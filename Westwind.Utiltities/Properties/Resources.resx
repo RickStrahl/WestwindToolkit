@@ -161,4 +161,8 @@
     <value>Invalid hex digit: </value>
     <comment>InvalidHexDigit description</comment>
   </data>
+  <data name="InvalidConnectionString" xml:space="preserve">
+    <value>Invalid Connection String.</value>
+    <comment>InvalidConnectionString description</comment>
+  </data>
 </root>

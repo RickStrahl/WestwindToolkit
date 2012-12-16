@@ -97,6 +97,15 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid Connection String..
+        /// </summary>
+        public static string InvalidConnectionString {
+            get {
+                return ResourceManager.GetString("InvalidConnectionString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid Connection string name..
         /// </summary>
         public static string InvalidConnectionStringName {
