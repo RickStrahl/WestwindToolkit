@@ -130,6 +130,15 @@ namespace Westwind.Utilities.Configuration
 
             string fieldsToEncrypt = "," + PropertiesToEncrypt.ToLower() + ",";
 
+
+            // Refresh the sections - req'd after write operations
+            // sometimes sections don't want to re-read            
+            if (string.IsNullOrEmpty(ConfigurationSection))
+                ConfigurationManager.RefreshSection("appSettings");
+            else
+                ConfigurationManager.RefreshSection(ConfigurationSection);
+                
+            
             // Loop through all fields and properties                 
             foreach (MemberInfo Member in Fields)
             {
@@ -165,7 +174,8 @@ namespace Westwind.Utilities.Configuration
                     value = ConfigurationManager.AppSettings[fieldName];
                 else
                 {
-                    NameValueCollection Values = (NameValueCollection)ConfigurationManager.GetSection(ConfigurationSection);
+                    NameValueCollection Values =
+                        (NameValueCollection) ConfigurationManager.GetSection(ConfigurationSection);
                     if (Values != null)
                         value = Values[fieldName];
                 }
@@ -306,7 +316,6 @@ namespace Westwind.Utilities.Configuration
         {
             lock (syncWriteLock)
             {
-
                 // Load the config file into DOM parser
                 XmlDocument Dom = new XmlDocument();
 
@@ -339,9 +348,14 @@ namespace Westwind.Utilities.Configuration
 
                 string fieldsToEncrypt = "," + PropertiesToEncrypt.ToLower() + ",";
 
+                string ConfigSection = "appSettings";
+                if (!string.IsNullOrEmpty(ConfigurationSection))
+                    ConfigSection = ConfigurationSection;
+
+                ConfigurationManager.RefreshSection(ConfigSection);
+
                 foreach (MemberInfo Field in Fields)
                 {
-
                     // If we can't find the key - write it out to the document
                     string Value = null;
                     object RawValue = null;
@@ -361,10 +375,6 @@ namespace Westwind.Utilities.Configuration
                     // Encrypt the field if in list
                     if (fieldsToEncrypt.IndexOf("," + Field.Name.ToLower() + ",") > -1)
                         Value = Encryption.EncryptString(Value, EncryptionKey);
-
-                    string ConfigSection = "appSettings";
-                    if (!string.IsNullOrEmpty(ConfigurationSection))
-                        ConfigSection = ConfigurationSection;
 
                     XmlNode Node = Dom.DocumentElement.SelectSingleNode(
                         XmlNamespacePrefix + ConfigSection + "/" +
@@ -407,16 +417,17 @@ namespace Westwind.Utilities.Configuration
                 {
                     // this will fail if permissions are not there
                     Dom.Save(configFile);
+
+                    ConfigurationManager.RefreshSection(ConfigSection);
                 }
                 catch
                 {
                     return false;
                 }
-
             }
             return true;
         }
-
+        
         /// <summary>
         /// Returns a single value from the XML in a configuration file.
         /// </summary>
