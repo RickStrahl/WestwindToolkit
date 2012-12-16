@@ -116,7 +116,15 @@ namespace Westwind.Utilities.Data
                     {
                         // Assume it's a connection string value
                         _Connection = dbProvider.CreateConnection();
-                        _Connection.ConnectionString = ConfigurationManager.ConnectionStrings[ConnectionString].ConnectionString;
+                        try
+                        {
+                            _Connection.ConnectionString = ConfigurationManager.ConnectionStrings[ConnectionString].ConnectionString;
+                        }
+                        catch
+                        {
+                            this.SetError(Resources.InvalidConnectionString);
+                            return false;
+                        }
                     }
                 }
 
@@ -147,8 +155,9 @@ namespace Westwind.Utilities.Data
         {
             SetError();
 
-            DbCommand command = dbProvider.CreateCommand();
-            command.CommandType = CommandType.Text;
+            DbCommand command = dbProvider.CreateCommand();           
+
+            command.CommandType = commandType;
             command.CommandText = sql;
 
             try
