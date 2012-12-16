@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Utiltities", "Westwind.Utiltities\Westwind.Utiltities.csproj", "{1C9829A8-8979-4493-863C-635726F8A61C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Utilities", "Westwind.Utiltities\Westwind.Utilities.csproj", "{1C9829A8-8979-4493-863C-635726F8A61C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Web.Core", "Westwind.Web.Core\Westwind.Web.Core.csproj", "{0C38B4E1-0C87-4289-A57B-87C1B5BE3BBE}"
 EndProject
@@ -15,6 +15,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Web.Mvc", "..\WestWindWebToolkit\Westwind.Web.Mvc\Westwind.Web.Mvc.csproj", "{809985C1-9458-496F-ABC5-FC71140BE4A5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Data", "Westwind.Data\Westwind.Data.csproj", "{1618C87C-1C5B-4E50-BB14-F6663FE4C0B6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{90FB62AD-E28A-460D-AB4B-38F39F51ADC0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Utilities.Test", "Test\Westwind.Utilities.Test\Westwind.Utilities.Test.csproj", "{2AFD91E5-5DE1-46D7-B2C1-D957050CB53D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,8 +42,15 @@ Global
 		{1618C87C-1C5B-4E50-BB14-F6663FE4C0B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1618C87C-1C5B-4E50-BB14-F6663FE4C0B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1618C87C-1C5B-4E50-BB14-F6663FE4C0B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AFD91E5-5DE1-46D7-B2C1-D957050CB53D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AFD91E5-5DE1-46D7-B2C1-D957050CB53D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AFD91E5-5DE1-46D7-B2C1-D957050CB53D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AFD91E5-5DE1-46D7-B2C1-D957050CB53D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{2AFD91E5-5DE1-46D7-B2C1-D957050CB53D} = {90FB62AD-E28A-460D-AB4B-38F39F51ADC0}
 	EndGlobalSection
 EndGlobal
