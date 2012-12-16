@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="&lt;-- User implemented class&#xD;&#xA;">
+    <Position X="2.865" Y="3.531" Height="0.255" Width="1.7" />
+  </Comment>
+  <Class Name="Westwind.Utilities.Configuration.AppConfiguration">
+    <Position X="0.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAAAAAEAQAAAAAAAAAgAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Configuration\AppConfiguration.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Provider" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Westwind.Utilities.Configuration.ConfigurationProviderBase&lt;TAppConfiguration&gt;">
+    <Position X="6.75" Y="0.5" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AQBBAIAAAYAQAQAAAAAAAAAgAAAAAAAAAAAAIQEAAAE=</HashCode>
+      <FileName>Configuration\ConfigurationProviderBase.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Westwind.Utilities.Configuration.XmlFileConfigurationProvider&lt;TAppConfiguration&gt;">
+    <Position X="9" Y="5.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAgAAAAAAAAAAAAAAgAAASAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Configuration\XmlFileConfigurationProvider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Westwind.Utilities.Configuration.ConfigurationFileConfigurationProvider&lt;TAppConfiguration&gt;">
+    <Position X="0.5" Y="5.25" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAABAQEIQAAACAAAAAAAgAAoAAAAAQAAAAAAIAEAAAA=</HashCode>
+      <FileName>Configuration\ConfigurationFileConfigurationProvider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Westwind.Utilities.Configuration.SqlServerConfigurationProvider&lt;TAppConfiguration&gt;">
+    <Position X="4.75" Y="5.25" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>CAAAAAACAAAAAAQAAAAAgAAgAAAgAAAAACAAAQEQAAA=</HashCode>
+      <FileName>Configuration\SqlServerConfigurationProvider.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Westwind.Utilities.Configuration.MyAppConfiguration">
+    <Position X="0.5" Y="2.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAASAAAAAAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Configuration\AppConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Westwind.Utilities.Configuration.IConfigurationProvider">
+    <Position X="3.75" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQAAAIAAAYAAAQAAAAAAAAAgAAAAAAAAAAAAAQEAAAA=</HashCode>
+      <FileName>Configuration\IConfigurationProvider.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Microsoft Sans Serif" Size="8.25" />
+</ClassDiagram>
