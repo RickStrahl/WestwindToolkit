@@ -33,7 +33,7 @@ namespace Westwind.Utilities.Configuration.Tests
         [TestMethod]
         public void DefaultConstructorInstanceTest()
         {
-            var config = new CustomConfigFileConfiguration(null);
+            var config = new CustomConfigFileConfiguration();
 
             Assert.IsNotNull(config);
             Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));
@@ -45,7 +45,8 @@ namespace Westwind.Utilities.Configuration.Tests
         [TestMethod]
         public void WriteConfigurationTest()
         {
-            var config = new CustomConfigFileConfiguration(null);
+            var config = new CustomConfigFileConfiguration();
+            config.Initialize();
             
             config.MaxDisplayListItems = 12;
             config.DebugMode = DebugModes.DeveloperErrorMessage;
@@ -73,7 +74,8 @@ namespace Westwind.Utilities.Configuration.Tests
         [TestMethod]
         public void WriteEncryptedConfigurationTest()
         {
-            var config = new CustomConfigFileConfiguration(null);
+            var config = new CustomConfigFileConfiguration();
+            config.Initialize();
 
             // write secure properties
             config.Password = "seekrit2";
@@ -89,7 +91,8 @@ namespace Westwind.Utilities.Configuration.Tests
             Assert.IsTrue(text.Contains(@"<add key=""AppConnectionString"" value=""z6+T5mzXbtJBEgWqpQNYbBss0csbtw2b/qdge7PUixE="" />"));
             
             // now re-read settings into a new object
-            var config2 = new CustomConfigFileConfiguration(null);
+            var config2 = new CustomConfigFileConfiguration();
+            config2.Initialize();
             
             // check secure properties
             Assert.IsTrue(config.Password == "seekrit2");

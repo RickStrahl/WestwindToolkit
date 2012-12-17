@@ -16,36 +16,53 @@ namespace Westwind.Utilities.Configuration.Tests
         // Must implement public default constructor
         public DatabaseConfiguration()
         {
-            // Default values assigned
-            Initialize();
+            ApplicationName = "Configuration Tests";
+            DebugMode = DebugModes.Default;
+            MaxDisplayListItems = 15;
+            SendAdminEmailConfirmations = false;
+            Password = "seekrit";
+            AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
         }
 
-        // Always call this constructor new CustomConfigFileConfiguration(null)
-        public DatabaseConfiguration(string connectionString, string tableName = null)
+        public void Initialize(string connectionString, string tableName = null)
         {
-            // Default values assigned
-            Initialize();
+            base.Initialize(configData: new { ConnectionString = connectionString, Tablename = tableName });
+        }
 
-            if (string.IsNullOrEmpty(connectionString))
-                connectionString = "LocalDatabaseConnection";
+        protected override void OnInitialize(IConfigurationProvider provider = null,
+                                      string sectionName = null,
+                                      object configData = null)
+        {
 
-
-            if (string.IsNullOrEmpty(tableName))
-                tableName = "ConfigSettings"; 
-
-            var provider = new SqlServerConfigurationProvider<DatabaseConfiguration>()
+            if (provider == null)
             {
-                ConnectionString = connectionString,
-                Tablename = tableName,   
-                ProviderName= "System.Data.SqlServerCe.4.0",
-                EncryptionKey = "ultra-seekrit",  // use a generated value here
-                PropertiesToEncrypt = "Password,AppConnectionString"
-                // UseBinarySerialization = true                     
-            };                
+                // default connect values
+                string connectionString =  "LocalDatabaseConnection";
+                string tableName = "ConfigurationData";
+
+                // ConfigData: new { ConnectionString = "...", Tablename = "..." }
+                if (configData != null)
+                {
+                    dynamic data = configData;
+                    connectionString = data.ConnectionString;
+                    tableName = data.Tablename;                       
+                }
+
+                provider = new SqlServerConfigurationProvider<DatabaseConfiguration>()
+                {
+                    ConnectionString = connectionString,
+                    Tablename = tableName,
+                    ProviderName = "System.Data.SqlServerCe.4.0",
+                    EncryptionKey = "ultra-seekrit",  // use a generated value here
+                    PropertiesToEncrypt = "Password,AppConnectionString"
+                    // UseBinarySerialization = true                     
+                };
+            }
                        
             // assign the provider
             Provider = provider;
-            Read();        
+
+            Read();            
         }
 
         public string ApplicationName { get; set; }
@@ -55,15 +72,7 @@ namespace Westwind.Utilities.Configuration.Tests
         public string Password { get; set; }
         public string AppConnectionString { get; set; }
 
-        protected override void Initialize()
-        {
-            ApplicationName = "Configuration Tests";
-            DebugMode = DebugModes.Default;
-            MaxDisplayListItems = 15;
-            SendAdminEmailConfirmations = false;
-            Password = "seekrit";
-            AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
-        }
+    
     }
 
 }

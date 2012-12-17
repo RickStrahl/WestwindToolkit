@@ -16,28 +16,43 @@ namespace Westwind.Utilities.Configuration.Tests
         // Must implement public default constructor
         public StringConfiguration()
         {
-            // Default values assigned
-            Initialize();
+            ApplicationName = "Configuration Tests";
+            DebugMode = DebugModes.Default;
+            MaxDisplayListItems = 15;
+            SendAdminEmailConfirmations = false;
+            Password = "seekrit";
+            AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
         }
 
-        // Always call this constructor new CustomConfigFileConfiguration(null)
-        public StringConfiguration(string xmlConfiguration)
+        /// <summary>
+        /// Initialize from Xml string
+        /// </summary>
+        /// <param name="xml"></param>
+        public void Initialize(string xml)
         {
-            // Default values assigned
-            Initialize();
-       
-            var provider = new StringConfigurationProvider<StringConfiguration>()
+            base.Initialize(configData: xml);
+        }
+
+
+        protected override void OnInitialize(IConfigurationProvider provider = null, 
+                                             string sectionName = null, 
+                                             object configData = null)
+        {
+            if (provider == null)
             {
-                EncryptionKey = "ultra-seekrit",  // use a generated value here
-                PropertiesToEncrypt = "Password,AppConnectionString",                   
-            };                            
-            
+                provider = new StringConfigurationProvider<StringConfiguration>()
+                {
+                    EncryptionKey = "ultra-seekrit",  // use a generated value here
+                    PropertiesToEncrypt = "Password,AppConnectionString",
+                };
+            }
+                      
             // assign the provider
             Provider = provider;
 
             // read config from string
-            if (!string.IsNullOrEmpty(xmlConfiguration))
-                Read(xmlConfiguration);        
+            if (configData != null && configData is string)
+                Read(configData as string);        
         }
 
         public string ApplicationName { get; set; }
@@ -47,15 +62,7 @@ namespace Westwind.Utilities.Configuration.Tests
         public string Password { get; set; }
         public string AppConnectionString { get; set; }
 
-        protected override void Initialize()
-        {
-            ApplicationName = "Configuration Tests";
-            DebugMode = DebugModes.Default;
-            MaxDisplayListItems = 15;
-            SendAdminEmailConfirmations = false;
-            Password = "seekrit";
-            AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
-        }
+       
     }
 
 }

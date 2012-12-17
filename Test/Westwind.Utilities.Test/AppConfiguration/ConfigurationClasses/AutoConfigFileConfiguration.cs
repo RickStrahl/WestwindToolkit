@@ -22,46 +22,46 @@ namespace Westwind.Utilities.Configuration.Tests
     {
 
         public AutoConfigFileConfiguration()
-        { }
-
-        public AutoConfigFileConfiguration(IConfigurationProvider provider,string section = "AutoConfigFileConfiguration")
-            :base(provider, section)
-        { }
-
-        public string ApplicationName { get; set; }
-        public DebugModes DebugMode { get; set; }
-        public int MaxDisplayListItems { get; set; }
-        public bool SendAdminEmailConfirmations { get; set; }
-
-        protected override void Initialize()
         {
             ApplicationName = "Configuration Tests";
             DebugMode = DebugModes.Default;
             MaxDisplayListItems = 15;
             SendAdminEmailConfirmations = false;
         }
-    }
-
-
-    class AutoConfigFile2Configuration : AppConfiguration
-    {
-
-        public AutoConfigFile2Configuration()
-            : base(null,"AutoConfigFile2Configuration")
-        { }
 
         public string ApplicationName { get; set; }
         public DebugModes DebugMode { get; set; }
         public int MaxDisplayListItems { get; set; }
         public bool SendAdminEmailConfirmations { get; set; }
 
-        protected override void Initialize()
+     
+    }
+
+    /// <summary>
+    /// This version of the class internally calls Initialize
+    /// to read configuration information immediately from
+    /// itself so no explicit call to Initialize is required
+    /// </summary>
+    class AutoConfigFile2Configuration : AppConfiguration
+    {
+
+        public AutoConfigFile2Configuration()
         {
             ApplicationName = "Configuration Tests";
-            DebugMode = DebugModes.ApplicationErrorMessage;
+            DebugMode = DebugModes.Default;
             MaxDisplayListItems = 15;
             SendAdminEmailConfirmations = false;
+
+
+            // Automatically initialize this one
+            this.Initialize();
         }
+
+        public string ApplicationName { get; set; }
+        public DebugModes DebugMode { get; set; }
+        public int MaxDisplayListItems { get; set; }
+        public bool SendAdminEmailConfirmations { get; set; }
+
     }
 
 }

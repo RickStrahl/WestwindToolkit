@@ -66,7 +66,7 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void DataReaderToObjectTest()
         {
-            SqlDataAccess data = new SqlDataAccess("TestData");
+            SqlDataAccess data = new SqlDataAccess("TestDataConnection");
 
             IDataReader reader = data.ExecuteReader("select top 1 * from TestLogFile");
 

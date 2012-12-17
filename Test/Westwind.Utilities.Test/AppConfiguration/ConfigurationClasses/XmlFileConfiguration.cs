@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Westwind.Utilities.Configuration.Tests
 {
@@ -16,31 +17,42 @@ namespace Westwind.Utilities.Configuration.Tests
         // Must implement public default constructor
         public XmlFileConfiguration()
         {
-            // Default values assigned
-            Initialize();
+            ApplicationName = "Configuration Tests";
+            DebugMode = DebugModes.Default;
+            MaxDisplayListItems = 15;
+            SendAdminEmailConfirmations = false;
+            Password = "seekrit";
+            AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
         }
 
-        // Always call this constructor new CustomConfigFileConfiguration(null)
-        public XmlFileConfiguration(string xmlFile)
+        // Automatically initialize with default config and config file
+        public void Initialize(string configFile)
         {
-            // Default values assigned
-            Initialize();
+            base.Initialize(configData: configFile);
+        }
 
-            if (string.IsNullOrEmpty(xmlFile))
-                xmlFile = "XmlConfiguration.xml"; // in web apps use full path
-
-            var provider = new XmlFileConfigurationProvider<XmlFileConfiguration>()
+        protected override void OnInitialize(IConfigurationProvider provider = null, 
+                                             string sectionName = null,
+                                             object configData = null)
+        {
+            if (provider == null)
             {
-                XmlConfigurationFile=xmlFile,
-                EncryptionKey = "ultra-seekrit",  // use a generated value here
-                PropertiesToEncrypt = "Password,AppConnectionString"
-                // UseBinarySerialization = true                     
-            };                
-                       
+                string xmlFile = "XmlConfiguration.xml";                 
+
+                provider = new XmlFileConfigurationProvider<XmlFileConfiguration>()
+                {
+                    XmlConfigurationFile = xmlFile,
+                    EncryptionKey = "ultra-seekrit",  // use a generated value here
+                    PropertiesToEncrypt = "Password,AppConnectionString"
+                    // UseBinarySerialization = true                     
+                };
+            }
+
             // assign the provider
             Provider = provider;
-            Read();        
+            Read(); 
         }
+
 
         public string ApplicationName { get; set; }
         public DebugModes DebugMode { get; set; }
@@ -49,15 +61,7 @@ namespace Westwind.Utilities.Configuration.Tests
         public string Password { get; set; }
         public string AppConnectionString { get; set; }
 
-        protected override void Initialize()
-        {
-            ApplicationName = "Configuration Tests";
-            DebugMode = DebugModes.Default;
-            MaxDisplayListItems = 15;
-            SendAdminEmailConfirmations = false;
-            Password = "seekrit";
-            AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
-        }
+      
     }
 
 }

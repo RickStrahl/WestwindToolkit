@@ -16,22 +16,24 @@ namespace Westwind.Utilities.Configuration.Tests
         // Must implement public default constructor
         public CustomConfigFileConfiguration()
         {
-            // Default values assigned
-            Initialize();
+            ApplicationName = "Configuration Tests";
+            DebugMode = DebugModes.Default;
+            MaxDisplayListItems = 15;
+            SendAdminEmailConfirmations = false;
+            Password = "seekrit";
+            AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
         }
 
-        // Always call this constructor new CustomConfigFileConfiguration(null)
-        public CustomConfigFileConfiguration(IConfigurationProvider provider,string section = "CustomConfigFileConfiguration")
+        protected override void OnInitialize(IConfigurationProvider provider = null, 
+                                             string sectionName = null, 
+                                             object configData = null)
         {
-            // Default values assigned
-            Initialize();
-
             if (provider == null)
             {
                 provider = new ConfigurationFileConfigurationProvider<CustomConfigFileConfiguration>()
                 {
                     //ConfigurationFile = "CustomConfiguration.config",
-                    ConfigurationSection = section,
+                    ConfigurationSection = sectionName,
                     EncryptionKey = "ultra-seekrit",  // use a generated value here
                     PropertiesToEncrypt = "Password,AppConnectionString"
                 };                
@@ -49,15 +51,6 @@ namespace Westwind.Utilities.Configuration.Tests
         public string Password { get; set; }
         public string AppConnectionString { get; set; }
 
-        protected override void Initialize()
-        {
-            ApplicationName = "Configuration Tests";
-            DebugMode = DebugModes.Default;
-            MaxDisplayListItems = 15;
-            SendAdminEmailConfirmations = false;
-            Password = "seekrit";
-            AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
-        }
     }
 
 }

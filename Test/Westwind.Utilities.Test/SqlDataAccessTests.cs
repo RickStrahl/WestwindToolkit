@@ -51,7 +51,7 @@ namespace Westwind.UtilitiesTests
         public static void Initialize(TestContext testContext) 
         {
             // warm up data connection
-            SqlDataAccess data = new SqlDataAccess("TestData");
+            SqlDataAccess data = new SqlDataAccess("TestDataConnection");
             var readr = data.ExecuteReader("select top 1 * from TestLogFile");
             readr.Read();
             readr.Close();
@@ -75,7 +75,7 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void DataReaderToObjectTest()
         {
-            SqlDataAccess data = new SqlDataAccess("TestData");
+            SqlDataAccess data = new SqlDataAccess("TestDataConnection");
 
             IDataReader reader = data.ExecuteReader("select top 1 * from TestLogFile");
 
@@ -94,7 +94,7 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void ExecuteDataReaderToListTest()
         {
-            SqlDataAccess data = new SqlDataAccess("TestData");
+            SqlDataAccess data = new SqlDataAccess("TestDataConnection");
             
             var swatch = new Stopwatch();
             swatch.Start();
@@ -114,7 +114,7 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void ExecuteDataReaderToListManualTest()
         {
-            SqlDataAccess data = new SqlDataAccess("TestData");
+            SqlDataAccess data = new SqlDataAccess("TestDataConnection");
         
             var swatch = new Stopwatch();
             swatch.Start();

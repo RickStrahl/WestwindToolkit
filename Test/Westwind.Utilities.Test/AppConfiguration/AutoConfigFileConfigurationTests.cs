@@ -34,7 +34,8 @@ namespace Westwind.Utilities.Configuration.Tests
         [TestMethod]
         public void DefaultConstructorInstanceTest()
         {            
-            var config = new AutoConfigFileConfiguration(null);
+            var config = new AutoConfigFileConfiguration();
+            config.Initialize();
 
             Assert.IsNotNull(config);
             Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));
@@ -47,7 +48,8 @@ namespace Westwind.Utilities.Configuration.Tests
         [TestMethod]
         public void AutoConfigWriteConfigurationTest()
         {            
-            var config = new AutoConfigFileConfiguration(null);
+            var config = new AutoConfigFileConfiguration();
+            config.Initialize();
 
             Assert.IsNotNull(config);
             Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));
@@ -56,19 +58,23 @@ namespace Westwind.Utilities.Configuration.Tests
             config.MaxDisplayListItems = 17;
             config.Write();
 
-            var config3 = new AutoConfigFileConfiguration(null);
-            Assert.AreEqual(config3.MaxDisplayListItems, 17);
+            var config2 = new AutoConfigFileConfiguration();
+            config2.Initialize();
+
+            Assert.AreEqual(config2.MaxDisplayListItems, 17);
 
             // reset to default val
-            config3.MaxDisplayListItems = 15;
-            config3.Write();
+            config2.MaxDisplayListItems = 15;
+            config2.Write();
         }
 
         [TestMethod]
         public void WriteConfigurationTest()
         {
 
-            var config = new AutoConfigFileConfiguration(null);
+            var config = new AutoConfigFileConfiguration();
+            config.Initialize();
+
             config.MaxDisplayListItems = 12;
             config.DebugMode = DebugModes.DeveloperErrorMessage;
             config.ApplicationName = "Changed";
@@ -82,7 +88,9 @@ namespace Westwind.Utilities.Configuration.Tests
             Assert.IsTrue(text.Contains(@"<add key=""MaxDisplayListItems"" value=""12"" />"));
             Assert.IsTrue(text.Contains(@"<add key=""SendAdminEmailConfirmations"" value=""True"" />"));
 
-            var config2 = new AutoConfigFileConfiguration(null);
+            var config2 = new AutoConfigFileConfiguration();
+            config2.Initialize();
+
             Assert.AreEqual(config2.MaxDisplayListItems, 12);
             Assert.AreEqual(config2.ApplicationName, "Changed");
 
@@ -99,6 +107,9 @@ namespace Westwind.Utilities.Configuration.Tests
         public void DefaultConstructor2InstanceTest()
         {
             var config = new AutoConfigFile2Configuration();
+            
+            // Not required since custom constructor calls this
+            //config.Initialize();
 
             Assert.IsNotNull(config);
             Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));
@@ -115,6 +126,9 @@ namespace Westwind.Utilities.Configuration.Tests
         public void WriteConfiguration2Test()
         {
             var config = new AutoConfigFile2Configuration();
+            
+            //config.Initialize();
+
             config.MaxDisplayListItems = 12;
             config.DebugMode = DebugModes.DeveloperErrorMessage;
             config.ApplicationName = "Changed";

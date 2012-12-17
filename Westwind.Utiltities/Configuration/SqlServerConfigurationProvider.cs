@@ -275,6 +275,9 @@ namespace Westwind.Utilities.Configuration
                 }
 
             }
+
+            if (Result < 0)
+                return false;
             
             return true;
         }

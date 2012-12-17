@@ -39,7 +39,8 @@ namespace Westwind.Utilities.Configuration.Tests
             // this should create the database table and add default
             // data into it if it doesn't exist - otherwise
             // the values are read
-            var config = new DatabaseConfiguration(null);
+            var config = new DatabaseConfiguration();
+            config.Initialize("LocalDatabaseConnection","ConfigurationData");
 
             Assert.IsNotNull(config);
             Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));                       
@@ -48,7 +49,9 @@ namespace Westwind.Utilities.Configuration.Tests
         [TestMethod]
         public void WriteConfigurationTest()
         {
-            var config = new DatabaseConfiguration(null);
+            var config = new DatabaseConfiguration();
+            // connection string and table are provided in OnInitialize()
+            config.Initialize();
             
             config.MaxDisplayListItems = 12;
             config.DebugMode = DebugModes.DeveloperErrorMessage;
@@ -62,11 +65,12 @@ namespace Westwind.Utilities.Configuration.Tests
             Assert.IsTrue(config.Write(),"Write Failed: " + config.ErrorMessage);
 
             // create a new instance and read the values from the database
-            var config2 = new DatabaseConfiguration(null);
+            var config2 = new DatabaseConfiguration();
+            config2.Initialize(); 
             
             Assert.IsNotNull(config2);
             Assert.AreEqual(config.MaxDisplayListItems, config2.MaxDisplayListItems);
-            Assert.AreEqual(config.DebugMode, config.DebugMode);
+            Assert.AreEqual(config.DebugMode, config2.DebugMode);
 
             // Encrypted values
             Assert.AreEqual(config.Password, config2.Password);

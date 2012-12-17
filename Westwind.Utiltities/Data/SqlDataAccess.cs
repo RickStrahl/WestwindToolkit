@@ -120,9 +120,9 @@ namespace Westwind.Utilities.Data
                         {
                             _Connection.ConnectionString = ConfigurationManager.ConnectionStrings[ConnectionString].ConnectionString;
                         }
-                        catch
+                        catch(Exception ex)
                         {
-                            this.SetError(Resources.InvalidConnectionString);
+                            this.SetError(Resources.InvalidConnectionString + ": " + ex.GetBaseException().Message);
                             return false;
                         }
                     }

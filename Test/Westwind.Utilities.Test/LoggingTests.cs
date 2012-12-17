@@ -69,7 +69,7 @@ namespace Westwind.Utilities.Tests
         public static void ClassInitialize(TestContext testContext)
         {
             // Set up the LogManager once
-            SqlLogAdapter adapter = new SqlLogAdapter("TestData");
+            SqlLogAdapter adapter = new SqlLogAdapter("TestDataConnection");
             adapter.LogFilename = STR_TestLogFile;
             LogManager.Create( adapter );
         }
@@ -77,7 +77,7 @@ namespace Westwind.Utilities.Tests
         [TestMethod]
         public void CreateDeleteLogWithSqlAdapterTest()
         {
-            SqlLogAdapter adapter = new SqlLogAdapter("TestData");
+            SqlLogAdapter adapter = new SqlLogAdapter("TestDataConnection");
             adapter.LogFilename = "ApplicationLog2";
 
             bool res = adapter.CreateLog();
@@ -91,7 +91,7 @@ namespace Westwind.Utilities.Tests
         [TestMethod]
         public void WriteLogEntryTest()
         {
-            SqlLogAdapter adapter = new SqlLogAdapter("TestData");
+            SqlLogAdapter adapter = new SqlLogAdapter("TestDataConnection");
             adapter.LogFilename = STR_TestLogFile;
             WebLogEntry entry = new WebLogEntry();
             entry.ErrorLevel = ErrorLevels.Message;
@@ -110,7 +110,7 @@ namespace Westwind.Utilities.Tests
         [TestMethod]
         public void WriteWebLogEntryTest()
         {
-            SqlLogAdapter adapter = new SqlLogAdapter("TestData");
+            SqlLogAdapter adapter = new SqlLogAdapter("TestDataConnection");
             adapter.LogFilename = STR_TestLogFile;
 
             WebLogEntry entry = new WebLogEntry();

@@ -39,7 +39,10 @@ namespace Westwind.Utilities.Configuration.Tests
         [TestMethod]
         public void DefaultConstructorInstanceTest()
         {
-            var config = new XmlFileConfiguration(STR_XMLCONFIGFILE);
+            var config = new XmlFileConfiguration();
+            config.Initialize(configData: STR_XMLCONFIGFILE);
+       
+
 
             Assert.IsNotNull(config);
             Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));
@@ -51,7 +54,8 @@ namespace Westwind.Utilities.Configuration.Tests
         [TestMethod]
         public void WriteConfigurationTest()
         {
-            var config = new XmlFileConfiguration(STR_XMLCONFIGFILE);
+            var config = new XmlFileConfiguration();
+            config.Initialize(STR_XMLCONFIGFILE);
             
             config.MaxDisplayListItems = 12;
             config.DebugMode = DebugModes.DeveloperErrorMessage;
@@ -79,7 +83,8 @@ namespace Westwind.Utilities.Configuration.Tests
         [TestMethod]
         public void WriteEncryptedConfigurationTest()
         {
-            var config = new XmlFileConfiguration(STR_XMLCONFIGFILE);
+            var config = new XmlFileConfiguration();
+            config.Initialize(STR_XMLCONFIGFILE);
 
             // write secure properties
             config.Password = "seekrit2";
@@ -95,7 +100,8 @@ namespace Westwind.Utilities.Configuration.Tests
             Assert.IsTrue(xmlConfig.Contains(@"<AppConnectionString>z6+T5mzXbtJBEgWqpQNYbBss0csbtw2b/qdge7PUixE=</AppConnectionString>"));
             
             // now re-read settings into a new object
-            var config2 = new XmlFileConfiguration(STR_XMLCONFIGFILE);
+            var config2 = new XmlFileConfiguration();
+            config2.Initialize(STR_XMLCONFIGFILE);
             
             // check secure properties
             Assert.IsTrue(config.Password == "seekrit2");

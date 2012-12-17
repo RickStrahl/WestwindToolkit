@@ -51,7 +51,8 @@ namespace Westwind.Utilities.Configuration.Tests
         [TestMethod]
         public void WriteConfigurationTest()
         {
-            var config = new StringConfiguration(null);
+            var config = new StringConfiguration();
+            
 
             config.MaxDisplayListItems = 12;
             config.DebugMode = DebugModes.DeveloperErrorMessage;
@@ -93,8 +94,12 @@ namespace Westwind.Utilities.Configuration.Tests
    <AppConnectionString>z6+T5mzXbtJBEgWqpQNYbBss0csbtw2b/qdge7PUixE=</AppConnectionString>
 </StringConfiguration>
 ";
-            var config = new StringConfiguration(xmlConfig);
-            //config.Read(xmlConfig);
+            var config = new StringConfiguration();
+
+            // Initialize with configData as parameter to load from
+            config.Initialize(configData: xmlConfig);
+
+            
 
             Assert.IsNotNull(config);
             Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));
@@ -106,7 +111,8 @@ namespace Westwind.Utilities.Configuration.Tests
         [TestMethod]
         public void WriteEncryptedConfigurationTest()
         {
-            var config = new StringConfiguration(null);
+            var config = new StringConfiguration();
+            config.Initialize();
 
             // write secure properties
             config.Password = "seekrit2";
@@ -121,9 +127,12 @@ namespace Westwind.Utilities.Configuration.Tests
             Assert.IsTrue(xml.Contains(@"<AppConnectionString>z6+T5mzXbtJBEgWqpQNYbBss0csbtw2b/qdge7PUixE=</AppConnectionString>"));
 
             // now re-read settings into a new object
-            var config2 = new StringConfiguration(xml);
-            //config2.Read(xml);  // you can also explicitly read
-            
+            var config2 = new StringConfiguration();
+            // pass XML to deserialize from - OnInitialize() implements this logic
+            //config2.Initialize(xml);  // same as below
+            config2.Initialize(configData: xml);
+                        
+
             // check secure properties
             Assert.IsTrue(config.Password == "seekrit2");
             Assert.IsTrue(config.AppConnectionString == "server=.;database=unsecured");
