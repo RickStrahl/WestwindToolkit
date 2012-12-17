@@ -291,8 +291,8 @@ namespace Westwind.Utilities.Configuration
                 if (!string.IsNullOrEmpty(sectionName))
                     provider.ConfigurationSection = sectionName;
             }
-            this.Provider = provider;
-            this.Provider.Read(this);
+            Provider = provider;
+            Provider.Read(this);
         }
 
         /// <summary>

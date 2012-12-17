@@ -129,6 +129,7 @@ namespace Westwind.Utilities.Configuration.Tests
         {
             var config = new AutoConfigFile2Configuration();
             
+            // not necesary since constructor calls internally
             //config.Initialize();
 
             config.MaxDisplayListItems = 12;
