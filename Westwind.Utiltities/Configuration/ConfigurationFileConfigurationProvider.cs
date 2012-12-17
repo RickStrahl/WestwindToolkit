@@ -51,29 +51,18 @@ namespace Westwind.Utilities.Configuration
         where TAppConfiguration: AppConfiguration, new()
     {
 
-
         /// <summary>
         /// Optional - the Configuration file where configuration settings are
         /// stored in. If not specified uses the default Configuration Manager
         /// and its default store.
         /// </summary>
-        public string ConfigurationFile
-        {
-            get { return _ConfigurationFile; }
-            set { _ConfigurationFile = value; }
-        }
-        private string _ConfigurationFile = string.Empty;
+        public string ConfigurationFile {get; set; }
 
         /// <summary>
         /// Optional The Configuration section where settings are stored.
         /// If not specified the appSettings section is used.
         /// </summary>
-        public string ConfigurationSection
-        {
-            get { return _ConfigurationSection; }
-            set { _ConfigurationSection = value; }
-        }
-        private string _ConfigurationSection = string.Empty;
+        //public new string ConfigurationSection {get; set; }
 
 
         /// <summary>

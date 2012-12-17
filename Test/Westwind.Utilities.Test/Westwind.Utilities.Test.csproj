@@ -65,8 +65,8 @@
     <Compile Include="AppConfiguration\CustomConfigFileConfigurationTests.cs" />
     <Compile Include="AppConfiguration\DatabaseConfigurationTests.cs" />
     <Compile Include="AppConfiguration\StringConfigurationTests.cs" />
-    <Compile Include="AppConfiguration\SupportClasses\DebugModes.cs" />
-    <Compile Include="AppConfiguration\SupportClasses\TestHelpers.cs" />
+    <Compile Include="SupportClasses\DebugModes.cs" />
+    <Compile Include="SupportClasses\TestHelpers.cs" />
     <Compile Include="AppConfiguration\XmlFileConfigurationTests.cs" />
     <Compile Include="DataUtilsTests.cs" />
     <Compile Include="DynamicDataReaderTests.cs" />

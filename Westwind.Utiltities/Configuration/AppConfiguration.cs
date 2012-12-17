@@ -201,9 +201,6 @@ namespace Westwind.Utilities.Configuration
         [NonSerialized]
         public IConfigurationProvider Provider = null;
 
-        [XmlIgnore]
-        [NonSerialized]
-        public string ConfigurationSection = string.Empty;
 
         /// <summary>
         /// Contains an error message if a method returns false or the object fails to 
@@ -291,12 +288,11 @@ namespace Westwind.Utilities.Configuration
                 provider = Activator.CreateInstance(typeProvider) as IConfigurationProvider;
 
                 // if no section name is passed it goes into standard appSettings
-                if (sectionName != null)
+                if (!string.IsNullOrEmpty(sectionName))
                     provider.ConfigurationSection = sectionName;
-
             }
-            Provider = provider;
-            Provider.Read(this);
+            this.Provider = provider;
+            this.Provider.Read(this);
         }
 
         /// <summary>

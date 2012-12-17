@@ -33,8 +33,10 @@ namespace Westwind.Utilities.Configuration.Tests
 
         [TestMethod]
         public void DefaultConstructorInstanceTest()
-        {            
+        {         
             var config = new AutoConfigFileConfiguration();
+            
+            // gets .config file, AutoConfigFileConfiguration section
             config.Initialize();
 
             Assert.IsNotNull(config);
