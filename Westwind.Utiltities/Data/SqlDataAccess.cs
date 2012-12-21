@@ -145,7 +145,7 @@ namespace Westwind.Utilities.Data
         /// <param name="sortOrderFields"></param>
         /// <param name="Parameters"></param>
         /// <returns></returns>
-        public override DbCommand CreatePagingCommand(string sql, int pageSize, int page, string sortOrderFields, params DbParameter[] Parameters)
+        public override DbCommand CreatePagingCommand(string sql, int pageSize, int page, string sortOrderFields, params object[] Parameters)
         {
             int pos = sql.IndexOf("select ", 0, StringComparison.OrdinalIgnoreCase);
             if (pos == -1)

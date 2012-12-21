@@ -51,12 +51,12 @@ namespace Westwind.Utilities.Data
     [DebuggerDisplay("{ErrorMessage}")]
     public abstract class DataAccessBase : IDisposable
     {
-        public DataAccessBase()
+        protected DataAccessBase()
         {
             dbProvider = DbProviderFactories.GetFactory("System.Data.SqlClient"); 
         }
 
-        public DataAccessBase(string connectionString)
+        protected DataAccessBase(string connectionString)
         {
             if (string.IsNullOrEmpty(connectionString))
                 throw new InvalidOperationException(Resources.AConnectionStringMustBePassedToTheConstructor);
@@ -82,7 +82,7 @@ namespace Westwind.Utilities.Data
     
             ConnectionString = connectionString;
         }
-        public DataAccessBase(string connectionString, string providerName)
+        protected DataAccessBase(string connectionString, string providerName)
         {
 #if SupportWebRequestProvider
             // Explicitly load Web Request Provider so the provider
@@ -122,6 +122,16 @@ namespace Westwind.Utilities.Data
         }
         private int _ErrorNumber = 0;
 
+        /// <summary>
+        /// The prefix used by the provider
+        /// </summary>
+        public string ParameterPrefix
+        {
+            get { return _ParameterPrefix; }
+            set { _ParameterPrefix = value; }
+        }
+        private string _ParameterPrefix = "@";
+        
 
         /// <summary>
         /// ConnectionString for the data access component
@@ -239,17 +249,19 @@ namespace Westwind.Utilities.Data
         /// <summary>
         /// Creates a Command object and opens a connection
         /// </summary>
-        /// <param name="ConnectionString"></param>
-        /// <param name="sql"></param>
+        /// <param name="ConnectionString">Connection string or ConnnectionString configuration name</param>
+        /// <param name="sql">Sql string to create</param>
+        /// <param name="commandType">Type of command to create</param>
+        /// <param name="parameters">Parameter values that map to @0,@1 or DbParameter objects created with CreateParameter()</param>
         /// <returns></returns>
-        public virtual DbCommand CreateCommand(string sql, CommandType commandType, params DbParameter[] parameters)
+        public virtual DbCommand CreateCommand(string sql, CommandType commandType, params object[] parameters)
         {
             SetError();
 
             DbCommand command = dbProvider.CreateCommand();
             command.CommandType = commandType;
             command.CommandText = sql;
-
+    
             try
             {
                 if (Transaction != null)
@@ -277,12 +289,8 @@ namespace Westwind.Utilities.Data
             }
 
             if (parameters != null)
-            {
-                foreach (DbParameter Parm in parameters)
-                {
-                    command.Parameters.Add(Parm);
-                }
-            }
+                AddParameters(command,parameters);
+            
 
             return command;
         }
@@ -290,14 +298,39 @@ namespace Westwind.Utilities.Data
         /// <summary>
         /// Creates a Command object and opens a connection
         /// </summary>
-        /// <param name="ConnectionString"></param>
-        /// <param name="sql"></param>
-        /// <returns></returns>
-        public virtual DbCommand CreateCommand(string sql, params DbParameter[] parameters)
+        /// <param name="ConnectionString">Connection String or Connection String Entry from config file</param>
+        /// <param name="sql">Sql string to execute</param>
+        /// <returns>Parameters. Either values mapping to @0,@1,@2 etc. or DbParameter objects created with CreateParameter()</returns>
+        public virtual DbCommand CreateCommand(string sql, params object[] parameters)
         {
             return CreateCommand(sql, CommandType.Text, parameters);
         }
 
+        /// <summary>
+        /// Adds parameters to a DbCommand instance. Parses value and DbParameter parameters
+        /// properly into the command's Parameters collection.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="parameters"></param>
+        protected internal void AddParameters(DbCommand command, object[] parameters)
+        {
+            if (parameters != null)
+            {
+                var parmCount = 0;
+                foreach (var parameter in parameters)
+                {
+                    if (parameter is DbParameter)
+                        command.Parameters.Add(parameter);
+                    else
+                    {
+                        var parm = CreateParameter(ParameterPrefix + parmCount, parameter);
+                        command.Parameters.Add(parm);
+                        parmCount++;
+                    }
+                }
+            }
+
+        }
 
         /// <summary>
         /// Used to create named parameters to pass to commands or the various
@@ -386,14 +419,11 @@ namespace Westwind.Utilities.Data
         /// <param name="Command">Command should be created with GetSqlCommand to have open connection</param>
         /// <param name="Parameters"></param>
         /// <returns></returns>
-        public virtual int ExecuteNonQuery(DbCommand Command, params DbParameter[] Parameters)
+        public virtual int ExecuteNonQuery(DbCommand Command)
         {
             SetError();
 
             int RecordCount = 0;
-
-            foreach (DbParameter Parameter in Parameters)
-            { Command.Parameters.Add(Parameter); }
 
             try
             {
@@ -431,50 +461,47 @@ namespace Westwind.Utilities.Data
         /// Executes a command that doesn't return a data result. You can return
         /// output parameters and you do receive an AffectedRecords counter.
         /// </summary>        
-        public virtual int ExecuteNonQuery(string sql, params DbParameter[] parameters)
+        public virtual int ExecuteNonQuery(string sql, params object[] parameters)
         {
-            DbCommand command = CreateCommand(sql);
+            DbCommand command = CreateCommand(sql,parameters);
             if (command == null)
                 return -1;
 
-            return ExecuteNonQuery(command, parameters);
+            return ExecuteNonQuery(command);
         }
 
 
         /// <summary>
         /// Executes a SQL Command object and returns a SqlDataReader object
         /// </summary>
-        /// <param name="Command">Command should be created with GetSqlCommand and open connection</param>
-        /// <param name="Parameters"></param>
+        /// <param name="command">Command should be created with GetSqlCommand and open connection</param>
+        /// <param name="parameters"></param>
         /// <returns></returns>
         /// <returns>A SqlDataReader. Make sure to call Close() to close the underlying connection.</returns>
         //public abstract DbDataReader ExecuteReader(DbCommand Command, params DbParameter[] Parameters)
-        public virtual DbDataReader ExecuteReader(DbCommand Command, params DbParameter[] Parameters)
+        public virtual DbDataReader ExecuteReader(DbCommand command, params object[] parameters)
         {
             SetError();
 
-            if (Command.Connection == null || Command.Connection.State != ConnectionState.Open)
+            if (command.Connection == null || command.Connection.State != ConnectionState.Open)
             {
                 if (!OpenConnection())
                     return null;
 
-                Command.Connection = _Connection;
+                command.Connection = _Connection;
             }
 
-            foreach (DbParameter Parameter in Parameters)
-            {
-                Command.Parameters.Add(Parameter);
-            }
+            AddParameters(command, parameters);
 
             DbDataReader Reader = null;
             try
             {
-                Reader = Command.ExecuteReader();
+                Reader = command.ExecuteReader();
             }
             catch (DbException ex)
             {
                 SetError(ex.GetBaseException().Message);
-                CloseConnection(Command);
+                CloseConnection(command);
                 return null;
             }
 
@@ -487,7 +514,7 @@ namespace Westwind.Utilities.Data
         /// <param name="sql">Sql String</param>
         /// <param name="parameters">Any SQL parameters </param>
         /// <returns></returns>
-        public virtual DbDataReader ExecuteReader(string sql, params DbParameter[] parameters)
+        public virtual DbDataReader ExecuteReader(string sql, params object[] parameters)
         {
             DbCommand command = CreateCommand(sql, parameters);
             if (command == null)
@@ -507,7 +534,7 @@ namespace Westwind.Utilities.Data
         /// <param name="sql">Sql string to execute</param>        
         /// <param name="parameters">DbParameters to fill the SQL statement</param>
         /// <returns>List of objects</returns>
-        public virtual List<T> ExecuteReader<T>(string sql, params DbParameter[] parameters)
+        public virtual List<T> ExecuteReader<T>(string sql, params object[] parameters)            
             where T : class, new()
         {
             var reader = ExecuteReader(sql, parameters);
@@ -530,16 +557,36 @@ namespace Westwind.Utilities.Data
         /// <param name="propertiesToExclude">Comma delimited list of properties that are not to be updated</param>
         /// <param name="parameters">DbParameters to fill the SQL statement</param>
         /// <returns>List of objects</returns>
-        public virtual List<T> ExecuteReader<T>(string sql, string propertiesToExclude, params DbParameter[] parameters)
-            where T : class, new()
+        public virtual List<T> ExecuteReader<T>(string sql, string propertiesToExclude, params object[] parameters)            
+            where T: class, new()
         {
-            var reader = ExecuteReader(sql, parameters);
+            var reader = this.ExecuteReader(sql, parameters);
             if (reader == null)
                 return null;
 
             var result = DataUtils.DataReaderToObjectList<T>(reader, propertiesToExclude);
             reader.Close();
+
             return result;
+        }
+
+        /// <summary>
+        /// Return a list of entities that are matched to an object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public virtual List<T> Query<T>(string sql, params object[] parameters)
+            where T: class, new()
+        {
+            return ExecuteReader<T>(sql, null, parameters);
+        }
+
+        public virtual List<T> Query<T>(string sql, string propertiesToExclude, params object[] parameters)
+            where T: class, new()
+        {
+            return ExecuteReader<T>(sql, propertiesToExclude, parameters);
         }
 
         /// <summary>
@@ -549,7 +596,7 @@ namespace Westwind.Utilities.Data
         /// <param name="sql">Sql String to executeTable</param>
         /// <param name="parameters">Array of DbParameters to pass</param>
         /// <returns></returns>
-        public virtual dynamic ExecuteDynamicDataReader(string sql, params DbParameter[] parameters)
+        public virtual dynamic ExecuteDynamicDataReader(string sql, params object[] parameters)
         {
             var reader = ExecuteReader(sql, parameters);
             return new DynamicDataReader(reader);
@@ -565,7 +612,7 @@ namespace Westwind.Utilities.Data
         /// <param name="sql">Sql string to execute</param>        
         /// <param name="parameters">DbParameters to fill the SQL statement</param>
         /// <returns>List of objects</returns>
-        public virtual List<T> ExecuteReader<T>(DbCommand sqlCommand, params DbParameter[] parameters)
+        public virtual List<T> ExecuteReader<T>(DbCommand sqlCommand, params object[] parameters)
             where T : class, new()
         {
             var reader = ExecuteReader(sqlCommand, parameters);
@@ -576,23 +623,20 @@ namespace Westwind.Utilities.Data
         /// <summary>
         /// Returns a DataTable from a Sql Command string passed in.
         /// </summary>
-        /// <param name="Tablename"></param>
-        /// <param name="Command"></param>
-        /// <param name="Parameters"></param>
+        /// <param name="tablename"></param>
+        /// <param name="command"></param>
+        /// <param name="parameters"></param>
         /// <returns></returns>
-        public virtual DataTable ExecuteTable(string Tablename, DbCommand Command, params DbParameter[] Parameters)
+        public virtual DataTable ExecuteTable(string tablename, DbCommand command, params object[] parameters)
         {
             SetError();
 
-            foreach (DbParameter Parameter in Parameters)
-            {
-                Command.Parameters.Add(Parameter);
-            }
+            AddParameters(command, parameters);
 
             DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
-            Adapter.SelectCommand = Command;
+            Adapter.SelectCommand = command;
 
-            DataTable dt = new DataTable(Tablename);
+            DataTable dt = new DataTable(tablename);
 
             try
             {
@@ -605,7 +649,7 @@ namespace Westwind.Utilities.Data
             }
             finally
             {
-                CloseConnection(Command);
+                CloseConnection(command);
             }
 
             return dt;
@@ -619,7 +663,7 @@ namespace Westwind.Utilities.Data
         /// <param name="Sql"></param>
         /// <param name="Parameters"></param>
         /// <returns></returns>
-        public virtual DataTable ExecuteTable(string Tablename, string Sql, params DbParameter[] Parameters)
+        public virtual DataTable ExecuteTable(string Tablename, string Sql, params object[] Parameters)
         {
             SetError();
 
@@ -638,7 +682,7 @@ namespace Westwind.Utilities.Data
         /// <param name="Command"></param>
         /// <param name="Parameters"></param>
         /// <returns></returns>
-        public virtual DataSet ExecuteDataSet(string Tablename, DbCommand Command, params DbParameter[] Parameters)
+        public virtual DataSet ExecuteDataSet(string Tablename, DbCommand Command, params object[] Parameters)
         {
             return ExecuteDataSet(null, Tablename, Command, Parameters);
         }
@@ -649,7 +693,7 @@ namespace Westwind.Utilities.Data
         /// <param name="command"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public virtual DataSet ExecuteDataSet(string tablename, string sql, params DbParameter[] parameters)
+        public virtual DataSet ExecuteDataSet(string tablename, string sql, params object[] parameters)
         {
             return ExecuteDataSet(tablename, CreateCommand(sql), parameters);
         }
@@ -658,11 +702,11 @@ namespace Westwind.Utilities.Data
         /// <summary>
         /// Returns a DataSet from a Sql Command string passed in.
         /// </summary>
-        /// <param name="Tablename"></param>
-        /// <param name="Command"></param>
-        /// <param name="Parameters"></param>
+        /// <param name="tableName"></param>
+        /// <param name="command"></param>
+        /// <param name="parameters"></param>
         /// <returns></returns>        
-        public virtual DataSet ExecuteDataSet(DataSet dataSet, string Tablename, DbCommand Command, params DbParameter[] Parameters)
+        public virtual DataSet ExecuteDataSet(DataSet dataSet, string tableName, DbCommand command, params object[] parameters)
         {
             SetError();
 
@@ -670,24 +714,21 @@ namespace Westwind.Utilities.Data
                 dataSet = new DataSet();
 
             DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
-            Adapter.SelectCommand = Command;
+            Adapter.SelectCommand = command;
 
             if (ExecuteWithSchema)
                 Adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
 
-            foreach (DbParameter parameter in Parameters)
-            {
-                Command.Parameters.Add(parameter);
-            }
+            AddParameters(command, parameters);
 
-            DataTable dt = new DataTable(Tablename);
+            DataTable dt = new DataTable(tableName);
 
-            if (dataSet.Tables.Contains(Tablename))
-                dataSet.Tables.Remove(Tablename);
+            if (dataSet.Tables.Contains(tableName))
+                dataSet.Tables.Remove(tableName);
 
             try
             {
-                Adapter.Fill(dataSet, Tablename);
+                Adapter.Fill(dataSet, tableName);
             }
             catch (Exception ex)
             {
@@ -696,11 +737,12 @@ namespace Westwind.Utilities.Data
             }
             finally
             {
-                CloseConnection(Command);
+                CloseConnection(command);
             }
 
             return dataSet;
         }
+
         /// <summary>
         /// Returns a DataTable from a Sql Command string passed in.
         /// </summary>
@@ -708,7 +750,7 @@ namespace Westwind.Utilities.Data
         /// <param name="Command"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public virtual DataSet ExecuteDataSet(DataSet dataSet, string tablename, string sql, params DbParameter[] parameters)
+        public virtual DataSet ExecuteDataSet(DataSet dataSet, string tablename, string sql, params object[] parameters)
         {
             DbCommand Command = CreateCommand(sql, parameters);
             if (Command == null)
@@ -725,19 +767,16 @@ namespace Westwind.Utilities.Data
         /// </summary>
         /// <param name="SqlCommand">A SQL Command object</param>
         /// <returns>value or null on failure</returns>        
-        public virtual object ExecuteScalar(DbCommand Command, params DbParameter[] Parameters)
+        public virtual object ExecuteScalar(DbCommand command, params object[] parameters)
         {
             SetError();
 
-            foreach (DbParameter Parameter in Parameters)
-            {
-                Command.Parameters.Add(Parameter);
-            }
+            AddParameters(command, parameters);
 
             object Result = null;
             try
             {
-                Result = Command.ExecuteScalar();
+                Result = command.ExecuteScalar();
             }
             catch (DbException ex)
             {
@@ -756,7 +795,7 @@ namespace Westwind.Utilities.Data
         /// <param name="Sql">Sql string to execute</param>
         /// <param name="Parameters">Any named SQL parameters</param>
         /// <returns>Result value or null. Check ErrorMessage on Null if unexpected</returns>
-        public virtual object ExecuteScalar(string sql, params DbParameter[] parameters)
+        public virtual object ExecuteScalar(string sql, params object[] parameters)
         {
             SetError();
 
@@ -807,7 +846,7 @@ namespace Westwind.Utilities.Data
         /// <param name="sortOrderFields"></param>
         /// <param name="Parameters"></param>
         /// <returns></returns>
-        public virtual DbCommand CreatePagingCommand(string sql, int pageSize, int page, string sortOrderFields, params DbParameter[] Parameters)
+        public virtual DbCommand CreatePagingCommand(string sql, int pageSize, int page, string sortOrderFields, params object[] Parameters)
         {
             int pos = sql.IndexOf("select ", 0, StringComparison.OrdinalIgnoreCase);
             if (pos == -1)
@@ -896,61 +935,47 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// Generic routine to retrieve an object from a database record
         /// The object properties must match the database fields.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="Table"></param>
-        /// <param name="KeyField"></param>
+        /// <param name="entity">The object to update</param>
+        /// <param name="command">Database command object</param>
         /// <param name="fieldsToSkip"></param>
         /// <returns></returns>
-        public virtual bool GetEntity(object entity, DbCommand command, string fieldsToSkip)
+        public virtual bool GetEntity(object entity, DbCommand command, string fieldsToSkip = null)
         {
             SetError();
 
             if (string.IsNullOrEmpty(fieldsToSkip))
                 fieldsToSkip = string.Empty;
 
-            DbDataReader Reader = ExecuteReader(command);
-            if (Reader == null)
+            DbDataReader reader = ExecuteReader(command);
+            if (reader == null)
                 return false;
 
-            if (!Reader.Read())
+            if (!reader.Read())
             {
-                Reader.Close();
+                reader.Close();
                 CloseConnection(command);
                 return false;
             }
 
-            Type ObjType = entity.GetType();
-            
-            PropertyInfo[] Properties = ObjType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
-            foreach (PropertyInfo Property in Properties)
-            {
-                if (!Property.CanRead || !Property.CanWrite)
-                    continue;
+            DataUtils.DataReaderToObject(reader, entity, fieldsToSkip);
 
-                string Name = Property.Name;
-
-                if (fieldsToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
-                    continue;
-
-                object Value = null;
-                try
-                {
-                    Value = Reader[Name];
-                    if (Value is DBNull)
-                        Value = null;
-                }
-                catch
-                {
-                    continue;
-                }
-
-                Property.SetValue(entity, Value, null);
-            }
-
-            Reader.Close();
+            reader.Close();
             CloseConnection();
 
             return true;
+        }
+
+        /// <summary>
+        /// Retrieves a single record and returns it as an entity
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="sql"></param>
+        /// <param name="fieldsToSkip"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public bool GetEntity(object entity, string sql, object[] parameters)
+        {
+            return GetEntity(entity, CreateCommand(sql,parameters),null);
         }
 
 
@@ -965,7 +990,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <param name="KeyValue"></param>
         /// <param name="FieldsToSkip"></param>
         /// <returns></returns>
-        public virtual bool GetEntity(object Entity, string Table, string KeyField, object KeyValue, string FieldsToSkip)
+        public virtual bool GetEntity(object Entity, string Table, string KeyField, object KeyValue, string FieldsToSkip = null)
         {
             SetError();
 
@@ -975,6 +1000,61 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 return false;
 
             return GetEntity(Entity, Command, FieldsToSkip);
+        }
+
+        /// <summary>
+        /// Returns a single
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="keyValue"></param>
+        /// <param name="tableName"></param>
+        /// <param name="keyField"></param>
+        /// <returns></returns>
+        public virtual T Find<T>(object keyValue, string tableName,string keyField)
+            where T: class,new()
+        {
+            T obj = new T();
+            if (obj == null)
+                return null;
+
+            if (!GetEntity(obj, tableName, keyField, keyValue, null))
+                return null;
+
+            return obj;
+        }
+
+        /// <summary>
+        /// Returns a single object retrieved from data
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public virtual T Find<T>(string sql, params object[] parameters)
+            where T : class,new()
+        {
+            T obj = new T();
+            if (!GetEntity(obj, sql, parameters))
+                return null;
+
+            return obj;
+        }
+
+        /// <summary>
+        /// Returns a single object retrieved from data
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public virtual T Find<T>(string sql, string fieldsToSkip, params object[] parameters)
+            where T : class,new()
+        {
+            T obj = new T();
+            if (!GetEntity(obj, CreateCommand( sql, parameters),fieldsToSkip))
+                return null;
+
+            return obj;
         }
 
         /// <summary>

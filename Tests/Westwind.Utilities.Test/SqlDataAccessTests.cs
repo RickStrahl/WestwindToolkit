@@ -17,6 +17,7 @@ namespace Westwind.UtilitiesTests
     [TestClass]
     public class SqlDataAccessTests
     {
+        private const string STR_TestDataConnection = "TestDataConnection";
         public SqlDataAccessTests()
         {
             //
@@ -51,7 +52,7 @@ namespace Westwind.UtilitiesTests
         public static void Initialize(TestContext testContext) 
         {
             // warm up data connection
-            SqlDataAccess data = new SqlDataAccess("TestDataConnection");
+            SqlDataAccess data = new SqlDataAccess(STR_TestDataConnection);
             var readr = data.ExecuteReader("select top 1 * from TestLogFile");
             readr.Read();
             readr.Close();
@@ -75,7 +76,7 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void DataReaderToObjectTest()
         {
-            SqlDataAccess data = new SqlDataAccess("TestDataConnection");
+            SqlDataAccess data = new SqlDataAccess(STR_TestDataConnection);
 
             IDataReader reader = data.ExecuteReader("select top 1 * from TestLogFile");
 
@@ -94,7 +95,7 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void ExecuteDataReaderToListTest()
         {
-            SqlDataAccess data = new SqlDataAccess("TestDataConnection");
+            SqlDataAccess data = new SqlDataAccess(STR_TestDataConnection);
             
             var swatch = new Stopwatch();
             swatch.Start();
@@ -114,7 +115,7 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void ExecuteDataReaderToListManualTest()
         {
-            SqlDataAccess data = new SqlDataAccess("TestDataConnection");
+            SqlDataAccess data = new SqlDataAccess(STR_TestDataConnection);
         
             var swatch = new Stopwatch();
             swatch.Start();
@@ -148,6 +149,177 @@ namespace Westwind.UtilitiesTests
             Console.WriteLine(entries.Count);            
         }
 
-     
+        [TestMethod]
+        public void NewParametersReaderTest()
+        {
+            var data = new SqlDataAccess(STR_TestDataConnection);
+
+            // warmup
+            data.ExecuteScalar("select top1 id from TestLogFile");
+
+            //var cmd = data.CreateCommand("select * from TestLogFile where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
+            //var table = data.ExecuteTable("TLogs", cmd);
+
+            var swatch = Stopwatch.StartNew();
+
+            var reader = data.ExecuteReader( "select * from TestLogFile where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
+
+            Assert.IsNotNull(reader, data.ErrorMessage);
+
+            int readerCount = 0;
+            while(reader.Read())             
+            {
+                Console.WriteLine(((DateTime)reader["Entered"]));
+                readerCount++;
+            }
+            swatch.Stop();
+            Console.WriteLine(readerCount);
+            Console.WriteLine(swatch.ElapsedMilliseconds + "ms");
+
+        }
+
+        [TestMethod]
+        public void NewParametersTableTest()
+        {
+            var data = new SqlDataAccess(STR_TestDataConnection);
+
+            // warmup
+            data.ExecuteScalar("select top1 id from TestLogFile");
+
+            //var cmd = data.CreateCommand("select * from TestLogFile where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
+            //var table = data.ExecuteTable("TLogs", cmd);
+
+            var swatch = Stopwatch.StartNew();
+
+            var table = data.ExecuteTable("TLogs","select * from TestLogFile where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
+
+
+            Assert.IsNotNull(table, data.ErrorMessage);
+
+            Console.WriteLine(table.Rows.Count);
+            foreach (DataRow row in table.Rows)
+            {
+                Console.WriteLine( ((DateTime) row["Entered"]) );
+            }
+            swatch.Stop();
+            Console.WriteLine(swatch.ElapsedMilliseconds + "ms");
+
+        }
+
+        [TestMethod]
+        public void NewParametersExecuteEntityTest()
+        {
+            var data = new SqlDataAccess(STR_TestDataConnection);
+
+            // warmup
+            data.ExecuteScalar("select top1 id from TestLogFile");
+
+            //var cmd = data.CreateCommand("select * from TestLogFile where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
+            //var table = data.ExecuteTable("TLogs", cmd);
+
+            var swatch = Stopwatch.StartNew();
+
+            var logEntries = data.ExecuteReader<WebLogEntry>("select * from TestLogFile where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
+
+            Assert.IsNotNull(logEntries, data.ErrorMessage);
+
+            Console.WriteLine(logEntries.Count);
+            foreach (var logEntry in logEntries)
+            {
+                Console.WriteLine(logEntry.Entered);
+            }
+
+            swatch.Stop();
+            Console.WriteLine(swatch.ElapsedMilliseconds + "ms");
+        }
+
+        [TestMethod]
+        public void NewParametersxecuteDynamicTest()
+        {
+            var data = new SqlDataAccess(STR_TestDataConnection);
+
+            // warmup
+            data.ExecuteScalar("select top1 id from TestLogFile");
+
+            //var cmd = data.CreateCommand("select * from TestLogFile where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
+            //var table = data.ExecuteTable("TLogs", cmd);
+
+            var swatch = Stopwatch.StartNew();
+
+            dynamic logEntries = data.ExecuteDynamicDataReader("select * from TestLogFile where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
+
+            
+            Assert.IsNotNull(logEntries, data.ErrorMessage);
+
+            int readerCount = 0;
+            while(logEntries.Read())
+            {
+                DateTime date = logEntries.Entered;
+                Console.WriteLine(date);
+                readerCount++;
+            }
+
+            swatch.Stop();
+            Console.WriteLine(readerCount);
+            Console.WriteLine(swatch.ElapsedMilliseconds + "ms");
+        }
+
+        [TestMethod]
+        public void FindByIdTest()
+        {
+            var data = new SqlDataAccess(STR_TestDataConnection);
+
+            var entry = data.Find<WebLogEntry>(1, "TestLogFile","Id");
+
+            Assert.IsNotNull(entry, data.ErrorMessage);
+            Console.WriteLine(entry.Entered + " " + entry.Message);            
+
+            var entry2 = new WebLogEntry();
+            data.GetEntity(entry2, "TestlogFile", "Id", 1);
+            Assert.IsNotNull(entry2);
+            Assert.AreEqual(entry2.Message,entry.Message);
+            Console.WriteLine(entry2.Entered + " " + entry2.Message);    
+        }
+
+        [TestMethod]
+        public void FindBySqlTest()
+        {
+            var data = new SqlDataAccess(STR_TestDataConnection);
+            
+            var entry = data.Find<WebLogEntry>("select * from TestLogFile where id=@0",1);
+
+            Assert.IsNotNull(entry, data.ErrorMessage);
+            Console.WriteLine(entry.Entered + " " + entry.Message);
+            
+            
+        }
+
+        [TestMethod]
+        public void QueryTest()
+        {
+            var data = new SqlDataAccess(STR_TestDataConnection);
+
+            // warmup
+            data.ExecuteScalar("select top1 id from TestLogFile");
+
+            //var cmd = data.CreateCommand("select * from TestLogFile where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
+            //var table = data.ExecuteTable("TLogs", cmd);
+
+            var swatch = Stopwatch.StartNew();
+
+            var logEntries = data.Query<WebLogEntry>("select * from TestLogFile where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
+
+            Assert.IsNotNull(logEntries, data.ErrorMessage);
+
+            Console.WriteLine(logEntries.Count);
+            foreach (var logEntry in logEntries)
+            {
+                Console.WriteLine(logEntry.Entered);
+            }
+
+            swatch.Stop();
+            Console.WriteLine(swatch.ElapsedMilliseconds + "ms");
+        }
+
     }
 }
