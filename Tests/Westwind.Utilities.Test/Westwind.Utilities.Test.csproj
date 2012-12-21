@@ -93,7 +93,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="AppConfiguration\Westwind.Utilities.Configuration.Tests.csproj" />
     <Content Include="Database.sdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

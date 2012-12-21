@@ -18,7 +18,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Data", "Westwind.D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{90FB62AD-E28A-460D-AB4B-38F39F51ADC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Utilities.Test", "Test\Westwind.Utilities.Test\Westwind.Utilities.Test.csproj", "{2AFD91E5-5DE1-46D7-B2C1-D957050CB53D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Utilities.Test", "Tests\Westwind.Utilities.Test\Westwind.Utilities.Test.csproj", "{2AFD91E5-5DE1-46D7-B2C1-D957050CB53D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

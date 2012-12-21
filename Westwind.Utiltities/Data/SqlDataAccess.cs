@@ -50,432 +50,94 @@ namespace Westwind.Utilities.Data
     /// </summary>
     public class SqlDataAccess : DataAccessBase, IDisposable
     {
-        public SqlDataAccess()
+        public SqlDataAccess() 
         {
             dbProvider = DbProviderFactories.GetFactory("System.Data.SqlClient"); 
         }
 
         public SqlDataAccess(string connectionString)
-        {
-            if (string.IsNullOrEmpty(connectionString))
-                throw new InvalidOperationException(Resources.AConnectionStringMustBePassedToTheConstructor);
+            : base(connectionString)
+        { }
 
-            if (!connectionString.Contains("="))
-            {
-                var connInfo = ConfigurationManager.ConnectionStrings[connectionString];
-                if (connInfo != null)
-                {
-                    if (!string.IsNullOrEmpty(connInfo.ProviderName))
-                        dbProvider = DbProviderFactories.GetFactory(connInfo.ProviderName);
-                    else
-                        dbProvider = DbProviderFactories.GetFactory("System.Data.SqlClient");
-
-                    connectionString = connInfo.ConnectionString;
-                }
-                else
-                    throw new InvalidOperationException(Resources.InvalidConnectionStringName);
-            }
-            else
-                dbProvider = DbProviderFactories.GetFactory("System.Data.SqlClient");
-    
-            ConnectionString = connectionString;
-        }
         public SqlDataAccess(string connectionString, string providerName)
-        {
-#if SupportWebRequestProvider
-            // Explicitly load Web Request Provider so the provider
-            // doesn't need to be registered
-            if (providerName == "Westwind.Utilities. Wind Web Request Provider")
-                dbProvider = WebRequestClientFactory.Instance;
-            else
-#endif
-            dbProvider = DbProviderFactories.GetFactory(providerName);
-            ConnectionString = connectionString;
-        }
+            :base(connectionString,providerName)
+        { }
+       
+
+        ///// <summary>
+        ///// Executes a SQL Command object and returns a SqlDataReader object
+        ///// </summary>
+        ///// <param name="Command">Command should be created with GetSqlCommand and open connection</param>
+        ///// <param name="Parameters"></param>
+        ///// <returns></returns>
+        ///// <returns>A SqlDataReader. Make sure to call Close() to close the underlying connection.</returns>
+        //public override DbDataReader ExecuteReader(DbCommand Command, params DbParameter[] Parameters)
+        //{
+        //    SetError();
+
+        //    if (Command.Connection == null || Command.Connection.State != ConnectionState.Open)
+        //    {
+        //        if (!OpenConnection())
+        //            return null;
+
+        //        Command.Connection = _Connection;
+        //    }
+
+        //    foreach (DbParameter Parameter in Parameters)
+        //    {
+        //        Command.Parameters.Add(Parameter);
+        //    }
+
+        //    DbDataReader Reader;
+        //    try
+        //    {
+        //        Reader = Command.ExecuteReader();
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        SetError(ex.GetBaseException().Message, ex.Number);
+        //        CloseConnection(Command);
+        //        return null;
+        //    }
+
+        //    return Reader;
+        //}
 
 
 
-        /// <summary>
-        /// Opens a Sql Connection based on the connection string.
-        /// Called internally but externally accessible. Sets the internal
-        /// _Connection property.
-        /// </summary>
-        /// <returns></returns>
-        public override bool OpenConnection()
-        {
-            try
-            {
-                if (_Connection == null)
-                {
-                    if (ConnectionString.Contains("="))
-                    {
-                        _Connection = dbProvider.CreateConnection();
-                        _Connection.ConnectionString = ConnectionString;
-                    }
-                    else
-                    {
-                        // Assume it's a connection string value
-                        _Connection = dbProvider.CreateConnection();
-                        try
-                        {
-                            _Connection.ConnectionString = ConfigurationManager.ConnectionStrings[ConnectionString].ConnectionString;
-                        }
-                        catch(Exception ex)
-                        {
-                            this.SetError(Resources.InvalidConnectionString + ": " + ex.GetBaseException().Message);
-                            return false;
-                        }
-                    }
-                }
-
-                if (_Connection.State != ConnectionState.Open)
-                    _Connection.Open();
-            }
-            catch (DbException ex)
-            {
-                SetError(ex.Message,ex.ErrorCode);                
-                return false;
-            }
-            catch (Exception ex)
-            {
-                SetError(ex.GetBaseException().Message);                
-                return false;
-            }
-
-            return true;
-        }
-
-        /// <summary>
-        /// Creates a Command object and opens a connection
-        /// </summary>
-        /// <param name="ConnectionString"></param>
-        /// <param name="sql"></param>
-        /// <returns></returns>
-        public override DbCommand CreateCommand(string sql, CommandType commandType, params DbParameter[] parameters)
-        {
-            SetError();
-
-            DbCommand command = dbProvider.CreateCommand();           
-
-            command.CommandType = commandType;
-            command.CommandText = sql;
-
-            try
-            {
-                if (Transaction != null)
-                {
-                    command.Transaction = Transaction;
-                    command.Connection = Transaction.Connection;
-                }
-                else
-                {
-                    if (!OpenConnection())
-                        return null;
-
-                    command.Connection = _Connection;
-                }
-            }
-            catch (DbException ex)
-            {
-                SetError(ex.Message,ex.ErrorCode);
-                return null;
-            }
-            catch (Exception ex)
-            {
-                SetError(ex.GetBaseException().Message);
-                return null;
-            }
-
-            if (parameters != null)
-            {
-                foreach (DbParameter Parm in parameters)
-                {
-                    command.Parameters.Add(Parm);
-                }
-            }
-
-            return command;
-        }
-   
-
-
-        /// <summary>
-        /// Creates a Sql Parameter for the specific provider
-        /// </summary>
-        /// <param name="parameterName"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public override DbParameter CreateParameter(string parameterName, object value)
-        {
-            DbParameter parm = dbProvider.CreateParameter();
-            parm.ParameterName = parameterName;
-            if (value == null)
-                value = DBNull.Value;
-            parm.Value = value;
-            return parm;
-        }
-
-
-        /// <summary>
-        /// Executes a non-query command and returns the affected records
-        /// </summary>
-        /// <param name="Command">Command should be created with GetSqlCommand to have open connection</param>
-        /// <param name="Parameters"></param>
-        /// <returns></returns>
-        public override int ExecuteNonQuery(DbCommand Command, params DbParameter[] Parameters)
-        {
-            SetError();
-
-            int RecordCount = 0;
-
-            foreach (DbParameter Parameter in Parameters)
-            { Command.Parameters.Add(Parameter); }
-
-            try
-            {
-                RecordCount = Command.ExecuteNonQuery();
-                if (RecordCount == -1)
-                    RecordCount = 0;
-            }
-            catch (DbException ex)
-            {
-                RecordCount = -1;
-                SetError(ex);;
-            }
-            catch (Exception ex)
-            {
-                RecordCount = -1;
-                SetError(ex);
-            }
-            finally
-            {
-                CloseConnection();
-            }
-
-            return RecordCount;
-        }
-
-        /// <summary>
-        /// Executes a SQL Command object and returns a SqlDataReader object
-        /// </summary>
-        /// <param name="Command">Command should be created with GetSqlCommand and open connection</param>
-        /// <param name="Parameters"></param>
-        /// <returns></returns>
-        /// <returns>A SqlDataReader. Make sure to call Close() to close the underlying connection.</returns>
-        public override DbDataReader ExecuteReader(DbCommand Command, params DbParameter[] Parameters)
-        {
-            SetError();
-
-            if (Command.Connection == null || Command.Connection.State != ConnectionState.Open)
-            {
-                if (!OpenConnection())
-                    return null;
-
-                Command.Connection = _Connection;
-            }
-
-            foreach (DbParameter Parameter in Parameters)
-            {
-                Command.Parameters.Add(Parameter);
-            }
-
-            DbDataReader Reader = null;
-            try
-            {
-                Reader = Command.ExecuteReader();
-            }
-            catch (SqlException ex)
-            {
-                SetError(ex.Message, ex.Number);
-                CloseConnection(Command);
-                return null;
-            }
-
-            return Reader;
-        }
-
-
-  
-
-        /// <summary>
-        /// Returns a DataTable from a Sql Command string passed in.
-        /// </summary>
-        /// <param name="Tablename"></param>
-        /// <param name="Command"></param>
-        /// <param name="Parameters"></param>
-        /// <returns></returns>
-        public override DataTable ExecuteTable(string Tablename, DbCommand Command, params DbParameter[] Parameters)
-        {
-            SetError();
-
-            foreach (DbParameter Parameter in Parameters)
-            {
-                Command.Parameters.Add(Parameter);
-            }
-
-            DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
-            Adapter.SelectCommand = Command;
-
-            DataTable dt = new DataTable(Tablename);
-
-            try
-            {
-                Adapter.Fill(dt);
-            }
-            catch (Exception ex)
-            {
-                SetError(ex.Message);
-                return null;
-            }
-            finally
-            {
-                CloseConnection(Command);
-            }
-
-            return dt;
-        }
-
-
-
-
-    
-
-        /// <summary>
-        /// Returns a DataTable from a Sql Command string passed in.
-        /// </summary>
-        /// <param name="Tablename"></param>
-        /// <param name="Command"></param>
-        /// <param name="Parameters"></param>
-        /// <returns></returns>
-        public override DataSet ExecuteDataSet(DataSet dataSet, string Tablename, DbCommand Command, params DbParameter[] Parameters)
-        {
-            SetError();
-
-            if (dataSet == null)
-                dataSet = new DataSet();
-
-            DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
-            Adapter.SelectCommand = Command;
-
-            if (ExecuteWithSchema)
-                Adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
-
-            foreach (DbParameter parameter in Parameters)
-            {
-                Command.Parameters.Add(parameter);  
-            }
-
-            DataTable dt = new DataTable(Tablename);
-
-            if (dataSet.Tables.Contains(Tablename))
-                dataSet.Tables.Remove(Tablename);
-
-            try
-            {                
-                Adapter.Fill(dataSet, Tablename);                
-            }
-            catch (Exception ex)
-            {
-                SetError(ex.Message);
-                return null;
-            }
-            finally
-            {
-                CloseConnection(Command);
-            }
-
-            return dataSet;
-        }
-
-        public override DataSet ExecuteDataSet(string Tablename, DbCommand Command, params DbParameter[] Parameters)
-        {
-            return ExecuteDataSet(null, Tablename, Command, Parameters);
-        }
-
-        /// <summary>
-        /// Executes a command and returns a scalar value from it
-        /// </summary>
-        /// <param name="SqlCommand">A SQL Command object</param>
-        /// <returns>value or null on failure</returns>
-        public override object ExecuteScalar(DbCommand Command, params DbParameter[] Parameters)
-        {
-            SetError();
+        ///// <summary>
+        ///// Executes a command and returns a scalar value from it
+        ///// </summary>
+        ///// <param name="SqlCommand">A SQL Command object</param>
+        ///// <returns>value or null on failure</returns>
+        //public override object ExecuteScalar(DbCommand Command, params DbParameter[] Parameters)
+        //{
+        //    SetError();
             
-            foreach (DbParameter Parameter in Parameters)
-            {
-                Command.Parameters.Add(Parameter);
-            }
+        //    foreach (DbParameter Parameter in Parameters)
+        //    {
+        //        Command.Parameters.Add(Parameter);
+        //    }
 
-            object Result = null;
-            try
-            {
-                Result = Command.ExecuteScalar();
-            }
-            catch (SqlException ex)
-            {
-                SetError(ex.Message,ex.Number);
-            }
-            finally
-            {
-                CloseConnection();
-            }
+        //    object Result = null;
+        //    try
+        //    {
+        //        Result = Command.ExecuteScalar();
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        SetError(ex.Message,ex.Number);
+        //    }
+        //    finally
+        //    {
+        //        CloseConnection();
+        //    }
 
-            return Result;
-        }
-
-        /// <summary>
-        /// Executes a Sql command and returns a single value from it.
-        /// </summary>
-        /// <param name="Sql">Sql string to execute</param>
-        /// <param name="Parameters">Any named SQL parameters</param>
-        /// <returns>Result value or null. Check ErrorMessage on Null if unexpected</returns>
-        public override object ExecuteScalar(string Sql, params DbParameter[] Parameters)
-        {
-            SetError();
-
-            DbCommand Command = CreateCommand(Sql, Parameters);
-            if (Command == null)
-                return null;
-
-            return ExecuteScalar(Command);
-        }
-
+        //    return Result;
+        //}
 
         /// <summary>
-        /// Closes a connection
-        /// </summary>
-        /// <param name="Command"></param>
-        public override void CloseConnection(DbCommand Command)
-        {
-            if (Transaction != null)
-                return;
-
-            if (Command.Connection != null &&
-                Command.Connection.State == ConnectionState.Open)
-                Command.Connection.Close();
-
-            _Connection = null;
-        }
-
-        /// <summary>
-        /// Closes an active connection. If a transaction is pending the 
-        /// connection is held open.
-        /// </summary>
-        public override void CloseConnection()
-        {
-            if (Transaction != null)
-                return;
-
-            if (_Connection != null &&
-                _Connection.State == ConnectionState.Open)
-                _Connection.Close();
-
-            _Connection = null;
-        }
-
-
-        /// <summary>
-        /// Sql 2005 specific semi-generic paging routine
+        /// Sql 2005 and later specific semi-generic paging routine
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="pageSize"></param>
@@ -506,10 +168,6 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                             CreateParameter("@OrderByFields", sortOrderFields));
 
         }
-
-
-
-
 
     }
 }

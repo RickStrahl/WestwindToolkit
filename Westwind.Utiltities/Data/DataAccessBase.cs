@@ -1,4 +1,5 @@
 ﻿#region License
+//#define SupportWebRequestProvider
 /*
  **************************************************************
  *  Author: Rick Strahl 
@@ -33,7 +34,6 @@
 
 using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.Reflection;
 using System.Text;
 using System.Configuration;
@@ -41,6 +41,7 @@ using System.Data.Common;
 using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities.Data
 {
@@ -50,12 +51,57 @@ namespace Westwind.Utilities.Data
     [DebuggerDisplay("{ErrorMessage}")]
     public abstract class DataAccessBase : IDisposable
     {
+        public DataAccessBase()
+        {
+            dbProvider = DbProviderFactories.GetFactory("System.Data.SqlClient"); 
+        }
+
+        public DataAccessBase(string connectionString)
+        {
+            if (string.IsNullOrEmpty(connectionString))
+                throw new InvalidOperationException(Resources.AConnectionStringMustBePassedToTheConstructor);
+            
+            if (!connectionString.Contains("="))
+            {
+                // it's a connection string entry
+                var connInfo = ConfigurationManager.ConnectionStrings[connectionString];
+                if (connInfo != null)
+                {
+                    if (!string.IsNullOrEmpty(connInfo.ProviderName))
+                        dbProvider = DbProviderFactories.GetFactory(connInfo.ProviderName);
+                    else
+                        dbProvider = DbProviderFactories.GetFactory("System.Data.SqlClient");
+
+                    connectionString = connInfo.ConnectionString;
+                }
+                else
+                    throw new InvalidOperationException(Resources.InvalidConnectionStringName);
+            }
+            else
+                dbProvider = DbProviderFactories.GetFactory("System.Data.SqlClient");
+    
+            ConnectionString = connectionString;
+        }
+        public DataAccessBase(string connectionString, string providerName)
+        {
+#if SupportWebRequestProvider
+            // Explicitly load Web Request Provider so the provider
+            // doesn't need to be registered
+            if (providerName == "Westwind.Utilities. Wind Web Request Provider")
+                dbProvider = WebRequestClientFactory.Instance;
+            else
+#endif
+            dbProvider = DbProviderFactories.GetFactory(providerName);
+            ConnectionString = connectionString;
+        }
+
+
+
         /// <summary>
         /// The internally used dbProvider
         /// </summary>
         public DbProviderFactory dbProvider = null;
         
-
         /// <summary>
         /// An error message if a method fails
         /// </summary>
@@ -133,7 +179,62 @@ namespace Westwind.Utilities.Data
         /// _Connection property.
         /// </summary>
         /// <returns></returns>
-        public abstract bool OpenConnection();
+        /// <summary>
+        /// Opens a Sql Connection based on the connection string.
+        /// Called internally but externally accessible. Sets the internal
+        /// _Connection property.
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool OpenConnection()
+        {
+            try
+            {
+                if (_Connection == null)
+                {
+                    if (ConnectionString.Contains("="))
+                    {
+                        _Connection = dbProvider.CreateConnection();
+                        _Connection.ConnectionString = ConnectionString;
+                    }
+                    else
+                    {
+                        // it's a connection string entry
+                        var connInfo = ConfigurationManager.ConnectionStrings[ConnectionString];
+                        if (connInfo != null)
+                        {
+                            if (dbProvider == null)
+                            {
+                                if (!string.IsNullOrEmpty(connInfo.ProviderName))
+                                    dbProvider = DbProviderFactories.GetFactory(connInfo.ProviderName);
+                                else
+                                    dbProvider = DbProviderFactories.GetFactory("System.Data.SqlClient");
+                            }
+                            ConnectionString = connInfo.ConnectionString;
+                        }
+                        else
+                        {
+                            SetError(Resources.InvalidConnectionString);
+                            return false;
+                        }
+                    }
+                }
+
+                if (_Connection.State != ConnectionState.Open)
+                    _Connection.Open();
+            }
+            catch (DbException ex)
+            {
+                SetError(ex.Message, ex.ErrorCode);
+                return false;
+            }
+            catch (Exception ex)
+            {
+                SetError(ex.GetBaseException().Message);
+                return false;
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// Creates a Command object and opens a connection
@@ -141,7 +242,50 @@ namespace Westwind.Utilities.Data
         /// <param name="ConnectionString"></param>
         /// <param name="sql"></param>
         /// <returns></returns>
-        public abstract DbCommand CreateCommand(string sql, CommandType commandType, params DbParameter[] parameters);
+        public virtual DbCommand CreateCommand(string sql, CommandType commandType, params DbParameter[] parameters)
+        {
+            SetError();
+
+            DbCommand command = dbProvider.CreateCommand();
+            command.CommandType = commandType;
+            command.CommandText = sql;
+
+            try
+            {
+                if (Transaction != null)
+                {
+                    command.Transaction = Transaction;
+                    command.Connection = Transaction.Connection;
+                }
+                else
+                {
+                    if (!OpenConnection())
+                        return null;
+
+                    command.Connection = _Connection;
+                }
+            }
+            catch (DbException ex)
+            {
+                SetError(ex.Message, ex.ErrorCode);
+                return null;
+            }
+            catch (Exception ex)
+            {
+                SetError(ex.GetBaseException().Message);
+                return null;
+            }
+
+            if (parameters != null)
+            {
+                foreach (DbParameter Parm in parameters)
+                {
+                    command.Parameters.Add(Parm);
+                }
+            }
+
+            return command;
+        }
 
         /// <summary>
         /// Creates a Command object and opens a connection
@@ -163,7 +307,15 @@ namespace Westwind.Utilities.Data
         /// <param name="value"></param>
         /// <param name="dbType"></param>
         /// <returns></returns>
-        public abstract DbParameter CreateParameter(string parameterName, object value);
+        public virtual DbParameter CreateParameter(string parameterName, object value)
+        {
+            DbParameter parm = dbProvider.CreateParameter();
+            parm.ParameterName = parameterName;
+            if (value == null)
+                value = DBNull.Value;
+            parm.Value = value;
+            return parm;
+        }
 
 
         /// <summary>
@@ -174,7 +326,7 @@ namespace Westwind.Utilities.Data
         /// <param name="value"></param>
         /// <param name="dbType"></param>
         /// <returns></returns>
-        public virtual DbParameter CreateParameter(string parameterName, object value, ParameterDirection parameterDirection)
+        public virtual DbParameter CreateParameter(string parameterName, object value, ParameterDirection parameterDirection = ParameterDirection.Input)
         {
             DbParameter parm = CreateParameter(parameterName, value);
             parm.Direction = parameterDirection;
@@ -234,7 +386,39 @@ namespace Westwind.Utilities.Data
         /// <param name="Command">Command should be created with GetSqlCommand to have open connection</param>
         /// <param name="Parameters"></param>
         /// <returns></returns>
-        public abstract int ExecuteNonQuery(DbCommand Command, params DbParameter[] Parameters);
+        public virtual int ExecuteNonQuery(DbCommand Command, params DbParameter[] Parameters)
+        {
+            SetError();
+
+            int RecordCount = 0;
+
+            foreach (DbParameter Parameter in Parameters)
+            { Command.Parameters.Add(Parameter); }
+
+            try
+            {
+                RecordCount = Command.ExecuteNonQuery();
+                if (RecordCount == -1)
+                    RecordCount = 0;
+            }
+            catch (DbException ex)
+            {
+                RecordCount = -1;
+                SetError(ex);;
+            }
+            catch (Exception ex)
+            {
+                RecordCount = -1;
+                SetError(ex);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+
+            return RecordCount;
+        }
+        
 
         /// <summary>
         /// Executes a command that doesn't return any data. The result
@@ -264,8 +448,38 @@ namespace Westwind.Utilities.Data
         /// <param name="Parameters"></param>
         /// <returns></returns>
         /// <returns>A SqlDataReader. Make sure to call Close() to close the underlying connection.</returns>
-        public abstract DbDataReader ExecuteReader(DbCommand Command, params DbParameter[] Parameters);
+        //public abstract DbDataReader ExecuteReader(DbCommand Command, params DbParameter[] Parameters)
+        public virtual DbDataReader ExecuteReader(DbCommand Command, params DbParameter[] Parameters)
+        {
+            SetError();
 
+            if (Command.Connection == null || Command.Connection.State != ConnectionState.Open)
+            {
+                if (!OpenConnection())
+                    return null;
+
+                Command.Connection = _Connection;
+            }
+
+            foreach (DbParameter Parameter in Parameters)
+            {
+                Command.Parameters.Add(Parameter);
+            }
+
+            DbDataReader Reader = null;
+            try
+            {
+                Reader = Command.ExecuteReader();
+            }
+            catch (DbException ex)
+            {
+                SetError(ex.GetBaseException().Message);
+                CloseConnection(Command);
+                return null;
+            }
+
+            return Reader;
+        }
 
         /// <summary>
         /// Executes a SQL command against the server and returns a DbDataReader
@@ -366,7 +580,36 @@ namespace Westwind.Utilities.Data
         /// <param name="Command"></param>
         /// <param name="Parameters"></param>
         /// <returns></returns>
-        public abstract DataTable ExecuteTable(string Tablename, DbCommand Command, params DbParameter[] Parameters);
+        public virtual DataTable ExecuteTable(string Tablename, DbCommand Command, params DbParameter[] Parameters)
+        {
+            SetError();
+
+            foreach (DbParameter Parameter in Parameters)
+            {
+                Command.Parameters.Add(Parameter);
+            }
+
+            DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
+            Adapter.SelectCommand = Command;
+
+            DataTable dt = new DataTable(Tablename);
+
+            try
+            {
+                Adapter.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                SetError(ex.GetBaseException().Message);
+                return null;
+            }
+            finally
+            {
+                CloseConnection(Command);
+            }
+
+            return dt;
+        }
 
         /// <summary>
         /// Returns a DataTable from a Sql Command string passed in.
@@ -395,8 +638,10 @@ namespace Westwind.Utilities.Data
         /// <param name="Command"></param>
         /// <param name="Parameters"></param>
         /// <returns></returns>
-        public abstract DataSet ExecuteDataSet(string tablename, DbCommand command, params DbParameter[] parameters);
-
+        public virtual DataSet ExecuteDataSet(string Tablename, DbCommand Command, params DbParameter[] Parameters)
+        {
+            return ExecuteDataSet(null, Tablename, Command, Parameters);
+        }
 
         /// <summary>
         /// Executes a SQL command against the server and returns a DataSet of the result
@@ -416,9 +661,46 @@ namespace Westwind.Utilities.Data
         /// <param name="Tablename"></param>
         /// <param name="Command"></param>
         /// <param name="Parameters"></param>
-        /// <returns></returns>
-        public abstract DataSet ExecuteDataSet(DataSet dataSet, string Tablename, DbCommand Command, params DbParameter[] Parameters);
+        /// <returns></returns>        
+        public virtual DataSet ExecuteDataSet(DataSet dataSet, string Tablename, DbCommand Command, params DbParameter[] Parameters)
+        {
+            SetError();
 
+            if (dataSet == null)
+                dataSet = new DataSet();
+
+            DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
+            Adapter.SelectCommand = Command;
+
+            if (ExecuteWithSchema)
+                Adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
+
+            foreach (DbParameter parameter in Parameters)
+            {
+                Command.Parameters.Add(parameter);
+            }
+
+            DataTable dt = new DataTable(Tablename);
+
+            if (dataSet.Tables.Contains(Tablename))
+                dataSet.Tables.Remove(Tablename);
+
+            try
+            {
+                Adapter.Fill(dataSet, Tablename);
+            }
+            catch (Exception ex)
+            {
+                SetError(ex.Message);
+                return null;
+            }
+            finally
+            {
+                CloseConnection(Command);
+            }
+
+            return dataSet;
+        }
         /// <summary>
         /// Returns a DataTable from a Sql Command string passed in.
         /// </summary>
@@ -436,13 +718,38 @@ namespace Westwind.Utilities.Data
         }
 
 
+
+
         /// <summary>
         /// Executes a command and returns a scalar value from it
         /// </summary>
         /// <param name="SqlCommand">A SQL Command object</param>
-        /// <returns>value or null on failure</returns>
-        public abstract object ExecuteScalar(DbCommand Command, params DbParameter[] Parameters);
+        /// <returns>value or null on failure</returns>        
+        public virtual object ExecuteScalar(DbCommand Command, params DbParameter[] Parameters)
+        {
+            SetError();
 
+            foreach (DbParameter Parameter in Parameters)
+            {
+                Command.Parameters.Add(Parameter);
+            }
+
+            object Result = null;
+            try
+            {
+                Result = Command.ExecuteScalar();
+            }
+            catch (DbException ex)
+            {
+                SetError(ex.GetBaseException().Message);
+            }
+            finally
+            {
+                CloseConnection();
+            }
+
+            return Result;
+        }
         /// <summary>
         /// Executes a Sql command and returns a single value from it.
         /// </summary>
@@ -451,6 +758,8 @@ namespace Westwind.Utilities.Data
         /// <returns>Result value or null. Check ErrorMessage on Null if unexpected</returns>
         public virtual object ExecuteScalar(string sql, params DbParameter[] parameters)
         {
+            SetError();
+
             DbCommand command = CreateCommand(sql, parameters);
             if (command == null)
                 return null;
@@ -462,15 +771,32 @@ namespace Westwind.Utilities.Data
         /// Closes a connection
         /// </summary>
         /// <param name="Command"></param>
-        public abstract void CloseConnection(DbCommand Command);
+        public virtual void CloseConnection(DbCommand Command)
+        {
+            if (Transaction != null)
+                return;
 
+            if (Command.Connection != null &&
+                Command.Connection.State == ConnectionState.Open)
+                Command.Connection.Close();
 
+            _Connection = null;
+        }
         /// <summary>
         /// Closes an active connection. If a transaction is pending the 
         /// connection is held open.
         /// </summary>
-        public abstract void CloseConnection();
+        public virtual void CloseConnection()
+        {
+            if (Transaction != null)
+                return;
 
+            if (_Connection != null &&
+                _Connection.State == ConnectionState.Open)
+                _Connection.Close();
+
+            _Connection = null;
+        }
 
         /// <summary>
         /// Sql 2005 specific semi-generic paging routine

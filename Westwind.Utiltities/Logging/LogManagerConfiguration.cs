@@ -54,18 +54,24 @@ namespace Westwind.Utilities.Logging
             
         }
 
-        public LogManagerConfiguration(IConfigurationProvider provider)
+        static LogManagerConfiguration()
+        {
+            Current = new LogManagerConfiguration();
+            Current.Initialize();
+        }
+
+
+        protected override void OnInitialize(IConfigurationProvider provider, string sectionName, object configData)
         {
             if (provider == null)
             {
-                Provider = new ConfigurationFileConfigurationProvider<LogManagerConfiguration>()
+                provider = new ConfigurationFileConfigurationProvider<LogManagerConfiguration>()
                 {
                     ConfigurationSection = "LogManager"
                 };
             }
-            else
-                Provider = provider;
             
+            Provider = provider;            
             Read();
         }
 
@@ -74,12 +80,7 @@ namespace Westwind.Utilities.Logging
         /// is always accessible
         /// </summary>
         [XmlIgnore]        
-        public static LogManagerConfiguration Current
-        {
-            get { return _Current; }
-            set { _Current = value; }
-        }
-        private static LogManagerConfiguration _Current = new LogManagerConfiguration(null);
+        public static LogManagerConfiguration Current { get; set;  }
 
 
 
