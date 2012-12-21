@@ -17,6 +17,7 @@ namespace Westwind.Data
         public SqlNative(DbConnection connection)
         {
             Connection = connection;
+            ParameterPrefix = "@";
         }
 
         /// <summary>
@@ -38,6 +39,11 @@ namespace Westwind.Data
         /// Active Transaction if any
         /// </summary>
         public DbTransaction Transaction { get; set;  }
+
+        /// <summary>
+        /// The parameter prefix character used for SQL parameters
+        /// </summary>
+        public string ParameterPrefix { get; set; }
 
         /// <summary>
         /// Error Message if an error occurs
@@ -133,51 +139,58 @@ namespace Westwind.Data
             return true;
         }
 
+        ///// <summary>
+        ///// Pass positional parameters
+        ///// </summary>
+        ///// <param name="sql"></param>
+        ///// <param name="dbParameters"></param>
+        ///// <returns></returns>
+        //public DbCommand CreateCommandWithValues(string sql, params object[] parameters)
+        //{
+        //    if (parameters == null || parameters.Length < 1)
+        //        return CreateCommand(sql);
+
+        //    var parmList = new List<DbParameter>();
+        //    int count = 0;
+        //    foreach (object parm in parameters)
+        //    {
+        //        parmList.Add(this.CreateParameter(ParameterPrefix + count.ToString(), parm));
+        //    }
+
+        //    return CreateCommand(sql, parmList.ToArray());
+        //}
+
         /// <summary>
-        /// Pass positional parameters
+        /// Creates a new SQL Command
         /// </summary>
-        /// <param name="sql"></param>
-        /// <param name="dbParameters"></param>
+        /// <param name="sqlCommand"></param>
+        /// <param name="parameters">Parameters for the command. Either dbParameter instances or objects linked with @0,@1,@2 etc.</param>
         /// <returns></returns>
-        public DbCommand CreateCommandWithValues(string sql, params object[] parameters)
+        public DbCommand CreateCommand(string sql, params object[] parameters)
         {
-            if (parameters == null || parameters.Length < 1)
-                return CreateCommand(sql);
-
-            var parmList = new List<DbParameter>();
-            int count = 0;
-            foreach (object parm in parameters)
-            {
-                parmList.Add(this.CreateParameter("@" + count.ToString(), parm));
-            }
-
-            return CreateCommand(sql, parmList.ToArray());
+            return CreateCommand(sql, CommandType.Text, parameters);
         }
 
         /// <summary>
         /// Creates a new SQL Command
         /// </summary>
         /// <param name="sqlCommand"></param>
-        /// <param name="dbParameters"></param>
+        /// <param name="parameters">Parameters for the command. Either dbParameter instances or objects linked with @0,@1,@2 etc.</param>
         /// <returns></returns>
-        public DbCommand CreateCommand(string sql, params DbParameter[] dbParameters)
+        public DbCommand CreateCommand(string sql, CommandType commandType, params object[] parameters)
         {
             DbCommand sqlCommand = Connection.CreateCommand();
             sqlCommand.CommandText = sql;
             sqlCommand.Connection = Connection;
 
-            if (dbParameters != null)
-            {
-                foreach (DbParameter parm in dbParameters)
-                    sqlCommand.Parameters.Add(parm);
-            }
+            if (parameters != null)
+                AddParameters(sqlCommand, parameters);
 
             if (Transaction != null)
                 sqlCommand.Transaction = Transaction;
 
             return sqlCommand;
         }
-
     
 
         /// <summary>
@@ -196,17 +209,6 @@ namespace Westwind.Data
             return parm;
         }
 
-        /// <summary>
-        /// Creates a new SQL Parameter
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <param name="direction"></param>
-        /// <returns></returns>
-        public DbParameter CreateParameter(string name, object value)
-        {
-            return CreateParameter(name, value);
-        }
 
         /// <summary>
         /// Retrieves a DbCommand from an IQueryable. 
@@ -247,16 +249,16 @@ namespace Westwind.Data
         /// Reader is created with CommandBehavior.CloseConnection
         /// </summary>
         /// <param name="sqlCommand"></param>
-        /// <param name="dbParameters"></param>
+        /// <param name="parameters"></param>
         /// <returns>DataReader or Null.</returns>
-        public DbDataReader ExecuteReader(DbCommand sqlCommand, params DbParameter[] dbParameters)
+        public DbDataReader ExecuteReader(DbCommand sqlCommand, params object[] parameters)
         {
-            foreach (DbParameter Parameter in dbParameters)
-            {
-                sqlCommand.Parameters.Add(Parameter);
-            }
+            if (parameters != null)       
+                AddParameters(sqlCommand,parameters);
+
             if (!this.OpenConnection())
                 return null;
+
             try
             {
                 return sqlCommand.ExecuteReader(CommandBehavior.CloseConnection);
@@ -277,9 +279,9 @@ namespace Westwind.Data
         /// <param name="sql"></param>
         /// <param name="dbParameters"></param>
         /// <returns></returns>
-        public DbDataReader ExecuteReader(string sql, params DbParameter[] dbParameters)
+        public DbDataReader ExecuteReader(string sql, params object[] parameters)
         {
-            return this.ExecuteReader(CreateCommand(sql), dbParameters);
+            return this.ExecuteReader(CreateCommand(sql, parameters));
         }
 
         /// <summary>
@@ -297,15 +299,13 @@ namespace Westwind.Data
         /// </summary>
         /// <param name="sqlCommand"></param>
         /// <param name="tableName"></param>
-        /// <param name="dbParameters"></param>
+        /// <param name="parameters"></param>
         /// <returns></returns>
-        public DataTable ExecuteDataTable(DbCommand sqlCommand, string tableName, params DbParameter[] dbParameters)
+        public DataTable ExecuteDataTable(DbCommand sqlCommand, string tableName, params object[] parameters)
         {
-            foreach (DbParameter Parameter in dbParameters)
-            {
-                sqlCommand.Parameters.Add(Parameter);
-            }
-
+            if (parameters != null)
+                AddParameters(sqlCommand,parameters);
+            
             DbDataAdapter Adapter = DbProvider.CreateDataAdapter();
             Adapter.SelectCommand = sqlCommand;
 
@@ -337,9 +337,9 @@ namespace Westwind.Data
         /// <param name="sql"></param>
         /// <param name="tableName"></param>
         /// <param name="dbParameters"></param>
-        public DataTable ExecuteDataTable(string sql, string tableName, params DbParameter[] dbParameters)
+        public DataTable ExecuteDataTable(string sql, string tableName, params object[] parameters)
         {
-            return this.ExecuteDataTable(this.CreateCommand(sql), tableName, dbParameters);
+            return this.ExecuteDataTable(this.CreateCommand(sql,parameters), tableName);
         }
 
         /// <summary>
@@ -362,7 +362,7 @@ namespace Westwind.Data
         /// <param name="tableName">Name of the result table</param>
         /// <param name="dbParameters">Optional SQL statement parameters</param>
         /// <returns></returns>
-        public DataSet ExecuteDataSet(DbCommand sqlCommand, DataSet dataSet, string tableName, params DbParameter[] dbParameters)
+        public DataSet ExecuteDataSet(DbCommand sqlCommand, DataSet dataSet, string tableName, params object[] parameters)
         {
             if (dataSet == null)
                 dataSet = new DataSet();
@@ -370,11 +370,9 @@ namespace Westwind.Data
             DbDataAdapter Adapter = DbProvider.CreateDataAdapter();
             Adapter.SelectCommand = sqlCommand;
 
-            foreach (DbParameter Parameter in dbParameters)
-            {
-                sqlCommand.Parameters.Add(Parameter);
-            }
-
+            if(parameters != null)
+                AddParameters(sqlCommand,parameters);
+            
             DataTable dt = new DataTable(tableName);
 
             if (dataSet.Tables.Contains(tableName))
@@ -408,9 +406,9 @@ namespace Westwind.Data
         /// <param name="tableName">Name of the result table</param>
         /// <param name="dbParameters">Optional SQL statement parameters</param>
         /// <returns></returns>
-        public DataSet ExecuteDataSet(string sql, DataSet dataSet, string tableName, params DbParameter[] dbParameters)
+        public DataSet ExecuteDataSet(string sql, DataSet dataSet, string tableName, params object[] parameters)
         {
-            return this.ExecuteDataSet(this.CreateCommand(sql), dataSet, tableName, dbParameters);
+            return this.ExecuteDataSet(this.CreateCommand(sql,parameters), dataSet, tableName);
         }
 
         /// <summary>
@@ -435,14 +433,12 @@ namespace Westwind.Data
         /// <param name="sqlCommand"></param>
         /// <param name="dbParameters"></param>
         /// <returns>-1 on error, records affected otherwise</returns>
-        public int ExecuteNonQuery(DbCommand sqlCommand, params DbParameter[] dbParameters)
+        public int ExecuteNonQuery(DbCommand sqlCommand, params object[] parameters)
         {
             int RecordCount = 0;
 
-            foreach (DbParameter parameter in dbParameters)
-            {
-                sqlCommand.Parameters.Add(parameter);
-            }
+            if (parameters != null)
+                AddParameters(sqlCommand, parameters);
 
             try
             {
@@ -470,11 +466,11 @@ namespace Westwind.Data
         /// a result set.
         /// </summary>
         /// <param name="sqlCommand"></param>
-        /// <param name="dbParameters"></param>
+        /// <param name="parameters"></param>
         /// <returns>-1 on error. Records affected otherwise</returns>
-        public int ExecuteNonQuery(string sql, params DbParameter[] dbParameters)
+        public int ExecuteNonQuery(string sql, params object[] parameters)
         {
-            return this.ExecuteNonQuery(this.CreateCommand(sql), dbParameters);
+            return this.ExecuteNonQuery(this.CreateCommand(sql, parameters));
         }
 
         /// <summary>
@@ -482,17 +478,15 @@ namespace Westwind.Data
         /// part of a result cursor
         /// </summary>
         /// <param name="command"></param>
-        /// <param name="dbParameters"></param>
+        /// <param name="parameters"></param>
         /// <returns></returns>
-        public virtual object ExecuteScalar(DbCommand command, params DbParameter[] dbParameters)
+        public virtual object ExecuteScalar(DbCommand command, params object[] parameters)
         {
             if (command.Connection.State != ConnectionState.Open)
                 this.OpenConnection();
 
-            foreach (DbParameter parameter in dbParameters)
-            {
-                command.Parameters.Add(parameter);
-            }
+            if (parameters != null)
+                AddParameters(command, parameters);
 
             object result;
             try
@@ -518,12 +512,41 @@ namespace Westwind.Data
         /// <param name="sql"></param>
         /// <param name="dbParameters"></param>
         /// <returns></returns>
-        public object ExecuteScalar(string sql, params DbParameter[] dbParameters)
+        public object ExecuteScalar(string sql, params object[] parameters)
         {
-            return this.ExecuteScalar(this.CreateCommand(sql), dbParameters);
+            return this.ExecuteScalar(this.CreateCommand(sql, parameters));
         }
 
         #endregion
+
+        #region EntityRoutines
+        #endregion
+
+        /// <summary>
+        /// Adds parameters to a DbCommand instance. Parses value and DbParameter parameters
+        /// properly into the command's Parameters collection.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <param name="parameters"></param>
+        protected void AddParameters(DbCommand command, object[] parameters)
+        {
+            if (parameters != null)
+            {
+                var parmCount = 0;
+                foreach (var parameter in parameters)
+                {
+                    if (parameter is DbParameter)
+                        command.Parameters.Add(parameter);
+                    else
+                    {
+                        var parm = CreateParameter(ParameterPrefix + parmCount, parameter);
+                        command.Parameters.Add(parm);
+                        parmCount++;
+                    }
+                }
+            }
+
+        }
 
 
         protected void SetError()
