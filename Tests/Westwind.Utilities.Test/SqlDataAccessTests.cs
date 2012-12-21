@@ -56,6 +56,10 @@ namespace Westwind.UtilitiesTests
             var readr = data.ExecuteReader("select top 1 * from TestLogFile");
             readr.Read();
             readr.Close();
+
+            // warm up DLR load time
+            dynamic ddata = data;
+            string err = ddata.ErrorMessage;
             
         }
         //
@@ -154,11 +158,6 @@ namespace Westwind.UtilitiesTests
         {
             var data = new SqlDataAccess(STR_TestDataConnection);
 
-            // warmup
-            data.ExecuteScalar("select top1 id from TestLogFile");
-
-            //var cmd = data.CreateCommand("select * from TestLogFile where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
-            //var table = data.ExecuteTable("TLogs", cmd);
 
             var swatch = Stopwatch.StartNew();
 
@@ -169,6 +168,9 @@ namespace Westwind.UtilitiesTests
             int readerCount = 0;
             while(reader.Read())             
             {
+                string Message = reader["Message"] as string;
+                string Details = reader["Details"] as string;
+
                 Console.WriteLine(((DateTime)reader["Entered"]));
                 readerCount++;
             }
@@ -211,9 +213,6 @@ namespace Westwind.UtilitiesTests
         {
             var data = new SqlDataAccess(STR_TestDataConnection);
 
-            // warmup
-            data.ExecuteScalar("select top1 id from TestLogFile");
-
             //var cmd = data.CreateCommand("select * from TestLogFile where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
             //var table = data.ExecuteTable("TLogs", cmd);
 
@@ -238,23 +237,18 @@ namespace Westwind.UtilitiesTests
         {
             var data = new SqlDataAccess(STR_TestDataConnection);
 
-            // warmup
-            data.ExecuteScalar("select top1 id from TestLogFile");
-
-            //var cmd = data.CreateCommand("select * from TestLogFile where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
-            //var table = data.ExecuteTable("TLogs", cmd);
-
             var swatch = Stopwatch.StartNew();
 
-            dynamic logEntries = data.ExecuteDynamicDataReader("select * from TestLogFile where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
-
+            var reader = data.ExecuteReader("select * from TestLogFile where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
+            dynamic dreader = new DynamicDataReader(reader);
             
-            Assert.IsNotNull(logEntries, data.ErrorMessage);
+           
+            Assert.IsNotNull(reader, data.ErrorMessage);
 
             int readerCount = 0;
-            while(logEntries.Read())
+            while(reader.Read())
             {
-                DateTime date = logEntries.Entered;
+                DateTime date = (DateTime) dreader.Entered; // reader.Entered;
                 Console.WriteLine(date);
                 readerCount++;
             }
@@ -281,6 +275,7 @@ namespace Westwind.UtilitiesTests
             Console.WriteLine(entry2.Entered + " " + entry2.Message);    
         }
 
+
         [TestMethod]
         public void FindBySqlTest()
         {
@@ -299,11 +294,6 @@ namespace Westwind.UtilitiesTests
         {
             var data = new SqlDataAccess(STR_TestDataConnection);
 
-            // warmup
-            data.ExecuteScalar("select top1 id from TestLogFile");
-
-            //var cmd = data.CreateCommand("select * from TestLogFile where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
-            //var table = data.ExecuteTable("TLogs", cmd);
 
             var swatch = Stopwatch.StartNew();
 

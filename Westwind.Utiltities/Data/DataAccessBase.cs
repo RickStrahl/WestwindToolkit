@@ -312,7 +312,7 @@ namespace Westwind.Utilities.Data
         /// </summary>
         /// <param name="command"></param>
         /// <param name="parameters"></param>
-        protected internal void AddParameters(DbCommand command, object[] parameters)
+        protected void AddParameters(DbCommand command, object[] parameters)
         {
             if (parameters != null)
             {
@@ -994,8 +994,8 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         {
             SetError();
 
-            DbCommand Command = CreateCommand("select * from " + Table + " where [" + KeyField + "]=@Key",
-                                                    CreateParameter("@Key", KeyValue));
+            DbCommand Command = CreateCommand("select * from " + Table + " where [" + KeyField + "]=" + ParameterPrefix + "Key",
+                                                    CreateParameter(ParameterPrefix + "Key", KeyValue));
             if (Command == null)
                 return false;
 
@@ -1095,16 +1095,16 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
                 object Value = Property.GetValue(entity, null);
 
-                sb.Append(" [" + Name + "]=@" + Name + ",");
+                sb.Append(" [" + Name + "]=" + this.ParameterPrefix +  Name + ",");
 
-                Command.Parameters.Add(CreateParameter("@" + Name, Value));
+                Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value));
             }
 
             object pkValue = ReflectionUtils.GetProperty(entity, keyField);
 
-            String CommandText = sb.ToString().TrimEnd(',') + " where " + keyField + "=@__PK";
+            String CommandText = sb.ToString().TrimEnd(',') + " where " + keyField + "=" + ParameterPrefix + "__PK";
 
-            Command.Parameters.Add(CreateParameter("@__PK", pkValue));
+            Command.Parameters.Add(CreateParameter(ParameterPrefix + "__PK", pkValue));
             Command.CommandText = CommandText;
 
             bool Result = ExecuteNonQuery(Command) > -1;
@@ -1154,15 +1154,15 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
                 object Value = Property.GetValue(Entity, null);
 
-                sb.Append(" [" + Name + "]=@" + Name + ",");
+                sb.Append(" [" + Name + "]=" + ParameterPrefix + Name + ",");
 
-                Command.Parameters.Add(CreateParameter("@" + Name, Value));
+                Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value));
             }
             object pkValue = ReflectionUtils.GetProperty(Entity, KeyField);
 
-            String CommandText = sb.ToString().TrimEnd(',') + " where " + KeyField + "=@__PK";
+            String CommandText = sb.ToString().TrimEnd(',') + " where " + KeyField + "=" + ParameterPrefix + "__PK";
 
-            Command.Parameters.Add(CreateParameter("@__PK", pkValue));
+            Command.Parameters.Add(CreateParameter(ParameterPrefix + "__PK", pkValue));
             Command.CommandText = CommandText;
 
             bool Result = ExecuteNonQuery(Command) > -1;
@@ -1215,9 +1215,9 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 object Value = Property.GetValue(entity, null);
 
                 FieldList.Append("[" + Name + "],");
-                DataList.Append("@" + Name + ",");
+                DataList.Append(ParameterPrefix + Name + ",");
 
-                Command.Parameters.Add(CreateParameter("@" + Name, Value == null ? DBNull.Value : Value));
+                Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value == null ? DBNull.Value : Value));
             }
 
             Command.CommandText = FieldList.ToString().TrimEnd(',') + ") " +
@@ -1246,8 +1246,8 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             object pkValue = ReflectionUtils.GetProperty(entity, keyField);
             object res = null;
             if (pkValue != null)
-                res = this.ExecuteScalar("select [" + keyField + "] from [" + table + "] where [" + keyField + "]=@id",
-                                         this.CreateParameter("@id", pkValue));
+                res = this.ExecuteScalar("select [" + keyField + "] from [" + table + "] where [" + keyField + "]=" + ParameterPrefix + "id",
+                                         this.CreateParameter(ParameterPrefix + "id", pkValue));
 
 
             if (res == null)
