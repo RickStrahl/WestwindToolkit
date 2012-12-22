@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          © West Wind Technologies, 2009
+ *          © West Wind Technologies, 2009-2013
  *          http://www.west-wind.com/
  * 
  * Created: 09/12/2009

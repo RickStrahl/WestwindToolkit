@@ -226,6 +226,8 @@ namespace Westwind.Utilities.Data
                             SetError(Resources.InvalidConnectionString);
                             return false;
                         }
+                        _Connection = dbProvider.CreateConnection();
+                        _Connection.ConnectionString = ConnectionString;
                     }
                 }
 

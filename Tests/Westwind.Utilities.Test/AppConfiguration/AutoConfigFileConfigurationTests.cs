@@ -48,6 +48,31 @@ namespace Westwind.Utilities.Configuration.Tests
         }
 
         [TestMethod]
+        public void DefaultConstructorWithCustomProviderTest()
+        {
+            var config = new AutoConfigFileConfiguration();
+
+            // Create a customized provider to set provider options
+            var provider = new ConfigurationFileConfigurationProvider<AutoConfigFileConfiguration>()
+            {
+                ConfigurationSection = "CustomConfiguration",
+                EncryptionKey = "seekrit123",
+                PropertiesToEncrypt = "MailServer,MailServerPassword"                
+            };
+
+            config.Initialize(provider);  
+            
+            // Config File and custom section should exist
+            string text = File.ReadAllText(TestHelpers.GetTestConfigFilePath());
+
+            Assert.IsFalse(string.IsNullOrEmpty(text));
+            Assert.IsTrue(text.Contains("<CustomConfiguration>"));
+
+            // MailServer/MailServerPassword value should be encrypted
+            Console.WriteLine(text);
+        }
+
+        [TestMethod]
         public void AutoConfigWriteConfigurationTest()
         {            
             var config = new AutoConfigFileConfiguration();

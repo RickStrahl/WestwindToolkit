@@ -36,19 +36,18 @@ namespace Westwind.Utilities.Configuration.Tests
         /// </summary>
         public const string STR_XMLCONFIGFILE = "XmlConfiguration.xml";
 
+
         [TestMethod]
         public void DefaultConstructorInstanceTest()
         {
             var config = new XmlFileConfiguration();
             config.Initialize(configData: STR_XMLCONFIGFILE);
-       
-
 
             Assert.IsNotNull(config);
             Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));
-            
+
             string text = File.ReadAllText(STR_XMLCONFIGFILE);
-            Console.WriteLine(text);          
+            Console.WriteLine(text);
         }
 
         [TestMethod]
@@ -56,7 +55,7 @@ namespace Westwind.Utilities.Configuration.Tests
         {
             var config = new XmlFileConfiguration();
             config.Initialize(STR_XMLCONFIGFILE);
-            
+
             config.MaxDisplayListItems = 12;
             config.DebugMode = DebugModes.DeveloperErrorMessage;
             config.ApplicationName = "Changed";
@@ -67,7 +66,7 @@ namespace Westwind.Utilities.Configuration.Tests
             config.AppConnectionString = "server=.;database=unsecured";
 
             config.Write();
-            
+
             string xmlConfig = File.ReadAllText(STR_XMLCONFIGFILE);
             Console.WriteLine(xmlConfig);
 
@@ -91,18 +90,18 @@ namespace Westwind.Utilities.Configuration.Tests
             config.AppConnectionString = "server=.;database=unsecured";
 
             config.Write();
-            
+
             string xmlConfig = File.ReadAllText(STR_XMLCONFIGFILE);
             Console.WriteLine(xmlConfig);
 
             // Password and AppSettings  should be encrypted in config file
             Assert.IsTrue(xmlConfig.Contains(@"<Password>ADoCNO6L1HIm8V7TyI4deg==</Password>"));
             Assert.IsTrue(xmlConfig.Contains(@"<AppConnectionString>z6+T5mzXbtJBEgWqpQNYbBss0csbtw2b/qdge7PUixE=</AppConnectionString>"));
-            
+
             // now re-read settings into a new object
             var config2 = new XmlFileConfiguration();
             config2.Initialize(STR_XMLCONFIGFILE);
-            
+
             // check secure properties
             Assert.IsTrue(config.Password == "seekrit2");
             Assert.IsTrue(config.AppConnectionString == "server=.;database=unsecured");

@@ -86,10 +86,10 @@ namespace Westwind.Utilities.Configuration.Tests
         {
             string xmlConfig = @"<?xml version=""1.0"" encoding=""utf-8""?>
 <StringConfiguration xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-   <ApplicationName>Changed</ApplicationName>
-   <DebugMode>DeveloperErrorMessage</DebugMode>
+   <ApplicationName>Configuration Tests</ApplicationName>
+   <DebugMode>Default</DebugMode>
    <MaxDisplayListItems>12</MaxDisplayListItems>
-   <SendAdminEmailConfirmations>true</SendAdminEmailConfirmations>
+   <SendAdminEmailConfirmations>false</SendAdminEmailConfirmations>
    <Password>ADoCNO6L1HIm8V7TyI4deg==</Password>
    <AppConnectionString>z6+T5mzXbtJBEgWqpQNYbBss0csbtw2b/qdge7PUixE=</AppConnectionString>
 </StringConfiguration>
@@ -99,12 +99,10 @@ namespace Westwind.Utilities.Configuration.Tests
             // Initialize with configData as parameter to load from
             config.Initialize(configData: xmlConfig);
 
-            
-
             Assert.IsNotNull(config);
             Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));
             Assert.IsTrue(config.MaxDisplayListItems == 12);
-            Assert.IsTrue(config.Password == "seekrit2");                        
+            Assert.AreEqual(config.Password, "seekrit2");                        
         }
 
         

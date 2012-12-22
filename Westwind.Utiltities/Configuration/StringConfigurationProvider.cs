@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          © West Wind Technologies, 2009-2012
+ *          © West Wind Technologies, 2009-2013
  *          http://www.west-wind.com/
  * 
  * Created: 09/12/2009
@@ -42,21 +42,39 @@ namespace Westwind.Utilities.Configuration
     /// through your code as long as it supports strings.   
     /// 
     /// The string provider is a real minimal implementation that only implements
-    /// WriteAsString(config) and Read(string).
+    /// WriteAsString(config) and Read(string). It inherits all of its functionality
+    /// from the base provider.
     /// </summary>
     public class StringConfigurationProvider<TAppConfiguration> : ConfigurationProviderBase<TAppConfiguration>
         where TAppConfiguration : AppConfiguration, new()
     {
+        public string InitialStringData { get; set; }
+
+        /// <summary>
+        /// Reads from the InitialStringData string data
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public override T Read<T>()
         {
-            throw new NotImplementedException();
+            return this.Read<T>(InitialStringData);
         }
 
+        /// <summary>
+        /// Reads configuration information into config from InitialStringData
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns></returns>
         public override bool Read(AppConfiguration config)
         {
-            return false;
+            return Read(config, InitialStringData);
         }
 
+        /// <summary>
+        /// Not supported for StringConfiguration
+        /// </summary>
+        /// <param name="config"></param>
+        /// <returns></returns>
         public override bool Write(AppConfiguration config)
         {
             throw new NotImplementedException();

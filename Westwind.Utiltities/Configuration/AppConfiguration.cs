@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          © West Wind Technologies, 2009-2012
+ *          © West Wind Technologies, 2009-2013
  *          http://www.west-wind.com/
  * 
  * Created: 09/12/2009
@@ -229,15 +229,15 @@ namespace Westwind.Utilities.Configuration
         { }
 
         /// <summary>
-        /// This method initializes the ApplicationConfiguration
-        /// with a provider.        
+        /// This method initializes the configuration object with a provider
+        /// and performs an initial read from the config store.    
         /// </summary>
         /// <param name="provider">
         /// Optional - preconfigured ConfigurationProvider instance.
         /// If not passed ConfigurationFileConfigurationProvider is used.
         /// </param>
         /// <param name="sectionName">
-        /// Optional - section name used
+        /// Optional - sub-section name used for config files. Not used by all config stores
         /// </param>
         /// <param name="configData">
         /// Optional - additional config data to pass to OnInitialize if implemented
@@ -246,14 +246,11 @@ namespace Westwind.Utilities.Configuration
                                string sectionName = null, 
                                object configData = null)
         {
-                // Initialization occurs only once
+            // Initialization occurs only once
             if (InitializeCalled)
                return;
-            InitializeCalled = true;           
-
-            if (provider == null)
-                provider = Provider;
-
+            InitializeCalled = true;  
+            
             if (string.IsNullOrEmpty(sectionName))
                 sectionName = this.GetType().Name;
 
@@ -261,9 +258,16 @@ namespace Westwind.Utilities.Configuration
         }
 
         /// <summary>
-        /// Handles the actual provider initialization process.
-        /// Subclass this method to create custom provider startups
-        /// and configuration.
+        /// Override this method to handle custom initialization tasks.
+        /// 
+        /// This method should: create a provider and call it's Read()
+        /// method to populate the current instance of the configuration
+        /// object.
+        /// 
+        /// If all you need is to create a default provider configuration
+        /// use the OnCreateDefaultProvider() method to override instead.
+        /// Use this method if you need to perform custom actions beyond
+        /// standard instantiation.
         /// </summary>
         /// <param name="provider">Provider value - can be null</param>
         /// <param name="sectionName">Sub Section name - can be null</param>
@@ -275,24 +279,34 @@ namespace Westwind.Utilities.Configuration
                                            string sectionName,
                                            object configData)
         {
-            
-
-            // if no provider was passed create a default
-            // config section provider - AppSettings if no section is passed
             if (provider == null)
-            {
-                // dynamically construct the generic provider type
-                var providerType = typeof(ConfigurationFileConfigurationProvider<>);
-                var type = this.GetType();
-                Type typeProvider = providerType.MakeGenericType(type);
-                provider = Activator.CreateInstance(typeProvider) as IConfigurationProvider;
+                provider = OnCreateDefaultProvider(sectionName, configData);
 
-                // if no section name is passed it goes into standard appSettings
-                if (!string.IsNullOrEmpty(sectionName))
-                    provider.ConfigurationSection = sectionName;
-            }
             Provider = provider;
-            Provider.Read(this);
+            Provider.Read(this);            
+        }
+
+        /// <summary>
+        /// Override this method to use a specialized configuration provider for your config class
+        /// when no explicit provider is passed to the Initialize() method.
+        /// </summary>
+        /// <param name="sectionName">Optional section name that was passed to Initialize()</param>
+        /// <param name="configData">Optional config data that was passed to Initialize()</param>
+        /// <returns>Instance of configuration provider</returns>
+        protected virtual IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)
+        {
+            // dynamically construct the generic provider type
+            var providerType = typeof(ConfigurationFileConfigurationProvider<>);
+            var type = this.GetType();
+            Type typeProvider = providerType.MakeGenericType(type);
+
+            var provider = Activator.CreateInstance(typeProvider) as IConfigurationProvider;
+
+            // if no section name is passed it goes into standard appSettings
+            if (!string.IsNullOrEmpty(sectionName))
+                provider.ConfigurationSection = sectionName;
+
+            return provider;
         }
 
         /// <summary>
@@ -463,6 +477,11 @@ namespace Westwind.Utilities.Configuration
         public string MyProperty { get; set; }
         public int MaxPageListItems { get; set; }
         public string ApplicationTitle { get; set; }
+
+        protected override IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)
+        {
+            return base.OnCreateDefaultProvider(sectionName, configData);
+        }
     }
 }
 

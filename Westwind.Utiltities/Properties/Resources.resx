@@ -165,4 +165,7 @@
     <value>Invalid Connection String.</value>
     <comment>InvalidConnectionString description</comment>
   </data>
+  <data name="ObjectCouldNotBeDeserializedFromXml" xml:space="preserve">
+    <value>Object could not be deserialized from Xml.</value>
+  </data>
 </root>

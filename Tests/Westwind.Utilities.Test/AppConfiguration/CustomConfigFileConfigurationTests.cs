@@ -34,11 +34,13 @@ namespace Westwind.Utilities.Configuration.Tests
         public void DefaultConstructorInstanceTest()
         {
             var config = new CustomConfigFileConfiguration();
+            config.Initialize();
 
             Assert.IsNotNull(config);
             Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));
             
             string text = File.ReadAllText(TestHelpers.GetTestConfigFilePath());
+            Assert.IsTrue(text.Contains(@"<add key=""MaxDisplayListItems"" value=""15"" />"));
             Console.WriteLine(text);          
         }
 

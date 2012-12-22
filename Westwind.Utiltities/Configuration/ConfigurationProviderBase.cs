@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          © West Wind Technologies, 2009
+ *          © West Wind Technologies, 2009-2013
  *          http://www.west-wind.com/
  * 
  * Created: 09/12/2009
@@ -33,6 +33,7 @@
 
 using System;
 using System.Reflection;
+using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities.Configuration
 {
@@ -155,7 +156,12 @@ namespace Westwind.Utilities.Configuration
 
             try
             {
-                newConfig = SerializationUtils.DeSerializeObject(xml, config.GetType(), false, true) as TAppConfiguration;
+                newConfig = SerializationUtils.DeSerializeObject(xml, config.GetType()) as TAppConfiguration;
+                if (newConfig == null)
+                {
+                    SetError(Resources.ObjectCouldNotBeDeserializedFromXml);
+                    return false;
+                }
             }
             catch (Exception ex)
             {

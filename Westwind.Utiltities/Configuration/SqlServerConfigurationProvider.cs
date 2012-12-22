@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          © West Wind Technologies, 2009-2012	
+ *          © West Wind Technologies, 2009-2013
  *          http://www.west-wind.com/
  * 
  * Created: 09/12/2009
@@ -113,55 +113,55 @@ namespace Westwind.Utilities.Configuration
         /// <returns></returns>
         public override T Read<T>()
         {
-            SqlDataAccess data = new SqlDataAccess(ConnectionString,ProviderName);            
-
-            string sql = "select * from [" + Tablename + "] where id=" + Key.ToString();
-
-            DbDataReader reader = null;
-            try
+            using (SqlDataAccess data = new SqlDataAccess(ConnectionString, ProviderName))
             {
-                DbCommand command = data.CreateCommand(sql);
-                if (command == null)
-                {
-                    SetError(data.ErrorMessage);
-                    return null;
-                }
-                reader = command.ExecuteReader();
-                if (reader == null)
-                {
-                    SetError(data.ErrorMessage);
-                    return null;
-                }
-            }
-            catch (SqlException ex)
-            {
-                if (ex.Number == 208)
-                {
+                string sql = "select * from [" + Tablename + "] where id=" + Key.ToString();
 
-                    sql =
-@"CREATE TABLE [" + Tablename + @"]  
-( [id] [int] , [ConfigData] [ntext] COLLATE SQL_Latin1_General_CP1_CI_AS)";
-                    try
+                DbDataReader reader = null;
+                try
+                {
+                    DbCommand command = data.CreateCommand(sql);
+                    if (command == null)
                     {
-                        data.ExecuteNonQuery(sql);
-                    }
-                    catch
-                    {
+                        SetError(data.ErrorMessage);
                         return null;
                     }
-
-                    // try again if we were able to create the table 
-                    return Read<T>();
+                    reader = command.ExecuteReader();
+                    if (reader == null)
+                    {
+                        SetError(data.ErrorMessage);
+                        return null;
+                    }
                 }
-
-            }
-            catch (DbException dbEx)
-            {
-                // SQL CE Table doesn't exist
-                if (dbEx.ErrorCode == -2147467259)
+                catch (SqlException ex)
                 {
+                    if (ex.Number == 208)
+                    {
+
+                        sql =
+    @"CREATE TABLE [" + Tablename + @"]  
+( [id] [int] , [ConfigData] [ntext] COLLATE SQL_Latin1_General_CP1_CI_AS)";
+                        try
+                        {
+                            data.ExecuteNonQuery(sql);
+                        }
+                        catch
+                        {
+                            return null;
+                        }
+
+                        // try again if we were able to create the table 
+                        return Read<T>();
+                    }
+
+                }
+                catch (DbException dbEx)
+                {
+                    // SQL CE Table doesn't exist
+                    if (dbEx.ErrorCode == -2147467259)
+                    {
                         sql = String.Format(
-                            @"CREATE TABLE [{0}] ( [id] [int] , [ConfigData] [ntext] )", 
+                            @"CREATE TABLE [{0}] ( [id] [int] , [ConfigData] [ntext] )",
                             Tablename);
                         try
                         {
@@ -174,37 +174,42 @@ namespace Westwind.Utilities.Configuration
 
                         // try again if we were able to create the table 
                         var inst = Read<T>();
-                        
+
                         // if we got it write it to the db
                         Write(inst);
 
                         return inst;
+                    }
+                    return null;
                 }
-                return null;
+                catch (Exception ex)
+                {
+                    if (reader != null)
+                        reader.Close();
+                    data.CloseConnection();
+                    return null;
+                }
+
+
+                string xmlConfig = null;
+
+                if (reader.Read())
+                    xmlConfig = (string)reader["ConfigData"];
+
+                reader.Close();
+                data.CloseConnection();
+
+                if (string.IsNullOrEmpty(xmlConfig))
+                {
+                    T newInstance = new T();
+                    newInstance.Provider = this;
+                    return newInstance;
+                }
+
+                T instance = Read<T>(xmlConfig);
+
+                return instance;
             }
-            catch (Exception ex)
-            {
-                return null;
-            }
-
-            string xmlConfig = null;
-            
-            if (reader.Read())
-                xmlConfig = (string)reader["ConfigData"];         
-
-            reader.Close();
-            data.CloseConnection();
-
-            if (string.IsNullOrEmpty(xmlConfig))
-            {
-                T newInstance = new T();
-                newInstance.Provider = this;
-                return newInstance;
-            }
-            
-            T instance = Read<T>(xmlConfig);
-
-            return instance;
         }
 
         /// <summary>
@@ -234,21 +239,29 @@ namespace Westwind.Utilities.Configuration
             
             string xml = WriteAsString(config);
 
-            int Result = 0;
+            int result = 0;
             try
             {
-                Result = data.ExecuteNonQuery(sql, data.CreateParameter("@ConfigData", xml));
+                result = data.ExecuteNonQuery(sql, data.CreateParameter("@ConfigData", xml));
             }
             catch
             {
+                result = -1;
+            }
+
+            // try to create the table
+            if (result == -1)
+            {
                 sql = String.Format(
-                        @"CREATE TABLE [{0}] ( [id] [int] , [ConfigData] [ntext] COLLATE SQL_Latin1_General_CP1_CI_AS)", 
-                        Tablename);
+            @"CREATE TABLE [{0}] ( [id] [int] , [ConfigData] [ntext] )",
+            Tablename);
                 try
                 {
-                    data.ExecuteNonQuery(sql);
+                    result = data.ExecuteNonQuery(sql);
+                    if (result > -1)
+                        result = 0;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     SetError(ex);
                     return false;
@@ -256,27 +269,26 @@ namespace Westwind.Utilities.Configuration
             }
 
             // Check for missing record
-            if (Result == 0)
+            if (result == 0)
             {
                 sql = "Insert [" + Tablename + "] (id,configdata) values (" + Key.ToString() + ",@ConfigData)";
 
                 try
                 {
-                    Result = data.ExecuteNonQuery(sql, data.CreateParameter("@ConfigData", xml));
+                    result = data.ExecuteNonQuery(sql, data.CreateParameter("@ConfigData", xml));
                 }
                 catch (Exception ex)
                 {
                     SetError(ex);
                     return false;
                 }
-                if (Result == 0)
+                if (result == 0)
                 {                   
                     return false;
                 }
-
             }
 
-            if (Result < 0)
+            if (result < 0)
                 return false;
             
             return true;

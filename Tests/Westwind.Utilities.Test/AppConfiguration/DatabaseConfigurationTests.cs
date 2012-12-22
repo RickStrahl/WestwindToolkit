@@ -40,7 +40,7 @@ namespace Westwind.Utilities.Configuration.Tests
             // data into it if it doesn't exist - otherwise
             // the values are read
             var config = new DatabaseConfiguration();
-            config.Initialize("LocalDatabaseConnection","ConfigurationData");
+            config.Initialize();
 
             Assert.IsNotNull(config);
             Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));                       
@@ -77,8 +77,8 @@ namespace Westwind.Utilities.Configuration.Tests
             Assert.AreEqual(config.AppConnectionString, config2.AppConnectionString);
 
             // reset to default val
-            config.MaxDisplayListItems = 15;
-            config.Write();
+            //config.MaxDisplayListItems = 15;
+            //config.Write();
         }
     }
 }

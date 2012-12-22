@@ -142,6 +142,15 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Object could not be deserialized from Xml..
+        /// </summary>
+        public static string ObjectCouldNotBeDeserializedFromXml {
+            get {
+                return ResourceManager.GetString("ObjectCouldNotBeDeserializedFromXml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Type Conversion not handled in StringToTypedValue for .
         /// </summary>
         public static string StringToTypedValueValueTypeConversionFailed {

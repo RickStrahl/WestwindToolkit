@@ -12,6 +12,12 @@ namespace Westwind.Utilities.Configuration.Tests
     /// </summary>
     public class StringConfiguration : Westwind.Utilities.Configuration.AppConfiguration
     {
+        public string ApplicationName { get; set; }
+        public DebugModes DebugMode { get; set; }
+        public int MaxDisplayListItems { get; set; }
+        public bool SendAdminEmailConfirmations { get; set; }
+        public string Password { get; set; }
+        public string AppConnectionString { get; set; }
 
         // Must implement public default constructor
         public StringConfiguration()
@@ -24,45 +30,25 @@ namespace Westwind.Utilities.Configuration.Tests
             AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
         }
 
+        protected override IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)
+        {
+            var provider = new StringConfigurationProvider<StringConfiguration>()
+            {
+                InitialStringData = configData as String,
+                EncryptionKey = "ultra-seekrit",  // use a generated value here
+                PropertiesToEncrypt = "Password,AppConnectionString",
+            };
+
+            return provider;
+        }
+
         /// <summary>
-        /// Initialize from Xml string
+        /// Optional - easier overload for xml string loading
         /// </summary>
         /// <param name="xml"></param>
         public void Initialize(string xml)
         {
             base.Initialize(configData: xml);
         }
-
-
-        protected override void OnInitialize(IConfigurationProvider provider = null, 
-                                             string sectionName = null, 
-                                             object configData = null)
-        {
-            if (provider == null)
-            {
-                provider = new StringConfigurationProvider<StringConfiguration>()
-                {
-                    EncryptionKey = "ultra-seekrit",  // use a generated value here
-                    PropertiesToEncrypt = "Password,AppConnectionString",
-                };
-            }
-                      
-            // assign the provider
-            Provider = provider;
-
-            // read config from string
-            if (configData != null && configData is string)
-                Read(configData as string);        
-        }
-
-        public string ApplicationName { get; set; }
-        public DebugModes DebugMode { get; set; }
-        public int MaxDisplayListItems { get; set; }
-        public bool SendAdminEmailConfirmations { get; set; }
-        public string Password { get; set; }
-        public string AppConnectionString { get; set; }
-
-       
     }
-
 }

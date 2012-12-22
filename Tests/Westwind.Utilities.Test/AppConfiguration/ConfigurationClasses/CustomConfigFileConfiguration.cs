@@ -12,8 +12,13 @@ namespace Westwind.Utilities.Configuration.Tests
     /// </summary>
     public class CustomConfigFileConfiguration : Westwind.Utilities.Configuration.AppConfiguration
     {
+        public string ApplicationName { get; set; }
+        public DebugModes DebugMode { get; set; }
+        public int MaxDisplayListItems { get; set; }
+        public bool SendAdminEmailConfirmations { get; set; }
+        public string Password { get; set; }
+        public string AppConnectionString { get; set; }
 
-        // Must implement public default constructor
         public CustomConfigFileConfiguration()
         {
             ApplicationName = "Configuration Tests";
@@ -24,33 +29,24 @@ namespace Westwind.Utilities.Configuration.Tests
             AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
         }
 
-        protected override void OnInitialize(IConfigurationProvider provider = null, 
-                                             string sectionName = null, 
-                                             object configData = null)
+        /// <summary>
+        /// Override to provide a custom default provider (created when Initialize() is
+        /// called with no parameters).
+        /// </summary>
+        /// <param name="sectionName"></param>
+        /// <param name="configData"></param>
+        /// <returns></returns>
+        protected override IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)
         {
-            if (provider == null)
+            var provider = new ConfigurationFileConfigurationProvider<CustomConfigFileConfiguration>()
             {
-                provider = new ConfigurationFileConfigurationProvider<CustomConfigFileConfiguration>()
-                {
-                    //ConfigurationFile = "CustomConfiguration.config",
-                    ConfigurationSection = sectionName,
-                    EncryptionKey = "ultra-seekrit",  // use a generated value here
-                    PropertiesToEncrypt = "Password,AppConnectionString"
-                };                
-            }
-            
-            // assign the provider
-            Provider = provider;
-            Read();        
+                //ConfigurationFile = "CustomConfiguration.config",
+                ConfigurationSection = sectionName,
+                EncryptionKey = "ultra-seekrit",  // use a generated value here
+                PropertiesToEncrypt = "Password,AppConnectionString"
+            };
+
+            return provider;
         }
-
-        public string ApplicationName { get; set; }
-        public DebugModes DebugMode { get; set; }
-        public int MaxDisplayListItems { get; set; }
-        public bool SendAdminEmailConfirmations { get; set; }
-        public string Password { get; set; }
-        public string AppConnectionString { get; set; }
-
     }
-
 }

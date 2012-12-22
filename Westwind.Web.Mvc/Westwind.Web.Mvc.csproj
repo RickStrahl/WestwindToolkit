@@ -65,9 +65,9 @@
     <Compile Include="Components\UserState.cs" />
     <Compile Include="Controls\BaseControl.cs" />
     <Compile Include="Controls\DateControl.cs" />
-    <Compile Include="Filters\Extensions\HtmlHelperExtensions.cs" />
+    <Compile Include="Extensions\HtmlHelperExtensions.cs" />
     <Compile Include="Controls\PageEnvironment.cs" />
-    <Compile Include="Filters\Extensions\UrlHelperExtensions.cs" />
+    <Compile Include="Extensions\UrlHelperExtensions.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

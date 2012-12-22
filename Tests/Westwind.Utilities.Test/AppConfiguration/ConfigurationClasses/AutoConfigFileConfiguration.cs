@@ -20,6 +20,12 @@ namespace Westwind.Utilities.Configuration.Tests
     /// </summary>
     class AutoConfigFileConfiguration : Westwind.Utilities.Configuration.AppConfiguration
     {
+        public string ApplicationName { get; set; }
+        public DebugModes DebugMode { get; set; }
+        public int MaxDisplayListItems { get; set; }
+        public bool SendAdminEmailConfirmations { get; set; }
+        public string MailServer { get; set; }
+        public string MailServerPassword { get; set; }
 
         public AutoConfigFileConfiguration()
         {
@@ -27,14 +33,11 @@ namespace Westwind.Utilities.Configuration.Tests
             DebugMode = DebugModes.Default;
             MaxDisplayListItems = 15;
             SendAdminEmailConfirmations = false;
+            MailServer = "mail.MyWickedServer.com:334";
+            MailServerPassword = "seekrity";
         }
 
-        public string ApplicationName { get; set; }
-        public DebugModes DebugMode { get; set; }
-        public int MaxDisplayListItems { get; set; }
-        public bool SendAdminEmailConfirmations { get; set; }
 
-     
     }
 
     /// <summary>
@@ -44,6 +47,10 @@ namespace Westwind.Utilities.Configuration.Tests
     /// </summary>
     class AutoConfigFile2Configuration : AppConfiguration
     {
+        public string ApplicationName { get; set; }
+        public DebugModes DebugMode { get; set; }
+        public int MaxDisplayListItems { get; set; }
+        public bool SendAdminEmailConfirmations { get; set; }
 
         public AutoConfigFile2Configuration()
         {
@@ -52,16 +59,8 @@ namespace Westwind.Utilities.Configuration.Tests
             MaxDisplayListItems = 15;
             SendAdminEmailConfirmations = false;
 
-
             // Automatically initialize this one
             this.Initialize();
         }
-
-        public string ApplicationName { get; set; }
-        public DebugModes DebugMode { get; set; }
-        public int MaxDisplayListItems { get; set; }
-        public bool SendAdminEmailConfirmations { get; set; }
-
     }
-
 }

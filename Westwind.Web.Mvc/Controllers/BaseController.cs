@@ -34,7 +34,7 @@ namespace Westwind.Web.Mvc
                 this.UserState = new UserState();
                         
             // have to explicitly add this so Master can see untyped value
-            ViewBag.UserSates = this.UserState;
+            ViewBag.UserSate = this.UserState;
             ViewBag.ErrorDisplay = this.ErrorDisplay;
 
             // custom views should also add these as properties
