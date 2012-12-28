@@ -18,7 +18,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{90FB62AD-E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Utilities.Test", "Tests\Westwind.Utilities.Test\Westwind.Utilities.Test.csproj", "{2AFD91E5-5DE1-46D7-B2C1-D957050CB53D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.BusinessFramework.Test", "..\Tests\Westwind.BusinessFramework.Test\Westwind.BusinessFramework.Test\Westwind.BusinessFramework.Test.csproj", "{B2976716-5F1C-45EA-A92E-8D96FF98EA58}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Data.Test", "..\Tests\Westwind.BusinessFramework.Test\Westwind.BusinessFramework.Test\Westwind.Data.Test.csproj", "{B2976716-5F1C-45EA-A92E-8D96FF98EA58}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Web.Mvc", "Westwind.Web.Mvc\Westwind.Web.Mvc.csproj", "{809985C1-9458-496F-ABC5-FC71140BE4A5}"
 EndProject

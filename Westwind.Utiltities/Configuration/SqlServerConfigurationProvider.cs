@@ -184,8 +184,11 @@ namespace Westwind.Utilities.Configuration
                 }
                 catch (Exception ex)
                 {
+                    this.SetError(ex);
+                    
                     if (reader != null)
                         reader.Close();
+                    
                     data.CloseConnection();
                     return null;
                 }

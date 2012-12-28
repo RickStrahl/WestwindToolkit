@@ -77,8 +77,8 @@ namespace Westwind.Utilities.Configuration.Tests
             Assert.AreEqual(config.AppConnectionString, config2.AppConnectionString);
 
             // reset to default val
-            //config.MaxDisplayListItems = 15;
-            //config.Write();
+            config.MaxDisplayListItems = 15;
+            config.Write();
         }
     }
 }

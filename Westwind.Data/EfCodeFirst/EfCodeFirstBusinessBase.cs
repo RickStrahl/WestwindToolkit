@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Xml.Serialization;
 using System.Data.Entity.Infrastructure;
@@ -13,7 +12,6 @@ using System.Data.Objects;
 using Westwind.Utilities;
 using System.Linq.Expressions;
 using System.Transactions;
-using System.Data.EntityClient;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Westwind.Data.EfCodeFirst
@@ -199,9 +197,8 @@ namespace Westwind.Data.EfCodeFirst
         /// </summary>
         /// <returns></returns>
         public virtual TEntity NewEntity()
-        {
-            Entity = new TEntity();
-            Entity = Context.Set<TEntity>().Add(Entity) as TEntity;
+        {            
+            Entity = Context.Set<TEntity>().Add(new TEntity()) as TEntity;
 
             OnNewEntity(Entity);
 
@@ -352,17 +349,16 @@ namespace Westwind.Data.EfCodeFirst
         /// <param name="markAsModified"></param>
         /// <param name="addNew"></param>
         /// <returns></returns>
-        public object Attach(object entity, bool addNew = false)
+        public object Attach(object entity, bool addNew = false, System.Data.EntityState entityState = System.Data.EntityState.Modified )
         {
             var dbSet = Context.Set(entity.GetType());
 
             if (addNew)
                 dbSet.Add(entity);
-
             else
             {
                 dbSet.Attach(entity);
-                GetEntityEntry(entity).State = System.Data.EntityState.Modified;
+                GetEntityEntry(entity).State = entityState;
             }
 
             return entity;
@@ -386,7 +382,12 @@ namespace Westwind.Data.EfCodeFirst
         /// when other changes in the Context are pending and you don't want them to commit
         /// immediately
         /// </param>
-        public virtual bool Delete(TEntity entity, DbSet dbSet = null, bool saveChanges = true)
+        /// <param name="noTransaction">Optional - 
+        /// If true the Delete operation is wrapped into a TransactionScope transaction that
+        /// ensures that OnBeforeDelete and OnAfterDelete all fire within the same Transaction scope.
+        /// Defaults to false as to improve performance.
+        /// </param>
+        public virtual bool Delete(TEntity entity, DbSet dbSet = null, bool saveChanges = true, bool useTransaction = false)
         {
             if (entity == null)
                 entity = Entity;
@@ -394,32 +395,51 @@ namespace Westwind.Data.EfCodeFirst
             if (entity == null)
                 return true;
 
-            using (var trans = new TransactionScope())
+            if (useTransaction)
             {
-                if (!OnBeforeDelete(entity))
-                    return false;
-
-                try
+                using (var trans = new TransactionScope())
                 {
-                    if (dbSet == null)
-                        dbSet = DbSet;
-
-                    dbSet.Remove(entity);
-
-                    // one operation that immediately submits
-                    if (saveChanges)
-                        Context.SaveChanges();
-
-                    if (!OnAfterDelete(entity))
+                    if (!DeleteInternal(entity, dbSet,saveChanges)) 
                         return false;
-                }
-                catch (Exception ex)
-                {
-                    SetError(ex, true);
-                    return false;
-                }
 
-                trans.Complete();
+                    trans.Complete();
+                }
+            }
+            else
+            {
+                 if (!DeleteInternal(entity, dbSet,saveChanges))
+                    return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Actual delete operation that removes an entity
+        /// </summary>
+        private bool DeleteInternal(TEntity entity, DbSet dbSet, bool saveChanges)
+        {
+            if (!OnBeforeDelete(entity))
+                return false;
+            
+            try
+            {
+                if (dbSet == null)
+                    dbSet = DbSet;
+
+                dbSet.Remove(entity);
+
+                // one operation that immediately submits
+                if (saveChanges)
+                    Context.SaveChanges();
+
+                if (!OnAfterDelete(entity))
+                    return false;
+            }
+            catch (Exception ex)
+            {
+                SetError(ex, true);
+                return false;
             }
 
             return true;

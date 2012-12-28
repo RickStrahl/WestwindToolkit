@@ -12,12 +12,15 @@ using Westwind.Utilities.Data;
 namespace Westwind.Data.EfCodeFirst
 {
     /// <summary>
-    /// Customization of the LINQ to SQL DataContext class that provides
-    /// core ADO.NET Data Access methods to the data context via a Db 
-    /// property.
+    /// Optional customized EF CodeFirst Context class that adds 
+    /// support for more full featured low level ADO.NET data access
+    /// using the Westwind.Utilities.Data.SqlDataAccess class.
     /// </summary>
     public class EfCodeFirstContext : DbContext
     {
+        /// <summary>
+        /// Low level data access object
+        /// </summary>
         public DataAccessBase Db
         {
             get
@@ -32,20 +35,30 @@ namespace Westwind.Data.EfCodeFirst
             }
         }
         private DataAccessBase _DbNative;
+        
+
+        public EfCodeFirstContext()
+        { }
 
         /// <summary>
         /// Custom constructor that allows passing in of a custom IDbNative context
         /// to provide SQL interactivity.
         /// </summary>
         /// <param name="dbNative"></param>
-        public EfCodeFirstContext(DataAccessBase dbNative)
-            : base()
+        public EfCodeFirstContext(DataAccessBase dbNative)   
         {
-            this.Db = dbNative;
+            Db = dbNative;            
         }
 
-        public EfCodeFirstContext()
+        public EfCodeFirstContext(string connectionString, string providerName = null)
         {
+            if(!string.IsNullOrEmpty(providerName))
+                Db = new SqlDataAccess(connectionString,providerName);
+            else
+                Db = new SqlDataAccess(connectionString);
         }
+
+
+        
     }    
 }

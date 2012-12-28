@@ -52,7 +52,7 @@ namespace Westwind.Utilities.Configuration.Tests
         public void WriteConfigurationTest()
         {
             var config = new StringConfiguration();
-            
+            config.Initialize(null);
 
             config.MaxDisplayListItems = 12;
             config.DebugMode = DebugModes.DeveloperErrorMessage;

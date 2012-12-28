@@ -283,7 +283,8 @@ namespace Westwind.Utilities.Configuration
                 provider = OnCreateDefaultProvider(sectionName, configData);
 
             Provider = provider;
-            Provider.Read(this);            
+            if (!Provider.Read(this))
+                throw new InvalidOperationException(Provider.ErrorMessage);
         }
 
         /// <summary>

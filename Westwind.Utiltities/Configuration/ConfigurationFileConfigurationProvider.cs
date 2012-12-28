@@ -164,7 +164,7 @@ namespace Westwind.Utilities.Configuration
                 else
                 {
                     NameValueCollection Values =
-                        (NameValueCollection) ConfigurationManager.GetSection(ConfigurationSection);
+                        ConfigurationManager.GetSection(ConfigurationSection) as NameValueCollection;
                     if (Values != null)
                         value = Values[fieldName];
                 }

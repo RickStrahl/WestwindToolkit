@@ -128,7 +128,12 @@ namespace Westwind.Utilities.Configuration
         public virtual T Read<T>(string xml)
             where T : AppConfiguration, new()
         {
-            T result = null;
+            if (string.IsNullOrEmpty((xml)))
+            {                
+                return null;
+            }
+
+            T result;
             try
             {
                 result = SerializationUtils.DeSerializeObject(xml, typeof(T)) as T;
@@ -153,6 +158,11 @@ namespace Westwind.Utilities.Configuration
         public virtual bool Read(AppConfiguration config, string xml)
         {
             TAppConfiguration newConfig = null;
+
+            // if no data was passed leave the object
+            // in its initial state.
+            if (string.IsNullOrEmpty(xml))
+                return true;
 
             try
             {

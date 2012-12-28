@@ -30,22 +30,13 @@ namespace Westwind.Utilities.Configuration.Tests
             AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
         }
 
-
-        /// <summary>
-        /// Optional - Create a custom overload with required parameters
-        /// </summary>
-        public void Initialize(string connectionString, string tableName = null)
-        {
-            base.Initialize(configData: new { ConnectionString = connectionString, Tablename = tableName });
-        }
-
-        /// <summary>
-        /// Override this method to create the custom default provider - in this case a database
-        /// provider with a few options.
-        /// </summary>
+    
+        ///// <summary>
+        ///// Override this method to create the custom default provider - in this case a database
+        ///// provider with a few options.
+        ///// </summary>
         protected override IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)
         {
-            // default connect values
             string connectionString = "LocalDatabaseConnection";
             string tableName = "ConfigurationData";
 
@@ -58,18 +49,29 @@ namespace Westwind.Utilities.Configuration.Tests
             }
 
             var provider = new SqlServerConfigurationProvider<DatabaseConfiguration>()
-            {
-                Key = 0,
-                ConnectionString = connectionString,
-                Tablename = tableName,
-                ProviderName = "System.Data.SqlServerCe.4.0",
-                EncryptionKey = "ultra-seekrit",  // use a generated value here
-                PropertiesToEncrypt = "Password,AppConnectionString"
-                // UseBinarySerialization = true                     
-            };
+                {
+                    Key = 0,
+                    ConnectionString = connectionString,
+                    Tablename = tableName,
+                    ProviderName = "System.Data.SqlServerCe.4.0",
+                    EncryptionKey = "ultra-seekrit", // use a generated value here
+                    PropertiesToEncrypt = "Password,AppConnectionString"
+                };
 
             return provider;
         }
+
+        /// <summary>
+        /// Optional - Create a custom overload with required parameters
+        /// </summary>
+        public void Initialize(string connectionString, string tableName = null)
+        {
+            // pass in anonymous object with parameters we're interested in
+            // the OnCreateDefaultProvider reads the anonymous object values
+            // and uses them for the SQL access object
+            base.Initialize(configData: new { ConnectionString = connectionString, Tablename = tableName });
+        }
+
     }
 
 }

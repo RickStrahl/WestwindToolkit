@@ -48,14 +48,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CommonClasses\BusinessObjectOptions.cs" />
-    <Compile Include="CommonClasses\ConflictResolutionModes.cs" />
-    <Compile Include="CommonClasses\EntityBase.cs" />
-    <Compile Include="CommonClasses\IDbNative.cs" />
-    <Compile Include="CommonClasses\ResultListTypes.cs" />
-    <Compile Include="CommonClasses\SqlNative.cs" />
     <Compile Include="CommonClasses\Support\DynamicQuery.cs" />
-    <Compile Include="CommonClasses\TrackingModes.cs" />
     <Compile Include="EfCodeFirst\DbContextFactory.cs" />
     <Compile Include="EfCodeFirst\EfCodeFirstBusinessBase.cs" />
     <Compile Include="EfCodeFirst\EfCodeFirstContext.cs" />
