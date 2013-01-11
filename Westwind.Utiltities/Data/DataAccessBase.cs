@@ -499,9 +499,9 @@ namespace Westwind.Utilities.Data
             DbDataReader Reader = null;
             try
             {
-                Reader = command.ExecuteReader();
+                Reader = command.ExecuteReader(CommandBehavior.CloseConnection);
             }
-            catch (DbException ex)
+            catch (Exception ex)
             {
                 SetError(ex.GetBaseException().Message);
                 CloseConnection(command);
@@ -537,16 +537,14 @@ namespace Westwind.Utilities.Data
         /// <param name="sql">Sql string to execute</param>        
         /// <param name="parameters">DbParameters to fill the SQL statement</param>
         /// <returns>List of objects</returns>
-        public virtual List<T> ExecuteReader<T>(string sql, params object[] parameters)            
+        public virtual IEnumerable<T> ExecuteReader<T>(string sql, params object[] parameters)            
             where T : class, new()
         {
             var reader = ExecuteReader(sql, parameters);
             if (reader == null)
                 return null;
 
-            var result = DataUtils.DataReaderToObjectList<T>(reader,null);
-            reader.Close();
-            return result;
+            return DataUtils.DataReaderToIEnumerable<T>(reader,null);
         }
 
         /// <summary>
@@ -560,17 +558,69 @@ namespace Westwind.Utilities.Data
         /// <param name="propertiesToExclude">Comma delimited list of properties that are not to be updated</param>
         /// <param name="parameters">DbParameters to fill the SQL statement</param>
         /// <returns>List of objects</returns>
-        public virtual List<T> ExecuteReader<T>(string sql, string propertiesToExclude, params object[] parameters)            
+        public virtual IEnumerable<T> ExecuteReader<T>(string sql, string propertiesToExclude, params object[] parameters)            
             where T: class, new()
         {
             var reader = this.ExecuteReader(sql, parameters);
             if (reader == null)
                 return null;
 
-            var result = DataUtils.DataReaderToObjectList<T>(reader, propertiesToExclude);
-            reader.Close();
+            var result = DataUtils.DataReaderToIEnumerable<T>(reader, propertiesToExclude);            
 
             return result;
+        }
+
+        /// <summary>
+        /// Calls a stored procedure that returns a cursor results
+        /// The result is returned as a DataReader
+        /// </summary>
+        /// <param name="storedProc">Name of the Stored Procedure to call</param>
+        /// <param name="parameters">
+        /// Parameters to pass. Note that if you need to pass out/inout/return parameters
+        /// you need to pass DbParameter instances or use the CreateParameter() method
+        /// </param>
+        /// <returns>A DataReader or null on failure</returns>
+        public virtual DbDataReader ExecuteStoredProcedureReader(string storedProc, params object[] parameters)
+        {
+            var command = CreateCommand(storedProc, parameters);
+            if (command == null)
+                return null;
+           
+            command.CommandType = CommandType.StoredProcedure;
+
+            return ExecuteReader(command);
+        }
+
+        public virtual IEnumerable<T> ExecuteStoredProcedureReader<T>(string storedProc, params object[] parameters)
+            where T : class, new()
+        {
+            var command = CreateCommand(storedProc, parameters);
+            if (command == null)
+                return null;
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            return ExecuteReader<T>(command);
+        }
+
+        /// <summary>
+        /// Executes a stored procedure that doesn't return a result set.
+        /// </summary>
+        /// <param name="storedProc">The Stored Procedure to call</param>
+        /// <param name="parameters">
+        /// Parameters to pass. Note that if you need to pass out/inout/return parameters
+        /// you need to pass DbParameter instances or use the CreateParameter() method
+        /// </param>
+        /// <returns>> -1 on success, -1 on failure</returns>
+        public virtual int ExecuteStoredProcedureNonQuery(string storedProc, params object[] parameters)
+        {
+            var command = CreateCommand(storedProc, parameters);
+            if (command == null)
+                return -1;
+
+            command.CommandType = CommandType.StoredProcedure;
+
+            return ExecuteNonQuery(command);
         }
 
         /// <summary>
@@ -580,13 +630,13 @@ namespace Westwind.Utilities.Data
         /// <param name="sql"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public virtual List<T> Query<T>(string sql, params object[] parameters)
+        public virtual IEnumerable<T> Query<T>(string sql, params object[] parameters)
             where T: class, new()
         {
             return ExecuteReader<T>(sql, null, parameters);
         }
 
-        public virtual List<T> Query<T>(string sql, string propertiesToExclude, params object[] parameters)
+        public virtual IEnumerable<T> Query<T>(string sql, string propertiesToExclude, params object[] parameters)
             where T: class, new()
         {
             return ExecuteReader<T>(sql, propertiesToExclude, parameters);
@@ -615,11 +665,11 @@ namespace Westwind.Utilities.Data
         /// <param name="sql">Sql string to execute</param>        
         /// <param name="parameters">DbParameters to fill the SQL statement</param>
         /// <returns>List of objects</returns>
-        public virtual List<T> ExecuteReader<T>(DbCommand sqlCommand, params object[] parameters)
+        public virtual IEnumerable<T> ExecuteReader<T>(DbCommand sqlCommand, params object[] parameters)
             where T : class, new()
         {
             var reader = ExecuteReader(sqlCommand, parameters);
-            return DataUtils.DataReaderToObjectList<T>(reader, null);
+            return DataUtils.DataReaderToIEnumerable<T>(reader, null);
         }
 
 

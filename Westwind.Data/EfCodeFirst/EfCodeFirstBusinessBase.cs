@@ -755,7 +755,7 @@ namespace Westwind.Data.EfCodeFirst
             DbEntityEntry entry = GetEntityEntry(entity);
             if (entry == null)
                 throw new ArgumentException(Resources.EntityIsNotPartOfTheContext);
-
+            
             return entry.State == System.Data.EntityState.Added;
         }
 

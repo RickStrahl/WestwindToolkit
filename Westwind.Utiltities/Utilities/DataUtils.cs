@@ -40,6 +40,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
 using Westwind.Utilities.Properties;
+using System.Data.Common;
 
 namespace Westwind.Utilities
 {
@@ -272,7 +273,7 @@ namespace Westwind.Utilities
         /// operation, but it can be useful for generic data reader to entity
         /// conversions on the fly and with anonymous types.
         /// </summary>
-        /// <typeparam name="TType"></typeparam>
+        /// <typeparam name="T"></typeparam>
         /// <param name="reader">An open DataReader that's in position to read</param>
         /// <param name="fieldsToSkip">Optional - comma delimited list of fields that you don't want to update</param>
         /// <param name="piList">
@@ -282,31 +283,71 @@ namespace Westwind.Utilities
         /// </param>
         /// <returns></returns>
         /// <remarks>DataReader is not closed by this method. Make sure you call reader.close() afterwards</remarks>
-        public static List<TType> DataReaderToObjectList<TType>(IDataReader reader, string fieldsToSkip = null, Dictionary<string, PropertyInfo> piList = null)
-            where TType : new()
+        public static List<T> DataReaderToObjectList<T>(IDataReader reader, string fieldsToSkip = null, Dictionary<string, PropertyInfo> piList = null)
+            where T : new()
         {
-            if (reader == null)
-                return null;
-
-            var items = new List<TType>();
+            List<T> list = new List<T>();
 
             // Get a list of PropertyInfo objects we can cache for looping            
             if (piList == null)
             {
                 piList = new Dictionary<string, PropertyInfo>();
-                var props = typeof(TType).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                var props = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
                 foreach (var prop in props)
                     piList.Add(prop.Name.ToLower(), prop);
             }
 
             while (reader.Read())
             {
-                var inst = new TType();
+                T inst = new T(); 
                 DataReaderToObject(reader, inst, fieldsToSkip, piList);
-                items.Add(inst);
+                list.Add(inst);
             }
 
-            return items;
+            reader.Close();
+
+            return list;
+        }
+
+        /// <summary>
+        /// Creates an IEnumerable of T from an open DataReader instance.
+        ///
+        /// Note this method uses Reflection so this isn't a high performance
+        /// operation, but it can be useful for generic data reader to entity
+        /// conversions on the fly and with anonymous types.
+        /// </summary>
+        /// <param name="reader">An open DataReader that's in position to read</param>
+        /// <param name="fieldsToSkip">Optional - comma delimited list of fields that you don't want to update</param>
+        /// <param name="piList">
+        /// Optional - Cached PropertyInfo dictionary that holds property info data for this object.
+        /// Can be used for caching hte PropertyInfo structure for multiple operations to speed up
+        /// translation. If not passed automatically created.
+        /// </param>
+        /// <returns></returns>
+        public static IEnumerable<T> DataReaderToIEnumerable<T>(IDataReader reader, string fieldsToSkip = null, Dictionary<string, PropertyInfo> piList = null)            
+            where T : new()
+        {
+            if (reader != null)
+            {
+                using (reader)
+                {
+                    // Get a list of PropertyInfo objects we can cache for looping            
+                    if (piList == null)
+                    {
+                        piList = new Dictionary<string, PropertyInfo>();
+                        var props = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                        foreach (var prop in props)
+                            piList.Add(prop.Name.ToLower(), prop);
+                    }
+
+                    while (reader.Read())
+                    {
+                        T inst = new T();
+                        DataReaderToObject(reader, inst, fieldsToSkip, piList);
+                        yield return inst;
+                    }                    
+                }
+            }
         }
 
         /// <summary>

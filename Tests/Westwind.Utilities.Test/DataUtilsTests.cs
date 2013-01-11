@@ -7,6 +7,8 @@ using Westwind.Utilities.Data;
 using System.Data;
 using Westwind.Utilities;
 using Westwind.Utilities.Logging;
+using System.Diagnostics;
+using System.Data.Common;
 
 namespace Westwind.UtilitiesTests
 {
@@ -66,20 +68,75 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void DataReaderToObjectTest()
         {
-            SqlDataAccess data = new SqlDataAccess("TestDataConnection");
+            using (SqlDataAccess data = new SqlDataAccess("TestDataConnection"))
+            {
+                IDataReader reader = data.ExecuteReader("select top 1 * from TestLogFile");
+                Assert.IsNotNull(reader, "Couldn't access Data reader. " + data.ErrorMessage);
+                Assert.IsTrue(reader.Read(), "Couldn't read from DataReader");
+                WebLogEntry entry = new WebLogEntry();
+                DataUtils.DataReaderToObject(reader, entry, null);
+                Assert.IsNotNull(entry.Message, "Entry Message should not be null");
+                Assert.IsTrue(entry.ErrorLevel != ErrorLevels.None, "Entry Error level should not be None (error)");
+            }
+        } 
 
-            IDataReader reader = data.ExecuteReader("select top 1 * from TestLogFile");
+        [TestMethod]
+        public void DataReaderToIEnumerableObjectTest()
+        {
+            using (SqlDataAccess data = new SqlDataAccess("TestDataConnection"))
+            {
+                DbDataReader reader = data.ExecuteReader("select top 1 * from TestLogFile");
+                reader.Close();
 
-            Assert.IsNotNull(reader, "Couldn't access Data reader. " + data.ErrorMessage);
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
 
-            Assert.IsTrue(reader.Read(),"Couldn't read from DataReader");
+                reader = data.ExecuteReader("select * from TestLogFile");
+                Assert.IsNotNull(reader, "Reader null: " + data.ErrorMessage);
+                var entries = DataUtils.DataReaderToIEnumerable<WebLogEntry>(reader);
+                foreach (var entry in entries)
+                {
+                    string name = entry.Message;
+                }                
+                sw.Stop();
 
-            WebLogEntry entry = new WebLogEntry();
+                // run again to check for connections not closed
+                reader = data.ExecuteReader("select * from TestLogFile");
+                Assert.IsNotNull(reader, "Reader null: " + data.ErrorMessage);
+                entries = DataUtils.DataReaderToIEnumerable<WebLogEntry>(reader);
+                foreach (var entry in entries)
+                {
+                    string name = entry.Message;
+                }                
+                
+                Console.WriteLine("DataReaderToIEnumerable: " + sw.ElapsedMilliseconds.ToString() + " ms");
+            }
+        }
 
-            DataUtils.DataReaderToObject(reader, entry, null);
+        [TestMethod]
+        public void DataReaderToListTest()
+        {
+            using (SqlDataAccess data = new SqlDataAccess("TestDataConnection"))
+            {
+                DbDataReader reader = data.ExecuteReader("select top 1 * from TestLogFile");
+                reader.Close();
 
-            Assert.IsNotNull(entry.Message, "Entry Message should not be null");
-            Assert.IsTrue(entry.ErrorLevel != ErrorLevels.None, "Entry Error level should not be None (error)");
+                Stopwatch sw = new Stopwatch();
+                sw.Start();
+
+                reader = data.ExecuteReader("select * from TestLogFile");
+                Assert.IsNotNull(reader, "Reader null: " + data.ErrorMessage);
+                var entries = DataUtils.DataReaderToObjectList<WebLogEntry>(reader);
+
+
+                foreach (var entry in entries)
+                {
+                    string name = entry.Message;
+                }
+                sw.Stop();
+
+                Console.WriteLine("DataReaderToList: " + sw.ElapsedMilliseconds.ToString() + " ms");
+            }
         }
     }
 }
