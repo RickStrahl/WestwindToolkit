@@ -66,9 +66,9 @@ namespace Westwind.Data.EfCodeFirst
         public EfCodeFirstContext(string nameOrConnectionString, string providerName = null) : base(nameOrConnectionString)
         {
             if(!string.IsNullOrEmpty(providerName))
-                Db = new SqlDataAccess(connectionString,providerName);
+                Db = new SqlDataAccess(nameOrConnectionString,providerName);
             else
-                Db = new SqlDataAccess(connectionString);
+                Db = new SqlDataAccess(nameOrConnectionString);
         }
         
     }    
