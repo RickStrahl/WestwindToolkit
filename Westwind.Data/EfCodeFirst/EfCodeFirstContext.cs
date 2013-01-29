@@ -15,11 +15,19 @@ namespace Westwind.Data.EfCodeFirst
     /// Optional customized EF CodeFirst Context class that adds 
     /// support for more full featured low level ADO.NET data access
     /// using the Westwind.Utilities.Data.SqlDataAccess class.
+    /// 
+    /// Use this class as a base class for your custom context
+    /// instead of DbContext only if you need more sophisticated
+    /// low level data access.
     /// </summary>
     public class EfCodeFirstContext : DbContext
     {
         /// <summary>
-        /// Low level data access object
+        /// Low level ADO.NET SQL data access object that
+        /// allows simple abstractions of the most common
+        /// data operations. Execute queries, run non-queries
+        /// retrieve scalars, retrieve lists to objects and call
+        /// stored procedures directly and easily.
         /// </summary>
         public DataAccessBase Db
         {
@@ -50,15 +58,18 @@ namespace Westwind.Data.EfCodeFirst
             Db = dbNative;            
         }
 
-        public EfCodeFirstContext(string connectionString, string providerName = null)
+        /// <summary>
+        /// Override with specific connection string and provider
+        /// </summary>
+        /// <param name="nameOrConnectionString"></param>
+        /// <param name="providerName"></param>
+        public EfCodeFirstContext(string nameOrConnectionString, string providerName = null) : base(nameOrConnectionString)
         {
             if(!string.IsNullOrEmpty(providerName))
                 Db = new SqlDataAccess(connectionString,providerName);
             else
                 Db = new SqlDataAccess(connectionString);
         }
-
-
         
     }    
 }
