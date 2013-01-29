@@ -42,6 +42,7 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Westwind.Utilities.Properties;
+using System.Data.SqlClient;
 
 namespace Westwind.Utilities.Data
 {
@@ -235,9 +236,14 @@ namespace Westwind.Utilities.Data
                 if (_Connection.State != ConnectionState.Open)
                     _Connection.Open();
             }
+            catch (SqlException ex)
+            {
+                SetError(ex);
+                return false;
+            }
             catch (DbException ex)
             {
-                SetError(ex.Message, ex.ErrorCode);
+                SetError(ex);
                 return false;
             }
             catch (Exception ex)
@@ -831,10 +837,14 @@ namespace Westwind.Utilities.Data
             {
                 Result = command.ExecuteScalar();
             }
-            catch (DbException ex)
+            catch (Exception ex)
             {
-                SetError(ex.GetBaseException().Message);
+                SetError(ex.GetBaseException());
             }
+            //catch (DbException ex)
+            //{
+            //    SetError(ex);
+            //}
             finally
             {
                 CloseConnection();
@@ -1408,10 +1418,19 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         {
             SetError(ex.Message, ex.ErrorCode);
         }
+        protected virtual void SetError(SqlException ex)
+        {
+            SetError(ex.Message, ex.Number);
+        }
 
         protected virtual void SetError(Exception ex)
         {
-            SetError(ex.Message,0);
+            if (ex is SqlException)
+                SetError(ex as SqlException);
+            else if (ex is DbException)
+                SetError(ex as DbException);
+            else
+                SetError(ex.Message, 0);
         }
 
         /// <summary>
