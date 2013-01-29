@@ -42,7 +42,7 @@ using System.Linq;
 using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities
-{   
+{
     /// <summary>
     /// String utility class that provides a host of string related operations
     /// </summary>
@@ -199,11 +199,11 @@ namespace Westwind.Utilities
         /// <param name="additionalMarkup"></param>
         /// <returns></returns>
         public static string Href(string text, string url, string target = null, string additionalMarkup = null)
-        {            
+        {
             if (url.StartsWith("~"))
-                url =  ResolveUrl(url);
+                url = ResolveUrl(url);
 
-            return "<a href=\""  + url + "\" " +
+            return "<a href=\"" + url + "\" " +
                 (string.IsNullOrEmpty(target) ? string.Empty : "target=\"" + target + "\" ") +
                 (string.IsNullOrEmpty(additionalMarkup) ? string.Empty : additionalMarkup) +
                 ">" + text + "</a>";
@@ -292,9 +292,9 @@ namespace Westwind.Utilities
         /// <param name="endDelim">ending delimiter</param>
         /// <param name="CaseInsensitive">Determines whether the search for delimiters is case sensitive</param>
         /// <returns>Extracted string or ""</returns>
-        public static string ExtractString(string source, 
+        public static string ExtractString(string source,
                                            string beginDelim,
-                                           string endDelim, 
+                                           string endDelim,
                                            bool caseSensitive = false,
                                            bool allowMissingEndDelimiter = false,
                                            bool returnDelimiters = false)
@@ -337,7 +337,7 @@ namespace Westwind.Utilities
                     return source.Substring(at1 + beginDelim.Length, at2 - at1 - beginDelim.Length);
                 else
                     return source.Substring(at1, at2 - at1 + endDelim.Length);
-            }   
+            }
 
             return string.Empty;
         }
@@ -445,7 +445,7 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static string Replicate(string input, int charCount)
         {
-            return new StringBuilder().Insert(0,"input",charCount).ToString();
+            return new StringBuilder().Insert(0, "input", charCount).ToString();
         }
 
         /// <summary>
@@ -454,7 +454,7 @@ namespace Westwind.Utilities
         /// <param name="charCount"></param>
         /// <param name="character"></param>
         /// <returns></returns>
-        public static string Replicate(char character,int charCount)
+        public static string Replicate(char character, int charCount)
         {
             return new string(character, charCount);
         }
@@ -480,7 +480,7 @@ namespace Westwind.Utilities
                 return string.Empty;
 
             StringBuilder sb = new StringBuilder(phrase.Length);
-            
+
             // First letter is always upper case
             bool nextUpper = true;
 
@@ -499,7 +499,7 @@ namespace Westwind.Utilities
 
                 nextUpper = false;
             }
-            
+
             return sb.ToString();
         }
 
@@ -524,11 +524,11 @@ namespace Westwind.Utilities
 
             foreach (char ch in camelCase)
             {
-                if ( !first && 
-                     ( char.IsUpper(ch) || 
-                       char.IsDigit(ch) && !char.IsDigit(lastChar)) )                     
+                if (!first &&
+                     (char.IsUpper(ch) ||
+                       char.IsDigit(ch) && !char.IsDigit(lastChar)))
                     sb.Append(' ');
-                
+
                 sb.Append(ch);
                 first = false;
                 lastChar = ch;
@@ -589,8 +589,8 @@ namespace Westwind.Utilities
             {
                 if (line.Length == 0)  // ignore blank lines
                     continue;
-                
-                int count = 0;                
+
+                int count = 0;
                 foreach (char chr in line)
                 {
                     if (chr == ' ' && count < minPadding)
@@ -670,6 +670,41 @@ namespace Westwind.Utilities
             return Guid.NewGuid().ToString().GetHashCode().ToString("x");
         }
 
+        /// <summary>
+        /// Creates a new random string of upper, lower case letters and digits.
+        /// Very useful for generating random data for storage in test data.
+        /// </summary>
+        /// <param name="size">The number of characters of the string to generate</param>
+        /// <returns>randomized string</returns>
+        public static string RandomString(int size, bool includeNumbers = false)
+        {
+            StringBuilder builder = new StringBuilder(size);
+            char ch;
+            int num;
+
+            for (int i = 0; i < size; i++)
+            {
+                if (includeNumbers)
+                    num = Convert.ToInt32(Math.Floor(62 * random.NextDouble()));
+                else
+                    num = Convert.ToInt32(Math.Floor(52 * random.NextDouble()));
+
+                if (num < 26)
+                    ch = Convert.ToChar(num + 65);
+                // lower case
+                else if (num > 25 && num < 52)
+                    ch = Convert.ToChar(num - 26 + 97);
+                // numbers
+                else
+                    ch = Convert.ToChar(num - 52 + 48);
+
+                builder.Append(ch);
+            }
+
+            return builder.ToString();
+        }
+        private static Random random = new Random((int)DateTime.Now.Ticks);
+
 
         /// <summary>
         /// Parses an string into an integer. If the value can't be parsed
@@ -682,7 +717,7 @@ namespace Westwind.Utilities
         public static int ParseInt(string input, int defaultValue, IFormatProvider numberFormat)
         {
             int val = defaultValue;
-            int.TryParse(input,NumberStyles.Any, numberFormat,out val);
+            int.TryParse(input, NumberStyles.Any, numberFormat, out val);
             return val;
         }
 
@@ -695,7 +730,7 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static int ParseInt(string input, int defaultValue)
         {
-            return ParseInt(input, defaultValue,CultureInfo.CurrentCulture.NumberFormat);
+            return ParseInt(input, defaultValue, CultureInfo.CurrentCulture.NumberFormat);
         }
 
         /// <summary>
@@ -708,7 +743,7 @@ namespace Westwind.Utilities
         public static decimal ParseDecimal(string input, decimal defaultValue, IFormatProvider numberFormat)
         {
             decimal val = defaultValue;
-            decimal.TryParse(input, NumberStyles.Any ,numberFormat, out val);
+            decimal.TryParse(input, NumberStyles.Any, numberFormat, out val);
             return val;
         }
 
@@ -771,12 +806,12 @@ namespace Westwind.Utilities
             if ((hex.Length % 2) != 0)
                 throw new ArgumentException(String.Format(Resources.InvalidHexStringLength, hex.Length));
 
-            byte[] ret = new byte[(hex.Length-offset)/2];
+            byte[] ret = new byte[(hex.Length - offset) / 2];
 
-            for (int i=0; i < ret.Length; i++)
+            for (int i = 0; i < ret.Length; i++)
             {
-                ret[i] = (byte) ((ParseHexChar(hex[offset]) << 4) 
-                                 | ParseHexChar(hex[offset+1]));
+                ret[i] = (byte)((ParseHexChar(hex[offset]) << 4)
+                                 | ParseHexChar(hex[offset + 1]));
                 offset += 2;
             }
             return ret;
@@ -813,20 +848,20 @@ namespace Westwind.Utilities
         /// <param name="value"></param>
         /// <returns></returns>
         public static string SetProperty(string propertyString, string key, string value)
-        {            
-            string extract = StringUtils.ExtractString(propertyString,"<" + key + ">","</" + key + ">");
+        {
+            string extract = StringUtils.ExtractString(propertyString, "<" + key + ">", "</" + key + ">");
 
-            if (string.IsNullOrEmpty(value) && extract!= string.Empty)
+            if (string.IsNullOrEmpty(value) && extract != string.Empty)
             {
-                return propertyString.Replace(extract,"");
+                return propertyString.Replace(extract, "");
             }
 
             string xmlLine = "<" + key + ">" + value + "</" + key + ">";
 
             // replace existing
             if (extract != string.Empty)
-                return propertyString.Replace(extract,xmlLine);
-            
+                return propertyString.Replace(extract, xmlLine);
+
             // add new
             return propertyString + xmlLine + "\r\n";
         }
@@ -871,7 +906,7 @@ namespace Westwind.Utilities
         {
             urlEncoded = "&" + urlEncoded + "&";
 
-            int Index = urlEncoded.IndexOf("&" + key + "=",StringComparison.OrdinalIgnoreCase);
+            int Index = urlEncoded.IndexOf("&" + key + "=", StringComparison.OrdinalIgnoreCase);
             if (Index < 0)
                 return string.Empty;
 
@@ -909,7 +944,7 @@ namespace Westwind.Utilities
 
 
 
-        static char[] base36CharArray = "0123456789abcdefghijklmnopqrstuvwxyz".ToCharArray();            
+        static char[] base36CharArray = "0123456789abcdefghijklmnopqrstuvwxyz".ToCharArray();
         static string base36Chars = "0123456789abcdefghijklmnopqrstuvwxyz";
 
         /// <summary>
@@ -926,14 +961,14 @@ namespace Westwind.Utilities
             bool isNegative = value < 0;
             if (isNegative)
                 value = value * -1;
-            
+
             do
             {
                 returnValue = base36CharArray[value % base36CharArray.Length] + returnValue;
                 value /= 36;
             } while (value != 0);
 
-            return isNegative ?  returnValue + "-" : returnValue;
+            return isNegative ? returnValue + "-" : returnValue;
         }
 
         /// <summary>
@@ -947,7 +982,7 @@ namespace Westwind.Utilities
             if (input.EndsWith("-"))
             {
                 isNegative = true;
-                input = input.Substring(0,input.Length-1);
+                input = input.Substring(0, input.Length - 1);
             }
 
             char[] arrInput = input.ToCharArray();
@@ -987,6 +1022,6 @@ namespace Westwind.Utilities
             return string.IsNullOrEmpty(text as string);
         }
 
-        #endregion  
+        #endregion
     }
 }

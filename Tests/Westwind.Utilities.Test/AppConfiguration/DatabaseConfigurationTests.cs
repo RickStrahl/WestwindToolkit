@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using Westwind.Utilities.Test;
 
 namespace Westwind.Utilities.Configuration.Tests
 {
@@ -11,6 +12,9 @@ namespace Westwind.Utilities.Configuration.Tests
     [TestClass]
     public class DatabaseConfigurationTests
     {
+
+
+
         private TestContext testContextInstance;
 
         /// <summary>
@@ -29,6 +33,13 @@ namespace Westwind.Utilities.Configuration.Tests
             }
         }
 
+        [ClassInitialize()]
+        public static void TestClassInitialize(TestContext testContext)
+        {
+            DatabaseInitializer.InitializeDatabase();
+        }
+
+
         /// <summary>
         /// Note: For Web Apps this should be a complete path.
         /// Here the filename references the current directory
@@ -43,7 +54,7 @@ namespace Westwind.Utilities.Configuration.Tests
             config.Initialize();
 
             Assert.IsNotNull(config);
-            Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));                       
+            Assert.IsFalse(string.IsNullOrEmpty(config.ApplicationName));
         }
 
         [TestMethod]
@@ -52,7 +63,7 @@ namespace Westwind.Utilities.Configuration.Tests
             var config = new DatabaseConfiguration();
             // connection string and table are provided in OnInitialize()
             config.Initialize();
-            
+
             config.MaxDisplayListItems = 12;
             config.DebugMode = DebugModes.DeveloperErrorMessage;
             config.ApplicationName = "Changed";
@@ -62,12 +73,12 @@ namespace Westwind.Utilities.Configuration.Tests
             config.Password = "seekrit2";
             config.AppConnectionString = "server=.;database=HRDatabase";
 
-            Assert.IsTrue(config.Write(),"Write Failed: " + config.ErrorMessage);
+            Assert.IsTrue(config.Write(), "Write Failed: " + config.ErrorMessage);
 
             // create a new instance and read the values from the database
             var config2 = new DatabaseConfiguration();
-            config2.Initialize(); 
-            
+            config2.Initialize();
+
             Assert.IsNotNull(config2);
             Assert.AreEqual(config.MaxDisplayListItems, config2.MaxDisplayListItems);
             Assert.AreEqual(config.DebugMode, config2.DebugMode);

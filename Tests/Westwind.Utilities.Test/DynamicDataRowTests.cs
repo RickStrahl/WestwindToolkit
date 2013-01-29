@@ -8,7 +8,7 @@ using Westwind.Utilities;
 using Microsoft.CSharp.RuntimeBinder;
 using Westwind.Utilities.Data;
 
-namespace Westwind.Tools.Tests
+namespace Westwind.Utilities.Data.Tests
 {
     /// <summary>
     /// Summary description for DynamicDataRowTests

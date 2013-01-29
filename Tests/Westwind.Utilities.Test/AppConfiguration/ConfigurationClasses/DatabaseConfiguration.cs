@@ -12,6 +12,7 @@ namespace Westwind.Utilities.Configuration.Tests
     /// </summary>
     public class DatabaseConfiguration : Westwind.Utilities.Configuration.AppConfiguration
     {
+        // Configuration store values 
         public string ApplicationName { get; set; }
         public DebugModes DebugMode { get; set; }
         public int MaxDisplayListItems { get; set; }
@@ -21,7 +22,7 @@ namespace Westwind.Utilities.Configuration.Tests
 
         // Must implement public default constructor
         public DatabaseConfiguration()
-        {
+        {            
             ApplicationName = "Configuration Tests";
             DebugMode = DebugModes.Default;
             MaxDisplayListItems = 15;
@@ -37,7 +38,7 @@ namespace Westwind.Utilities.Configuration.Tests
         ///// </summary>
         protected override IConfigurationProvider OnCreateDefaultProvider(string sectionName, object configData)
         {
-            string connectionString = "LocalDatabaseConnection";
+            string connectionString = "WestwindToolkitSamples";
             string tableName = "ConfigurationData";
 
             // ConfigData: new { ConnectionString = "...", Tablename = "..." }
@@ -53,7 +54,7 @@ namespace Westwind.Utilities.Configuration.Tests
                     Key = 0,
                     ConnectionString = connectionString,
                     Tablename = tableName,
-                    ProviderName = "System.Data.SqlServerCe.4.0",
+                    //ProviderName = "System.Data.SqlServerCe.4.0",
                     EncryptionKey = "ultra-seekrit", // use a generated value here
                     PropertiesToEncrypt = "Password,AppConnectionString"
                 };

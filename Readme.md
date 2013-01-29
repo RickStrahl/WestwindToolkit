@@ -17,7 +17,3 @@ The main components of the West Wind Toolkit are:
 * Westwind.Web.Mvc - MVC specific helpers and components
 * Westwind.Web.WebForms - WebForms helpers and controls
 * Westwind.Data - Business Object wrapper for Entity Framework Code First
-
-
-* [Westwind.ApplicationConfiguration Documentation](http://west-wind.com/westwindwebtoolkit/docs?page=_2le027umn.htm)
-* [Westwind.ApplicationConfiguration Class Reference](http://west-wind.com/westwindwebtoolkit/docs?page=_3ff0psdpu.htm)

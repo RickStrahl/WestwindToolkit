@@ -3,14 +3,17 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Westwind.Utilities.Data;
 using System.Data;
 using Westwind.Utilities;
 using Westwind.Utilities.Logging;
 using System.Diagnostics;
 using System.Data.Common;
+using System.Data.Entity;
+using Westwind.Utilities;
+using Westwind.Utilities.Data;
+using Westwind.Utilities.Test;
 
-namespace Westwind.UtilitiesTests
+namespace Westwind.Utilities.Data.Tests
 {
     /// <summary>
     /// Summary description for DataUtilsTests
@@ -18,6 +21,9 @@ namespace Westwind.UtilitiesTests
     [TestClass]
     public class DataUtilsTests
     {
+        private const string STR_TestDataConnection = "WestwindToolkitSamples";
+
+
         public DataUtilsTests()
         {
             //
@@ -48,8 +54,10 @@ namespace Westwind.UtilitiesTests
         // You can use the following additional attributes as you write your tests:
         //
         // Use ClassInitialize to run code before running the first test in the class
-        // [ClassInitialize()]
-        // public static void MyClassInitialize(TestContext testContext) { }
+        public static void MyClassInitialize(TestContext testContext) 
+        {
+            DatabaseInitializer.InitializeDatabase();
+        }
         //
         // Use ClassCleanup to run code after all tests in a class have run
         // [ClassCleanup()]
@@ -68,9 +76,9 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void DataReaderToObjectTest()
         {
-            using (SqlDataAccess data = new SqlDataAccess("TestDataConnection"))
+            using (SqlDataAccess data = new SqlDataAccess(STR_TestDataConnection))
             {
-                IDataReader reader = data.ExecuteReader("select top 1 * from TestLogFile");
+                IDataReader reader = data.ExecuteReader("select top 1 * from ApplicationLog");
                 Assert.IsNotNull(reader, "Couldn't access Data reader. " + data.ErrorMessage);
                 Assert.IsTrue(reader.Read(), "Couldn't read from DataReader");
                 WebLogEntry entry = new WebLogEntry();
@@ -83,15 +91,15 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void DataReaderToIEnumerableObjectTest()
         {
-            using (SqlDataAccess data = new SqlDataAccess("TestDataConnection"))
+            using (SqlDataAccess data = new SqlDataAccess(STR_TestDataConnection))
             {
-                DbDataReader reader = data.ExecuteReader("select top 1 * from TestLogFile");
+                DbDataReader reader = data.ExecuteReader("select top 1 * from ApplicationLog");
                 reader.Close();
 
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
-                reader = data.ExecuteReader("select * from TestLogFile");
+                reader = data.ExecuteReader("select * from ApplicationLog");
                 Assert.IsNotNull(reader, "Reader null: " + data.ErrorMessage);
                 var entries = DataUtils.DataReaderToIEnumerable<WebLogEntry>(reader);
                 foreach (var entry in entries)
@@ -101,7 +109,7 @@ namespace Westwind.UtilitiesTests
                 sw.Stop();
 
                 // run again to check for connections not closed
-                reader = data.ExecuteReader("select * from TestLogFile");
+                reader = data.ExecuteReader("select * from ApplicationLog");
                 Assert.IsNotNull(reader, "Reader null: " + data.ErrorMessage);
                 entries = DataUtils.DataReaderToIEnumerable<WebLogEntry>(reader);
                 foreach (var entry in entries)
@@ -116,15 +124,15 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void DataReaderToListTest()
         {
-            using (SqlDataAccess data = new SqlDataAccess("TestDataConnection"))
+            using (SqlDataAccess data = new SqlDataAccess(STR_TestDataConnection))
             {
-                DbDataReader reader = data.ExecuteReader("select top 1 * from TestLogFile");
+                DbDataReader reader = data.ExecuteReader("select top 1 * from ApplicationLog");
                 reader.Close();
 
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
-                reader = data.ExecuteReader("select * from TestLogFile");
+                reader = data.ExecuteReader("select * from ApplicationLog");
                 Assert.IsNotNull(reader, "Reader null: " + data.ErrorMessage);
                 var entries = DataUtils.DataReaderToObjectList<WebLogEntry>(reader);
 

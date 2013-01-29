@@ -11,7 +11,7 @@ using System.Runtime.Serialization;
 using System.Web.Script.Serialization;
 
 
-namespace Westwind.Tools.Tests
+namespace Westwind.Utilities.Tests
 {
     /// <summary>
     /// Summary description for UnitTest1

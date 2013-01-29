@@ -8,8 +8,9 @@ using System.Data;
 using Westwind.Utilities;
 using Westwind.Utilities.Logging;
 using System.Diagnostics;
+using Westwind.Utilities.Test;
 
-namespace Westwind.UtilitiesTests
+namespace Westwind.Utilities.Data.Tests
 {
     /// <summary>
     /// Summary description for DataUtilsTests
@@ -17,7 +18,7 @@ namespace Westwind.UtilitiesTests
     [TestClass]
     public class SqlDataAccessTests
     {
-        private const string STR_TestDataConnection = "TestDataConnection";
+        private const string STR_ConnectionString = "WestwindToolkitSamples";
         public SqlDataAccessTests()
         {
             //
@@ -51,9 +52,11 @@ namespace Westwind.UtilitiesTests
         [ClassInitialize()]
         public static void Initialize(TestContext testContext) 
         {
+            DatabaseInitializer.InitializeDatabase();
+
             // warm up data connection
-            SqlDataAccess data = new SqlDataAccess(STR_TestDataConnection);
-            var readr = data.ExecuteReader("select top 1 * from TestLogFile");
+            SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
+            var readr = data.ExecuteReader("select top 1 * from Customers");
             readr.Read();
             readr.Close();
 
@@ -80,9 +83,9 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void DataReaderToObjectTest()
         {
-            SqlDataAccess data = new SqlDataAccess(STR_TestDataConnection);
+            SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
 
-            IDataReader reader = data.ExecuteReader("select top 1 * from TestLogFile");
+            IDataReader reader = data.ExecuteReader("select top 1 * from ApplicationLog");
 
             Assert.IsNotNull(reader, "Couldn't access Data reader. " + data.ErrorMessage);
 
@@ -99,12 +102,12 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void ExecuteDataReaderToListTest()
         {
-            SqlDataAccess data = new SqlDataAccess(STR_TestDataConnection);
+            SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
             
             var swatch = new Stopwatch();
             swatch.Start();
             
-            var recs = data.ExecuteReader<WebLogEntry>("select * from TestLogFile").ToList();
+            var recs = data.ExecuteReader<WebLogEntry>("select * from ApplicationLog").ToList();
             
             swatch.Stop();
 
@@ -119,12 +122,12 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void ExecuteDataReaderToIEnumerableTest()
         {
-            SqlDataAccess data = new SqlDataAccess(STR_TestDataConnection);
+            SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
 
             var swatch = new Stopwatch();
             swatch.Start();
 
-            var enumerable = data.ExecuteReader<WebLogEntry>("select * from TestLogFile");
+            var enumerable = data.ExecuteReader<WebLogEntry>("select * from ApplicationLog");
 
             var recs = new List<WebLogEntry>();
             foreach (var entry in enumerable)
@@ -148,13 +151,13 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void ExecuteDataReaderToListManualTest()
         {
-            SqlDataAccess data = new SqlDataAccess(STR_TestDataConnection);
+            SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
         
             var swatch = new Stopwatch();
             swatch.Start();
 
             var entries = new List<WebLogEntry>();
-            var reader = data.ExecuteReader("select * from TestLogFile");
+            var reader = data.ExecuteReader("select * from ApplicationLog");
             
             while (reader.Read())
             {
@@ -185,12 +188,12 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void NewParametersReaderTest()
         {
-            var data = new SqlDataAccess(STR_TestDataConnection);
+            var data = new SqlDataAccess(STR_ConnectionString);
 
 
             var swatch = Stopwatch.StartNew();
 
-            var reader = data.ExecuteReader( "select * from TestLogFile where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
+            var reader = data.ExecuteReader( "select * from ApplicationLog where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
 
             Assert.IsNotNull(reader, data.ErrorMessage);
 
@@ -212,17 +215,17 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void NewParametersTableTest()
         {
-            var data = new SqlDataAccess(STR_TestDataConnection);
+            var data = new SqlDataAccess(STR_ConnectionString);
 
             // warmup
-            data.ExecuteScalar("select top1 id from TestLogFile");
+            data.ExecuteScalar("select top1 id from ApplicationLog");
 
-            //var cmd = data.CreateCommand("select * from TestLogFile where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
+            //var cmd = data.CreateCommand("select * from ApplicationLog where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
             //var table = data.ExecuteTable("TLogs", cmd);
 
             var swatch = Stopwatch.StartNew();
 
-            var table = data.ExecuteTable("TLogs","select * from TestLogFile where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
+            var table = data.ExecuteTable("TLogs","select * from ApplicationLog where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
 
             Assert.IsNotNull(table, data.ErrorMessage);
 
@@ -239,12 +242,12 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void NewParametersExecuteEntityTest()
         {
-            using (var data = new SqlDataAccess(STR_TestDataConnection))
+            using (var data = new SqlDataAccess(STR_ConnectionString))
             {
-                //var cmd = data.CreateCommand("select * from TestLogFile where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
+                //var cmd = data.CreateCommand("select * from ApplicationLog where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
                 //var table = data.ExecuteTable("TLogs", cmd);
                 var swatch = Stopwatch.StartNew();
-                var entries = data.ExecuteReader<WebLogEntry>("select * from TestLogFile where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
+                var entries = data.ExecuteReader<WebLogEntry>("select * from ApplicationLog where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
                 var logEntries = entries.ToList();
                 Assert.IsNotNull(logEntries, data.ErrorMessage);
                 Console.WriteLine(logEntries.Count);
@@ -260,10 +263,10 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void NewParametersxecuteDynamicTest()
         {
-            using (var data = new SqlDataAccess(STR_TestDataConnection))
+            using (var data = new SqlDataAccess(STR_ConnectionString))
             {
                 var swatch = Stopwatch.StartNew();
-                var reader = data.ExecuteReader("select * from TestLogFile where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
+                var reader = data.ExecuteReader("select * from ApplicationLog where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
                 dynamic dreader = new DynamicDataReader(reader);
                 Assert.IsNotNull(reader, data.ErrorMessage);
                 int readerCount = 0;
@@ -282,13 +285,13 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void FindByIdTest()
         {
-            using (var data = new SqlDataAccess(STR_TestDataConnection))
+            using (var data = new SqlDataAccess(STR_ConnectionString))
             {
-                var entry = data.Find<WebLogEntry>(1, "TestLogFile", "Id");
+                var entry = data.Find<WebLogEntry>(1, "ApplicationLog", "Id");
                 Assert.IsNotNull(entry, data.ErrorMessage);
                 Console.WriteLine(entry.Entered + " " + entry.Message);
                 var entry2 = new WebLogEntry();
-                data.GetEntity(entry2, "TestlogFile", "Id", 1);
+                data.GetEntity(entry2, "ApplicationLog", "Id", 1);
                 Assert.IsNotNull(entry2);
                 Assert.AreEqual(entry2.Message, entry.Message);
                 Console.WriteLine(entry2.Entered + " " + entry2.Message);
@@ -299,9 +302,9 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void FindBySqlTest()
         {
-            using (var data = new SqlDataAccess(STR_TestDataConnection))
+            using (var data = new SqlDataAccess(STR_ConnectionString))
             {
-                var entry = data.Find<WebLogEntry>("select * from TestLogFile where id=@0", 1);
+                var entry = data.Find<WebLogEntry>("select * from ApplicationLog where id=@0", 1);
                 Assert.IsNotNull(entry, data.ErrorMessage);
                 Console.WriteLine(entry.Entered + " " + entry.Message);
             }
@@ -312,10 +315,10 @@ namespace Westwind.UtilitiesTests
         [TestMethod]
         public void QueryTest()
         {
-            using (var data = new SqlDataAccess(STR_TestDataConnection))
+            using (var data = new SqlDataAccess(STR_ConnectionString))
             {
                 var swatch = Stopwatch.StartNew();
-                var logEntries = data.Query<WebLogEntry>("select * from TestLogFile where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1)).ToList();
+                var logEntries = data.Query<WebLogEntry>("select * from ApplicationLog where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1)).ToList();
                 Assert.IsNotNull(logEntries, data.ErrorMessage);
                 Console.WriteLine(logEntries.Count);
                 foreach (var logEntry in logEntries)

@@ -5,7 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Westwind.Utilities;
 
-namespace Westwind.Tools.Tests
+namespace Westwind.Utilities.Tests
 {
     /// <summary>
     /// Summary description for StringUtilsTests
@@ -202,6 +202,27 @@ namespace Westwind.Tools.Tests
             Assert.IsTrue(list.Distinct().Count() == 100, "Didn't create 100 unique entries");
         }
 
+        [TestMethod]
+        public void RandomStringTest()
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                string random = StringUtils.RandomString(20);
+                foreach (var ch in random)
+                    Assert.IsTrue(char.IsLetter(ch));
+            }
+        }
+
+        [TestMethod]
+        public void RandomStringWithNumbersTest()
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                string random = StringUtils.RandomString(20,true);
+                foreach (var ch in random)
+                    Assert.IsTrue(char.IsLetterOrDigit(ch));
+            }
+        }
 
         [TestMethod]
         public void ExtractStringTest()

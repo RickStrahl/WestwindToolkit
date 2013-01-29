@@ -5,7 +5,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Westwind.Utilities;
 
-namespace Westwind.UtiltitiesTests
+namespace Westwind.Utilities.Tests
 {
     /// <summary>
     /// Summary description for UnitTest1

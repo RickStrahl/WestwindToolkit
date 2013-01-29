@@ -6,7 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Text.RegularExpressions;
 using Westwind.Utilities;
 
-namespace Westwind.Tools.Tests
+namespace Westwind.Utilities.Tests
 {
     /// <summary>
     /// Summary description for StrExtractTest

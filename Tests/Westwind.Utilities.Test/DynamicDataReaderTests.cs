@@ -10,7 +10,7 @@ using Westwind.Utilities.Data;
 using System.Diagnostics;
 using System.Threading;
 
-namespace Westwind.Tools.Tests
+namespace Westwind.Utilities.Data.Tests
 {
     /// <summary>
     /// Summary description for DynamicDataRowTests

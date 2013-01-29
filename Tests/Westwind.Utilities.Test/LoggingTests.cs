@@ -6,8 +6,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Westwind.Utilities;
 using Westwind.Utilities.Logging;
 using System.Data;
+using Westwind.Utilities.Test;
 
-namespace Westwind.Utilities.Tests
+namespace Westwind.Utilities.Logging.Tests
 {
     /// <summary>
     /// NOTE:
@@ -17,7 +18,8 @@ namespace Westwind.Utilities.Tests
     [TestClass]
     public class LoggingTests
     {
-        private const string STR_TestLogFile = "TestLogFile";
+        private const string STR_TestLogFile = "ApplicationLog";
+        private const string STR_ConnectionString = "WestwindToolkitSamples";
 
         public LoggingTests()
         {
@@ -49,8 +51,11 @@ namespace Westwind.Utilities.Tests
         // You can use the following additional attributes as you write your tests:
         //
         // Use ClassInitialize to run code before running the first test in the class
-        // [ClassInitialize()]
-        // public static void MyClassInitialize(TestContext testContext) { }
+        //[ClassInitialize()]
+        //public static void MyClassInitialize(TestContext testContext) 
+        //{
+
+        //}
         //
         // Use ClassCleanup to run code after all tests in a class have run
         // [ClassCleanup()]
@@ -68,36 +73,41 @@ namespace Westwind.Utilities.Tests
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)
         {
+            DatabaseInitializer.InitializeDatabase();
+
             // Set up the LogManager once
-            SqlLogAdapter adapter = new SqlLogAdapter("TestDataConnection");
+            SqlLogAdapter adapter = new SqlLogAdapter(STR_ConnectionString);
             adapter.LogFilename = STR_TestLogFile;
-            LogManager.Create( adapter );
+            LogManager.Create(adapter);
         }
 
         [TestMethod]
         public void CreateDeleteLogWithSqlAdapterTest()
         {
-            SqlLogAdapter adapter = new SqlLogAdapter("TestDataConnection");
+            SqlLogAdapter adapter = new SqlLogAdapter(STR_ConnectionString);
             adapter.LogFilename = "ApplicationLog2";
 
             bool res = adapter.CreateLog();
             Assert.IsTrue(res, "Application Log not Created");
 
-            //res = adapter.DeleteLog();
-            //Assert.IsTrue(res, "Application Log not deleted");
+            res = adapter.DeleteLog();
+            Assert.IsTrue(res, "Application Log not deleted");
 
         }
 
         [TestMethod]
-        public void WriteLogEntryTest()
+        public void WriteLogEntryWithAdapterTest()
         {
-            SqlLogAdapter adapter = new SqlLogAdapter("TestDataConnection");
+            SqlLogAdapter adapter = new SqlLogAdapter(STR_ConnectionString);
             adapter.LogFilename = STR_TestLogFile;
+
             WebLogEntry entry = new WebLogEntry();
             entry.ErrorLevel = ErrorLevels.Message;
             entry.Message = "Testing " + DateTime.Now.ToString();
 
             bool res = adapter.WriteEntry(entry);
+
+            //bool res = adapter.WriteEntry(entry);
 
             Assert.IsTrue(res, "Entry couldn't be written to database");
 
@@ -110,9 +120,6 @@ namespace Westwind.Utilities.Tests
         [TestMethod]
         public void WriteWebLogEntryTest()
         {
-            SqlLogAdapter adapter = new SqlLogAdapter("TestDataConnection");
-            adapter.LogFilename = STR_TestLogFile;
-
             WebLogEntry entry = new WebLogEntry();
             entry.ErrorLevel = ErrorLevels.Message;
             entry.Message = "Testing " + DateTime.Now.ToString();
@@ -122,11 +129,11 @@ namespace Westwind.Utilities.Tests
             entry.QueryString = "Logout=true";
             entry.RequestDuration = 0.12M;
 
-            bool res = adapter.WriteEntry(entry);
+            bool res = LogManager.Current.WriteEntry(entry);
 
             Assert.IsTrue(res, "Entry couldn't be written to database");
 
-            LogEntry entry2 = adapter.GetEntry(entry.Id);
+            LogEntry entry2 = LogManager.Current.GetWebLogEntry(entry.Id);
 
             Assert.IsTrue(entry.Message == entry2.Message);
             Assert.IsTrue(entry.ErrorLevel == entry2.ErrorLevel);
@@ -163,13 +170,17 @@ namespace Westwind.Utilities.Tests
         [TestMethod]
         public void XmlLogAdapterTest()
         {
-            XmlLogAdapter adapter = new XmlLogAdapter() { ConnectionString = @"c:\temp\applicationlog.xml" };
 
-            WebLogEntry entry = new WebLogEntry() { Message = "Entered on: " + DateTime.Now.ToString(),
-            ErrorLevel = ErrorLevels.Log,
-            Details = "Longer text goes here" };
+            XmlLogAdapter adapter = new XmlLogAdapter() { ConnectionString = TestContext.DeploymentDirectory + @"\applicationlog.xml" };
 
-            adapter.WriteEntry(entry);
+            WebLogEntry entry = new WebLogEntry()
+            {
+                Message = "Entered on: " + DateTime.Now.ToString(),
+                ErrorLevel = ErrorLevels.Log,
+                Details = StringUtils.RandomString(40,true)
+            };
+
+            Assert.IsTrue(adapter.WriteEntry(entry), "Failed to write entry to log");
         }
     }
 }
