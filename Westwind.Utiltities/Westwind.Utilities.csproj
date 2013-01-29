@@ -87,6 +87,7 @@
     <Compile Include="Utilities\DebugUtils.cs" />
     <Compile Include="Utilities\ExpandUrlsParser.cs" />
     <Compile Include="Utilities\FileUtils.cs" />
+    <Compile Include="Utilities\GenericUtilities.cs" />
     <Compile Include="Utilities\NetworkUtils.cs" />
     <Compile Include="Utilities\ReflectionUtils.cs" />
     <Compile Include="Utilities\SecurityUtils.cs" />

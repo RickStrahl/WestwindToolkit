@@ -460,6 +460,17 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
+        /// Determines if a string is contained in a list of other strings
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public static bool Inlist(string s, params string[] list)
+        {
+            return list.Contains(s);
+        }
+
+        /// <summary>
         /// Return a string in proper Case format
         /// </summary>
         /// <param name="Input"></param>
@@ -793,6 +804,7 @@ namespace Westwind.Utilities
         {
             return StringToStream(text, Encoding.Default);
         }
+
 
         /// <summary>
         /// Turns a BinHex string that contains raw byte values
