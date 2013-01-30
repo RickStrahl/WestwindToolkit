@@ -416,9 +416,6 @@ namespace Westwind.Utilities
             return;
         }
 
-
-
-
         /// <summary>
         /// The default SQL date used by InitializeDataRowWithBlanks. Considered a blank date instead of null.
         /// </summary>

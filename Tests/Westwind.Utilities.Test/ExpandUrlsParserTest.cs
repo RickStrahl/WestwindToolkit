@@ -65,7 +65,7 @@ namespace Westwind.Utilities.Tests
         {
             string text = "This is a test with an [embedded link|www.west-wind.com] that is formatted and one to www.west-wind.com that is not.";
 
-            string parsed = StringUtils.ExpandUrls(text, null, true);
+            string parsed = UrlParser.ExpandUrls(text, null, true);
 
             TestContext.WriteLine("{0}", parsed);
 
@@ -78,7 +78,7 @@ namespace Westwind.Utilities.Tests
         {
             string text = "This is a test with an [embedded link|jquery.ui.com] that is formatted and one to http://skodia.name.com that is not.";
 
-            string parsed = StringUtils.ExpandUrls(text, null, true);
+            string parsed = UrlParser.ExpandUrls(text, null, true);
 
             TestContext.WriteLine("{0}", parsed);
 

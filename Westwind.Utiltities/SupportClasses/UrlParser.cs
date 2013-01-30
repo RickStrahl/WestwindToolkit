@@ -46,10 +46,28 @@ namespace Westwind.Utilities
     /// Internally used class that is used to expand links in text
     /// strings.
     /// </summary>
-    internal class ExpandUrlsParser
+    public class UrlParser
     {
-        public string Target = string.Empty;
-        public bool ParseFormattedLinks = false;
+        internal string Target = string.Empty;
+        internal bool ParseFormattedLinks = false;
+
+        /// <summary>
+        /// Expands links into HTML hyperlinks inside of text or HTML.
+        /// </summary>
+        /// <param name="text">The text to expand</param>
+        /// <param name="target">Target frame where links are displayed</param>
+        /// <param name="parseFormattedLinks">Allows parsing of links in the following format [text|www.site.com]</param>
+        /// <returns></returns>
+        public static string ExpandUrls(string text, string target = null, bool parseFormattedLinks = false)
+        {
+            if (target == null)
+                target = string.Empty;
+
+            UrlParser Parser = new UrlParser();
+            Parser.Target = target;
+            Parser.ParseFormattedLinks = parseFormattedLinks;
+            return Parser.ExpandUrls(text);
+        }
 
         /// <summary>
         /// Expands links into HTML hyperlinks inside of text or HTML.
