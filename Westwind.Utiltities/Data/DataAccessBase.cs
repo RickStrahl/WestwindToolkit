@@ -841,10 +841,6 @@ namespace Westwind.Utilities.Data
             {
                 SetError(ex.GetBaseException());
             }
-            //catch (DbException ex)
-            //{
-            //    SetError(ex);
-            //}
             finally
             {
                 CloseConnection();
