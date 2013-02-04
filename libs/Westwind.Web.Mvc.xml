@@ -1,0 +1,631 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Westwind.Web.Mvc</name>
+    </assembly>
+    <members>
+        <member name="T:Westwind.Web.Mvc.BaseController">
+            <summary>
+            Base Controller implementation that holds UserState,
+            ErrorDisplay objects that are preinitialized.
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.Mvc.BaseController.UserState">
+            <summary>
+            Contains User state information retrieved from the authentication system
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.Mvc.BaseController.ErrorDisplay">
+            <summary>
+            ErrorDisplay control that holds page level error information
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.BaseController.CreateViewModel``1">
+            <summary>
+            Creates or updates a ViewModel and adds values to some of the
+            stock properties of the Controller. 
+            
+            This default implementation initializes the ErrorDisplay and UserState
+            objects after creation.
+            </summary>
+            <typeparam name="TViewModel"></typeparam>
+            <returns></returns>        
+        </member>
+        <member name="M:Westwind.Web.Mvc.BaseController.InitializeViewModel(Westwind.Web.Mvc.BaseViewModel)">
+            <summary>
+            Updates a ViewModel and adds values to some of the
+            stock properties of the Controller. 
+            
+            This default implementation initializes the ErrorDisplay and UserState
+            objects after creation.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.BaseController.InitializeExplicit(System.Web.Routing.RequestContext)">
+            <summary>
+            Allow external initialization of this controller by explicitly
+            passing in a request context
+            </summary>
+            <param name="requestContext"></param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.BaseController.DisplayErrorPage(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Displays a self contained error page without redirecting.
+            Depends on ErrorController.ShowError() to exist
+            </summary>
+            <param name="title"></param>
+            <param name="message"></param>
+            <param name="redirectTo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowError(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Displays a generic error message
+            </summary>
+            <param name="title"></param>
+            <param name="message"></param>
+            <param name="redirectTo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorFromModel(Westwind.Web.Mvc.ErrorViewModel)">
+            <summary>
+            Displays a generic error message but allows passing a view model directly for 
+            additional flexibility
+            </summary>
+            <param name="errorModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorPageResult(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Static method that can be called from outside of MVC requests
+            (like in Application_Error) to display an error View.
+            </summary>
+            <param name="title"></param>
+            <param name="message"></param>
+            <param name="redirectTo"></param>
+            <param name="IsHtml"></param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowMessagePageResult(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Static method that can be called from outside of MVC requests
+            (like in Application_Error) to display an error View.
+            </summary>
+            <param name="title"></param>
+            <param name="message"></param>
+            <param name="redirectTo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorPageResult(Westwind.Web.Mvc.ErrorViewModel)">
+            <summary>
+            Static method that can be called from outside of MVC requests
+            (like in Application_Error) to display an error View.
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.Mvc.CompressContentAttribute">
+            <summary>
+            Attribute that can be added to controller methods to force content
+            to be GZip encoded if the client supports it
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.CompressContentAttribute.OnActionExecuting(System.Web.Mvc.ActionExecutingContext)">
+            <summary>
+            Override to compress the content that is generated by
+            an action method.
+            </summary>
+            <param name="filterContext"></param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.CompressContentAttribute.IsGZipSupported">
+            <summary>
+            Determines if GZip is supported
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.CompressContentAttribute.GZipEncodePage">
+            <summary>
+            Sets up the current page or handler to use GZip through a Response.Filter
+            IMPORTANT:  
+            You have to call this method before any output is generated!
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.Mvc.ErrorDisplay">
+            <summary>
+            An error display component that allows rich rendering of individual messages
+            as well as validation error messages.
+            
+            Object should be passed in to view end rendered with 
+            &lt;%= ((ErrorDisplay) ViewData["ErrorDisplay"]).Show(450,true) %&gt;
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorDisplay.Render(System.Int32,System.Boolean)">
+            <summary>
+            Method 
+            </summary>
+            <param name="width"></param>
+            <param name="center"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorDisplay.AddMessages(System.Web.Mvc.ModelStateDictionary,System.String)">
+            <summary>
+            Adds ModelState errors to the validationErrors
+            </summary>
+            <param name="modelErrors"></param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorDisplay.AddMessages(Westwind.Utilities.ValidationErrorCollection,System.String)">
+            <summary>
+            Adds an existing set of Validation Errors to the DisplayErrors
+            </summary>
+            <param name="validationErrors"></param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorDisplay.AddMessage(System.String,System.String)">
+            <summary>
+            Adds an individual model error
+            </summary>
+            <param name="errorMessage"></param>
+            <param name="control"></param>
+        </member>
+        <member name="P:Westwind.Web.Mvc.ErrorDisplay.Message">
+            <summary>
+            The message that is displayed
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.ErrorDisplay.HtmlEncodeMessage">
+            <summary>
+            Flag that determines whether the message is displayed
+            as HTML or as text. By default message is encoded as text (true).
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.ErrorDisplay.DisplayErrors">
+            <summary>
+            Holds a modelstate errors collection
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.Mvc.UserState">
+            <summary>
+            User information container that can easily 'serialize'
+            to a string and back. Meant to hold basic logon information
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.UserState.ToString">
+            <summary>
+            Exports a short string list of Id, Email, Name separated by |
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.UserState.FromString(System.String)">
+            <summary>
+            Imports Id, Email and Name from a | separated string
+            </summary>
+            <param name="itemString"></param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.UserState.CreateFromString(System.String)">
+            <summary>
+            Creates an instance of a userstate object from serialized
+            data.
+            
+            IsEmpty() will return true if data was not loaded. A 
+            UserData object is always returned.
+            </summary>
+            <param name="userData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.UserState.CreateFromFormsAuthTicket">
+            <summary>
+            Creates a UserData object from authentication information in the 
+            Forms Authentication ticket.
+            
+            IsEmpty() will return false if no data was loaded but
+            a Userdata object is always returned
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.UserState.IsEmpty">
+            <summary>
+            Determines whether UserState instance
+            holds user information.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Westwind.Web.Mvc.UserState.Name">
+            <summary>
+            The display name for the userId
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.UserState.Email">
+            <summary>
+            The user's email address or login acount
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.UserState.UserId">
+            <summary>
+            The user's user Id as a string
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.UserState.IsAdmin">
+            <summary>
+            The users admin status
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.UserState.UserIdInt">
+            <summary>
+            Returns the User Id as an int if convertiable
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.BaseControl.ApplyAttributes">
+            <summary>
+            renders standard attributes. Override for any custom attributes
+            you want to add to the control. When overriding the base class
+            method call the base method to include the stock rendering.
+            
+            Called by RenderAttributes.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.BaseControl.RenderAttributes">
+            <summary>
+            Renders the attributes into the output stream
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.BaseControl.Render">
+            <summary>
+            Returns rendered HTML output
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.BaseControl.MergeAttributes(System.Object)">
+            <summary>
+            Merges attributes from an object map 
+            </summary>
+            <param name="attributes"></param>
+        </member>
+        <member name="P:Westwind.Web.Mvc.BaseControl.Id">
+            <summary>
+            The ID rendered into the page
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.BaseControl.Name">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.BaseControl.Text">
+            <summary>
+            Text for the control if applicable. This property may 
+            not apply to all types of controls
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.BaseControl.Value">
+            <summary>
+            A value for the control for rendering. May not apply for all controls
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.BaseControl.CssClass">
+            <summary>
+            The CSS class rendered
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.BaseControl.Attributes">
+            <summary>
+            Any Html Attributes for the main element of this control specified as key value strings
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.BaseControl.Styles">
+            <summary>
+            A set of styles specified as key value strings
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.BaseControl.Style">
+            <summary>
+            A style string you want to apply. Augmented by the Styles dictionary property
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.BaseControl.Output">
+            <summary>
+            Internal output writer
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.BaseControl.Page">
+            <summary>
+            Page level helper routines and state features for
+            use internally in the control's code
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.BaseControl.IsFirstRenderOnPage">
+            <summary>
+            Determines whether the control has already been rendered. Use to control
+            whether scripts or other shared page components get rendered more than
+            once.
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.Mvc.DateControl">
+            <summary>
+            Simple Implemnetation of a Date Control that uses
+            ui.jquery's Date picker control. Very rudimentary
+            
+            Requires: jquery.js and ui.jquery.js loaded (which includes date picker)
+                      expects ui. themes in folder below scripts
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.Mvc.HtmlHelperExtensions">
+            <summary>
+            Application specific UrlHelper Extensions
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.HtmlHelperExtensions.Control``1(System.Web.Mvc.HtmlHelper,System.String,``0,System.Object)">
+            <summary>
+            Generic routine that embeds a control derived off base control into the
+            current output stream.
+            
+            DateControl
+            ErrorDisplay        
+            </summary>
+            <typeparam name="ControlType"></typeparam>
+            <param name="htmlHelper"></param>
+            <param name="name"></param>
+            <param name="control"></param>
+            <param name="htmlAttributes"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Westwind.Web.Mvc.PageEnvironment">
+            <summary>
+            Class that can be used by Controls to access some
+            common high level functionality
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.PageEnvironment.EmbedScriptString(System.Text.StringBuilder,System.String,System.String,System.Boolean)">
+            <summary>
+            Embeds a piece of script into the page uniquely by id. 
+            
+            Use this method to ensure this script block is loaded into the page
+            only once based on a common id. First script loaded wins.
+            </summary>
+            <param name="output"></param>
+            <param name="script"></param>
+            <param name="id"></param>
+            <param name="addScriptTags"></param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.PageEnvironment.GetWebResourceUrl(System.Type,System.String)">
+            <summary>
+            Returns a Url to a WebResource as a string
+            </summary>
+            <param name="type">Any type in the same assembly as the Resource</param>
+            <param name="resourceId">The full resource Id in the specified assembly</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.PageEnvironment.EmbedScriptResource(System.Text.StringBuilder,System.Type,System.String,System.String)">
+            <summary>
+            Embeds a script reference into the page
+            </summary>
+            <param name="output"></param>
+            <param name="resourceId"></param>        
+            <param name="id"></param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.PageEnvironment.EmbedScriptReference(System.Text.StringBuilder,System.String,System.String)">
+            <summary>
+            Embeds a script tag that references an external .js/resource
+            </summary>
+            <param name="output"></param>
+            <param name="url"></param>
+            <param name="id"></param>
+        </member>
+        <member name="P:Westwind.Web.Mvc.PageEnvironment.Current">
+            <summary>
+            Current Page State Instance
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.PageEnvironment.CachedPageInstance">
+            <summary>
+            Internal Cached Page instance for access to client script
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.Mvc.UrlHelperExtensions">
+            <summary>
+            Application specific UrlHelper Extensions
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.UrlHelperExtensions.Css(System.Web.Mvc.UrlHelper,System.String,System.String)">
+            <summary>
+            Retrieves a CSS link based on a themes path
+            </summary>
+            <param name="urlHelper"></param>
+            <param name="cssFile"></param>
+            <param name="theme"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Westwind.Web.Mvc.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.Properties.Resources.ViewCouldNotBeFound">
+            <summary>
+              Looks up a localized string similar to View could not be found..
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.Mvc.MvcHtmlUtils">
+            <summary>
+            Set of generic MVC Html Helper utilities
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.MvcHtmlUtils.SelectListItemsFromEnum(System.Type,System.Boolean)">
+            <summary>
+            Returns a selectListItem list for an enumerated value
+            </summary>
+            <param name="enumType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.MvcHtmlUtils.SelectListItemsFromDictionary(System.Collections.IDictionary)">
+            <summary>
+            Takes a dictionary of values and turns it into a SelectListItems enumeration.
+            Converts the dictionary keys  into the value and the dictionary value into
+            the text.
+            </summary>
+            <remarks>
+            Assumes the dictionary keys and values can be turned 
+            into strings using ToString()
+            </remarks>
+            <param name="dict"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.MvcHtmlUtils.RenderPartialViewToString(System.String,System.Object,System.Web.Mvc.ControllerContext)">
+            <summary>
+            Renders a Razor view to a string.
+            </summary>
+            <param name="viewPath"></param>
+            <param name="model"></param>
+            <param name="controllerContext"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.MvcHtmlUtils.RenderViewToString(System.String,System.Object,System.Web.Mvc.ControllerContext)">
+            <summary>
+            Renders a Razor view to a string.
+            </summary>
+            <param name="viewPath"></param>
+            <param name="model"></param>
+            <param name="controllerContext"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.MvcHtmlUtils.RenderViewToString(System.String,System.Object,System.Web.Mvc.ControllerContext,System.Boolean,System.String@)">
+            <summary>
+            Renders a view to a string
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model"></param>
+            <param name="controllerContext"></param>
+            <param name="partial">If true renders partial view (ie. no _layout pages)</param>
+            <param name="razorErrorMessage">Error message to capture</param>
+            <returns></returns>
+        </member>
+        <member name="T:Westwind.Web.Mvc.ViewRenderer">
+            <summary>
+            Class that renders MVC views to a string using the
+            standard MVC View Engine to render the view. 
+            
+            Note: This class can only be used within MVC 
+            applications that have an active ControllerContext.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderView(System.String,System.Object)">
+            <summary>
+            Renders a full MVC view to a string. Will render with the full MVC
+            View engine including running _ViewStart and merging into _Layout        
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">The model to render the view with</param>
+            <returns>String of the rendered view or null on error</returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderPartialView(System.String,System.Object)">
+            <summary>
+            Renders a partial MVC view to string. Use this method to render
+            a partial view that doesn't merge with _Layout and doesn't fire
+            _ViewStart.
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">The model to pass to the viewRenderer</param>
+            <returns>String of the rendered view or null on error</returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderView(System.String,System.Object,System.Web.Mvc.ControllerContext)">
+            <summary>
+            Renders a partial MVC view to string. Use this method to render
+            a partial view that doesn't merge with _Layout and doesn't fire
+            _ViewStart.
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">The model to pass to the viewRenderer</param>
+            <param name="controllerContext">Active Controller context</param>
+            <returns>String of the rendered view or null on error</returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderView(System.String,System.Object,System.Web.Mvc.ControllerContext,System.String@)">
+            <summary>
+            Renders a partial MVC view to string. Use this method to render
+            a partial view that doesn't merge with _Layout and doesn't fire
+            _ViewStart.
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">The model to pass to the viewRenderer</param>
+            <param name="controllerContext">Active Controller context</param>
+            <param name="errorMessage">optional out parameter that captures an error message instead of throwing</param>
+            <returns>String of the rendered view or null on error</returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderPartialView(System.String,System.Object,System.Web.Mvc.ControllerContext)">
+            <summary>
+            Renders a partial MVC view to string. Use this method to render
+            a partial view that doesn't merge with _Layout and doesn't fire
+            _ViewStart.
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">The model to pass to the viewRenderer</param>
+            <param name="controllerContext">Active controller context</param>
+            <returns>String of the rendered view or null on error</returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderPartialView(System.String,System.Object,System.Web.Mvc.ControllerContext,System.String@)">
+            <summary>
+            Renders a partial MVC view to string. Use this method to render
+            a partial view that doesn't merge with _Layout and doesn't fire
+            _ViewStart.
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">The model to pass to the viewRenderer</param>
+            <param name="controllerContext">Active controller context</param>
+            <param name="errorMessage">optional output parameter to receive an error message on failure</param>
+            <returns>String of the rendered view or null on error</returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderViewToStringInternal(System.String,System.Object,System.Boolean)">
+            <summary>
+            Internal method that handles rendering of either partial or 
+            or full views.
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">Model to render the view with</param>
+            <param name="partial">Determines whether to render a full or partial view</param>
+            <returns>String of the rendered view</returns>
+        </member>
+        <member name="P:Westwind.Web.Mvc.ViewRenderer.Context">
+            <summary>
+            Required Controller Context
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.Mvc.PagingDetails">
+            <summary>
+            Contains information about a paging setup
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.Mvc.PagingDetails.ClientPageClickHandler">
+            <summary>
+            Client handler function called on POST operation with page number as parameter
+            </summary>
+        </member>
+    </members>
+</doc>

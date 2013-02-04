@@ -1,0 +1,583 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Westwind.Data</name>
+    </assembly>
+    <members>
+        <member name="T:Westwind.Data.EfCodeFirst.DbContextFactory">
+            <summary>
+            Class that creates dbContext instances and scopes them
+            either to a thread or a Web context for efficient reuse.
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetDbContext``1">
+            <summary>
+            Creates a new DbContext for a specific DbContext type
+            </summary>
+            <typeparam name="TDbContext"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetDbContext``1(System.String)">
+            <summary>
+            Creates a new DbContext for a specific DbContext type with an explicit
+            connection string id
+            </summary>
+            <typeparam name="TDbContext"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetWebRequestOrThreadScopedDataContext``1(System.String,System.String)">
+            <summary>
+            Retrieves a Web Request DbContext if available. If not available will use a thread scoped DbContext instead
+            </summary>
+            <typeparam name="TDbContext"></typeparam>
+            <param name="connectionStringId">Optional connection string ID from .config file</param>
+            <param name="key">optional key name of the cached item</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetWebRequestScopedDbContext``1(System.String,System.String)">
+            <summary>
+            Creates a ASP.NET Context scoped instance of a DbContext. This static
+            method creates a single instance and reuses it whenever this method is
+            called.
+            
+            This version creates an internal request specific key shared key that is
+            shared by each caller of this method from the current Web request.
+            </summary>
+            <param name="connectionStringId">optional connectionstring id to load context with</param>
+            <param name="key">Optional name of the key to store</param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetThreadScopedDbContext``1(System.String,System.String)">
+            <summary>
+            Creates a Thread Scoped DataContext object that can be reused.
+            The DataContext is stored in Thread local storage.
+            </summary>
+            <typeparam name="TDataContext"></typeparam>
+            <param name="connectionStringId">optional connection string ID from config file</param>
+            <param name="key">optional key name of the context to cache</param>     
+            <typeparam name="TDbContext">DbContext Parameter</typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetWebRequestScopedDbContextInternal(System.Type,System.String,System.String)">
+            <summary>
+            Internal method that handles creating a context that is scoped to the HttpContext Items collection
+            by creating and holding the DataContext there.
+            </summary>
+            <param name="type"></param>
+            <param name="key"></param>
+            <param name="connectionString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetThreadScopedDbContextInternal(System.Type,System.String,System.String)">
+            <summary>
+            Creates a Thread Scoped DataContext object that can be reused.
+            The DataContext is stored in Thread local storage.
+            </summary>
+            <typeparam name="TDataContext"></typeparam>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2">
+            <summary>
+            Business object base class that acts as a container for a base entity
+            type and a DbContext instance. Subclasses of this business object
+            should be used to implement most data related logic that deals with
+            creating, updating, removing and querying of data use EF Code First.
+            
+            The business object provides base CRUD methods like Load, NewEntity,
+            Remove. The Save() method uses the EF specific context based SaveChanges
+            which saves all pending changes (not just those for the current entity 
+            and its relations). As such these business objects should be used as
+            atomically as possible and call Save() as often as possible to change
+            pending data.
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <typeparam name="TContext"></typeparam>
+        </member>
+        <member name="T:Westwind.Data.EfCodeFirst.IBusinessObject`1">
+            <summary>
+            Marker interface for business object and so we have access to
+            DbContext instance.
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.#ctor">
+            <summary>
+            Base constructor using default behavior.
+            Loads a new DbContext
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.#ctor(Westwind.Data.EfCodeFirst.IBusinessObject{`1})">
+            <summary>
+            Use this constructor to share a DbContext 
+            from another business object.
+            
+            Useful for 'child business' objects that
+            need to operate from within internal business object
+            operations.
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Initialize">
+            <summary>
+            Override to hook post Context intialization
+            Fired by all constructors.
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.InitializeInternal">
+            <summary>
+            Internal common pre-Context creation initialization code
+            fired by all constructors
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.NewEntity">
+            <summary>
+            Creates a new instance of an Entity tracked
+            by the DbContext.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.OnNewEntity(`0)">
+            <summary>
+            Overridable method that allows adding post NewEntity functionaly
+            </summary>
+            <param name="entity"></param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Load(System.Int32)">
+            <summary>
+            Loads in instance based on its integer id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Load(System.Guid)">
+            <summary>
+            Loads in instance based on its Guid id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Load(System.String)">
+            <summary>
+            Loads in instance based on its string id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.LoadBase(System.Object)">
+            <summary>
+            Loads an instance based on its key field id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.LoadBase(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+            Loads an entity based on a Lambda expression
+            </summary>
+            <param name="whereClauseLambda"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.OnEntityLoaded(`0)">
+            <summary>
+            Fired after an entity has been loaded with the .Load() method
+            </summary>
+            <param name="entity"></param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Attach(`0,System.Boolean)">
+            <summary>
+            Attaches an untracked to the internal context and 
+            marks it as modified optionally
+            Note: child elements need to be manually added.
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Attach(System.Object,System.Boolean,System.Data.EntityState)">
+            <summary>
+            Attaches an untracked entity to an entity set and marks it as modified.
+            Note: child elements need to be manually added.
+            </summary>
+            <param name="entity"></param>
+            <param name="entitySet"></param>
+            <param name="markAsModified"></param>
+            <param name="addNew"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Delete(`0,System.Data.Entity.DbSet,System.Boolean,System.Boolean)">
+            <summary>
+            removes an individual entity instance.
+            
+            This method allows specifying an entity in a dbSet other
+            then the main one as long as it's specified by the dbSet
+            parameter.
+            </summary>
+            <param name="entity"></param>
+            <param name="dbSet">Optional - 
+            Allows specifying the DbSet to which the entity passed belongs.
+            If not specified the current DbSet for the current entity is used </param>
+            <param name="saveChanges">Optional - 
+            If true does a Context.SaveChanges. Set to false
+            when other changes in the Context are pending and you don't want them to commit
+            immediately
+            </param>
+            <param name="noTransaction">Optional - 
+            If true the Delete operation is wrapped into a TransactionScope transaction that
+            ensures that OnBeforeDelete and OnAfterDelete all fire within the same Transaction scope.
+            Defaults to false as to improve performance.
+            </param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.DeleteInternal(`0,System.Data.Entity.DbSet,System.Boolean)">
+            <summary>
+            Actual delete operation that removes an entity
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Delete(System.Object)">
+            <summary>
+            Deletes an entity from the main entity set
+            based on a key value.
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.OnBeforeDelete(`0)">
+            <summary>
+            Called before a delete operation occurs
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.OnAfterDelete(`0)">
+            <summary>
+            Called after a resource is deleted. Runs within the same
+            transaction scope
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.AbortChanges">
+            <summary>
+            Cancel Changes on the current connected context
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Save(`0)">
+            <summary>
+            Saves all changes. 
+            </summary>
+            <remarks>
+            This method calls Context.SaveChanges() so it saves
+            all changes made in the context not just changes made
+            to the current entity. It's crucial to Save() as
+            atomically as possible or else use separate Business
+            object instances with separate contexts.
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.OnBeforeSave(`0)">
+            <summary>
+            Hook point fired just before the save method is called.
+            
+            Override this method to fix up entity values before a save
+            operation occurs.                
+            </summary>
+            <returns>return true to save or false to avoid saving</returns>
+            <param name="entity"></param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.OnAfterSave(`0)">
+            <summary>
+            Hook point fired after the Save operation has completed
+            successfully. Note doesn't fire if the Save() operation
+            fails.
+            
+            Override this method to fix up or fire actions after
+            the Save operation completes.
+            </summary>
+            <param name="entity"></param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Validate(`0,System.Boolean)">
+            <summary>
+            Validate() is used to validate business rules on the business object. 
+            Generally this method consists of a bunch of if statements that validate 
+            the data of the business object and adds any errors to the 
+            <see>wwBusiness.ValidationErrors</see> collection.
+            
+            If the <see>wwBusiness.AutoValidate</see> flag is set to true causes Save()
+             to automatically call this method. Must be overridden to perform any 
+            validation.
+            <seealso>Class wwBusiness Class ValidationErrorCollection</seealso>
+            </summary>
+            <param name="entity">Optional entity to validate. Defaults to this.Entity</param>
+            <param name="clearValidationErrors">If true clears all validation errors before processing rules</param>
+            <returns>True or False.</returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.OnValidate(`0)">
+            <summary>
+            Method that should be overridden in a business object to handle actual validation. 
+            This method is called from the Validate method.
+            
+            This method should add any errors to the <see cref="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ValidationErrors"/> collection.
+            </summary>
+            <param name="entity">The entity to be validated</param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.GetProperties(System.String,System.Object)">
+            <summary>
+            Loads the Properties dictionary with values from a Properties property of 
+            an entity object. Once loaded you can access the dictionary to read and write
+            values from it arbitrarily and use SetProperties to write the values back
+            in serialized form to the underlying property for database storage.
+            </summary>
+            <param name="stringFieldNameToLoadFrom"></param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.SetProperties(System.String,System.Object)">
+            <summary>
+            Saves the Properties Dictionary - in serialized string form - to a specified entity field which 
+            in turn allows writing the data back to the database.
+            </summary>
+            <param name="stringFieldToSaveTo"></param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.SetChildBusinessObject(Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase{`0,`1})">
+            <summary>
+            Passes the DbContext from the current business object to the 
+            a child business object so all operations are running
+            in the same context. This allows sharing of Business
+            object logic in the same context
+            </summary>
+            <param name="childBusObject"></param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.IsNewEntity(`0)">
+            <summary>
+            Checks to see if the current entity has been added
+            to the data context as a new entity
+            
+            This entity specific version is more efficient
+            than the generic object parameter version.
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.IsNewEntity(System.Object)">
+            <summary>
+            Checks to see if the current entity has been added
+            to the data context as a new entity
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.GetEntityEntry(`0)">
+            <summary>
+            Returns the Entity Entry meta data object that provides
+            various pieces of info on the entity.
+            
+            Use this specific version if possible for faster retrieval.
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.GetEntityEntry(System.Object)">
+            <summary>
+            Returns the Entity Entry meta data object that provides
+            various pieces of info on the entity
+            
+            Generic version that works with any entity not just those
+            of the type defined on this business object.
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ExecuteNonQuery(System.String,System.Object[])">
+            <summary>
+            Allows execution of an arbitrary non query SQL command against
+            the database.
+            
+            Format can either be named parameters (@pk, @name)
+            with DbParameter objects (CreateParameter) or by using @0,@1 for
+            positional parameters and passing in the actual values.
+            
+            Uses the Entity Sql Connection
+            </summary>
+            <param name="sql">Sql statement as a string</param>
+            <param name="parameters">Named parameter objects</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Execute``1(System.String,System.Object[])">
+            <summary>
+            Allows execution of a SQL command as s tring agains the Context's
+            provider and return the result as an Entity collection
+            
+            Format can either be named parameters (@pk, @name)
+            with DbParameter objects (CreateParameter) or by using @p0,p1 for
+            positional parameters and passing in the actual values.
+            </summary>
+            <typeparam name="TResult"></typeparam>
+            <param name="sql">Sql String. 
+            </param>
+            <param name="parameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.CreateParameter(System.String,System.Object,System.Data.ParameterDirection,System.Data.DbType)">
+            <summary>
+            Creates a new SQL Parameter
+            </summary>
+            <param name="name"></param>
+            <param name="value"></param>
+            <param name="direction"></param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.OpenConnection">
+            <summary>
+            Opens the connection on this business object's Context.
+            Use this before manually creating Transactions to ensure
+            transactions execute on a single connection.
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.CloseConnection">
+            <summary>
+            explicitly closes a connection
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.CreateParameter(System.String,System.Object,System.Data.ParameterDirection)">
+            <summary>
+            Createst a new Sql Parameter
+            </summary>
+            <param name="name"></param>
+            <param name="value"></param>
+            <param name="direction"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.SetError(System.String)">
+            <summary>
+            Sets an internal error message.
+            </summary>
+            <param name="Message"></param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.SetError(System.Exception,System.Boolean)">
+            <summary>
+            Sets an internal error exception
+            </summary>
+            <param name="ex"></param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.SetError">
+            <summary>
+            Clear out errors
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ToString">
+            <summary>
+            Overridden to display error messages if one exists
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.DbSet">
+            <summary>
+            Internally re-usable DbSet instance.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ObjectContext">
+            <summary>
+            Get an instance of the underlying object context
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ValidationErrors">
+            <summary>
+            A collection that can be used to hold errors. This collection
+            is set by the AddValidationError method.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.AutoValidate">
+            <summary>
+            Determines whether or not the Save operation causes automatic
+            validation
+            </summary>                        
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Entity">
+            <summary>
+            Internally loaded instance from load and newentity calls
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ErrorMessage">
+            <summary>
+            Error Message of the last exception
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ErrorException">
+            <summary>
+            Instance of an exception object that caused the last error
+            </summary>            img
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Properties" -->
+        <member name="T:Westwind.Data.EfCodeFirst.EfCodeFirstContext">
+            <summary>
+            Optional customized EF CodeFirst Context class that adds 
+            support for more full featured low level ADO.NET data access
+            using the Westwind.Utilities.Data.SqlDataAccess class.
+            
+            Use this class as a base class for your custom context
+            instead of DbContext only if you need more sophisticated
+            low level data access.
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstContext.#ctor(Westwind.Utilities.Data.DataAccessBase)">
+            <summary>
+            Custom constructor that allows passing in of a custom IDbNative context
+            to provide SQL interactivity.
+            </summary>
+            <param name="dbNative"></param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstContext.#ctor(System.String,System.String)">
+            <summary>
+            Override with specific connection string and provider
+            </summary>
+            <param name="nameOrConnectionString"></param>
+            <param name="providerName"></param>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstContext.Db">
+            <summary>
+            Low level ADO.NET SQL data access object that
+            allows simple abstractions of the most common
+            data operations. Execute queries, run non-queries
+            retrieve scalars, retrieve lists to objects and call
+            stored procedures directly and easily.
+            </summary>
+        </member>
+        <member name="T:Westwind.Data.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.Properties.Resources.CouldnTLoadEntityInvalidKeyProvided">
+            <summary>
+              Looks up a localized string similar to Couldn&apos;t load entity - invalid key provided..
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.Properties.Resources.EntityIsNotPartOfTheContext">
+            <summary>
+              Looks up a localized string similar to Entity is not part of the context.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.Properties.Resources.ErrorColon">
+            <summary>
+              Looks up a localized string similar to Error: .
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.Properties.Resources.UnableToFindMatchingEntityForKey">
+            <summary>
+              Looks up a localized string similar to Unable to find matching entity for key..
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.Properties.Resources.UnsupportedProviderForRawSQLStatementParam">
+            <summary>
+              Looks up a localized string similar to Unsupported provider for raw SQL Statement Parameters..
+            </summary>
+        </member>
+    </members>
+</doc>
