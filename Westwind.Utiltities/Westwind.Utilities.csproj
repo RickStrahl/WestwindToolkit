@@ -85,7 +85,7 @@
     <Compile Include="SupportClasses\Scheduler.cs" />
     <Compile Include="Utilities\DataUtils.cs" />
     <Compile Include="Utilities\DebugUtils.cs" />
-    <Compile Include="Utilities\UrlParser.cs" />
+    <Compile Include="SupportClasses\UrlParser.cs" />
     <Compile Include="Utilities\FileUtils.cs" />
     <Compile Include="Utilities\GenericUtils.cs" />
     <Compile Include="Utilities\HtmlUtils.cs" />

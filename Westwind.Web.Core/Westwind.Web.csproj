@@ -7,8 +7,8 @@
     <ProjectGuid>{0C38B4E1-0C87-4289-A57B-87C1B5BE3BBE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Westwind.Web.Core</RootNamespace>
-    <AssemblyName>Westwind.Web.Core</AssemblyName>
+    <RootNamespace>Westwind.Web</RootNamespace>
+    <AssemblyName>Westwind.Web</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
