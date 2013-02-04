@@ -68,7 +68,7 @@ CRUD operations:
     var customer = customerBus.NewEntity();
     customer.LastName = "Strahl";
     customer.FirstName = "Rick";
-    customer.Entered = DateTime.Now;
+    customer.Entered = DateTime.UtcNow;
     
 	Assert.IsTrue(customerBus.Save(),customerBus.ErrorMessage)
     
