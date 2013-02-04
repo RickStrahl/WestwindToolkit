@@ -49,6 +49,11 @@ Create an instance of the business object and inherit it from EfCodeFirstBusines
 You specify a main entity type (Customer) and the DbContext type (OrdersContext). 
 You now have a functioning business object.
 
+Note that you would create many business objects for each **logical** business context
+or operation which wouldn't necessarily match each entity in the data model. For example,
+you would have an Order business object, but likely not a LineItem business object since
+lineitems are logically associated with the Order.
+
 ###Using the Business Object###
 Without adding any functionality the business object is now functional and can run basic
 CRUD operations:
@@ -75,7 +80,7 @@ CRUD operations:
          FirstName = "Markus",
          Entered = DateTime.Now
     }
-    customerBus.Attach(customer3);
+    customerBus.NewEntity(customer3);
 
     // both the update and the new customer save
 	Assert.IsTrue(customerBus.Save(),customerBus.ErrorMessage)

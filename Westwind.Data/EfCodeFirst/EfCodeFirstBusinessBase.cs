@@ -209,6 +209,29 @@ namespace Westwind.Data.EfCodeFirst
         }
 
         /// <summary>
+        /// Adds a new entity as if it was created and fires
+        /// the OnNewEntity internally. 
+        /// 
+        /// This allows for external creation of the entity
+        /// and then adding the entity to the context after
+        /// the fact.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public virtual TEntity NewEntity(TEntity entity)
+        {
+            Entity = Context.Set<TEntity>().Add(entity) as TEntity;
+
+            OnNewEntity(Entity);
+
+            if (Entity == null)
+                return null;
+
+            return Entity;
+        }
+
+
+        /// <summary>
         /// Overridable method that allows adding post NewEntity functionaly
         /// </summary>
         /// <param name="entity"></param>
