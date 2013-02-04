@@ -24,10 +24,15 @@ In the current beta status of the library you have to install the library
 from the binaries. There's no NuGet package just yet. The latest binaries
 can be found in the /libs folder.
 
-To run you will need the following assemblies:
+Requirements:
+* .NET 4.5 Runtime
+* EntityFramework 5.x (from NuGet)
+
+To run the Westwind.Data framework you will need the following assemblies:
 
 * Westwind.Data.dll
 * Westwind.Utilities.dll
+* EntityFramework 5.0 (from NuGet)
 
 ##Getting Started##
 *under construction*
