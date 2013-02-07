@@ -9,7 +9,8 @@ distributes the entire project on GitHub under their
 separate library trees.
 </div>
 For the moment this library will be hosted here in source code only 
-format -  there are no pre-compiled binaries distributed just yet.
+format without NuGet components, but you can grab the source to
+compile it or the binaries from the /libs folder.
 
 The main components of the West Wind Toolkit are:
 
