@@ -53,6 +53,7 @@
     <Compile Include="Configuration\SqlServerConfigurationProvider.cs" />
     <Compile Include="Configuration\StringConfigurationProvider.cs" />
     <Compile Include="Configuration\XmlFileConfigurationProvider.cs" />
+    <Compile Include="Data\ConnectionStringInfo.cs" />
     <Compile Include="Data\DataAccessBase.cs" />
     <Compile Include="Data\DataTableExtensions.cs" />
     <Compile Include="Data\DynamicDataReader.cs" />

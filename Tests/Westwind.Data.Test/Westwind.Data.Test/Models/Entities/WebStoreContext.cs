@@ -23,8 +23,7 @@ namespace Westwind.Data.Test.Models
     public class WebStoreContextInitializer : DropCreateDatabaseIfModelChanges<WebStoreContext>
     {
         protected override void Seed(WebStoreContext context)
-        {
-
+        {            
             try
             {
                 var cust = new Customer()

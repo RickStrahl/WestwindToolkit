@@ -15,5 +15,7 @@ namespace Westwind.Data.Test
         public busCustomer(IBusinessObject<WebStoreContext> parentBusinessObject)
             : base(parentBusinessObject)
         { }
+        
+
     }
 }

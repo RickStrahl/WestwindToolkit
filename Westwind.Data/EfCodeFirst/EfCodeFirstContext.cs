@@ -28,7 +28,7 @@ namespace Westwind.Data.EfCodeFirst
         /// data operations. Execute queries, run non-queries
         /// retrieve scalars, retrieve lists to objects and call
         /// stored procedures directly and easily.
-        /// </summary>
+        /// </summary>        
         public DataAccessBase Db
         {
             get
@@ -59,17 +59,16 @@ namespace Westwind.Data.EfCodeFirst
         }
 
         /// <summary>
-        /// Override with specific connection string and provider
+        /// Override with specific connection string
         /// </summary>
         /// <param name="nameOrConnectionString"></param>
         /// <param name="providerName"></param>
-        public EfCodeFirstContext(string nameOrConnectionString, string providerName = null) : base(nameOrConnectionString)
+        public EfCodeFirstContext(string connectionString)  : base(connectionString)
         {
-            if(!string.IsNullOrEmpty(providerName))
-                Db = new SqlDataAccess(nameOrConnectionString,providerName);
-            else
-                Db = new SqlDataAccess(nameOrConnectionString);
+            //if(!string.IsNullOrEmpty(providerName))
+            //    Db = new SqlDataAccess(connectionString, providerName);
+            //else
+            Db = new SqlDataAccess(connectionString);
         }
-        
     }    
 }

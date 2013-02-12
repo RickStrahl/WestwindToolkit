@@ -51,13 +51,13 @@ Create an instance of the business object and inherit it from EfCodeFirstBusines
 	public class busCustomer : EfCodeFirstBusinessBase<Customer,OrdersContext>
     { }    
 
-You specify a main entity type (Customer) and the DbContext type (OrdersContext). 
-You now have a functioning business object.
+You specify a main entity type (Customer in this case) and the DbContext type (OrdersContext). 
+You now have a functioning business object for Customers. 
 
 Note that you would create many business objects for each **logical** business context
 or operation which wouldn't necessarily match each entity in the data model. For example,
-you would have an Order business object, but likely not a LineItem business object since
-lineitems are logically associated with the Order.
+you would have an busOrder business object, but likely not a LineItem business object since
+lineitems are logically associated with the Order and managed through an Order business object.
 
 ###Using the Business Object###
 Without adding any functionality the business object is now functional and can run basic
@@ -65,37 +65,51 @@ CRUD operations:
 
     var customerBus = new busCustomer();
     
+	// Add a new customer
     var customer = customerBus.NewEntity();
     customer.LastName = "Strahl";
     customer.FirstName = "Rick";
     customer.Entered = DateTime.UtcNow;
     
+    // Save all data since last Save() operation
 	Assert.IsTrue(customerBus.Save(),customerBus.ErrorMessage)
     
-    // PK gets updated
+    // new PK gets auto-updated after save
     int id = customer.Id;
     
-    // load a new instance by Pk and make a change
+    // load a new customer instance by Pk and make a change
     var customer2 = customerBus.Load(id);
     customer2.Updated = DateTime.Now;
 
-    // Alternate way to add
+    // Also use alternate way to add another customer
     var customer3 = new Customer() {
          LastName = "Egger",
          FirstName = "Markus",
          Entered = DateTime.Now
     }
-    customerBus.NewEntity(customer3);
+    customerBus.NewEntity(customer3);  // attach customer as new
 
-    // both the update and the new customer save
+    // both the updated and the new customer entities are saved
 	Assert.IsTrue(customerBus.Save(),customerBus.ErrorMessage)
         
-    // delete the first customer
+    // delete the first customer by pk
     Assert.IsTrue(customerBus.Delete(id));
 
 Although a business object by default maps to an entity type, the business object
 is not bound to the entity. Internally the business object can manipulate the 
 entire model accessible via the Entity instance.
+
+###Connection Strings###
+By default a business object - like a DbContext object - is instantiated with a 
+default constructor which looks for a connection string entry in the .config file
+with the same name as the DbContext instance. This is the recommended way to set
+up the business object since it's easy, yet also very configurable.
+
+If you require custom connection strings you'll need to create custom constructors
+that point back at the business object base constructor and allow for custom connection
+strings:
+
+
 
 ###Adding to the Business Object###
 The previous operations are not that different from plain EF CodeFirst operations, except

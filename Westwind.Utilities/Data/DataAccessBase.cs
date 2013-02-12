@@ -51,38 +51,42 @@ namespace Westwind.Utilities.Data
     /// </summary>
     [DebuggerDisplay("{ErrorMessage}")]
     public abstract class DataAccessBase : IDisposable
-    {
+    {        
+        private const string STR_DefaultProviderName = "System.Data.SqlClient";
+
+        /// <summary>
+        /// Default constructor that should be called back to 
+        /// by subclasses. Parameterless assumes default provider
+        /// and no connection string which must be explicitly set.
+        /// </summary>
         protected DataAccessBase()
         {
-            dbProvider = DbProviderFactories.GetFactory("System.Data.SqlClient"); 
+            dbProvider = DbProviderFactories.GetFactory(STR_DefaultProviderName); 
         }
 
+        /// <summary>
+        /// Most common constructor that expects a connection string or 
+        /// connection string name from a .config file. If a connection
+        /// string is provided the default provider is used.
+        /// </summary>
+        /// <param name="connectionString"></param>
         protected DataAccessBase(string connectionString)
         {
             if (string.IsNullOrEmpty(connectionString))
                 throw new InvalidOperationException(Resources.AConnectionStringMustBePassedToTheConstructor);
-            
-            if (!connectionString.Contains("="))
-            {
-                // it's a connection string entry
-                var connInfo = ConfigurationManager.ConnectionStrings[connectionString];
-                if (connInfo != null)
-                {
-                    if (!string.IsNullOrEmpty(connInfo.ProviderName))
-                        dbProvider = DbProviderFactories.GetFactory(connInfo.ProviderName);
-                    else
-                        dbProvider = DbProviderFactories.GetFactory("System.Data.SqlClient");
 
-                    connectionString = connInfo.ConnectionString;
-                }
-                else
-                    throw new InvalidOperationException(Resources.InvalidConnectionStringName);
-            }
-            else
-                dbProvider = DbProviderFactories.GetFactory("System.Data.SqlClient");
-    
-            ConnectionString = connectionString;
+            // sets dbProvider and ConnectionString properties
+            // based on connectionString Name or full connection string
+            GetConnectionInfo(connectionString,null);
         }
+
+        /// <summary>
+        /// Constructor that expects a full connection string and provider
+        /// for creating a SQL instance. To be called by the same implementation
+        /// on a subclass.
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <param name="providerName"></param>
         protected DataAccessBase(string connectionString, string providerName)
         {
 #if SupportWebRequestProvider
@@ -96,6 +100,43 @@ namespace Westwind.Utilities.Data
             ConnectionString = connectionString;
         }
 
+        /// <summary>
+        /// Figures out the dbProvider and Connection string from a 
+        /// connectionString name in a config file or explicit 
+        /// ConnectionString and provider.         
+        /// </summary>
+        /// <param name="connectionString">Config file connection name or full connection string</param>
+        /// <param name="providerName">optional provider name. If not passed with a connection string is considered Sql Server</param>
+        public void GetConnectionInfo(string connectionString, string providerName = null)
+        {
+            if (string.IsNullOrEmpty(connectionString))
+                throw new InvalidOperationException(Resources.AConnectionStringMustBePassedToTheConstructor);
+
+            if (!connectionString.Contains("="))
+            {
+                // it's a connection string entry
+                var connInfo = ConfigurationManager.ConnectionStrings[connectionString];
+                if (connInfo != null)
+                {
+                    if (!string.IsNullOrEmpty(connInfo.ProviderName))
+                        dbProvider = DbProviderFactories.GetFactory(connInfo.ProviderName);
+                    else
+                        dbProvider = DbProviderFactories.GetFactory(STR_DefaultProviderName);
+
+                    connectionString = connInfo.ConnectionString;
+                }
+                else
+                    throw new InvalidOperationException(Resources.InvalidConnectionStringName);
+            }
+            else
+            {
+                if (providerName == null)
+                    providerName = STR_DefaultProviderName;
+                dbProvider = DbProviderFactories.GetFactory(providerName);
+            }
+
+            ConnectionString = connectionString;
+        }
 
 
         /// <summary>
@@ -218,7 +259,7 @@ namespace Westwind.Utilities.Data
                                 if (!string.IsNullOrEmpty(connInfo.ProviderName))
                                     dbProvider = DbProviderFactories.GetFactory(connInfo.ProviderName);
                                 else
-                                    dbProvider = DbProviderFactories.GetFactory("System.Data.SqlClient");
+                                    dbProvider = DbProviderFactories.GetFactory(STR_DefaultProviderName);
                             }
                             ConnectionString = connInfo.ConnectionString;
                         }
@@ -1449,4 +1490,5 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
         #endregion
     }
+
 }

@@ -13,6 +13,7 @@ using Westwind.Utilities;
 using System.Linq.Expressions;
 using System.Transactions;
 using System.ComponentModel.DataAnnotations.Schema;
+using Westwind.Utilities.Data;
 
 namespace Westwind.Data.EfCodeFirst
 {
@@ -76,6 +77,7 @@ namespace Westwind.Data.EfCodeFirst
         /// is set by the AddValidationError method.
         /// </summary>
         [XmlIgnore]
+        [NotMapped]
         public ValidationErrorCollection ValidationErrors
         {
             get
@@ -137,8 +139,8 @@ namespace Westwind.Data.EfCodeFirst
         #region ObjectInitializers
 
         /// <summary>
-        /// Base constructor using default behavior.
-        /// Loads a new DbContext
+        /// Base constructor using default behavior loading context by 
+        /// connectionstring name that matches the context
         /// </summary>
         public EfCodeFirstBusinessBase()
         {
@@ -146,7 +148,19 @@ namespace Westwind.Data.EfCodeFirst
             Context = CreateContext();
             Initialize();
         }
-        
+
+        /// <summary>
+        /// Base constructor using default behavior loading context by 
+        /// connectionstring name.
+        /// </summary>
+        /// <param name="connectionString">Connection string name</param>
+        public EfCodeFirstBusinessBase(string connectionString)
+        {
+            InitializeInternal();
+            Context = CreateContext(connectionString);
+            Initialize();
+        }               
+
 
         /// <summary>
         /// Use this constructor to share a DbContext 
@@ -156,19 +170,66 @@ namespace Westwind.Data.EfCodeFirst
         /// need to operate from within internal business object
         /// operations.
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="parentBusinessObject">An existing business object to share are context with</param>
         public EfCodeFirstBusinessBase(IBusinessObject<TContext> parentBusinessObject)
         {
             InitializeInternal(); 
             Context = parentBusinessObject.Context as TContext;
             Initialize();
         }
-        
+
+        /// <summary>
+        /// Creates a new instance of the business Object
+        /// and allows passing in an existing instance
+        /// of a DbContext.
+        /// </summary>
+        /// <param name="context">An existing context to share with</param>
+        public EfCodeFirstBusinessBase(TContext context)
+        {
+            InitializeInternal();
+            Context = context;
+            Initialize();
+        }
+
+        /// <summary>
+        /// Simple factory method that creates a new Context.
+        /// The default behavior simply creates the context by looking
+        /// for a matching connectionstring with the same name in the 
+        /// .config file.
+        /// 
+        /// If you need custom logic simply override this method and 
+        /// return the context.
+        /// 
+        /// This method is called from the constructor to ensure that
+        /// the Context exists before Initialize() is called.
+        /// </summary>
+        /// <returns></returns>
         protected virtual TContext CreateContext()
         {            
             return new TContext();                        
         }
-          
+
+        /// <summary>
+        /// Specialized CreateContext that accepts a connection string and provider.
+        /// Creates a new context based on a Connection String name or
+        /// connection string.
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <returns></returns>
+        /// <remarks>Important: 
+        /// This only works if you implement a DbContext contstructor on your custom context
+        /// that accepts a connectionString parameter.
+        /// </remarks>
+        protected virtual TContext CreateContext(string connectionString)
+        {            
+            TContext context = ReflectionUtils.CreateInstanceFromType(typeof(TContext), connectionString) as TContext;
+
+            if (context == null)
+                throw new InvalidOperationException(Resources.ThisConstructorOnlyOnCustomContext);
+
+            return context;
+        }
+
 
         /// <summary>
         /// Override to hook post Context intialization
