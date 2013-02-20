@@ -101,9 +101,16 @@
         </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.#ctor">
             <summary>
-            Base constructor using default behavior.
-            Loads a new DbContext
+            Base constructor using default behavior loading context by 
+            connectionstring name that matches the context
             </summary>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.#ctor(System.String)">
+            <summary>
+            Base constructor using default behavior loading context by 
+            connectionstring name.
+            </summary>
+            <param name="connectionString">Connection string name</param>
         </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.#ctor(Westwind.Data.EfCodeFirst.IBusinessObject{`1})">
             <summary>
@@ -114,7 +121,43 @@
             need to operate from within internal business object
             operations.
             </summary>
-            <param name="context"></param>
+            <param name="parentBusinessObject">An existing business object to share are context with</param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.#ctor(`1)">
+            <summary>
+            Creates a new instance of the business Object
+            and allows passing in an existing instance
+            of a DbContext.
+            </summary>
+            <param name="context">An existing context to share with</param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.CreateContext">
+            <summary>
+            Simple factory method that creates a new Context.
+            The default behavior simply creates the context by looking
+            for a matching connectionstring with the same name in the 
+            .config file.
+            
+            If you need custom logic simply override this method and 
+            return the context.
+            
+            This method is called from the constructor to ensure that
+            the Context exists before Initialize() is called.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.CreateContext(System.String)">
+            <summary>
+            Specialized CreateContext that accepts a connection string and provider.
+            Creates a new context based on a Connection String name or
+            connection string.
+            </summary>
+            <param name="connectionString"></param>
+            <returns></returns>
+            <remarks>Important: 
+            This only works if you implement a DbContext contstructor on your custom context
+            that accepts a connectionString parameter.
+            </remarks>
         </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Initialize">
             <summary>
@@ -534,9 +577,9 @@
             </summary>
             <param name="dbNative"></param>
         </member>
-        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstContext.#ctor(System.String,System.String)">
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstContext.#ctor(System.String)">
             <summary>
-            Override with specific connection string and provider
+            Override with specific connection string
             </summary>
             <param name="nameOrConnectionString"></param>
             <param name="providerName"></param>
@@ -548,7 +591,7 @@
             data operations. Execute queries, run non-queries
             retrieve scalars, retrieve lists to objects and call
             stored procedures directly and easily.
-            </summary>
+            </summary>        
         </member>
         <member name="T:Westwind.Data.Properties.Resources">
             <summary>
@@ -579,6 +622,11 @@
         <member name="P:Westwind.Data.Properties.Resources.ErrorColon">
             <summary>
               Looks up a localized string similar to Error: .
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.Properties.Resources.ThisConstructorOnlyOnCustomContext">
+            <summary>
+              Looks up a localized string similar to This constructor can only be called on a Context that supports overloads for connectionString and providername.
             </summary>
         </member>
         <member name="P:Westwind.Data.Properties.Resources.UnableToFindMatchingEntityForKey">

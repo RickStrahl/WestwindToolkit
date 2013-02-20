@@ -775,24 +775,23 @@ namespace Westwind.Data.EfCodeFirst
         /// values from it arbitrarily and use SetProperties to write the values back
         /// in serialized form to the underlying property for database storage.
         /// </summary>
-        /// <param name="stringFieldNameToLoadFrom"></param>
-        protected bool GetProperties(string stringFieldNameToLoadFrom = "Properties", object entity = null)
+        /// <param name="stringFieldNameToLoadFrom">The name of the field to load the XML properties from.</param>
+        protected void GetProperties(string stringFieldNameToLoadFrom = "Properties", object entity = null)
         {
             Properties = null;
 
             if (entity == null)
                 entity = this.Entity;
 
+            // Always create a new property bag
+            Properties = new PropertyBag();            
+
             string fieldValue = ReflectionUtils.GetProperty(entity, stringFieldNameToLoadFrom) as string;
             if (string.IsNullOrEmpty(fieldValue))
-                return false;
+                return;
 
-            // load up Properties from XML
-            Properties = new PropertyBag();
-            Properties.FromXml(fieldValue);
-
-            //DataContractSerializationUtils.DeserializeXmlString(fieldValue,typeof(Dictionary<string,object>),true) as Dictionary<string,object>;
-            return true;
+            // load up Properties from XML                       
+            Properties.FromXml(fieldValue);            
         }
 
         /// <summary>
@@ -807,8 +806,12 @@ namespace Westwind.Data.EfCodeFirst
 
             //string xml = DataContractSerializationUtils.SerializeToXmlString(Properties,true);
 
-            // Serialize to Xml
-            string xml = Properties.ToXml();
+            string xml = null;
+            if (Properties.Count > 0)
+            {
+                // Serialize to Xm
+                 xml = Properties.ToXml();
+            }
             ReflectionUtils.SetProperty(Entity, stringFieldToSaveTo, xml);
         }
         #endregion
