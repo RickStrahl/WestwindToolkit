@@ -9,6 +9,7 @@ using System.Xml.Serialization;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 
 
 namespace Westwind.Utilities.Tests
@@ -190,6 +191,44 @@ namespace Westwind.Utilities.Tests
             Assert.IsTrue(bag["Key3"] == 300.10M);
         }
 
+
+        [TestMethod]
+        public void SerializationToJson()
+        {
+            var bag = new PropertyBag<string>();
+
+            bag.Add("Value1", "asldkjalsk dalksdj");
+            bag.Add("Value2", "bbasdasdklajsdalksdja");
+
+            string json = JsonConvert.SerializeObject(bag,Formatting.Indented);
+            Console.WriteLine(json);
+
+            var bag2 = JsonConvert.DeserializeObject(json, typeof(PropertyBag<string>)) as PropertyBag<string>;
+
+            Assert.IsNotNull(bag2);
+            Assert.IsNotNull(bag["Value2"] as string);
+            Console.WriteLine(bag["Value1"] as string);            
+        }
+
+
+        [TestMethod]
+        public void SerializationToXml()
+        {
+            var bag = new PropertyBag<string>();
+
+            bag.Add("Value1", "asldkjalsk dalksdj");
+            bag.Add("Value2", "bbasdasdklajsdalksdja");
+
+            string xml = null;
+            SerializationUtils.SerializeObject(bag, out xml);
+            Console.WriteLine(xml);
+
+            var bag2 = SerializationUtils.DeSerializeObject(xml, typeof(PropertyBag<string>)) as PropertyBag<string>;
+
+            Assert.IsNotNull(bag2);
+            Assert.IsNotNull(bag["Value2"] as string);
+            Console.WriteLine(bag["Value1"] as string);
+        }
 
         #region StandardSerializerTests
 

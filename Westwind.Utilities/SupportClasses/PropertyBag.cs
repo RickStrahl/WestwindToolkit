@@ -80,7 +80,9 @@ namespace Westwind.Utilities
                 writer.WriteEndElement();
 
                 writer.WriteStartElement("value");
+
                 string xmlType = XmlUtils.MapTypeToXmlType(type);
+
                 bool isCustom = false;
 
                 // Type information attribute if not string

@@ -157,10 +157,15 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static string MapTypeToXmlType(Type type)
         {
+            if (type == null)
+                return null;
+
             if (type == typeof(string) || type == typeof(char) )
                 return "string";
-            if (type == typeof(int) || type== typeof(Int32)  )
+            if (type == typeof(int) || type== typeof(Int32) )
                 return "integer";
+            if (type == typeof(Int16) || type == typeof(byte) )
+                return "short";
             if (type == typeof(long) || type == typeof(Int64) )
                 return "long";
             if (type == typeof(bool))
