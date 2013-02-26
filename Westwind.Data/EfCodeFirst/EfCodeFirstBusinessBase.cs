@@ -770,6 +770,23 @@ namespace Westwind.Data.EfCodeFirst
         private PropertyBag _Properties = null;
 
         /// <summary>
+        /// Retrieves a value from the Properties collection safely.
+        /// If the value doesn't exist null is returned.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public object GetProperty(string key)
+        {
+            if (this.Properties == null)
+                return null;
+
+            object value = null;
+            Properties.TryGetValue(key, out value);
+
+            return value;
+        }
+
+        /// <summary>
         /// Loads the Properties dictionary with values from a Properties property of 
         /// an entity object. Once loaded you can access the dictionary to read and write
         /// values from it arbitrarily and use SetProperties to write the values back
