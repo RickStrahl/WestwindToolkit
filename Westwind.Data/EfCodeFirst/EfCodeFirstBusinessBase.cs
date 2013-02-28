@@ -498,6 +498,32 @@ namespace Westwind.Data.EfCodeFirst
             return true;
         }
 
+
+        /// <summary>
+        /// Deletes an entity from the main entity set
+        /// based on a key value.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public virtual bool Delete(object id)
+        {
+            TEntity entity = DbSet.Find(id);
+            return Delete(entity);
+        }
+
+
+        /// <summary>
+        /// Deletes an entity from the main entity set
+        /// based on a key value.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public virtual bool Delete(object id, bool saveChanges)
+        {
+            TEntity entity = DbSet.Find(id);
+            return Delete(entity, saveChanges: saveChanges);
+        }
+
         /// <summary>
         /// Actual delete operation that removes an entity
         /// </summary>
@@ -529,17 +555,6 @@ namespace Westwind.Data.EfCodeFirst
             return true;
         }
 
-        /// <summary>
-        /// Deletes an entity from the main entity set
-        /// based on a key value.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public  bool Delete(object id) 
-        {
-            TEntity entity = DbSet.Find(id);
-            return Delete(entity);
-        }
 
         /// <summary>
         /// Called before a delete operation occurs
