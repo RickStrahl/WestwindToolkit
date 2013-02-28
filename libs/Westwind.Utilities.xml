@@ -699,10 +699,73 @@
             and its default store.
             </summary>
         </member>
+        <member name="T:Westwind.Utilities.Data.ConnectionStringInfo">
+            <summary>
+            Used to parse a connection string or connection string name 
+            into a connection stringn and dbProvider
+            </summary>
+        </member>
+        <member name="F:Westwind.Utilities.Data.ConnectionStringInfo.STR_DefaultProviderName">
+            <summary>
+            The default connection string provider
+            </summary>
+        </member>
+        <member name="M:Westwind.Utilities.Data.ConnectionStringInfo.GetConnectionStringInfo(System.String,System.String)">
+            <summary>
+            Figures out the Provider and ConnectionString from either a connection string
+            name in a config file or full  ConnectionString and provider.         
+            </summary>
+            <param name="connectionString">Config file connection name or full connection string</param>
+            <param name="providerName">optional provider name. If not passed with a connection string is considered Sql Server</param>
+        </member>
+        <member name="P:Westwind.Utilities.Data.ConnectionStringInfo.ConnectionString">
+            <summary>
+            The connection string parsed
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.Data.ConnectionStringInfo.Provider">
+            <summary>
+            The DbProviderFactory parsed from the connection string
+            or default provider
+            </summary>
+        </member>
         <member name="T:Westwind.Utilities.Data.DataAccessBase">
             <summary>
             Basic low level Data Access Layer
             </summary>
+        </member>
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.#ctor">
+            <summary>
+            Default constructor that should be called back to 
+            by subclasses. Parameterless assumes default provider
+            and no connection string which must be explicitly set.
+            </summary>
+        </member>
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.#ctor(System.String)">
+            <summary>
+            Most common constructor that expects a connection string or 
+            connection string name from a .config file. If a connection
+            string is provided the default provider is used.
+            </summary>
+            <param name="connectionString"></param>
+        </member>
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.#ctor(System.String,System.String)">
+            <summary>
+            Constructor that expects a full connection string and provider
+            for creating a SQL instance. To be called by the same implementation
+            on a subclass.
+            </summary>
+            <param name="connectionString"></param>
+            <param name="providerName"></param>
+        </member>
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.GetConnectionInfo(System.String,System.String)">
+            <summary>
+            Figures out the dbProvider and Connection string from a 
+            connectionString name in a config file or explicit 
+            ConnectionString and provider.         
+            </summary>
+            <param name="connectionString">Config file connection name or full connection string</param>
+            <param name="providerName">optional provider name. If not passed with a connection string is considered Sql Server</param>
         </member>
         <member name="F:Westwind.Utilities.Data.DataAccessBase.dbProvider">
             <summary>
