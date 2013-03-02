@@ -4,6 +4,935 @@
         <name>Westwind.Web</name>
     </assembly>
     <members>
+        <member name="F:Westwind.Web.PostBackModes.None">
+            No Form data is posted (but there may still be some post state)
+        </member>
+        <member name="F:Westwind.Web.PostBackModes.Get">
+            <summary>
+            No POST data is posted back to the server
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.PostBackModes.Post">
+            <summary>
+            Only standard POST data is posted back - ASP.NET Post stuff left out
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.PostBackModes.PostNoViewstate">
+            <summary>
+            Posts back POST data but skips ViewState and EventTargets
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.PostBackModes.PostMethodParametersOnly">
+            <summary>
+            Posts only the method parameters and nothing else
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JavaScriptCodeLocationTypes.EmbeddedInPage">
+            <summary>
+            Causes the Javascript code to be embedded into the page on every 
+            generation. Fully self-contained.
+            <seealso>Enumeration JavaScriptCodeLocationTypes</seealso>
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JavaScriptCodeLocationTypes.ExternalFile">
+            <summary>
+            Keeps the .js file as an external file in the Web application. If this is 
+            set you should set the &lt;&lt;%= TopicLink([ScriptLocation],[_1Q01F9K4D]) 
+            %&gt;&gt; Property to point at the location of the file.
+            
+            This option requires that you deploy the .js file with your application.
+            <seealso>Enumeration JavaScriptCodeLocationTypes</seealso>
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JavaScriptCodeLocationTypes.WebResource">
+            <summary>
+            ASP.NET 2.0 option to generate a WebResource.axd call that feeds the .js 
+            file to the client.
+            <seealso>Enumeration JavaScriptCodeLocationTypes</seealso>
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JavaScriptCodeLocationTypes.None">
+            <summary>
+            Don't include any script - assume the page owner will handle it all
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.ProxyClassGenerationModes.Inline">
+            <summary>
+            The proxy is generated inline of the page.
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.ProxyClassGenerationModes.None">
+            <summary>
+            No proxy is generated at all
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.ProxyClassGenerationModes.jsdebug">
+            <summary>
+            Works only with CallbackHandler implementations
+            that run as handlers at a distinct URL.
+            JsonCallbacks.ashx/jsdebug
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.CallbackException">
+            <summary>
+            Special return type used to indicate that an exception was
+            fired on the server. This object is JSON serialized and the
+            client can check for Result.IsCallbackError to see if a 
+            a failure occured on the server.
+            </summary>    
+        </member>
+        <member name="T:Westwind.Web.CallbackMessage">
+            <summary>
+            Special return type that can be used to return messages to the
+            </summary>    
+        </member>
+        <member name="T:Westwind.Web.CallbackHandler">
+            <summary>
+            CallbackHandler is an Http Handler base class that allows you to create a
+             class with methods marked up with a [CallbackMethod] attribute which are 
+            then exposed for remote execution. The handler routes the to the methods 
+            and executes the call and returns the results - or any errors - as JSON 
+            strings.
+            
+            To use this service you need to create an HttpHandler (either .ASHX or a 
+            class registered in web.config's httpHandler section) and then add methods 
+            with the [CallbackMethod] attribute and that's it. The service accepts 
+            inputs via query string and POST data.
+            
+            If you use the AjaxMethodCallbackControl the process of calling service
+            methods is fully automated including automatic client proxy creation and
+            you can call methods with individual parameters mapped from client to server.
+            
+            Alternately you can also use plain REST calls that pass either no parameters
+            and purely access POST data, or pass a single JSON object that can act as 
+            a single input parameter.
+            
+            The service can be accessed with:
+            
+            MyHandler.ashx?CallbackMethod=MethodToCall
+            
+            POST data can then be passed in to act as parameters:
+            
+            &lt;&lt;ul&gt;&gt;
+            &lt;&lt;li&gt;&gt; &lt;&lt;b&gt;&gt;Raw Post Buffer&lt;&lt;/b&gt;&gt;
+            You simply pass raw POST data that you can access with Request.Form in the 
+            handler
+            
+            &lt;&lt;li&gt;&gt; &lt;&lt;b&gt;&gt;JSON value or object 
+            string&lt;&lt;/b&gt;&gt;
+            Alternately you can set the content type to application/json and pass a 
+            JSON string of a value or object which calls the server method with a 
+            single parameter of matching type.
+            &lt;&lt;/ul&gt;&gt;
+            
+            For more information on how to call these handlers see 
+            <see cref="!:_24I0VDWUR">Using CallbackHandler with REST Calls</see>.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.CallbackHandler.ProcessRequest(System.Web.HttpContext)">
+            <summary>
+            Handle the actual callback by deferring to JsonCallbackMethodProcessor()
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="P:Westwind.Web.CallbackHandler.Response">
+            <summary>
+            Shortcut to the ASP.NET Response object.
+            
+            Allows easy access to the ASP.NET Response object to allow formatting of 
+            the response. Note that CallbackHandler will set default content types and 
+            encoding for a request which can be overridden in your code if necessary.
+            
+            &lt;&lt;code lang="C#"&gt;&gt;[CallbackMethod(RouteUrl="stocks/{symbol}")]
+            public StockQuote GetStockQuote(string symbol)
+            {
+                Response.Cache.SetExpires(DateTime.UtcNow.Add(new TimeSpan(0, 2, 0)));
+            
+                StockServer server = new StockServer();
+                return server.GetStockQuote(symbol);
+            }&lt;&lt;/code&gt;&gt;
+            <seealso>Class CallbackHandler</seealso>
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.CallbackHandler.Request">
+            <summary>
+            Shortcut reference to active ASP.NET Request object
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.CallbackHandler.Context">
+            <summary>
+            Shortcut to the current HttpContext instance
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.CallbackHandler.IsReusable">
+            <summary>
+            This handler is not thread-safe
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.CallbackHandler.RouteData">
+            <summary>
+            Optionally store RouteData on this handler
+            so we can access it internally
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.CallbackHandlerRouteHandler">
+            <summary>
+            Route handler that can create instances of CallbackHandler derived
+            callback classes. The route handler tracks the method name and
+            creates an instance of the service in a predictable manner
+            </summary>
+            <typeparam name="TCallbackHandler">CallbackHandler type</typeparam>
+        </member>
+        <member name="M:Westwind.Web.CallbackHandlerRouteHandler.#ctor(System.String,System.Type)">
+            <summary>
+            Constructor to pass in the two required components we
+            need to create an instance of our handler. 
+            </summary>
+            <param name="methodName"></param>
+            <param name="callbackHandlerType"></param>
+        </member>
+        <member name="M:Westwind.Web.CallbackHandlerRouteHandler.System#Web#Routing#IRouteHandler#GetHttpHandler(System.Web.Routing.RequestContext)">
+            <summary>
+            Retrieves an Http Handler based on the type specified in the constructor
+            </summary>
+            <param name="requestContext"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.CallbackHandlerRouteHandler.RegisterRoutes``1(System.Web.Routing.RouteCollection)">
+            <summary>
+            Generic method to register all routes from a CallbackHandler
+            that have RouteUrls defined on the [CallbackMethod] attribute
+            </summary>
+            <typeparam name="TCallbackHandler"></typeparam>
+            <param name="routes"></param>
+        </member>
+        <member name="P:Westwind.Web.CallbackHandlerRouteHandler.MethodName">
+            <summary>
+            Method name that is to be called on this route.
+            Set by the automatically generated RegisterRoutes 
+            invokatio.n
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.CallbackHandlerRouteHandler.CallbackHandlerType">
+            <summary>
+            The type of the handler we're going to instantiate.
+            Needed so we can semi-generically instantiate the
+            handler and call the method on it.
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.CallbackMethodAttribute">
+            <summary>
+            Marker Attribute to be used on Callback methods. Signals
+            parser that the method is allowed to be executed remotely
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.CallbackMethodAttribute.#ctor">
+            <summary>
+            Default Constructor for CallbackMethodAttribute. No functionality added
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.CallbackMethodAttribute.RouteUrl">
+            <summary>
+            Allows specification of an ASP.NET style route URL to
+            a Service Method.        
+            
+            Parameterized route fragments ( {parameter} ) should match
+            parameter names. 
+            <example>        
+            products/{id}
+            products/add
+            products/add/{sku}
+            service/helloworld/{name}/{company}
+            </example>
+            <remarks>
+            Applies only to CallbackHandler based handlers. 
+            Doesn't have any effect on Page methods called with AjaxMethodCallback
+            
+            Routes need to *uniquely* identify a method in a CallbackHandler.
+            Make sure you don't have the same route or same partially parameterized
+            route pointing at multiple methods - in which case you may end up with
+            routing mismatches. 
+            stocks/{symbol}
+            stocks/{symbollist}
+            </remarks>
+            </summary>        
+        </member>
+        <member name="P:Westwind.Web.CallbackMethodAttribute.ContentType">
+            <summary>
+            Content Type used for results that are returned as Stream
+            or raw string values. Same as setting Response.ContentType
+            but more clear in the attribute
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.CallbackMethodAttribute.AllowedHttpVerbs">
+            <summary>
+            Allows specifying of the HTTP Verb that is accepted for the called method.
+            
+            The default is HttpVerbs.All.
+            
+            <remarks>
+            Requests that fail to access the endpoint with the right HTTP Verb will not
+            get called and return a 405 error along with an error object (JSON/XML) that 
+            details the error in the body.
+            </remarks>
+            <seealso>Class CallbackMethodAttribute</seealso>
+            </summary>
+            <example>
+            &lt;&lt;code lang=&quot;C#&quot;&gt;&gt;// Allow both GET and POST 
+            operations
+            [CallbackMethod(AllowedHttpVerbs=HttpVerbs.GET | HttpVerbs.POST),
+                            RouteUrl=&quot;stocks/{symbol}&quot;]
+            public StockQuote GetStockQuote(string symbol)
+            { ... }&lt;&lt;/code&gt;&gt;
+            </example>
+        </member>
+        <member name="P:Westwind.Web.CallbackMethodAttribute.ReturnAsRawString">
+            <summary>
+            When set to true indicates that a string result returned to the
+            client should not be encoded in anw way. This can be more efficient for 
+            large string results passed back to the client when returning
+            HTML or other plain text and avoids extra encoding and decoding.
+            
+            The client can also specify format=string on the querystring to
+            return string values as raw strings.
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.CallbackMethodProcessorHelper">
+            <summary>
+            This class provides helper services to the CallbackProcessor classes with 
+            the generic services that deal with method execution and parsing POST 
+            parameters which should be independent of the specific implementation 
+            (JSON, XML etc.).
+            
+            Extracted here so other Callback Processors can be created more easily 
+            later on, using other request formats (Xml etc.)
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.CallbackMethodProcessorHelper.ExecuteMethod(System.String,System.Object,System.String[],Westwind.Web.CallbackMethodParameterType,Westwind.Web.CallbackMethodAttribute@)">
+            <summary>
+            Executes the requested method. 
+            to the proper types for execution.
+            </summary>
+            <param name="Method"></param>
+            <param name="methodParameters">An array of the string json parameters to </param>
+            <param name="target">The object to call the method on</param>
+            <param name="parameters">An array of json Strings that make up the parameters for the method call. This value can be null in which case parms are parsed out of GET QueryString or POST values</param>
+            <param name="callbackMethodAttribute">An optional instance of an CallbackAttribute that is set by this method</param>
+            <returns>the result of the method execution</returns>
+        </member>
+        <member name="T:Westwind.Web.ICallbackMethodProcessor">
+            <summary>
+            Inteface that defines the Callback operations for handling method callbacks
+            on the server.
+            
+            This interface serves as an abstraction for potentially different implementations
+            that use XML instead of JSON.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.ICallbackMethodProcessor.ProcessCallbackMethodCall(System.Object)">
+            <summary>
+            Generic method that handles processing a Callback request by routing to
+            a method in a provided target object.
+            
+            </summary>
+            <param name="target">The target object that is to be called. If null this is used</param>
+        </member>
+        <member name="M:Westwind.Web.ICallbackMethodProcessor.WriteErrorResponse(System.String,System.String)">
+            <summary>
+            Returns an error response to the client from a callback. Code
+            should exit after this call.
+            </summary>
+            <param name="ErrorMessage"></param>
+        </member>
+        <member name="T:Westwind.Web.JsonCallbackMethodProcessor">
+            <summary>
+            This is the core implementation of the JSON callback method handler that 
+            picks up POST data from the request and uses it to call the actual callback
+             method on the specified object and return the results back as JSON.
+            
+            This processor is generic and can be used easily from anywhere that needs 
+            to feed back JSON data from a method callback, simply calling the 
+            ProcessCallbackMethod() with an object that contains methods that are 
+            marked up with the [CallbackMethod] attribute.
+            
+            For example, wwCallbackHandler simply forwards all processing like this:
+            
+            &lt;&lt;code lang="C#"&gt;&gt;public void ProcessRequest(HttpContext 
+            context)
+            {
+                // Pass off to the worker Callback Processor
+                ICallbackMethodProcessor processor = new JsonCallbackMethodProcessor();
+            
+                // Process the inbound request and execute it on this
+                // Http Handler's methods
+                processor.ProcessCallbackMethodCall(this);
+            }&lt;&lt;/code&gt;&gt;
+            
+            This processor is expected to execute in an environment where 
+            HttpContext.Current is available and where POST data is available to 
+            describe the incoming parameter data and method to call.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.JsonCallbackMethodProcessor.ProcessCallbackMethodCall(System.Object,System.String)">
+            <summary>
+            Generic method that handles processing a Callback request by routing to
+            a method in a provided target object.
+            
+            </summary>
+            <param name="target">The target object that is to be called. If null this is used</param>
+        </member>
+        <member name="M:Westwind.Web.JsonCallbackMethodProcessor.HandleSpecialReturnTypes(System.Object,Westwind.Web.CallbackMethodAttribute,System.Web.HttpRequest,System.Web.HttpResponse)">
+            <summary>
+            This method handles special return types from callback methods
+            by examining the return type or the ResultFormat query string.
+            
+            Checks are performed for:
+            Stream, Bitmap, byte[] and raw string output
+            </summary>
+            <param name="Result"></param>
+            <param name="callbackAttribute"></param>
+            <param name="Request"></param>
+            <param name="Response"></param>
+        </member>
+        <member name="M:Westwind.Web.JsonCallbackMethodProcessor.ProcessCallbackMethodCall(System.Object)">
+            <summary>
+            Generic method that handles processing a Callback request by routing to
+            a method in a provided target object.
+            
+            This version doesn't pass in the method name but retrieves it from the
+            POST data or query string.
+            </summary>
+            <param name="target"></param>
+        </member>
+        <member name="M:Westwind.Web.JsonCallbackMethodProcessor.WriteErrorResponse(System.String,System.String)">
+            <summary>
+            Returns an error response to the client from a callback. Code
+            should exit after this call.
+            </summary>
+            <param name="ErrorMessage"></param>
+        </member>
+        <member name="P:Westwind.Web.JsonCallbackMethodProcessor.JsonPMethod">
+            <summary>
+            JSONP method parameter value if provided
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.XmlCallbackMethodProcessor">
+            <summary>
+            This is the core implementation of the JSON callback method handler that 
+            picks up POST data from the request and uses it to call the actual callback
+             method on the specified object and return the results back as JSON.
+            
+            This processor is generic and can be used easily from anywhere that needs 
+            to feed back JSON data from a method callback, simply calling the 
+            ProcessCallbackMethod() with an object that contains methods that are 
+            marked up with the [CallbackMethod] attribute.
+            
+            For example, wwCallbackHandler simply forwards all processing like this:
+            
+            &lt;&lt;code lang="C#"&gt;&gt;public void ProcessRequest(HttpContext 
+            context)
+            {
+                // Pass off to the worker Callback Processor
+                ICallbackMethodProcessor processor = new JsonCallbackMethodProcessor();
+            
+                // Process the inbound request and execute it on this
+                // Http Handler's methods
+                processor.ProcessCallbackMethodCall(this);
+            }&lt;&lt;/code&gt;&gt;
+            
+            This processor is expected to execute in an environment where 
+            HttpContext.Current is available and where POST data is available to 
+            describe the incoming parameter data and method to call.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.XmlCallbackMethodProcessor.ProcessCallbackMethodCall(System.Object,System.String)">
+            <summary>
+            Generic method that handles processing a Callback request by routing to
+            a method in a provided target object.
+            
+            </summary>
+            <param name="target">The target object that is to be called. If null this is used</param>
+        </member>
+        <member name="M:Westwind.Web.XmlCallbackMethodProcessor.HandleSpecialReturnTypes(System.Object,Westwind.Web.CallbackMethodAttribute,System.Web.HttpRequest,System.Web.HttpResponse)">
+            <summary>
+            This method handles special return types from callback methods
+            by examining the return type or the ResultFormat query string.
+            
+            Checks are performed for:
+            Stream, Bitmap, byte[] and raw string output
+            </summary>
+            <param name="Result"></param>
+            <param name="callbackAttribute"></param>
+            <param name="Request"></param>
+            <param name="Response"></param>
+        </member>
+        <member name="M:Westwind.Web.XmlCallbackMethodProcessor.ProcessCallbackMethodCall(System.Object)">
+            <summary>
+            Generic method that handles processing a Callback request by routing to
+            a method in a provided target object.
+            
+            This version doesn't pass in the method name but retrieves it from the
+            POST data or query string.
+            </summary>
+            <param name="target"></param>
+        </member>
+        <member name="M:Westwind.Web.XmlCallbackMethodProcessor.WriteErrorResponse(System.String,System.String)">
+            <summary>
+            Returns an error response to the client from a callback. Code
+            should exit after this call.
+            </summary>
+            <param name="ErrorMessage"></param>
+        </member>
+        <member name="P:Westwind.Web.XmlCallbackMethodProcessor.JsonDateEncoding">
+            <summary>
+            Implemented only for compatibility
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JsonSerializers.JSONSerializerBase.masterSerializer">
+            <summary>
+            Master instance of the JSONSerializer that the user interacts with
+            Used to read option properties
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.JSONSerializerBase.#ctor(Westwind.Web.JsonSerializers.JSONSerializer)">
+            <summary>
+             Force a master Serializer to be passed for settings
+            </summary>
+            <param name="serializer"></param>
+        </member>
+        <member name="P:Westwind.Web.JsonSerializers.JSONSerializerBase.DateSerializationMode">
+            <summary>
+            Encodes Dates as a JSON string value that is compatible
+            with MS AJAX and is safe for JSON validators. If false
+            serializes dates as new Date() expression instead.
+            
+            The default is true.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.JsonSerializers.JSONSerializerBase.FormatJsonOutput">
+            <summary>
+            Determines if there are line breaks inserted into the 
+            JSON to make it more easily human readable.
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.JsonSerializers.JsonNetJsonSerializer">
+            <summary>
+            More text is a basic JSON serializer and deserializer that 
+            deals with standard .NET types. Unlike the MS Ajax JSONSerializer
+            parser this parser support serialization and deserialization without 
+            explicit type markup in the JSON resulting in a simpler two-way model.
+            
+            The inbound model for complex types is based on Reflection parsing
+            of properties.
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JsonSerializers.JsonNetJsonSerializer.masterSerializer">
+            <summary>
+            Master instance of the JSONSerializer that the user interacts with
+            Used to read option properties
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.JsonNetJsonSerializer.#ctor(Westwind.Web.JsonSerializers.JSONSerializer)">
+            <summary>
+             Force a master Serializer to be passed for settings
+            </summary>
+            <param name="serializer"></param>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.JsonNetJsonSerializer.Serialize(System.Object)">
+            <summary>
+            Serializes a .NET object reference into a JSON string.
+            
+            The serializer supports:
+            &lt;&lt;ul&gt;&gt;
+            &lt;&lt;li&gt;&gt; All simple types
+            &lt;&lt;li&gt;&gt; POCO objects and hierarchical POCO objects
+            &lt;&lt;li&gt;&gt; Arrays
+            &lt;&lt;li&gt;&gt; IList based collections
+            &lt;&lt;li&gt;&gt; DataSet
+            &lt;&lt;li&gt;&gt; DataTable
+            &lt;&lt;li&gt;&gt; DataRow
+            &lt;&lt;/ul&gt;&gt;
+            
+            The serializer works off any .NET type - types don't have to be explicitly 
+            serializable.
+            
+            DataSet/DataTable/DataRow parse into a special format that is essentially 
+            array based of just the data. These objects can be serialized but cannot be
+             passed back in via deserialization.
+            <seealso>Class JSONSerializer</seealso>
+            </summary>
+            <param name="value">
+            The strongly typed value to parse
+            </param>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.JsonNetJsonSerializer.Deserialize(System.String,System.Type)">
+            <summary>
+            Takes a JSON string and attempts to create a .NET object from this  
+            structure. An input type is required and any type that is serialized to  
+            must support a parameterless constructor.
+            
+            The de-serializer instantiates each object and runs through the properties
+            
+            The deserializer supports &lt;&lt;ul&gt;&gt; &lt;&lt;li&gt;&gt; All simple 
+            types &lt;&lt;li&gt;&gt; Most POCO objects and Hierarchical POCO objects 
+            &lt;&lt;li&gt;&gt; Arrays and Object Arrays &lt;&lt;li&gt;&gt; IList based 
+            collections &lt;&lt;/ul&gt;&gt;
+            
+            Note that the deserializer doesn't support DataSets/Tables/Rows like the  
+            serializer as there's no type information available from the client to  
+            create these objects on the fly.
+            <seealso>Class JSONSerializer</seealso>
+            </summary>
+            <param name="JSONText">
+            A string of JSON text passed from the client.
+            </param>
+            <param name="valueType">
+            The type of the object that is to be created from the JSON text.
+            </param>
+        </member>
+        <member name="P:Westwind.Web.JsonSerializers.JsonNetJsonSerializer.DateSerializationMode">
+            <summary>
+            Encodes Dates as a JSON string value that is compatible
+            with MS AJAX and is safe for JSON validators. If false
+            serializes dates as new Date() expression instead.
+            
+            The default is true.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.JsonSerializers.JsonNetJsonSerializer.FormatJsonOutput">
+            <summary>
+            Determines if there are line breaks inserted into the 
+            JSON to make it more easily human readable.
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.JsonSerializers.JSONSerializer">
+            <summary>
+            The high level JSON Serializer wrapper that provides 
+            serialization and deserialization services to the application. 
+            
+            This class merely defers operation to the specified JSON parsing implementation
+            to allow for pluggable JSON serializers to be used.
+            
+            Supported parsers include:
+            
+            * West Wind Native that's built-in (no dependencies)   (This is the default)
+            * JavaScriptSerializer (ASP.NET JavaScript Serializer)
+            * JSON.NET   (requires JSON.NET assembly to be included and JSONNET_REFERENCE global Define    
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JsonSerializers.JSONSerializer.DefaultJsonParserType">
+            <summary>
+            This property determines the default parser that is created when
+            using the default constructor. This is also the default serializer
+            used when using the AjaxMethodCallback control.
+            
+            This property should be set only once at application startup typically
+            in Application_Start of a Web app.
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JsonSerializers.JSONSerializer.SerializeFields">
+            <summary>
+            Determines whether fields are serialized. Supported only for the West Wind JSON Serializer        
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.JSONSerializer.#ctor">
+            <summary>
+            Default Constructor - assigns default 
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.JsonSerializers.JSONSerializer.DateSerializationMode">
+            <summary>
+            Determines the date serialization mode supported 
+            for the Westwind and Json.NET parsers (not the JavaScript JSON Serializer)
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.JsonSerializers.JSONSerializer.FormatJsonOutput">
+            <summary>
+            Determines if there are line breaks inserted into the 
+            JSON to make it more easily human readable.
+            
+            By default if running in DebugMode this flag will be set to true
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JsonSerializers.SupportedJsonParserTypes.WestWindJsonSerializer">
+            <summary>
+            Default - West Wind JSON parser.
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JsonSerializers.SupportedJsonParserTypes.JsonNet">
+            <summary>
+            NewtonSoft JSON.NET JSON Parser
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JsonSerializers.SupportedJsonParserTypes.JavaScriptSerializer">
+            <summary>
+            The ASP.NET JavaScript Serializer
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.JsonSerializers.JsonDateEncodingModes">
+            <summary>
+            Enumeration that determines how JavaScript dates are
+            generated in JSON output
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.JsonSerializers.WebExtensionsJavaScriptSerializer">
+            <summary>
+            More text is a basic JSON serializer and deserializer that 
+            deals with standard .NET types. Unlike the MS Ajax JSONSerializer
+            parser this parser support serialization and deserialization without 
+            explicit type markup in the JSON resulting in a simpler two-way model.
+            
+            The inbound model for complex types is based on Reflection parsing
+            of properties.
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.JsonSerializers.WestwindJsonSerializer">
+            <summary>
+            More text is a basic JSON serializer and deserializer that 
+            deals with standard .NET types. Unlike the MS Ajax JSONSerializer
+            parser this parser support serialization and deserialization without 
+            explicit type markup in the JSON resulting in a simpler two-way model.
+            
+            The inbound model for complex types is based on Reflection parsing
+            of properties.
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JsonSerializers.WestwindJsonSerializer.STR_WHITESPACE">
+            <summary>
+            White space checking for char values
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JsonSerializers.WestwindJsonSerializer.DAT_JAVASCRIPT_BASEDATE">
+            <summary>
+            The JavaScript base date on which all date time values
+            in JavaScript are based. Offsets are given in milliseconds
+            (ie. new Date(99990123) where the number is the offset in ms
+            from the base date)
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JsonSerializers.WestwindJsonSerializer.masterSerializer">
+            <summary>
+            Master instance of the JSONSerializer that the user interacts with
+            Used to read option properties
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JsonSerializers.WestwindJsonSerializer._traversedTypes">
+            <summary>
+            Internally held set of types traversed. Circular references are
+            not serialized and return null
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.JsonSerializers.WestwindJsonSerializer.SerializeFields">
+            <summary>
+            Determines whether fields are serialized
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.#ctor(Westwind.Web.JsonSerializers.JSONSerializer)">
+            <summary>
+             Force a master Serializer to be passed for settings
+            </summary>
+            <param name="serializer"></param>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.#ctor">
+            <summary>
+            Master Serializer contructor is preferred
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.Serialize(System.Object)">
+            <summary>
+            Serializes a .NET object reference into a JSON string.
+            
+            The serializer supports:
+            &lt;&lt;ul&gt;&gt;
+            &lt;&lt;li&gt;&gt; All simple types
+            &lt;&lt;li&gt;&gt; POCO objects and hierarchical POCO objects
+            &lt;&lt;li&gt;&gt; Arrays
+            &lt;&lt;li&gt;&gt; IList based collections
+            &lt;&lt;li&gt;&gt; DataSet
+            &lt;&lt;li&gt;&gt; DataTable
+            &lt;&lt;li&gt;&gt; DataRow
+            &lt;&lt;/ul&gt;&gt;
+            
+            The serializer works off any .NET type - types don't have to be explicitly 
+            serializable.
+            
+            DataSet/DataTable/DataRow parse into a special format that is essentially 
+            array based of just the data. These objects can be serialized but cannot be
+             passed back in via deserialization.
+            <seealso>Class JSONSerializer</seealso>
+            </summary>
+            <param name="value">
+            The strongly typed value to parse
+            </param>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.Deserialize(System.String,System.Type)">
+            <summary>
+            Takes a JSON string and attempts to create a .NET object from this  
+            structure. An input type is required and any type that is serialized to  
+            must support a parameterless constructor.
+            
+            The de-serializer instantiates each object and runs through the properties
+            
+            The deserializer supports &lt;&lt;ul&gt;&gt; &lt;&lt;li&gt;&gt; All simple 
+            types &lt;&lt;li&gt;&gt; Most POCO objects and Hierarchical POCO objects 
+            &lt;&lt;li&gt;&gt; Arrays and Object Arrays &lt;&lt;li&gt;&gt; IList based 
+            collections &lt;&lt;/ul&gt;&gt;
+            
+            Note that the deserializer doesn't support DataSets/Tables/Rows like the  
+            serializer as there's no type information available from the client to  
+            create these objects on the fly.
+            <seealso>Class JSONSerializer</seealso>
+            </summary>
+            <param name="JSONText">
+            A string of JSON text passed from the client.
+            </param>
+            <param name="valueType">
+            The type of the object that is to be created from the JSON text.
+            </param>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.Deserialize``1(System.String)">
+            <summary>
+            Deserializes JSON string into a specified type value.
+            </summary>
+            <typeparam name="TType"></typeparam>
+            <param name="jsonText"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.WriteValue(System.Text.StringBuilder,System.Object)">
+             <summary>
+             Serialization routine that takes any value and serializes
+             it into JSON. 
+             
+             Date formatting follows Microsoft ASP.NET AJAX format which
+             represents dates as strings in the format of: "\/Date(231231231)\/"
+            
+             This code is based originally on Jason Diamond's JSON code
+             in Anthem.NET although heavy modifications have been made.
+             </summary>
+             <param name="sb"></param>
+             <param name="val"></param>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.WriteString(System.Text.StringBuilder,System.String)">
+            <summary>
+            Writes a string as a JSON string
+            </summary>
+            <param name="sb"></param>
+            <param name="s"></param>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.WriteDate(System.Text.StringBuilder,System.DateTime)">
+            <summary>
+            Writes a date out as a JSON string into the string builder.
+            
+            Data format is set based serialized based on the DateSerializationMode.         
+            </summary>
+            <param name="sb"></param>
+            <param name="universalDate"></param>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.WriteDictionary(System.Text.StringBuilder,System.Collections.IDictionary)">
+            <summary>
+            Outputs any dictionary type that has a string key.
+            Non string keys will cause an exception.
+            </summary>
+            <param name="sb"></param>
+            <param name="dict"></param>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.UnicodeEscapeMatchEvaluator(System.Text.RegularExpressions.Match)">
+            <summary>
+            Unescapes string encoded Unicode character in the format of \u03AF
+            </summary>
+            <param name="match"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.ParseValueString(System.String,System.Type)">
+            <summary>
+            High level parsing method that takes a JSON string and tries to
+            convert it to the appropriate type. 
+            </summary>
+            <param name="value"></param>
+            <param name="valueType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.ParseString(System.String)">
+            <summary>
+            Parses a JSON string into a string value
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.ParseDate(System.String)">
+            <summary>
+            Parses Date Time values. Supports parsing values in various formats:
+            
+            new Date()
+            MS Ajax Date Form (\/Date(xxxx)\/)
+            ISO Date Format
+            </summary>
+            <param name="jsonDate"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.ParseObject(System.IO.StringReader,System.Type,System.Boolean)">
+            <summary>
+            Parsing routine specific to parsing an object. Note the recursive flag which 
+            allows skipping over prefix information.
+            </summary>
+            <param name="Reader"></param>
+            <param name="ValueType"></param>
+            <param name="RecursiveCall"></param>
+            <returns></returns>
+        </member>
+        <member name="F:Westwind.Web.JsonSerializers.WestwindJsonSerializer.arrayTerminatorChar">
+            <summary>
+            Parses a array and IList subtype 
+            
+            Supports only Objects as array items
+            </summary>
+            <param name="Reader"></param>
+            <param name="ArrayType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.ParseArray(System.IO.StringReader,System.Type)">
+            <summary>
+            Parses a JSON array string to its underlying array type.
+            Requires:
+            - Array must be of a single element type (ie. an object, or string or decimal)
+            </summary>
+            <remarks>
+            Re-written by Joe McLain with modifications by Rick Strahl
+            06/01/2008
+            </remarks>
+            <param name="reader"></param>
+            <param name="arrayType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.GetArrayType(System.Type)">
+            <summary>
+            Returns the type of item type of the array/collection
+            </summary>
+            <param name="arrayType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.WestwindJsonSerializer.StripComma(System.Text.StringBuilder)">
+            <summary>
+            Strips a comma off a string builder. In Format mode
+            ,\r\n are stripped
+            </summary>
+            <param name="sb"></param>
+        </member>
+        <member name="P:Westwind.Web.JsonSerializers.WestwindJsonSerializer.DateSerializationMode">
+            <summary>
+            Encodes Dates as a JSON string value that is compatible
+            with MS AJAX and is safe for JSON validators. If false
+            serializes dates as new Date() expression instead.
+            
+            The default is true.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.JsonSerializers.WestwindJsonSerializer.FormatJsonOutput">
+            <summary>
+            Determines if there are line breaks inserted into the 
+            JSON to make it more easily human readable.
+            </summary>
+        </member>
         <member name="T:Westwind.Web.ClientScriptProxy">
             <summary>
             This is a proxy object for the Page.ClientScript and MS Ajax ScriptManager 

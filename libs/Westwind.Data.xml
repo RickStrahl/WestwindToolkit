@@ -280,11 +280,6 @@
             Defaults to false as to improve performance.
             </param>
         </member>
-        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.DeleteInternal(`0,System.Data.Entity.DbSet,System.Boolean)">
-            <summary>
-            Actual delete operation that removes an entity
-            </summary>
-        </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Delete(System.Object)">
             <summary>
             Deletes an entity from the main entity set
@@ -292,6 +287,19 @@
             </summary>
             <param name="id"></param>
             <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Delete(System.Object,System.Boolean)">
+            <summary>
+            Deletes an entity from the main entity set
+            based on a key value.
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.DeleteInternal(`0,System.Data.Entity.DbSet,System.Boolean)">
+            <summary>
+            Actual delete operation that removes an entity
+            </summary>
         </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.OnBeforeDelete(`0)">
             <summary>
@@ -372,6 +380,14 @@
             </summary>
             <param name="entity">The entity to be validated</param>
         </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.GetProperty(System.String)">
+            <summary>
+            Retrieves a value from the Properties collection safely.
+            If the value doesn't exist null is returned.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.GetProperties(System.String,System.Object)">
             <summary>
             Loads the Properties dictionary with values from a Properties property of 
@@ -379,7 +395,7 @@
             values from it arbitrarily and use SetProperties to write the values back
             in serialized form to the underlying property for database storage.
             </summary>
-            <param name="stringFieldNameToLoadFrom"></param>
+            <param name="stringFieldNameToLoadFrom">The name of the field to load the XML properties from.</param>
         </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.SetProperties(System.String,System.Object)">
             <summary>
