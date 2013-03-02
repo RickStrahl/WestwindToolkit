@@ -12,4 +12,7 @@ copy ..\Westwind.Web\bin\release\Westwind.Web.xml
 copy ..\Westwind.Web.Mvc\bin\release\Westwind.Web.Mvc.dll 
 copy ..\Westwind.Web.Mvc\bin\release\Westwind.Web.Mvc.xml 
 
+copy ..\Westwind.Web.WebForms\bin\release\Westwind.Web.Webforms.dll 
+copy ..\Westwind.Web.WebForms\bin\release\Westwind.Web.Webforms.xml 
+
 pause

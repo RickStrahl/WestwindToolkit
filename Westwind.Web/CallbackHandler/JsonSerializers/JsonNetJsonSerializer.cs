@@ -112,8 +112,9 @@ namespace Westwind.Web.JsonSerializers
 
             StringWriter sw = new StringWriter();
 
+            //JsonTextWriter writer = new JsonTextWriter(sw);
             dynamic writer = ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonTextWriter",sw); 
-                                                    //new JsonTextWriter(sw);
+                                                    
             if (FormatJsonOutput)
                 writer.Formatting = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.Formatting","Indented");
             else
