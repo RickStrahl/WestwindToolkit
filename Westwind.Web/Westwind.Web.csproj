@@ -37,9 +37,24 @@
     <Reference Include="System.Web" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CallbackHandler\CallbackHandler\CallbackEnumerations.cs" />
+    <Compile Include="CallbackHandler\CallbackHandler\CallbackException.cs" />
+    <Compile Include="CallbackHandler\CallbackHandler\CallbackHandler.cs" />
+    <Compile Include="CallbackHandler\CallbackHandler\CallbackHandlerRouteHandler.cs" />
+    <Compile Include="CallbackHandler\CallbackHandler\CallbackMethodAttribute.cs" />
+    <Compile Include="CallbackHandler\CallbackHandler\CallbackMethodProcessorHelper.cs" />
+    <Compile Include="CallbackHandler\CallbackHandler\ICallbackMethodProcessor.cs" />
+    <Compile Include="CallbackHandler\CallbackHandler\JsonCallbackMethodProcessor.cs" />
+    <Compile Include="CallbackHandler\CallbackHandler\XmlCallbackMethodProcessor.cs" />
+    <Compile Include="CallbackHandler\JsonSerializers\IJSONSerializer.cs" />
+    <Compile Include="CallbackHandler\JsonSerializers\JsonNetJsonSerializer.cs" />
+    <Compile Include="CallbackHandler\JsonSerializers\JSONSerializer.cs" />
+    <Compile Include="CallbackHandler\JsonSerializers\WebExtensionsSerializer.cs" />
+    <Compile Include="CallbackHandler\JsonSerializers\WestwindJsonSerializer.cs" />
     <Compile Include="ClientScriptUtilities\ClientScriptProxy.cs" />
     <Compile Include="ClientScriptUtilities\JavaScriptMinifier.cs" />
     <Compile Include="Resources\WebResources.cs" />
