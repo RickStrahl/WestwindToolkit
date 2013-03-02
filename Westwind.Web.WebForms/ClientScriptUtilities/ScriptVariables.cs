@@ -555,7 +555,7 @@ namespace Westwind.Web
             
             return sb.ToString();
             // Use ClientScriptProxy to be MS Ajax compatible - otherwise use ClientScript
-            //scriptProxy.RegisterClientScriptBlock(Page, typeof(ControlResources), "ClientObject_" + ClientObjectName, sb.ToString(), true);
+            //scriptProxy.RegisterClientScriptBlock(Page, typeof(WebResources), "ClientObject_" + ClientObjectName, sb.ToString(), true);
         }
 
         /// <summary>

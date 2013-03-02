@@ -34,16 +34,15 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientScriptUtilities\ClientScriptProxy.cs" />
-    <Compile Include="ClientScriptUtilities\JavaScriptMinifier.cs" />
     <Compile Include="ClientScriptUtilities\ScriptVariables.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -51,6 +50,41 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="WebFormsControls\Ajax\AjaxMethodCallback.cs" />
+    <Compile Include="WebFormsControls\Ajax\Autocomplete.cs" />
+    <Compile Include="WebFormsControls\Ajax\DragPanel.cs" />
+    <Compile Include="WebFormsControls\Ajax\HoverPanel.cs" />
+    <Compile Include="WebFormsControls\Ajax\jQueryDatePicker.cs" />
+    <Compile Include="WebFormsControls\Ajax\ModalDialog.cs" />
+    <Compile Include="WebFormsControls\Ajax\ScriptContainer.cs" />
+    <Compile Include="WebFormsControls\BaseControls\wwCheckBox.cs" />
+    <Compile Include="WebFormsControls\BaseControls\wwCheckBoxList.cs" />
+    <Compile Include="WebFormsControls\BaseControls\wwDropDownList.cs" />
+    <Compile Include="WebFormsControls\BaseControls\wwImageLink.cs" />
+    <Compile Include="WebFormsControls\BaseControls\wwListBox.cs" />
+    <Compile Include="WebFormsControls\BaseControls\wwPage.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebFormsControls\BaseControls\wwRadioButtonList.cs" />
+    <Compile Include="WebFormsControls\BaseControls\wwTextBox.cs" />
+    <Compile Include="WebFormsControls\BaseControls\wwWebForm.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebFormsControls\DataBinderControl\BindingErrors.cs" />
+    <Compile Include="WebFormsControls\DataBinderControl\BindingExceptions.cs" />
+    <Compile Include="WebFormsControls\DataBinderControl\DataBinder.cs" />
+    <Compile Include="WebFormsControls\DataBinderControl\DataBindingItem.cs" />
+    <Compile Include="WebFormsControls\DataBinderControl\DataBindingItemCollection.cs" />
+    <Compile Include="WebFormsControls\DataBinderControl\IDataBinder.cs" />
+    <Compile Include="WebFormsControls\Extended\Captcha.cs" />
+    <Compile Include="WebFormsControls\Extended\ErrorDisplay.cs" />
+    <Compile Include="WebFormsControls\Extended\HelpControl.cs" />
+    <Compile Include="WebFormsControls\Extended\MessageDisplay.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebFormsControls\Extended\Pager.cs" />
+    <Compile Include="WebFormsControls\Extended\PreservePropertyControl.cs" />
+    <Compile Include="WebFormsControls\Extended\TabControl.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj">

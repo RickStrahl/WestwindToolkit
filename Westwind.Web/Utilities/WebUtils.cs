@@ -47,6 +47,7 @@ using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using Westwind.Web;
 using Westwind.Web.Controls.Properties;
+using Westwind.Web.JsonSerializers;
 
 namespace Westwind.Utilities
 {
@@ -77,7 +78,7 @@ namespace Westwind.Utilities
         public static string ResolveUrl(string originalUrl)
         {
             if (originalUrl == null)
-                return null;        
+                return null;
 
             // Fix up image path for ~ root app dir directory
             if (originalUrl.StartsWith("~"))
@@ -477,10 +478,10 @@ namespace Westwind.Utilities
                     }
 
                     // Lookup key will be field plus the prefix
-                    string formvarKey = prefix + Name;                    
+                    string formvarKey = prefix + Name;
 
                     // Try a simple lookup at the root first
-                    var strValue = Request.Form[formvarKey];                    
+                    var strValue = Request.Form[formvarKey];
 
                     // if not found try to find the control and then
                     // use its UniqueID for lookup instead
@@ -940,7 +941,7 @@ namespace Westwind.Utilities
                     Response.Headers.Remove("Content-Encoding");
                     Response.AppendHeader("Content-Encoding", "deflate");
                 }
-              
+
 
             }
 
@@ -998,7 +999,7 @@ namespace Westwind.Utilities
 
             return ival;
         }
-        
+
         /// <summary>
         /// Returns the content of the POST buffer as string
         /// </summary>
@@ -1135,7 +1136,7 @@ namespace Westwind.Utilities
             // Has to be bracketed in quotes
             if (!encodedString.StartsWith("\"") || !encodedString.EndsWith("\""))
                 encodedString = "\"" + encodedString + "\"";
-            
+
             if (encodedString == "\"\"")
                 return string.Empty;
 
@@ -1164,6 +1165,43 @@ namespace Westwind.Utilities
             return encodedString;
         }
 
+
+        /// <summary>
+        /// Converts a .NET date to a JavaScript JSON date value.
+        /// </summary>
+        /// <param name="date">.Net Date</param>
+        /// <returns></returns>
+        public static string EncodeJsDate(DateTime date, JsonDateEncodingModes dateMode = JsonDateEncodingModes.ISO)
+        {
+            TimeSpan tspan = date.ToUniversalTime().Subtract(DAT_JAVASCRIPT_BASEDATE);
+            double milliseconds = Math.Floor(tspan.TotalMilliseconds);
+
+            // ISO 8601 mode string "2009-03-28T21:55:21.1234567Z"
+            if (dateMode == JsonDateEncodingModes.ISO)
+                // this is the same format that browser JSON formatters produce
+                return string.Concat("\"", date.ToString("yyyy-MM-ddThh:mm:ss.fffZ"), "\"");
+
+            // raw date expression - new Date(1227578400000)
+            if (dateMode == JsonDateEncodingModes.NewDateExpression)
+                return "new Date(" + milliseconds.ToString() + ")";
+
+            // MS Ajax style string: "\/Date(1227578400000)\/"
+            if (dateMode == JsonDateEncodingModes.MsAjax)
+            {
+                StringBuilder sb = new StringBuilder(40);
+                sb.Append(@"""\/Date(");
+                sb.Append(milliseconds);
+
+                // Add Timezone 
+                sb.Append((TimeZone.CurrentTimeZone.GetUtcOffset(date).Hours * 100).ToString("0000").PadLeft(4, '0'));
+
+                sb.Append(@")\/""");
+                return sb.ToString();
+            }
+
+            throw new ArgumentException("Date Format not supported.");
+        }
+
         /// <summary>
         /// Matchevaluated to unescape string encoded Unicode character in the format of \u03AF
         /// </summary>
@@ -1178,8 +1216,9 @@ namespace Westwind.Utilities
         }
 
 
-        
-        
+
+
+
         /// <summary>
         /// Returns a resource string. Shortcut for HttpContext.GetGlobalResourceObject.
         /// </summary>
@@ -1311,8 +1350,8 @@ namespace Westwind.Utilities
                 }
             }
 
-            decimal osVer = (decimal) Environment.OSVersion.Version.Major +
-                    ((decimal) Environment.OSVersion.Version.MajorRevision / 10);
+            decimal osVer = (decimal)Environment.OSVersion.Version.Major +
+                    ((decimal)Environment.OSVersion.Version.MajorRevision / 10);
 
             // Windows 7 and Win2008 R2
             if (osVer == 6.1M)
@@ -1331,7 +1370,8 @@ namespace Westwind.Utilities
                 return 5.0M;
 
             // error result
-            return -1M;                
+            return -1M;
         }
     }
+
 }

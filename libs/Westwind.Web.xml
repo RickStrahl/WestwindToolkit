@@ -2685,6 +2685,13 @@
             <param name="encodedString">JSON string</param>
             <returns>unencoded string</returns>
         </member>
+        <member name="M:Westwind.Utilities.WebUtils.EncodeJsDate(System.DateTime,Westwind.Web.JsonSerializers.JsonDateEncodingModes)">
+            <summary>
+            Converts a .NET date to a JavaScript JSON date value.
+            </summary>
+            <param name="date">.Net Date</param>
+            <returns></returns>
+        </member>
         <member name="M:Westwind.Utilities.WebUtils.UnicodeEscapeMatchEvaluator(System.Text.RegularExpressions.Match)">
             <summary>
             Matchevaluated to unescape string encoded Unicode character in the format of \u03AF

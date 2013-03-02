@@ -300,7 +300,7 @@ namespace Westwind.Web
         /// Loads a script resource based on the following scriptLocation values:
         /// 
         /// * WebResource
-        ///   Loads the Web Resource specified out of ControlResources. Specify the resource
+        ///   Loads the Web Resource specified out of WebResources. Specify the resource
         ///   that applied in the resourceName parameter
         ///   
         /// * Url/RelativeUrl
