@@ -264,8 +264,8 @@ namespace Westwind.Web.Controls
                 // Use ScriptProxy to load jQuery and ww.Jquery
                 if (!string.IsNullOrEmpty(jQueryScriptLocation))
                     ScriptLoader.LoadjQuery(this);
-                
-                ScriptProxy.LoadControlScript(this, ScriptLocation, WebResources.WWJQUERY_SCRIPT_RESOURCE,ScriptRenderModes.Header);
+
+                ScriptLoader.LoadwwjQuery(this, false);                
             }
         }
 

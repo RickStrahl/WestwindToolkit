@@ -39,15 +39,15 @@ using System.Reflection;
 using Westwind.Utilities;
 
 
-[assembly: WebResource("Westwind.Web.Core.Resources.jquery.js", "application/x-javascript")]
-[assembly: WebResource("Westwind.Web.Core.Resources.ww.jquery.js", "application/x-javascript")]
+[assembly: WebResource("Westwind.Web.Resources.jquery.js", "application/x-javascript")]
+[assembly: WebResource("Westwind.Web.Resources.ww.jquery.js", "application/x-javascript")]
 
 
-[assembly: WebResource("Westwind.Web.Core.Resources.warning.gif", "image/gif")]
-[assembly: WebResource("Westwind.Web.Core.Resources.info.gif", "image/gif")]
-[assembly: WebResource("Westwind.Web.Core.Resources.close.gif", "image/gif")]
-[assembly: WebResource("Westwind.Web.Core.Resources.help.gif", "image/gif")]
-[assembly: WebResource("Westwind.Web.Core.Resources.calendar.gif", "image/gif")]
+[assembly: WebResource("Westwind.Web.Resources.warning.gif", "image/gif")]
+[assembly: WebResource("Westwind.Web.Resources.info.gif", "image/gif")]
+[assembly: WebResource("Westwind.Web.Resources.close.gif", "image/gif")]
+[assembly: WebResource("Westwind.Web.Resources.help.gif", "image/gif")]
+[assembly: WebResource("Westwind.Web.Resources.calendar.gif", "image/gif")]
 
 namespace Westwind.Web
 {
@@ -57,17 +57,17 @@ namespace Westwind.Web
     public class WebResources
     {
         /* Embedded Script Resources */
-        public const string JQUERY_SCRIPT_RESOURCE = "Westwind.Web.Core.Resources.jquery.js";
-        public const string WWJQUERY_SCRIPT_RESOURCE = "Westwind.Web.Core.Resources.ww.jquery.js";
+        public const string JQUERY_SCRIPT_RESOURCE = "Westwind.Web.Resources.jquery.js";
+        public const string WWJQUERY_SCRIPT_RESOURCE = "Westwind.Web.Resources.ww.jquery.js";
 
         /*  Icon Resource Strings */
-        public const string INFO_ICON_RESOURCE = "Westwind.Web.Coer.Resources.info.gif";
-        public const string WARNING_ICON_RESOURCE = "Westwind.Web.Core.Resources.warning.gif";
-        public const string CLOSE_ICON_RESOURCE = "Westwind.Web.Core.Resources.close.gif";
-        public const string HELP_ICON_RESOURCE = "Westwind.Web.Core.Resources.help.gif";
-        public const string LOADING_ICON_RESOURCE = "Westwind.Web.Core.Resources.loading.gif";
-        public const string LOADING_SMALL_ICON_RESOURCE = "Westwind.Web.Core.Resources.loading_small.gif";
-        public const string CALENDAR_ICON_RESOURCE = "Westwind.Web.Core.Resources.calendar.gif";
+        public const string INFO_ICON_RESOURCE = "Westwind.Web.Resources.info.gif";
+        public const string WARNING_ICON_RESOURCE = "Westwind.Web.Resources.warning.gif";
+        public const string CLOSE_ICON_RESOURCE = "Westwind.Web.Resources.close.gif";
+        public const string HELP_ICON_RESOURCE = "Westwind.Web.Resources.help.gif";
+        public const string LOADING_ICON_RESOURCE = "Westwind.Web.Resources.loading.gif";
+        public const string LOADING_SMALL_ICON_RESOURCE = "Westwind.Web.Resources.loading_small.gif";
+        public const string CALENDAR_ICON_RESOURCE = "Westwind.Web.Resources.calendar.gif";
 
         /* Content Types */
         public const string STR_JsonContentType = "application/json";
