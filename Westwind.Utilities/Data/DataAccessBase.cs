@@ -583,7 +583,7 @@ namespace Westwind.Utilities.Data
         /// <typeparam name="T">Entity type to create from DataReader data</typeparam>
         /// <param name="sql">Sql string to execute</param>        
         /// <param name="parameters">DbParameters to fill the SQL statement</param>
-        /// <returns>List of objects</returns>
+        /// <returns>List of objects or null. Null is returned if there are no matches</returns>
         public virtual IEnumerable<T> ExecuteReader<T>(string sql, params object[] parameters)            
             where T : class, new()
         {

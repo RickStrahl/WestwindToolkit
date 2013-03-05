@@ -4,6 +4,8 @@ using Westwind.Data.Test.Models;
 using Westwind.Data.EfCodeFirst;
 using System.Data.Entity;
 using Westwind.Utilities;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace Westwind.Data.Test
 {

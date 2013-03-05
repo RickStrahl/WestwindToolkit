@@ -120,6 +120,31 @@ namespace Westwind.Utilities.Data.Tests
         }
 
         [TestMethod]
+        public void ExecuteDataReaderWithNoMatchingDataTest()
+        {
+            SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
+            
+            // no records returned from query
+            var reader = data.ExecuteReader("select * from ApplicationLog where 1=2");
+            Assert.IsNotNull(reader, "Reader is null and shouldn't be");            
+        }
+
+        [TestMethod]
+        public void ExecuteDataReaderTWithNoMatchingDataTest()
+        {
+            SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
+
+            // no records returned from query
+            var entries = data.ExecuteReader<WebLogEntry>("select * from ApplicationLog where 1=2");
+
+            var ent = entries.ToList();
+            Console.WriteLine(ent.Count);
+
+            Assert.IsNotNull(entries, "IEnumerable should not be null - only null on failure.");            
+            
+        }
+
+        [TestMethod]
         public void ExecuteDataReaderToIEnumerableTest()
         {
             SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
@@ -134,8 +159,6 @@ namespace Westwind.Utilities.Data.Tests
             {
                 recs.Add(entry);
             }
-
-            
 
             swatch.Stop();
 
