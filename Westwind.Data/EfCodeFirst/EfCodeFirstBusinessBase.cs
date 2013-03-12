@@ -271,22 +271,28 @@ namespace Westwind.Data.EfCodeFirst
 
         /// <summary>
         /// Adds a new entity as if it was created and fires
-        /// the OnNewEntity internally. 
+        /// the OnNewEntity internally. If NULL is passed in
+        /// a brand new entity is created and passed back.
         /// 
         /// This allows for external creation of the entity
         /// and then adding the entity to the context after
         /// the fact.
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="entity">An entity instance</param>
         /// <returns></returns>
         public virtual TEntity NewEntity(TEntity entity)
         {
-            Entity = Context.Set<TEntity>().Add(entity) as TEntity;
+            // always create an entity - if null return brand new entity            
+            if (entity == null)
+                return NewEntity();
+
+            // check to see if the entity already exists
+            if (GetEntityEntry(entity) == null)                
+                Entity = Context.Set<TEntity>().Add(entity) as TEntity;
+            else                
+                Entity = entity;
 
             OnNewEntity(Entity);
-
-            if (Entity == null)
-                return null;
 
             return Entity;
         }
@@ -904,8 +910,16 @@ namespace Westwind.Data.EfCodeFirst
         /// <returns></returns>
         protected DbEntityEntry GetEntityEntry(TEntity entity)
         {
-            return Context.ChangeTracker.Entries<TEntity>()
-                            .Where(ent => ent.Entity == entity).FirstOrDefault();
+            var entries =  Context.ChangeTracker
+                                  .Entries<TEntity>();
+                            
+            var res = entries.FirstOrDefault(ent => ent.Entity == entity);
+
+            // REQUIRED: if res is null and returned method fails
+            if (res == null)
+                return null;
+
+            return res;
         }
 
         /// <summary>
