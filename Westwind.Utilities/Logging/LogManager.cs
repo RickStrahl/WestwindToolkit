@@ -120,7 +120,12 @@ namespace Westwind.Utilities.Logging
         /// </summary>
         public static LogManager Current
         {
-            get { return _Current; }
+            get {
+                if (_Current == null)                
+                    _Current = LogManager.Create();
+                
+                return _Current; 
+            }
             set { _Current = value; }
         }
         private static LogManager _Current;
