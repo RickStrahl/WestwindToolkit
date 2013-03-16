@@ -102,7 +102,7 @@ namespace Westwind.Utilities.Logging.Tests
             adapter.LogFilename = STR_TestLogFile;
 
             WebLogEntry entry = new WebLogEntry();
-            entry.ErrorLevel = ErrorLevels.Message;
+            entry.ErrorLevel = ErrorLevels.Info;
             entry.Message = "Testing " + DateTime.Now.ToString();
 
             bool res = adapter.WriteEntry(entry);
@@ -121,7 +121,7 @@ namespace Westwind.Utilities.Logging.Tests
         public void WriteWebLogEntryTest()
         {
             WebLogEntry entry = new WebLogEntry();
-            entry.ErrorLevel = ErrorLevels.Message;
+            entry.ErrorLevel = ErrorLevels.Info;
             entry.Message = "Testing " + DateTime.Now.ToString();
             entry.IpAddress = "127.0.0.1";
             entry.Referrer = "http://www.west-wind.com/";
@@ -144,7 +144,7 @@ namespace Westwind.Utilities.Logging.Tests
         {
             WebLogEntry entry = new WebLogEntry();
             entry.Message = "Testing " + DateTime.Now.ToString();
-            entry.ErrorLevel = ErrorLevels.Message;
+            entry.ErrorLevel = ErrorLevels.Info;
             entry.Url = "/wwstore/admin.aspx";
             entry.QueryString = "action=show";
             entry.PostData = "Bogus".PadRight(3000, '.');
@@ -159,7 +159,7 @@ namespace Westwind.Utilities.Logging.Tests
         {
             WebLogEntry entry = new WebLogEntry();
             entry.Message = "Testing " + DateTime.Now.ToString();
-            entry.ErrorLevel = ErrorLevels.Message;
+            entry.ErrorLevel = ErrorLevels.Info;
             entry.Details = "Bogus".PadRight(3000, '.');
 
             bool res = LogManager.Current.WriteEntry(entry);
@@ -176,7 +176,7 @@ namespace Westwind.Utilities.Logging.Tests
             WebLogEntry entry = new WebLogEntry()
             {
                 Message = "Entered on: " + DateTime.Now.ToString(),
-                ErrorLevel = ErrorLevels.Log,
+                ErrorLevel = ErrorLevels.Info,
                 Details = StringUtils.RandomString(40,true)
             };
 

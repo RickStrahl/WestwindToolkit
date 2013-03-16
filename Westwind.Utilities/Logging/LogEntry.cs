@@ -83,7 +83,7 @@ namespace Westwind.Utilities.Logging
             get { return _Message; }
             set { _Message = value; }
         }
-        private string _Message = "";
+        private string _Message = String.Empty;
 
 
         /// <summary>
@@ -105,7 +105,7 @@ namespace Westwind.Utilities.Logging
             get { return _Details; }
             set { _Details = value; }
         }
-        private string _Details = "";
+        private string _Details = String.Empty;
 
         /// <summary>
         /// The type of exception that was thrown if an error occurred
@@ -115,7 +115,7 @@ namespace Westwind.Utilities.Logging
             get { return _ErrorType; }
             set { _ErrorType = value; }
         }
-        private string _ErrorType = "";
+        private string _ErrorType = String.Empty;
 
         /// <summary>
         /// StackTrace in event of an exception
@@ -125,7 +125,7 @@ namespace Westwind.Utilities.Logging
             get { return _StackTrace; }
             set { _StackTrace = value; }
         }
-        private string _StackTrace = "";
+        private string _StackTrace = String.Empty;
 
 
         /// <summary>
@@ -142,6 +142,7 @@ namespace Westwind.Utilities.Logging
             StackTrace = ex.StackTrace != null && ex.StackTrace.Length > 1490 ?  
                               ex.StackTrace.Substring(0,1500) : 
                               ex.StackTrace;
+            Details = ex.Source;
         }
     }
 
@@ -152,25 +153,21 @@ namespace Westwind.Utilities.Logging
         /// <summary>
         /// A critical error occurred
         /// </summary>          
-        Error = 2,
+        Error = 1,
         /// <summary>
         /// A warning type message that drives attention to potential problems
         /// </summary>
-        Warning = 1,
-        /// <summary>
-        /// An informational message such as start and stop notices
-        /// </summary>
-        Message = 4,
+        Warning = 2,
         /// <summary>
         /// Log Entry
         /// </summary>
-        Log = 8,
+        Info = 4,
         /// <summary>
-        /// Unclassified message type
+        /// Debug message
         /// </summary>
-        Miscellaneous = 16,
+        Debug = 8,
         /// <summary>
-        /// Empty/none 
+        /// Empty - not assigned
         /// </summary>
         None = 0,
         /// <summary>

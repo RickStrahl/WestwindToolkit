@@ -121,11 +121,11 @@ namespace Westwind.Utilities.Test
                     var entry = new WebLogEntry()
                     {
                         Entered = DateTime.Now.AddDays(i * -1),
-                        ErrorLevel = ErrorLevels.Log,
+                        ErrorLevel = ErrorLevels.Info,
                         Message = StringUtils.RandomString(50, true),
                         Details = StringUtils.RandomString(60, true),
                         QueryString = StringUtils.RandomString(20, true),
-                        ErrorType = (i % 2 == 0 ? "Log" : "Error"),
+                        ErrorType = (i % 2 == 0 ? "Info" : "Error"),
                         IpAddress = StringUtils.RandomString(12),
                         RequestDuration = i * 1.10M
 

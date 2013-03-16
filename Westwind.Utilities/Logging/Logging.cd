@@ -7,17 +7,7 @@
     </Compartments>
     <TypeIdentifier>
       <HashCode>QAAAAQAAAAARAAAAAACAAAABAAAAAQCICIAAAACCAgA=</HashCode>
-      <FileName>System\Logging\WebLogEntry.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Westwind.Utilities.Logging.LogManager">
-    <Position X="0.75" Y="0.5" Width="1.5" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-    </Compartments>
-    <TypeIdentifier>
-      <HashCode>AAAAAgAAAAEAASAAAACCEAAAAIAAAEIAQBAAAABAAAA=</HashCode>
-      <FileName>System\Logging\LogManager.cs</FileName>
+      <FileName>Logging\WebLogEntry.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Westwind.Utilities.Logging.LogEntry">
@@ -26,8 +16,8 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAACgAAAAAABAABIAAAAAAAAABAAAAAAAAAAoAAEAQA=</HashCode>
-      <FileName>System\Logging\LogEntry.cs</FileName>
+      <HashCode>AAACgAAAAAABAgBKAAAACAAAABACAAAAAAAAoAAEQQA=</HashCode>
+      <FileName>Logging\LogEntry.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Westwind.Utilities.Logging.SqlLogAdapter">
@@ -36,8 +26,8 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAIAgAAAAEAAQAAEAACgAAAgAAgAAIAACAAAQBgAAA=</HashCode>
-      <FileName>System\Logging\SqlLogAdapter.cs</FileName>
+      <HashCode>AAAIAgAAAQAAAQAAAAACAAAAgAAggAIAACAAAABgCAA=</HashCode>
+      <FileName>Logging\SqlLogAdapter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -47,30 +37,37 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAgAAAAkAAQAAEAACAAIAgAAgAAIAACAAAABAAAA=</HashCode>
-      <FileName>System\Logging\XmlLogAdapter.cs</FileName>
+      <HashCode>AAAAAgAAAQAAAQAACAACAAIAgAAggAIAACAAAAJAAAA=</HashCode>
+      <FileName>Logging\XmlLogAdapter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Westwind.Utilities.Logging.LogManager">
+    <Position X="1" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgAAAAAAACAAAACCEAAAAIgIAEIAQBAAAABAAAA=</HashCode>
+      <FileName>Logging\LogManager.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Interface Name="Westwind.Utilities.Logging.ILogAdapter">
     <Position X="4.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAgAAAAEAAQAAEAACAAAAgAAAAAIAACAAAABAAAA=</HashCode>
-      <FileName>System\Logging\ILogAdapter.cs</FileName>
+      <HashCode>AAAAAgAAAQAAAQAAAAACAAAAgAAAgAIAACAAAABAAAA=</HashCode>
+      <FileName>Logging\ILogAdapter.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Enum Name="Westwind.Utilities.Logging.ErrorLevels" Collapsed="true">
-    <Position X="6.75" Y="1.5" Width="1.5" />
+  <Enum Name="Westwind.Utilities.Logging.ErrorLevels">
+    <Position X="8.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAEAAAAQAAAAAAABAAAAgAAAAAAIAAIAEAAAA=</HashCode>
-      <FileName>System\Logging\LogEntry.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAYAAAAAAABAAAAAAAAAAAIAAAEEAAAA=</HashCode>
+      <FileName>Logging\LogEntry.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="Westwind.Utilities.Logging.LogTypes" Collapsed="true">
+  <Enum Name="Westwind.Utilities.Logging.LogTypes">
     <Position X="6.75" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAEAAAAEAAAA=</HashCode>
-      <FileName>System\Logging\ILogAdapter.cs</FileName>
+      <FileName>Logging\ILogAdapter.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Tahoma" Size="8.25" />

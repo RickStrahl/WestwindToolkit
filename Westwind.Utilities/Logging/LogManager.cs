@@ -35,6 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
 
 namespace Westwind.Utilities.Logging
 {
@@ -169,12 +170,103 @@ namespace Westwind.Utilities.Logging
         /// </summary>
         /// <param name="entry"></param>
         /// <returns></returns>
+        [Obsolete("Use the Log() or LogInfo/LogError/LogWarning methods instead.")]
         public bool WriteEntry(WebLogEntry entry)
         {
             return LogAdapter.WriteEntry(entry);
         }
 
+        /// <summary>
+        /// Writes a Web specific log entry into the log
+        /// </summary>
+        /// <param name="entry"></param>
+        /// <returns></returns>
+        public bool Log(WebLogEntry entry, bool logHttpInfo = false)
+        {
+            if (logHttpInfo)
+                entry.UpdateFromRequest();
+            
+            return LogAdapter.WriteEntry(entry);            
+        }
 
+        /// <summary>
+        /// Writes an Info entry into the log
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="?"></param>
+        /// <returns></returns>
+        public bool LogInfo(string message, 
+                            string details = null, 
+                            string stackTrace = null,
+                            bool logHttpInfo = false)
+
+        {
+            var entry = new WebLogEntry() 
+            {
+                ErrorLevel = ErrorLevels.Info,
+                Message = message,
+                Details = details,
+                StackTrace = stackTrace                
+            };
+            return Log(entry, logHttpInfo);
+        }
+
+
+        /// <summary>
+        /// Writes an Error message entry to the log
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="details"></param>
+        /// <param name="stackTrace"></param>
+        /// <returns></returns>
+        public bool LogError(string message, 
+                            string details = null,
+                            string stackTrace = null)
+        {
+            var entry = new WebLogEntry()
+            {
+                ErrorLevel = ErrorLevels.Error,
+                Message = message,
+                Details = details,
+                StackTrace = stackTrace
+            };
+            return Log(entry);
+        }                            
+
+        /// <summary>
+        /// Writes an error entry from an exception to the log
+        /// </summary>
+        /// <param name="ex"></param>
+        /// <param name="logHttpInfo"></param>
+        /// <returns></returns>
+        public bool LogError(Exception ex, bool logHttpInfo = false)
+        {
+            var entry = new WebLogEntry(ex);
+            return Log(entry, logHttpInfo);
+        }
+
+        /// <summary>
+        /// Writes a warning message to the log
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="details"></param>
+        /// <param name="stackTrace"></param>
+        /// <param name="logHttpInfo"></param>
+        /// <returns></returns>
+        public bool LogWarning(string message, 
+                    string details = null,
+                    string stackTrace = null,
+                    bool logHttpInfo = false)
+        {
+            var entry = new WebLogEntry()
+            {
+                ErrorLevel = ErrorLevels.Warning,
+                Message = message,
+                Details = details,
+                StackTrace = stackTrace
+            };
+            return Log(entry, logHttpInfo);
+        } 
 
 
         /// <summary>
