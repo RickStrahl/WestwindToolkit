@@ -78,13 +78,13 @@ namespace Westwind.Utilities.Logging
         {
             lock (SyncRoot)
             {
-                if (Current == null)
+                if (_Current == null)
                 {
                     LogManager manager = new LogManager(adapter);
-                    Current = manager;
+                    _Current = manager;
                 }
 
-                return Current;
+                return _Current;
             }
         }
 
@@ -169,8 +169,7 @@ namespace Westwind.Utilities.Logging
         /// Writes a Web specific log entry into the log
         /// </summary>
         /// <param name="entry"></param>
-        /// <returns></returns>
-        [Obsolete("Use the Log() or LogInfo/LogError/LogWarning methods instead.")]
+        /// <returns></returns>        
         public bool WriteEntry(WebLogEntry entry)
         {
             return LogAdapter.WriteEntry(entry);
