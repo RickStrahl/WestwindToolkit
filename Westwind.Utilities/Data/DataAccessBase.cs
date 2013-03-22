@@ -43,6 +43,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using Westwind.Utilities.Properties;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace Westwind.Utilities.Data
 {
@@ -978,18 +979,19 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// changes are rolled back. If true commands are accepted even if failures occur
         /// and are not rolled back.
         /// </summary>
-        /// <param name="Script"></param>
-        /// <param name="ScriptIsFile"></param>
+        /// <param name="script"></param>
+        /// <param name="continueOnError"></param>
+        /// <param name="scriptIsFile"></param>
         /// <returns></returns>
-        public bool RunSqlScript(string Script, bool ContinueOnError, bool ScriptIsFile)
+        public bool RunSqlScript(string script, bool continueOnError = false, bool scriptIsFile = false)
         {
             SetError();
 
-            if (ScriptIsFile)
+            if (scriptIsFile)
             {
                 try
                 {
-                    Script = File.ReadAllText(Script);
+                    script = File.ReadAllText(script);
                 }
                 catch (Exception ex)
                 {
@@ -998,21 +1000,24 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 }
             }
 
-            string[] ScriptBlocks = System.Text.RegularExpressions.Regex.Split(Script + "\r\n", "GO\r\n");
-            string Errors = "";
+            // Normalize line endings to \n
+            string scriptNormal = script.Replace("\r\n", "\n").Replace("\r", "\n");
+            string[] scriptBlocks = Regex.Split(scriptNormal + "\n", "GO\n");
 
-            if (!ContinueOnError)
+            string errors = "";
+
+            if (!continueOnError)
                 BeginTransaction();
 
-            foreach (string Block in ScriptBlocks)
+            foreach (string block in scriptBlocks)
             {
-                if (string.IsNullOrEmpty(Block.TrimEnd()))
+                if (string.IsNullOrEmpty(block.TrimEnd()))
                     continue;
 
-                if (ExecuteNonQuery(Block) == -1)
+                if (ExecuteNonQuery(block) == -1)
                 {
-                    Errors = ErrorMessage + "\r\n";
-                    if (!ContinueOnError)
+                    errors = ErrorMessage +  block;
+                    if (!continueOnError)
                     {
                         RollbackTransaction();
                         return false;
@@ -1020,13 +1025,13 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 }
             }
 
-            if (!ContinueOnError)
+            if (!continueOnError)
                 CommitTransaction();
 
-            if (string.IsNullOrEmpty(Errors))
+            if (string.IsNullOrEmpty(errors))
                 return true;
 
-            ErrorMessage = Errors;
+            ErrorMessage = errors;
             return false;
         }
 
