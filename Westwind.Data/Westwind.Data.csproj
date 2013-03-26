@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommonClasses\Support\DynamicQuery.cs" />
+    <Compile Include="EfCodeFirst\DbContextExtensions.cs" />
     <Compile Include="EfCodeFirst\DbContextFactory.cs" />
     <Compile Include="EfCodeFirst\EfCodeFirstBusinessBase.cs" />
     <Compile Include="EfCodeFirst\EfCodeFirstContext.cs" />

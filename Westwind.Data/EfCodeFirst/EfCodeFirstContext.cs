@@ -43,7 +43,7 @@ namespace Westwind.Data.EfCodeFirst
             }
         }
         private DataAccessBase _DbNative;
-        
+
 
         public EfCodeFirstContext()
         { }
@@ -70,5 +70,6 @@ namespace Westwind.Data.EfCodeFirst
             //else
             Db = new SqlDataAccess(connectionString);
         }
-    }    
+    }
+
 }
