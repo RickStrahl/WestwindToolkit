@@ -7,7 +7,8 @@ namespace Westwind.Data.EfCodeFirst
     /// <summary>
     /// Extensions to the DbContext class
     /// </summary>
-    public static class DbContextUtils
+    public static class DbContextUtils<TContext>
+        where TContext : DbContext
     {
         static object _InitializeLock = new object();
         static bool _InitializeLoaded = false;
@@ -16,8 +17,8 @@ namespace Westwind.Data.EfCodeFirst
         /// Method to allow running a DatabaseInitializer exactly once
         /// </summary>   
         /// <param name="initializer">A Database Initializer to run</param>
-        public static void SetInitializer<TContext>(IDatabaseInitializer<TContext> initializer = null)
-            where TContext : DbContext
+        public static void SetInitializer(IDatabaseInitializer<TContext> initializer = null)
+            
         {            
             if (_InitializeLoaded)
                 return;
