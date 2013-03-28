@@ -11,6 +11,11 @@ namespace Westwind.Web.Mvc
     /// 
     /// Object should be passed in to view end rendered with 
     /// &lt;%= ((ErrorDisplay) ViewData["ErrorDisplay"]).Show(450,true) %&gt;
+    /// or via a view.
+    /// 
+    /// Relies on several CSS Styles:
+    /// .errordisplay, errordisplay-text, errordisplay-warning-icon, errordisplay-info-icon
+    /// The icon links link to images.
     /// </summary>
     public class ErrorDisplay
     {        
@@ -22,7 +27,19 @@ namespace Westwind.Web.Mvc
             get { return _message; }
             set { _message = value; }
         }
-        private string _message = "";
+        private string _message = null;
+
+
+        /// <summary>
+        /// Determines whether there is a message present.
+        /// </summary>
+        public bool HasMessage
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(Message);
+            }
+        }
 
         /// <summary>
         /// Flag that determines whether the message is displayed
@@ -59,32 +76,30 @@ namespace Westwind.Web.Mvc
         protected void RenderTop(int width, bool center)
         {
             writer.Length = 0;
-            if (center)            
-                writer.AppendLine("<center>");            
 
             writer.Append("<div class=\"errordisplay\" ");            
 
             if (width != 0)
-                writer.Append("style=\"width: " + width.ToString() +"px;\"");
+                writer.Append("style=\"width: " + width.ToString() +"px;");
+            if (center)
+                writer.Append("margin-left: auto; margin-right: auto");
+            writer.Append("\"");
 
             writer.Append(" />\r\n");
         }
 
-        protected void RenderBottom(bool center)
+        protected void RenderBottom()
         {            
             // close out the dialog
             writer.AppendLine("</div>");
-            if (center)
-                writer.AppendLine("</center>");
         }
 
         protected void RenderDisplayErrors()
         {
             if (this.DisplayErrors.Count > 0)
             {
-                writer.Append("<div style=\"margin-left: 30px;\"><hr/>");
-                writer.Append(this.DisplayErrors.ToHtml());
-                writer.Append("</div>");
+                writer.AppendLine("<hr/>");
+                writer.AppendLine(this.DisplayErrors.ToHtml());                
             }
         }
 
@@ -96,24 +111,24 @@ namespace Westwind.Web.Mvc
         /// <returns></returns>
         public HtmlString Render(int width = 400, bool center = true)
         {
-            if (!visible) 
+            if (!visible || !HasMessage) 
                 return new HtmlString(string.Empty);
 
             RenderTop(width, center);
 
             if (ErrorDisplayType == ErrorDisplayTypes.Error)
-                writer.Append(" <img src=\"" + VirtualPathUtility.ToAbsolute("~/css/images/warning.gif") + "\" style=\"float: left; margin: 2px 12px;\" />");
+                writer.AppendLine(" <div class=\"errordisplay-warning-icon\"></div>");
             else
-                writer.Append(" <img src=\"" + VirtualPathUtility.ToAbsolute("~/css/images/info.gif") + "\" style=\"float: left; margin: 2px 12px;\" />");
+                writer.AppendLine(" <div class=\"errordisplay-info-icon\"></div>");
 
-            writer.Append("<div style=\"margin-left: 40px;\">");
+            writer.AppendLine("<div class=\"errordisplay-text\">");
             
-            writer.Append(  this.HtmlEncodeMessage ? HttpUtility.HtmlEncode(this.Message) : this.Message);
+            writer.AppendLine(  this.HtmlEncodeMessage ? HttpUtility.HtmlEncode(this.Message) : this.Message);
             RenderDisplayErrors();
             
-            writer.Append("</div>");
+            writer.AppendLine("</div>");
 
-            RenderBottom(center);
+            RenderBottom();
 
             return new HtmlString(writer.ToString());
         }
