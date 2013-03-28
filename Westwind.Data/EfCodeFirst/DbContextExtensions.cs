@@ -17,8 +17,7 @@ namespace Westwind.Data.EfCodeFirst
         /// Method to allow running a DatabaseInitializer exactly once
         /// </summary>   
         /// <param name="initializer">A Database Initializer to run</param>
-        public static void SetInitializer(IDatabaseInitializer<TContext> initializer = null)
-            
+        public static void SetInitializer(IDatabaseInitializer<TContext> initializer = null)            
         {            
             if (_InitializeLoaded)
                 return;

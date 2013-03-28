@@ -911,7 +911,7 @@
             <typeparam name="T">Entity type to create from DataReader data</typeparam>
             <param name="sql">Sql string to execute</param>        
             <param name="parameters">DbParameters to fill the SQL statement</param>
-            <returns>List of objects</returns>
+            <returns>List of objects or null. Null is returned if there are no matches</returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteReader``1(System.String,System.String,System.Object[])">
             <summary>
@@ -1080,8 +1080,9 @@
             changes are rolled back. If true commands are accepted even if failures occur
             and are not rolled back.
             </summary>
-            <param name="Script"></param>
-            <param name="ScriptIsFile"></param>
+            <param name="script"></param>
+            <param name="continueOnError"></param>
+            <param name="scriptIsFile"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.GetEntity(System.Object,System.Data.Common.DbCommand,System.String)">
@@ -1736,24 +1737,19 @@
             A warning type message that drives attention to potential problems
             </summary>
         </member>
-        <member name="F:Westwind.Utilities.Logging.ErrorLevels.Message">
-            <summary>
-            An informational message such as start and stop notices
-            </summary>
-        </member>
-        <member name="F:Westwind.Utilities.Logging.ErrorLevels.Log">
+        <member name="F:Westwind.Utilities.Logging.ErrorLevels.Info">
             <summary>
             Log Entry
             </summary>
         </member>
-        <member name="F:Westwind.Utilities.Logging.ErrorLevels.Miscellaneous">
+        <member name="F:Westwind.Utilities.Logging.ErrorLevels.Debug">
             <summary>
-            Unclassified message type
+            Debug message
             </summary>
         </member>
         <member name="F:Westwind.Utilities.Logging.ErrorLevels.None">
             <summary>
-            Empty/none 
+            Empty - not assigned
             </summary>
         </member>
         <member name="F:Westwind.Utilities.Logging.ErrorLevels.All">
@@ -1832,6 +1828,48 @@
             Writes a Web specific log entry into the log
             </summary>
             <param name="entry"></param>
+            <returns></returns>        
+        </member>
+        <member name="M:Westwind.Utilities.Logging.LogManager.Log(Westwind.Utilities.Logging.WebLogEntry,System.Boolean)">
+            <summary>
+            Writes a Web specific log entry into the log
+            </summary>
+            <param name="entry"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.LogManager.LogInfo(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Writes an Info entry into the log
+            </summary>
+            <param name="message"></param>
+            <param name="?"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.LogManager.LogError(System.String,System.String,System.String)">
+            <summary>
+            Writes an Error message entry to the log
+            </summary>
+            <param name="message"></param>
+            <param name="details"></param>
+            <param name="stackTrace"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.LogManager.LogError(System.Exception,System.Boolean)">
+            <summary>
+            Writes an error entry from an exception to the log
+            </summary>
+            <param name="ex"></param>
+            <param name="logHttpInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.LogManager.LogWarning(System.String,System.String,System.String,System.Boolean)">
+            <summary>
+            Writes a warning message to the log
+            </summary>
+            <param name="message"></param>
+            <param name="details"></param>
+            <param name="stackTrace"></param>
+            <param name="logHttpInfo"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Logging.LogManager.GetWebLogEntry(System.Int32)">

@@ -4,6 +4,17 @@
         <name>Westwind.Data</name>
     </assembly>
     <members>
+        <member name="T:Westwind.Data.EfCodeFirst.DbContextUtils`1">
+            <summary>
+            Extensions to the DbContext class
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.DbContextUtils`1.SetInitializer(System.Data.Entity.IDatabaseInitializer{`0})">
+            <summary>
+            Method to allow running a DatabaseInitializer exactly once
+            </summary>   
+            <param name="initializer">A Database Initializer to run</param>
+        </member>
         <member name="T:Westwind.Data.EfCodeFirst.DbContextFactory">
             <summary>
             Class that creates dbContext instances and scopes them
@@ -181,13 +192,14 @@
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.NewEntity(`0)">
             <summary>
             Adds a new entity as if it was created and fires
-            the OnNewEntity internally. 
+            the OnNewEntity internally. If NULL is passed in
+            a brand new entity is created and passed back.
             
             This allows for external creation of the entity
             and then adding the entity to the context after
             the fact.
             </summary>
-            <param name="entity"></param>
+            <param name="entity">An entity instance</param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.OnNewEntity(`0)">
