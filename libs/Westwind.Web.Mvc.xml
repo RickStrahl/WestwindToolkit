@@ -133,6 +133,11 @@
             
             Object should be passed in to view end rendered with 
             &lt;%= ((ErrorDisplay) ViewData["ErrorDisplay"]).Show(450,true) %&gt;
+            or via a view.
+            
+            Relies on several CSS Styles:
+            .errordisplay, errordisplay-text, errordisplay-warning-icon, errordisplay-info-icon
+            The icon links link to images.
             </summary>
         </member>
         <member name="M:Westwind.Web.Mvc.ErrorDisplay.Render(System.Int32,System.Boolean)">
@@ -165,6 +170,11 @@
         <member name="P:Westwind.Web.Mvc.ErrorDisplay.Message">
             <summary>
             The message that is displayed
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.ErrorDisplay.HasMessage">
+            <summary>
+            Determines whether there is a message present.
             </summary>
         </member>
         <member name="P:Westwind.Web.Mvc.ErrorDisplay.HtmlEncodeMessage">

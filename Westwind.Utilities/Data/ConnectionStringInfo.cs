@@ -14,14 +14,18 @@ namespace Westwind.Utilities.Data
 {
     /// <summary>
     /// Used to parse a connection string or connection string name 
-    /// into a connection stringn and dbProvider
+    /// into a the base connection  string and dbProvider.
+    /// 
+    /// If a connection string is passed that's just used.
+    /// If a ConnectionString entry name is passed the connection 
+    /// string is extracted and the provider parsed.
     /// </summary>
     public class ConnectionStringInfo
     {
         /// <summary>
         /// The default connection string provider
         /// </summary>
-        public const string STR_DefaultProviderName = "System.Data.SqlClient";
+        public static string DefaultProviderName = "System.Data.SqlClient";
 
         /// <summary>
         /// The connection string parsed
@@ -42,7 +46,7 @@ namespace Westwind.Utilities.Data
         /// <param name="connectionString">Config file connection name or full connection string</param>
         /// <param name="providerName">optional provider name. If not passed with a connection string is considered Sql Server</param>
         public static ConnectionStringInfo GetConnectionStringInfo(string connectionString, string providerName = null)
-        {
+        {            
             var info = new ConnectionStringInfo();
 
             if (string.IsNullOrEmpty(connectionString))
@@ -57,7 +61,7 @@ namespace Westwind.Utilities.Data
                     if (!string.IsNullOrEmpty(connInfo.ProviderName))
                         info.Provider = DbProviderFactories.GetFactory(connInfo.ProviderName);
                     else
-                        info.Provider = DbProviderFactories.GetFactory(STR_DefaultProviderName);
+                        info.Provider = DbProviderFactories.GetFactory(DefaultProviderName);
 
                     connectionString = connInfo.ConnectionString;
                 }
@@ -67,7 +71,7 @@ namespace Westwind.Utilities.Data
             else
             {
                 if (providerName == null)
-                    providerName = STR_DefaultProviderName;
+                    providerName = DefaultProviderName;
                 info.Provider = DbProviderFactories.GetFactory(providerName);
             }
 

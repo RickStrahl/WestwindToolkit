@@ -324,13 +324,13 @@ namespace Westwind.Utilities
         /// translation. If not passed automatically created.
         /// </param>
         /// <returns></returns>
-        public static IEnumerable<T> DataReaderToIEnumerable<T>(IDataReader reader, string fieldsToSkip = null, Dictionary<string, PropertyInfo> piList = null)            
+        public static IEnumerable<T> DataReaderToIEnumerable<T>(DbDataReader reader, string fieldsToSkip = null, Dictionary<string, PropertyInfo> piList = null)            
             where T : new()
         {
             if (reader != null)
             {
                 using (reader)
-                {
+                {                   
                     // Get a list of PropertyInfo objects we can cache for looping            
                     if (piList == null)
                     {
@@ -345,7 +345,8 @@ namespace Westwind.Utilities
                         T inst = new T();
                         DataReaderToObject(reader, inst, fieldsToSkip, piList);
                         yield return inst;
-                    }                    
+                    }
+                    
                 }
             }
         }

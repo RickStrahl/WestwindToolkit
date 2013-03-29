@@ -702,10 +702,14 @@
         <member name="T:Westwind.Utilities.Data.ConnectionStringInfo">
             <summary>
             Used to parse a connection string or connection string name 
-            into a connection stringn and dbProvider
+            into a the base connection  string and dbProvider.
+            
+            If a connection string is passed that's just used.
+            If a ConnectionString entry name is passed the connection 
+            string is extracted and the provider parsed.
             </summary>
         </member>
-        <member name="F:Westwind.Utilities.Data.ConnectionStringInfo.STR_DefaultProviderName">
+        <member name="F:Westwind.Utilities.Data.ConnectionStringInfo.DefaultProviderName">
             <summary>
             The default connection string provider
             </summary>
@@ -2971,7 +2975,7 @@
             <returns></returns>
             <remarks>DataReader is not closed by this method. Make sure you call reader.close() afterwards</remarks>
         </member>
-        <member name="M:Westwind.Utilities.DataUtils.DataReaderToIEnumerable``1(System.Data.IDataReader,System.String,System.Collections.Generic.Dictionary{System.String,System.Reflection.PropertyInfo})">
+        <member name="M:Westwind.Utilities.DataUtils.DataReaderToIEnumerable``1(System.Data.Common.DbDataReader,System.String,System.Collections.Generic.Dictionary{System.String,System.Reflection.PropertyInfo})">
              <summary>
              Creates an IEnumerable of T from an open DataReader instance.
             

@@ -110,33 +110,11 @@ namespace Westwind.Utilities.Data
         /// <param name="providerName">optional provider name. If not passed with a connection string is considered Sql Server</param>
         public void GetConnectionInfo(string connectionString, string providerName = null)
         {
-            if (string.IsNullOrEmpty(connectionString))
-                throw new InvalidOperationException(Resources.AConnectionStringMustBePassedToTheConstructor);
+            // throws if connection string is invalid or missing
+            var connInfo = ConnectionStringInfo.GetConnectionStringInfo(connectionString, providerName);
 
-            if (!connectionString.Contains("="))
-            {
-                // it's a connection string entry
-                var connInfo = ConfigurationManager.ConnectionStrings[connectionString];
-                if (connInfo != null)
-                {
-                    if (!string.IsNullOrEmpty(connInfo.ProviderName))
-                        dbProvider = DbProviderFactories.GetFactory(connInfo.ProviderName);
-                    else
-                        dbProvider = DbProviderFactories.GetFactory(STR_DefaultProviderName);
-
-                    connectionString = connInfo.ConnectionString;
-                }
-                else
-                    throw new InvalidOperationException(Resources.InvalidConnectionStringName);
-            }
-            else
-            {
-                if (providerName == null)
-                    providerName = STR_DefaultProviderName;
-                dbProvider = DbProviderFactories.GetFactory(providerName);
-            }
-
-            ConnectionString = connectionString;
+            ConnectionString = connInfo.ConnectionString;
+            dbProvider = connInfo.Provider;                       
         }
 
 
@@ -589,10 +567,19 @@ namespace Westwind.Utilities.Data
             where T : class, new()
         {
             var reader = ExecuteReader(sql, parameters);
+            
             if (reader == null)
                 return null;
 
-            return DataUtils.DataReaderToIEnumerable<T>(reader,null);
+            try
+            {
+                return DataUtils.DataReaderToIEnumerable<T>(reader, null);                
+            }
+            catch (Exception ex)
+            {
+                SetError(ex);
+                return null;
+            }                            
         }
 
         /// <summary>
@@ -609,12 +596,23 @@ namespace Westwind.Utilities.Data
         public virtual IEnumerable<T> ExecuteReader<T>(string sql, string propertiesToExclude, params object[] parameters)            
             where T: class, new()
         {
+            IEnumerable<T> result;
+
             var reader = this.ExecuteReader(sql, parameters);
+            
             if (reader == null)
                 return null;
 
-            var result = DataUtils.DataReaderToIEnumerable<T>(reader, propertiesToExclude);            
-
+            try
+            {
+                result = DataUtils.DataReaderToIEnumerable<T>(reader, propertiesToExclude);
+            }
+            catch (Exception ex)
+            {
+                SetError(ex);
+                return null;
+            }
+            
             return result;
         }
 
@@ -717,7 +715,16 @@ namespace Westwind.Utilities.Data
             where T : class, new()
         {
             var reader = ExecuteReader(sqlCommand, parameters);
-            return DataUtils.DataReaderToIEnumerable<T>(reader, null);
+
+            try
+            {
+                return DataUtils.DataReaderToIEnumerable<T>(reader, null);
+            }
+            catch (Exception ex)
+            {
+                SetError(ex);
+                return null;
+            }
         }
 
 
