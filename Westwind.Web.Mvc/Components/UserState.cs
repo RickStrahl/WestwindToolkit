@@ -5,12 +5,17 @@ using System.Web.UI;
 using System.IO;
 using System.Web.Security;
 using System.Web;
+using Westwind.Utilities;
 
 namespace Westwind.Web.Mvc
 {
     /// <summary>
     /// User information container that can easily 'serialize'
-    /// to a string and back. Meant to hold basic logon information
+    /// to a string and back. Meant to hold basic logon information.
+    /// 
+    /// I use this class a lot to attach as Forms Authentication
+    /// Ticket data to keep basic user data without having to
+    /// hit the database
     /// </summary>
     [Serializable]
     public class UserState
@@ -56,7 +61,10 @@ namespace Westwind.Web.Mvc
                     return 0;
                 return int.Parse(UserId);  
             }
-            set { UserId = value.ToString(); }
+            set 
+            { 
+                UserId = value.ToString(); 
+            }
         }
 
         
@@ -66,13 +74,8 @@ namespace Westwind.Web.Mvc
         /// </summary>
         /// <returns></returns>
         public override string ToString()
-        {            
-            //var serializer = new LosFormatter();
-            //StringWriter writer = new StringWriter();
-            //serializer.Serialize(writer, this);
-            //return writer.ToString();
-           
-            return string.Join(STR_Seperator, new string[] { this.UserId, this.Name, this.IsAdmin.ToString(), this.Email });
+        {
+            return StringSerializer.SerializeObject(this);
         }
 
 
@@ -89,10 +92,8 @@ namespace Westwind.Web.Mvc
             if (state == null)
                 return false;
 
-            UserId = state.UserId;
-            Email = state.Email;
-            Name = state.Name;
-            IsAdmin = state.IsAdmin;
+            // copy the properties
+            DataUtils.CopyObjectData(state, this);
 
             return true;
         }
@@ -112,25 +113,11 @@ namespace Westwind.Web.Mvc
             if (string.IsNullOrEmpty(userData))
                 return null;
 
-            //var serializer = new LosFormatter();
-            //return serializer.Deserialize(userData) as UserState;
-
-            string[] strings = userData.Split(new string[1] {STR_Seperator}, StringSplitOptions.None );
-            if (strings.Length < 4)
-                return null;
-
-            var userState = new UserState();
-
-            userState.UserId = strings[0];
-            userState.Name = strings[1];            
-            userState.IsAdmin = strings[2] == "True";
-            userState.Email = strings[3];
-            
-            return userState;
+            return StringSerializer.Deserialize<UserState>(userData);
         }
 
         /// <summary>
-        /// Creates a UserData object from authentication information in the 
+        /// Creates a UserState object from authentication information in the 
         /// Forms Authentication ticket.
         /// 
         /// IsEmpty() will return false if no data was loaded but
