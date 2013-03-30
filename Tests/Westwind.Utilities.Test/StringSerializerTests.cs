@@ -14,7 +14,7 @@ namespace Westwind.Utilities.Test
             state.Email = "rstrahl@west-wind.com";
             state.UserId = "1";
             state.IsAdmin = true;
-            state.Name = "Rick";
+            state.Name = "Rick Strahl | Markus Egger";
             state.Date = DateTime.Now;
 
             state.Role =  new Role()
@@ -32,6 +32,7 @@ namespace Westwind.Utilities.Test
 
             Assert.AreEqual(state.Email, state2.Email);
             Assert.AreEqual(state.UserId, state2.UserId);
+            Assert.AreEqual(state.Name, state2.Name);
 
             // exact date is not lined up to ticks so compare minutes
             Assert.AreEqual(state.Date.Minute, state2.Date.Minute);

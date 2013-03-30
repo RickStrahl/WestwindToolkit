@@ -7,7 +7,7 @@ using System.Text;
 namespace Westwind.Utilities
 {
     /// <summary>
-    /// A very simplistic flat object serializer that can be used 
+    /// A very simple flat object serializer that can be used 
     /// for intra application serialization. It creates a very compact
     /// positional string of properties.
     /// Only serializes top level properties, with no nesting support
@@ -54,7 +54,7 @@ namespace Westwind.Utilities
 
             var properties = objectToSerialize.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
 
-            var values = new List<object>();
+            var values = new List<string>();
             
             for (int i = 0; i < properties.Length; i++)
             {
@@ -79,7 +79,7 @@ namespace Westwind.Utilities
                         stringValue = ReflectionUtils.TypedValueToString(value, unsupportedReturn: "null");
                 }
 
-                values.Add(value);                
+                values.Add(stringValue);                
             }
 
             if (values.Count < 0)
