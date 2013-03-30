@@ -588,8 +588,8 @@ public static string TypedValueToString(object rawValue, CultureInfo culture =  
     else
     {
         // Any type that supports a type converter
-        TypeConverter converter = TypeDescriptor.GetConverter(valueType);
-        if (converter != null && converter.CanConvertTo(typeof(string)))
+        TypeConverter converter = TypeDescriptor.GetConverter(valueType);        
+        if (converter != null && converter.CanConvertTo(typeof(string)) && converter.CanConvertFrom(typeof(string)) )
             returnValue = converter.ConvertToString(null, culture, rawValue);
         else
         {

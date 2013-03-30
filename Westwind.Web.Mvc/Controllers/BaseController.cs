@@ -29,12 +29,12 @@ namespace Westwind.Web.Mvc
 
             // Grab the user's login information from FormsAuth            
             if (this.User.Identity != null && this.User.Identity is FormsIdentity)
-                this.UserState = UserState.CreateFromString(((FormsIdentity)this.User.Identity).Ticket.UserData);
+                this.UserState = UserState.CreateFromFormsAuthTicket();
             else
                 this.UserState = new UserState();
                         
             // have to explicitly add this so Master can see untyped value
-            ViewBag.UserSate = this.UserState;
+            ViewBag.UserState = this.UserState;
             ViewBag.ErrorDisplay = this.ErrorDisplay;
 
             // custom views should also add these as properties
