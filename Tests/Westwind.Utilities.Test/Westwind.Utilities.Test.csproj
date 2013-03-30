@@ -108,6 +108,8 @@
     <Compile Include="SqlDataAccessTests.cs" />
     <Compile Include="StrExtractTest.cs" />
     <Compile Include="StringUtilsTests.cs" />
+    <Compile Include="StringSerializerTests.cs" />
+    <Compile Include="ReflectionUtilsTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

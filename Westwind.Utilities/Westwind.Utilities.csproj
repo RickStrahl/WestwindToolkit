@@ -23,6 +23,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\Westwind.Utilities.xml</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -85,6 +87,7 @@
     <Compile Include="SupportClasses\ObjectFactory.cs" />
     <Compile Include="SupportClasses\PropertyBag.cs" />
     <Compile Include="SupportClasses\Scheduler.cs" />
+    <Compile Include="SupportClasses\StringSerializer.cs" />
     <Compile Include="Utilities\DataUtils.cs" />
     <Compile Include="Utilities\DebugUtils.cs" />
     <Compile Include="SupportClasses\UrlParser.cs" />

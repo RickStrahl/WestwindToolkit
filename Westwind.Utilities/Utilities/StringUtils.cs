@@ -393,6 +393,41 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
+        /// Converts a string into bytes for storage in any byte[] type
+        /// buffer or stream format (like MemoryStream).
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="encoding">The character encoding to use. Defaults to Unicode</param>
+        /// <returns></returns>
+        public static byte[] StringToBytes(string text, Encoding encoding = null)
+        {
+            if (text == null)
+                return null;
+
+            if (encoding == null)
+                encoding = Encoding.Unicode;
+
+            return encoding.GetBytes(text);
+        }
+
+        /// <summary>
+        /// Converts a byte array to a stringUtils
+        /// </summary>
+        /// <param name="buffer">raw string byte data</param>
+        /// <param name="encoding">Character encoding to use. Defaults to Unicode</param>
+        /// <returns></returns>
+        public static string BytesToString(byte[] buffer, Encoding encoding = null)
+        {
+            if (buffer == null)
+                return null;
+
+            if (encoding == null)
+                encoding = Encoding.Unicode;
+
+            return encoding.GetString(buffer);            
+        }
+
+        /// <summary>
         /// Returns an abstract of the provided text by returning up to Length characters
         /// of a text string. If the text is truncated a ... is appended.
         /// </summary>
