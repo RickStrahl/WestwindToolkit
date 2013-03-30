@@ -191,7 +191,11 @@
         <member name="T:Westwind.Web.Mvc.UserState">
             <summary>
             User information container that can easily 'serialize'
-            to a string and back. Meant to hold basic logon information
+            to a string and back. Meant to hold basic logon information.
+            
+            I use this class a lot to attach as Forms Authentication
+            Ticket data to keep basic user data without having to
+            hit the database
             </summary>
         </member>
         <member name="M:Westwind.Web.Mvc.UserState.ToString">
@@ -219,7 +223,7 @@
         </member>
         <member name="M:Westwind.Web.Mvc.UserState.CreateFromFormsAuthTicket">
             <summary>
-            Creates a UserData object from authentication information in the 
+            Creates a UserState object from authentication information in the 
             Forms Authentication ticket.
             
             IsEmpty() will return false if no data was loaded but

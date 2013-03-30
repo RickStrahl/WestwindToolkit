@@ -2893,6 +2893,62 @@
             created or submitted.
             </summary>
         </member>
+        <member name="T:Westwind.Utilities.StringSerializer">
+            <summary>
+            A very simple flat object serializer that can be used 
+            for intra application serialization. It creates a very compact
+            positional string of properties.
+            Only serializes top level properties, with no nesting support
+            and only simple properties or those with a type converter are
+            supported. Complex properties or non-two way type convertered
+            values are ignored.
+            
+            Creates strings in the format of:
+            Rick|rstrahl@west-wind.com|1|True|3/29/2013 1:32:31 PM|1
+            </summary>
+            <remarks>
+            This component is meant for intra application serialization of
+            very compact objects. A common use case is for state serialization
+            for cookies or a Forms Authentication ticket to minimize the amount
+            of space used - the output produced here contains only the actual
+            data, no property info or validation like other serialization formats.
+            Use only on small objects when size and speed matter otherwise use
+            a JSON/XML/Binary serializer or the ASP.NET LosFormatter object.
+            </remarks>
+        </member>
+        <member name="M:Westwind.Utilities.StringSerializer.SerializeObject(System.Object,System.String)">
+            <summary>
+            Serializes a flat object's properties into a String
+            separated by a separator character/string. Only
+            top level properties are serialized.
+            </summary>
+            <remarks>
+            Only serializes top level properties, with no nesting support
+            and only simple properties or those with a type converter are
+            'serialized'. All other property types use ToString().
+            </remarks>
+            <param name="objectToSerialize">The object to serialize</param>
+            <param name="separator">Optional separator character or string. Default is |</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.StringSerializer.DeserializeObject(System.String,System.Type,System.String)">
+            <summary>
+            Deserializes an object previously serialized by SerializeObject.
+            </summary>
+            <param name="serialized"></param>
+            <param name="type"></param>
+            <param name="separator"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.StringSerializer.Deserialize``1(System.String,System.String)">
+            <summary>
+            Deserializes an object serialized with SerializeObject.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="serialized"></param>
+            <param name="separator"></param>
+            <returns></returns>
+        </member>
         <member name="T:Westwind.Utilities.DataUtils">
             <summary>
             Utility library for common data operations.
@@ -3503,7 +3559,7 @@
             <param name="progId"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.ReflectionUtils.TypedValueToString(System.Object,System.Globalization.CultureInfo)">
+        <member name="M:Westwind.Utilities.ReflectionUtils.TypedValueToString(System.Object,System.Globalization.CultureInfo,System.String)">
             <summary>
             Converts a type to string if possible. This method supports an optional culture generically on any value.
             It calls the ToString() method on common types and uses a type converter on all other objects
@@ -3511,16 +3567,7 @@
             </summary>
             <param name="rawValue">The Value or Object to convert to a string</param>
             <param name="culture">Culture for numeric and DateTime values</param>
-            <returns>string</returns>
-        </member>
-        <member name="M:Westwind.Utilities.ReflectionUtils.TypedValueToString(System.Object)">
-            <summary>
-            Converts a type to string if possible. This method uses the current culture for numeric and DateTime values.
-            It calls the ToString() method on common types and uses a type converter on all other objects
-            if available.
-            </summary>
-            <param name="rawValue">The Value or Object to convert to a string</param>
-            <param name="Culture">Culture for numeric and DateTime values</param>
+            <param name="unsupportedReturn">Return string for unsupported types</param>
             <returns>string</returns>
         </member>
         <member name="M:Westwind.Utilities.ReflectionUtils.StringToTypedValue(System.String,System.Type,System.Globalization.CultureInfo)">
@@ -3545,25 +3592,6 @@
             </param>
             <returns>object. Throws exception if it cannot be converted.</returns>
         </member>
-        <member name="M:Westwind.Utilities.ReflectionUtils.StringToTypedValue(System.String,System.Type)">
-            <summary>
-            Turns a string into a typed value generically.
-            Explicitly assigns common types and falls back
-            on using type converters for unhandled types.         
-            
-            Common uses: 
-            * UI -&gt; to data conversions
-            * Parsers
-            <seealso>Class ReflectionUtils</seealso>
-            </summary>
-            <param name="sourceString">
-            The string to convert from
-            </param>
-            <param name="targetType">
-            The type to convert to
-            </param>
-            <returns>object. Throws exception if it cannot be converted.</returns>
-        </member>
         <member name="M:Westwind.Utilities.ReflectionUtils.StringToTypedValue``1(System.String,System.Globalization.CultureInfo)">
             <summary>
             Generic version allow for automatic type conversion without the explicit type
@@ -3572,15 +3600,6 @@
             <typeparam name="T">Type to be converted to</typeparam>
             <param name="sourceString">input string value to be converted</param>
             <param name="culture">Culture applied to conversion</param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.ReflectionUtils.StringToTypedValue``1(System.String)">
-            <summary>
-            Generic version allow for automatic type conversion without the explicit type
-            parameter. Defaults conversion to CurrentCulture.
-            </summary>
-            <typeparam name="T">Type to be converted to</typeparam>
-            <param name="sourceString">input string value to be converted</param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.ReflectionUtils.GetEnumList(System.Type,System.Boolean)">
@@ -3960,6 +3979,23 @@
             code blocks for example so you can get a left aligned code snippet.
             </summary>
             <param name="code"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.StringUtils.StringToBytes(System.String,System.Text.Encoding)">
+            <summary>
+            Converts a string into bytes for storage in any byte[] type
+            buffer or stream format (like MemoryStream).
+            </summary>
+            <param name="text"></param>
+            <param name="encoding">The character encoding to use. Defaults to Unicode</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.StringUtils.BytesToString(System.Byte[],System.Text.Encoding)">
+            <summary>
+            Converts a byte array to a stringUtils
+            </summary>
+            <param name="buffer">raw string byte data</param>
+            <param name="encoding">Character encoding to use. Defaults to Unicode</param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.StringUtils.TextAbstract(System.String,System.Int32)">
