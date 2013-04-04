@@ -27,11 +27,7 @@ namespace Westwind.Web.Mvc
         {
             base.Initialize(requestContext);
 
-            // Grab the user's login information from FormsAuth            
-            if (this.User.Identity != null && this.User.Identity is FormsIdentity)
-                this.UserState = UserState.CreateFromFormsAuthTicket();
-            else
-                this.UserState = new UserState();
+            this.CreateUserState();
                         
             // have to explicitly add this so Master can see untyped value
             ViewBag.UserState = this.UserState;
@@ -40,6 +36,19 @@ namespace Westwind.Web.Mvc
             // custom views should also add these as properties
         }
 
+        /// <summary>
+        /// Override this method to create custom overridden userstate
+        /// object instances.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual UserState CreateUserState()
+        {
+            // Grab the user's login information from FormsAuth            
+            if (this.User.Identity != null && this.User.Identity is FormsIdentity)
+                this.UserState = UserState.CreateFromFormsAuthTicket();
+            else
+                this.UserState = new UserState();
+        }
    
         /// <summary>
         /// Creates or updates a ViewModel and adds values to some of the
