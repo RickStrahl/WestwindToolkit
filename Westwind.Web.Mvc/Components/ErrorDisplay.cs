@@ -71,6 +71,7 @@ namespace Westwind.Web.Mvc
 
         StringBuilder writer = new StringBuilder();
         bool visible = false;
+
         private ErrorDisplayTypes ErrorDisplayType = ErrorDisplayTypes.Error;
 
         protected void RenderTop(int width, bool center)
