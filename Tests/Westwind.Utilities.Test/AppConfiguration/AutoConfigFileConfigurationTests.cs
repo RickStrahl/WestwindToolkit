@@ -62,7 +62,7 @@ namespace Westwind.Utilities.Configuration.Tests
 
             config.Initialize(provider);  
             
-            // Config File and custom section should exist
+            // Config File and custom section should have been created in config file
             string text = File.ReadAllText(TestHelpers.GetTestConfigFilePath());
 
             Assert.IsFalse(string.IsNullOrEmpty(text));

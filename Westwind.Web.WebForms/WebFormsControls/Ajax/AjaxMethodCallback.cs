@@ -402,10 +402,9 @@ namespace Westwind.Web.Controls
                 // If we're not in a callback provide script to client 
                 if (!string.IsNullOrEmpty(jQueryScriptLocation))
                     ScriptLoader.LoadjQuery(this.Page);
-                //ClientScriptProxy.LoadControlScript(this, jQueryScriptLocation, WebResources.JQUERY_SCRIPT_RESOURCE, ScriptRenderModes.HeaderTop);
-           
-                ClientScriptProxy.LoadControlScript(this, ScriptLocation, WebResources.WWJQUERY_SCRIPT_RESOURCE, ScriptRenderModes.Header);
-
+                
+                ScriptLoader.LoadwwjQuery(this.Page, false);
+                
                 // Generate the class wrapper and class loader function
                 GenerateControlSpecificJavaScript();
             }

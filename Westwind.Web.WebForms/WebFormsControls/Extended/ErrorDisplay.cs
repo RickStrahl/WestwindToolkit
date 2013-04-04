@@ -121,24 +121,6 @@ namespace Westwind.Web.Controls
         private string _UserMessage = "";
 
         
-        /// <summary>
-        /// Image URL to a warning icon displayed with the error message. Defaults to WarningResource which loads an image resource from the assembly. 
-        /// </summary>
-        [Description("The image to display when an error occurs. Default is WarningResource which is loaded as a resource image."), Category("ErrorMessage"),
-       Editor("System.Web.UI.Design.ImageUrlEditor", typeof(UITypeEditor)), DefaultValue("WarningResource")]
-        public string ErrorImage
-        {
-            get
-            {
-                return _ErrorImage;
-            }
-            set
-            {
-                _ErrorImage = value;
-            }
-        }
-        private string _ErrorImage = "WarningResource";
-
 
         /// <summary>
         /// An image Url that is displayed with the ShowMessage method. Defaults to 
@@ -189,6 +171,19 @@ namespace Westwind.Web.Controls
 
 
         /// <summary>
+        /// Flag that determines whether the message is displayed
+        /// as HTML or as text. By default message is encoded as text (true).
+        /// </summary>
+        [Category("ErrorMessage"), Description("Determines whether the message is formatted as text (true) or raw html (false)"), DefaultValue(false)]        
+        public bool HtmlEncodeMessage
+        {
+            get { return _HtmlEncodeMessage; }
+            set { _HtmlEncodeMessage = value; }
+        }
+        private bool _HtmlEncodeMessage = false;
+
+
+        /// <summary>
         /// Determines how the error dialog renders
         /// </summary>
         [Category("ErrorMessage"), Description("Determines whether the control renders text or Html"), DefaultValue(RenderModes.Html)]
@@ -222,22 +217,6 @@ namespace Westwind.Web.Controls
         }
         private Unit _Width = Unit.Pixel(400);
 
-        /// <summary>
-        /// Determines the padding inside of the error display box.
-        /// </summary>
-        [Description("The Cellpadding for the wrapper table that bounds the Error Display."), DefaultValue("10")]
-        public string CellPadding
-        {
-            get
-            {
-                return _CellPadding;
-            }
-            set
-            {
-                _CellPadding = value;
-            }
-        }
-        private string _CellPadding = "10";
 
         /// <summary>
         /// The CSS Class used for the table and column to display this item.
@@ -258,6 +237,22 @@ namespace Westwind.Web.Controls
 
 
         /// <summary>
+        /// Holds a modelstate errors collection
+        /// </summary>
+        public ValidationErrorCollection DisplayErrors
+        {
+            get
+            {
+                if (_DisplayErrors == null)
+                    _DisplayErrors = new ValidationErrorCollection();
+
+                return _DisplayErrors;
+            }
+        }
+        private ValidationErrorCollection _DisplayErrors = null;
+
+
+        /// <summary>
         /// A timeout in milliseconds for how long the error display is visible. 0 means no timeout.
         /// </summary>
         [Description("A timeout in milliseconds for how long the error display is visible. 0 means no timeout."), DefaultValue(0)]
@@ -268,101 +263,182 @@ namespace Westwind.Web.Controls
         }
         private int _DisplayTimeout = 0;
 
+        private ErrorDisplayTypes ErrorDisplayType = ErrorDisplayTypes.Error;
 
-        /// <summary>
-        /// Renders the container
-        /// </summary>
-        /// <param name="writer"></param>
-        protected override void Render(HtmlTextWriter writer)
+        protected void RenderTop(HtmlTextWriter writer)
         {
-            if (Text == "" && !DesignMode)
-            {
-                base.Render(writer);
-                return;
-            }
 
-            if (RenderMode == RenderModes.Text)
-                Text = HtmlUtils.DisplayMemo(Text);
-
-            string TStyle = Style["position"];
-            bool IsAbsolute = false;
-            if (TStyle != null && TStyle.Trim() == "absolute")
-                IsAbsolute = true;
-
-            // <Center> is still the only reliable way to get block structures centered
-            if (!IsAbsolute && Center)
-            {                
-                writer.AddStyleAttribute(HtmlTextWriterStyle.MarginLeft, "auto");
-                writer.AddStyleAttribute(HtmlTextWriterStyle.MarginRight, "auto");
-
-                // In designmode we want to write out a container so it
-                // so the designer properly shows the controls as block control
-                if (DesignMode)
-                    writer.Write("<div style='width:100%'>");
-            }
-
-            writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
-            writer.AddAttribute(HtmlTextWriterAttribute.Class, CssClass);                      
-            writer.AddStyleAttribute(HtmlTextWriterStyle.Width, Width.ToString());
-            
             foreach (string Key in Style.Keys)
             {
                 writer.AddStyleAttribute(Key, Style[Key]);
             }
+            writer.AddAttribute(HtmlTextWriterAttribute.Class, this.CssClass);
+            
+            writer.Write("<div class=\"errordisplay\" ");
 
+            if (Width != 0)
+                writer.AddStyleAttribute("width", Width.ToString());
+            if (Center)
+            {
+                writer.AddStyleAttribute(HtmlTextWriterStyle.MarginLeft, "auto");
+                writer.AddStyleAttribute(HtmlTextWriterStyle.MarginRight, "auto");
+            }
             writer.RenderBeginTag(HtmlTextWriterTag.Div);
 
-            
-            writer.RenderBeginTag(HtmlTextWriterTag.Table);
+        }
 
-            writer.RenderBeginTag(HtmlTextWriterTag.Tr);
+        protected void RenderBottom(HtmlTextWriter writer)
+        {
+            // close out the dialog
+            writer.RenderEndTag();  //div
+            //RenderBeginTag(HtmlTextWriterTag.Div);
+        }
 
-            // Set up  image <td> tag                                 
-            writer.RenderBeginTag(HtmlTextWriterTag.Td);
-
-            if (ErrorImage != "")
+        protected void RenderDisplayErrors(HtmlTextWriter writer)
+        {
+            if (this.DisplayErrors.Count > 0)
             {
-                string ImageUrl = ErrorImage.ToLower();
-                if (ImageUrl == "warningresource")
-                    ImageUrl = Page.ClientScript.GetWebResourceUrl(GetType(), WebResources.WARNING_ICON_RESOURCE);
-                else if (ImageUrl == "inforesource")
-                    ImageUrl = Page.ClientScript.GetWebResourceUrl(GetType(), WebResources.INFO_ICON_RESOURCE);
-                else
-                    ImageUrl = ResolveUrl(ErrorImage);
+                writer.WriteLine("<hr/>");
+                writer.WriteLine(this.DisplayErrors.ToHtml());
+            }
+        }
 
-                writer.AddAttribute(HtmlTextWriterAttribute.Src, ImageUrl);
-                writer.RenderBeginTag(HtmlTextWriterTag.Img);
-                writer.RenderEndTag();
+        /// <summary>
+        /// Method 
+        /// </summary>
+        /// <param name="width"></param>
+        /// <param name="center"></param>
+        /// <returns></returns>
+        protected override void Render(HtmlTextWriter writer)
+        {
+
+            if (string.IsNullOrEmpty(Text) && !DesignMode)
+            {
+                   base.Render(writer);
+                   return;
             }
 
-            writer.RenderEndTag();  // image <td>
+            // In designmode we want to write out a container so it
+            // so the designer properly shows the controls as block control
+            if (DesignMode)
+                writer.WriteLine("<div style='width:100%'>");
 
-            // Render content <td> tag            
-            writer.RenderBeginTag(HtmlTextWriterTag.Td);
+            RenderTop(writer);
 
-            if (UserMessage != "")
-                writer.Write("<span style='font-weight:normal'>" + UserMessage + "</span><hr />");
+            if (ErrorDisplayType == ErrorDisplayTypes.Error)
+                writer.WriteLine("<div class=\"errordisplay-warning-icon\"></div>");
+            else
+                writer.WriteLine("<div class=\"errordisplay-info-icon\"></div>");
 
-            writer.Write(Text);
+            writer.WriteLine("<div class=\"errordisplay-text\">");
 
-            writer.RenderEndTag();  // Content <td>
-            writer.RenderEndTag();  // </tr>
-            writer.RenderEndTag();  // </table>
+            writer.WriteLine(this.HtmlEncodeMessage ? HttpUtility.HtmlEncode(Text) : Text);
+            RenderDisplayErrors(writer);
 
-            writer.RenderEndTag();  // </div>
+            writer.WriteLine("</div>");
 
-            if (!IsAbsolute)
-            {
-                if (Center)
-                {
-                    if (DesignMode)
-                        writer.Write("</div>");  // </div>
-                    
-                }
+            RenderBottom(writer);
 
-                writer.WriteBreak();
-            }    
+            if (DesignMode)
+                writer.WriteLine("</div>");
+            
         }
+
+
+        ///// <summary>
+        ///// Renders the container
+        ///// </summary>
+        ///// <param name="writer"></param>
+        //protected override void Render(HtmlTextWriter writer)
+        //{
+        //    if (Text == "" && !DesignMode)
+        //    {
+        //        base.Render(writer);
+        //        return;
+        //    }
+
+        //    if (RenderMode == RenderModes.Text)
+        //        Text = HtmlUtils.DisplayMemo(Text);
+
+        //    string TStyle = Style["position"];
+        //    bool IsAbsolute = false;
+        //    if (TStyle != null && TStyle.Trim() == "absolute")
+        //        IsAbsolute = true;
+
+        //    // <Center> is still the only reliable way to get block structures centered
+        //    if (!IsAbsolute && Center)
+        //    {                
+        //        writer.AddStyleAttribute(HtmlTextWriterStyle.MarginLeft, "auto");
+        //        writer.AddStyleAttribute(HtmlTextWriterStyle.MarginRight, "auto");
+
+        //        // In designmode we want to write out a container so it
+        //        // so the designer properly shows the controls as block control
+        //        if (DesignMode)
+        //            writer.Write("<div style='width:100%'>");
+        //    }
+
+        //    writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
+        //    writer.AddAttribute(HtmlTextWriterAttribute.Class, CssClass);                      
+        //    writer.AddStyleAttribute(HtmlTextWriterStyle.Width, Width.ToString());
+            
+        //    foreach (string Key in Style.Keys)
+        //    {
+        //        writer.AddStyleAttribute(Key, Style[Key]);
+        //    }
+
+        //    writer.RenderBeginTag(HtmlTextWriterTag.Div);
+
+            
+        //    writer.RenderBeginTag(HtmlTextWriterTag.Table);
+
+        //    writer.RenderBeginTag(HtmlTextWriterTag.Tr);
+
+        //    // Set up  image <td> tag                                 
+        //    writer.RenderBeginTag(HtmlTextWriterTag.Td);
+
+        //    if (ErrorImage != "")
+        //    {
+        //        string ImageUrl = ErrorImage.ToLower();
+        //        if (ImageUrl == "warningresource")
+        //            ImageUrl = Page.ClientScript.GetWebResourceUrl(GetType(), WebResources.WARNING_ICON_RESOURCE);
+        //        else if (ImageUrl == "inforesource")
+        //            ImageUrl = Page.ClientScript.GetWebResourceUrl(GetType(), WebResources.INFO_ICON_RESOURCE);
+        //        else
+        //            ImageUrl = ResolveUrl(ErrorImage);
+
+        //        writer.AddAttribute(HtmlTextWriterAttribute.Src, ImageUrl);
+        //        writer.RenderBeginTag(HtmlTextWriterTag.Img);
+        //        writer.RenderEndTag();
+        //    }
+
+        //    writer.RenderEndTag();  // image <td>
+
+        //    // Render content <td> tag            
+        //    writer.RenderBeginTag(HtmlTextWriterTag.Td);
+
+        //    if (UserMessage != "")
+        //        writer.Write("<span style='font-weight:normal'>" + UserMessage + "</span><hr />");
+
+        //    writer.Write(Text);
+
+        //    writer.RenderEndTag();  // Content <td>
+        //    writer.RenderEndTag();  // </tr>
+        //    writer.RenderEndTag();  // </table>
+
+        //    writer.RenderEndTag();  // </div>
+
+        //    if (!IsAbsolute)
+        //    {
+        //        if (Center)
+        //        {
+        //            if (DesignMode)
+        //                writer.Write("</div>");  // </div>
+                    
+        //        }
+
+        //        writer.WriteBreak();
+        //    }    
+        //}
 
 
         protected override void OnPreRender(EventArgs e)
@@ -428,8 +504,7 @@ namespace Westwind.Web.Controls
         /// </param>
         public void ShowMessage(string Message)
         {
-            UserMessage = "";
-            ErrorImage = InfoImage;
+            UserMessage = "";            
             Text = Message;
             Visible = true;
         }
@@ -449,5 +524,12 @@ namespace Westwind.Web.Controls
         /// Text is plain text and should be rendered as a bullet list
         /// </summary>
         TextAsBulletList
+    }
+
+
+    public enum ErrorDisplayTypes
+    {
+        Error,
+        Message
     }
 }

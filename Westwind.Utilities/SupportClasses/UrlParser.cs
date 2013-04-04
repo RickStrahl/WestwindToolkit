@@ -66,7 +66,8 @@ namespace Westwind.Utilities
             UrlParser Parser = new UrlParser();
             Parser.Target = target;
             Parser.ParseFormattedLinks = parseFormattedLinks;
-            return Parser.ExpandUrls(text);
+
+            return Parser.ExpandUrlsInternal(text);
         }
 
         /// <summary>
@@ -74,7 +75,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="text">The text to expand</param>    
         /// <returns></returns>
-        public string ExpandUrls(string text)
+        private string ExpandUrlsInternal(string text)
         {
             MatchEvaluator matchEval = null;
             string pattern = null;

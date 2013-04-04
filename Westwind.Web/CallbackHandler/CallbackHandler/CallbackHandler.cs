@@ -134,6 +134,10 @@ namespace Westwind.Web
         /// <param name="context"></param>
         public virtual void ProcessRequest(HttpContext context)
         {
+            Request = context.Request;
+            Response = context.Response;
+            Context = context;
+
             var pathInfo = Request.PathInfo;
             // handle WCF/ASMX style type wrappers for handler implementation
             // returns a separate dynamic link with the JavaScript Service Proxy
@@ -144,10 +148,7 @@ namespace Westwind.Web
                 return;
             }
 
-            Request = context.Request;
-            Response = context.Response;
-            Context = context;
-
+          
             // Pass off to the worker Callback Processor
 
             ICallbackMethodProcessor processor;
