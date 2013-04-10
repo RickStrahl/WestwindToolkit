@@ -281,17 +281,16 @@ namespace Westwind.Data.EfCodeFirst
         /// <param name="entity">An entity instance</param>
         /// <returns></returns>
         public virtual TEntity NewEntity(TEntity entity)
-        {
-            // always create an entity - if null return brand new entity            
+        {                   
             if (entity == null)
                 return NewEntity();
-
+            
             // check to see if the entity already exists
-            if (GetEntityEntry(entity) == null)                
+            if (GetEntityEntry(entity) == null)
                 Entity = Context.Set<TEntity>().Add(entity) as TEntity;
-            else                
+            else
                 Entity = entity;
-
+            
             OnNewEntity(Entity);
 
             return Entity;

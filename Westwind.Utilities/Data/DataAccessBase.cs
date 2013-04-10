@@ -229,25 +229,16 @@ namespace Westwind.Utilities.Data
                     }
                     else
                     {
-                        // it's a connection string entry
-                        var connInfo = ConfigurationManager.ConnectionStrings[ConnectionString];
-                        if (connInfo != null)
-                        {
-                            if (dbProvider == null)
-                            {
-                                if (!string.IsNullOrEmpty(connInfo.ProviderName))
-                                    dbProvider = DbProviderFactories.GetFactory(connInfo.ProviderName);
-                                else
-                                    dbProvider = DbProviderFactories.GetFactory(STR_DefaultProviderName);
-                            }
-                            ConnectionString = connInfo.ConnectionString;
-                        }
-                        else
+                        var connInfo = ConnectionStringInfo.GetConnectionStringInfo(ConnectionString);
+                        if (connInfo == null)
                         {
                             SetError(Resources.InvalidConnectionString);
                             return false;
                         }
 
+                        dbProvider = connInfo.Provider;
+                        ConnectionString = connInfo.ConnectionString;
+                        
                         _Connection = dbProvider.CreateConnection();
                         _Connection.ConnectionString = ConnectionString;
                     }
