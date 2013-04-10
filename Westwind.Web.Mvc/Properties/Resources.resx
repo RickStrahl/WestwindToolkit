@@ -101,4 +101,8 @@
     <value>View could not be found.</value>
     <comment>ViewCouldNotBeFound description</comment>
   </data>
+  <data name="WeAreSorryButAnUnspecifiedErrorOccurredInT" xml:space="preserve">
+    <value>We are sorry, but an unspecified error occurred in the application. The error has been logged and forwarded to be checked out as soon as possible.</value>
+    <comment>WeAreSorryButAnUnspecifiedErrorOccurredInT description</comment>
+  </data>
 </root>

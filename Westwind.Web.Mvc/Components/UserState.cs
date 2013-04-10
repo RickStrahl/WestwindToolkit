@@ -11,7 +11,9 @@ namespace Westwind.Web.Mvc
 {
     /// <summary>
     /// User information container that can easily 'serialize'
-    /// to a string and back. Meant to hold basic logon information.
+    /// to a string and back. Meant to hold basic logon information
+    /// to avoid trips to the database for common information required
+    /// by an app to validate and display user info.
     /// 
     /// I use this class a lot to attach as Forms Authentication
     /// Ticket data to keep basic user data without having to
@@ -26,6 +28,7 @@ namespace Westwind.Web.Mvc
             Email = string.Empty;
             UserId = string.Empty;
             IsAdmin = false;
+            SecurityToken = string.Empty;
         }
 
         /// <summary>
@@ -65,7 +68,26 @@ namespace Westwind.Web.Mvc
             }
         }
 
+        /// <summary>
+        /// A unique id created for this entry that can be used to
+        /// identify the user outside of the UserState context
+        /// </summary>
+        public string SecurityToken { 
+            get 
+            {
+                if (string.IsNullOrEmpty(_SecurityToken))
+                    _SecurityToken = StringUtils.NewStringId();
 
+                return _SecurityToken;
+            }
+            set
+            {
+                _SecurityToken = value;
+            }
+        }
+        private string _SecurityToken = null;
+
+        
 
         /// <summary>
         /// Exports a short string list of Id, Email, Name separated by |
@@ -107,10 +129,35 @@ namespace Westwind.Web.Mvc
         /// <returns></returns>
         public static UserState CreateFromString(string userData)
         {
+            return CreateFromString<UserState>(userData);            
+        }
+
+        /// <summary>
+        /// Creates an instance of a userstate object from serialized
+        /// data.
+        /// 
+        /// IsEmpty() will return true if data was not loaded. A 
+        /// UserData object is always returned.
+        /// </summary>
+        /// <param name="userData"></param>
+        /// <returns></returns>
+        public static T CreateFromString<T>(string userData)
+            where T : UserState, new()
+        {
             if (string.IsNullOrEmpty(userData))
                 return null;
+            
+            T result = null;
+            try
+            {
+                result = StringSerializer.DeserializeObject(userData, typeof(T)) as T;
+            }
+            catch
+            {
+                return new T();
+            }
 
-            return StringSerializer.Deserialize<UserState>(userData);
+            return result;
         }
 
 
@@ -125,8 +172,31 @@ namespace Westwind.Web.Mvc
         /// <returns></returns>
         public static UserState CreateFromFormsAuthTicket()
         {
-            return CreateFromString(((FormsIdentity)HttpContext.Current.User.Identity).Ticket.UserData);
+            var identity = HttpContext.Current.User.Identity as FormsIdentity;
+            if (identity == null)
+                return new UserState();
+
+            return CreateFromString(identity.Ticket.UserData);
         }
+
+        /// <summary>
+        /// Creates a UserState object from authentication information in the 
+        /// Forms Authentication ticket.
+        /// 
+        /// IsEmpty() will return false if no data was loaded but
+        /// a Userdata object is always returned
+        /// </summary>
+        /// <returns></returns>
+        public static UserState CreateFromFormsAuthTicket<T>()
+            where T : UserState, new()
+        {
+            var identity = HttpContext.Current.User.Identity as FormsIdentity;
+            if (identity == null)
+                return new T();            
+
+            return CreateFromString<T>(identity.Ticket.UserData) as T;
+        }
+
 
 
         /// <summary>

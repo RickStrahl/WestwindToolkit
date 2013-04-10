@@ -41,13 +41,13 @@ namespace Westwind.Web.Mvc
         /// object instances.
         /// </summary>
         /// <returns></returns>
-        protected virtual UserState CreateUserState()
+        protected virtual void CreateUserState()
         {
             // Grab the user's login information from FormsAuth            
             if (this.User.Identity != null && this.User.Identity is FormsIdentity)
                 this.UserState = UserState.CreateFromFormsAuthTicket();
             else
-                this.UserState = new UserState();
+                this.UserState = new UserState();            
         }
    
         /// <summary>

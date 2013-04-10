@@ -57,7 +57,6 @@
     <Compile Include="CallbackHandler\JsonSerializers\WestwindJsonSerializer.cs" />
     <Compile Include="ClientScriptUtilities\ClientScriptProxy.cs" />
     <Compile Include="ClientScriptUtilities\JavaScriptMinifier.cs" />
-    <Compile Include="Resources\WestWindWebControl.cs" />
     <Compile Include="Resources\WebResources.cs" />
     <Compile Include="Resources\ScriptLoader.cs">
       <SubType>Code</SubType>

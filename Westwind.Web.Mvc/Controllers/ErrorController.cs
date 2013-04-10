@@ -1,6 +1,7 @@
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Westwind.Web.Mvc.Properties;
 
 namespace Westwind.Web.Mvc
 {
@@ -16,13 +17,13 @@ namespace Westwind.Web.Mvc
         public ActionResult ShowError(string title, string message, string redirectTo = null, bool isHtml = true)
         {
             if (string.IsNullOrEmpty(message))
-                message = "We are sorry, but an unspecified error occurred in the application. The error has been logged and forwarded to be checked out as soon as possible.";
+                message = Resources.WeAreSorryButAnUnspecifiedErrorOccurredInT;
 
             ErrorViewModel model = new ErrorViewModel
             {
                 Message = message,
                 Title = title,
-                RedirectTo = redirectTo != null ? Url.Content(redirectTo) : "",                
+                RedirectTo = redirectTo != null ? Url.Content(redirectTo) : "",
                 MessageIsHtml = isHtml,
                 IsMessage = false
             };
@@ -34,7 +35,7 @@ namespace Westwind.Web.Mvc
         public ActionResult ShowMessage(string title, string message, string redirectTo = null, bool isHtml = true)
         {
             if (string.IsNullOrEmpty(message))
-                message = "We are sorry, but an unspecified error occurred in the application. The error has been logged and forwarded to be checked out as soon as possible.";
+                message = Resources.WeAreSorryButAnUnspecifiedErrorOccurredInT; 
 
             ErrorViewModel model = new ErrorViewModel
             {
@@ -124,6 +125,44 @@ namespace Westwind.Web.Mvc
             errorModel.IsMessage = true;
             ErrorController controller = new ErrorController();
             return controller.ShowErrorFromModel(errorModel);
+        }
+
+        /// <summary>
+        /// Static method that can be called from outside of MVC requests
+        /// (like in Application_Error) to display an error View.
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="message"></param>
+        /// <param name="redirectTo"></param>
+        /// <param name="messageIsHtml"></param>
+        public static void ShowErrorPage(string title, string message, string redirectTo = null)
+        {
+            ErrorController controller = new ErrorController();
+
+            RouteData routeData = new RouteData();
+            routeData.Values.Add("controller", "Error");
+            routeData.Values.Add("action", "ShowError");
+            routeData.Values.Add("title", title);
+            routeData.Values.Add("message", message);            
+            routeData.Values.Add("redirectTo", redirectTo);
+
+            ((IController)controller).Execute(new RequestContext(new HttpContextWrapper(System.Web.HttpContext.Current), routeData));
+        }
+
+        /// <summary>
+        /// Static method that can be called from outside of MVC requests
+        /// (like in Application_Error) to display an error View.
+        /// </summary>
+        public static void ShowErrorPage(ErrorViewModel errorModel)
+        {
+            ErrorController controller = new ErrorController();
+
+            RouteData routeData = new RouteData();
+            routeData.Values.Add("controller", "Error");
+            routeData.Values.Add("action", "ShowErrorFromModel");
+            routeData.Values.Add("errorModel", errorModel);
+
+            ((IController)controller).Execute(new RequestContext(new HttpContextWrapper(System.Web.HttpContext.Current), routeData));
         }
 
     }
