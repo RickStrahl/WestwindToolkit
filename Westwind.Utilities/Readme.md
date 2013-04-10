@@ -16,16 +16,21 @@ a regular basis and have compiled over the years.
 It includes tools for:
 
 * Configuration settings management with strongly typed classes
-* A small database drive logging engine
-* A simple Data Access Layer that thinly wraps ADO net
+* A small, extensible logging engine with built-in Database and Xml support
+* A simple Data Access Layer that thinly wraps ADO.NET
 * Many data access helpers for parsing data to objects and dynamics
-* Many helper classes with utility features:
+* 
+* Many static helper classes with tons of utility features:
 	* StringUtils
+    * HtmlUtils
 	* ReflectionUtils
 	* SerializationUtils
 	* DataUtils
 	* EncryptionUtils
 	* FileUtils
+    * TimeUtils
+    * XmlUtils    
+
 
 and much, much more.
 

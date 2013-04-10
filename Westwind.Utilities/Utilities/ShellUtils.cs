@@ -46,13 +46,9 @@ namespace Westwind.Utilities
     public static class ShellUtils
     {
 
-        //[DllImport("Shell32.dll")]
-        //private static extern int ShellExecute(int hwnd, string lpOperation,
-        //    string lpFile, string lpParameters,
-        //    string lpDirectory, int nShowCmd);
-
         /// <summary>
-        /// Uses the Shell Extensions to launch a program based or URL moniker.
+        /// Uses the Shell Extensions to launch a program based on URL moniker or file name
+        /// Basically a wrapper around ShellExecute
         /// </summary>
         /// <param name="url">Any URL Moniker that the Windows Shell understands (URL, Word Docs, PDF, Email links etc.)</param>
         /// <returns></returns>
@@ -74,35 +70,40 @@ namespace Westwind.Utilities
         }
 
 
-
-
-
-
         /// <summary>
-        /// Displays an HTML string in a browser window
+        /// Displays a string in in a browser as HTML. Optionally
+        /// provide an alternate extension to display in the appropriate
+        /// text viewer (ie. "txt" likely shows in NotePad)
         /// </summary>
-        /// <param name="HtmlString"></param>
+        /// <param name="text"></param>
+        /// <param name="extension"></param>
         /// <returns></returns>
-        public static int ShowString(string HtmlString, string extension)
+        public static int ShowString(string text, string extension = null)
         {
             if (extension == null)
                 extension = "htm";
 
             string File = Path.GetTempPath() + "\\__preview." + extension;
             StreamWriter sw = new StreamWriter(File, false, Encoding.Default);
-            sw.Write(HtmlString);
+            sw.Write(text);
             sw.Close();
 
             return GoUrl(File);
         }
 
-        public static int ShowHtml(string HtmlString)
+        /// <summary>
+        /// Shows a string as HTML
+        /// </summary>
+        /// <param name="htmlString"></param>
+        /// <returns></returns>
+        public static int ShowHtml(string htmlString)
         {
-            return ShowString(HtmlString, null);
+            return ShowString(htmlString, null);
         }
 
         /// <summary>
-        /// Displays a large Text string as a text file.
+        /// Displays a large Text string as a text file in the
+        /// systems' default text viewer (ie. NotePad)
         /// </summary>
         /// <param name="TextString"></param>
         /// <returns></returns>
@@ -120,20 +121,31 @@ namespace Westwind.Utilities
         /// <summary>
         /// Simple method to retrieve HTTP content from the Web quickly
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="url">Url to access</param>        
+        /// <returns>Http response text or null</returns>
+        public static string HttpGet(string url)
+        {
+            string errorMessage;
+            return HttpGet(url, out errorMessage);
+        }
+
+        /// <summary>
+        /// Simple method to retrieve HTTP content from the Web quickly
+        /// </summary>
+        /// <param name="url">Url to access</param>
         /// <param name="errorMessage"></param>
         /// <returns></returns>
-        public static string HttpGet(string url, ref string errorMessage)
+        public static string HttpGet(string url, out string errorMessage)
         {
             string responseText = string.Empty;
+            errorMessage = null;
 
             WebClient Http = new WebClient();
 
             // Download the Web resource and save it into a data buffer.
             try
             {
-                byte[] Result = Http.DownloadData(url);
-                responseText = Encoding.Default.GetString(Result);
+                responseText = Http.DownloadString(url);                
             }
             catch (Exception ex)
             {
@@ -144,16 +156,30 @@ namespace Westwind.Utilities
             return responseText;
         }
 
+
         /// <summary>
         /// Retrieves a buffer of binary data from a URL using
         /// a plain HTTP Get.
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="errorMessage"></param>
-        /// <returns></returns>
-        public static byte[] HttpGetBytes(string url, ref string errorMessage)
+        /// <param name="url">Url to access</param>
+        /// <returns>Response bytes or null on error</returns>
+        public static byte[] HttpGetBytes(string url)
+        {
+            string errorMessage;
+            return HttpGetBytes(url,out errorMessage);
+        }
+
+        /// <summary>
+        /// Retrieves a buffer of binary data from a URL using
+        /// a plain HTTP Get.
+        /// </summary>
+        /// <param name="url">Url to access</param>
+        /// <param name="errorMessage">ref parm to receive an error message</param>
+        /// <returns>response bytes or null on error</returns>
+        public static byte[] HttpGetBytes(string url, out string errorMessage)
         {
             byte[] result = null;
+            errorMessage = null;
 
             var Http = new WebClient();
 
