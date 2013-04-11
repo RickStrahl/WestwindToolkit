@@ -45,7 +45,7 @@ using System.IO;
 using System.Web.UI.Design;
 using System.Drawing.Design;
 using Westwind.Web.JsonSerializers;
-using Westwind.Web.Controls.Properties;
+using Westwind.Web.Properties;
 
 
 namespace Westwind.Web.Controls

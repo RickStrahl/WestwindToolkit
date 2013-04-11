@@ -158,10 +158,10 @@ namespace Westwind.Web
 
             // check accept types
             if (string.IsNullOrEmpty(format))
-            {                
+            {
                 if (context.Request.AcceptTypes.Where(str => str.Contains(WebResources.STR_JsonContentType) || str.Contains(WebResources.STR_JavaScriptContentType)).Count() > 0)
                     format = "json";
-                else if (context.Request.AcceptTypes.Where(str => str.Contains(WebResources.STR_XmlContentType)).Count() > 0)
+                else if (context.Request.AcceptTypes.Where(str => str.Contains(WebResources.STR_XmlContentType) || str.Contains(WebResources.STR_XmlApplicationContentType)).Count() > 0)
                     format = "xml";
             }
             

@@ -1,7 +1,7 @@
 ﻿/// <reference path="jquery.js" />
 /*
 ww.jQuery.js  
-Version 1.08 - 12/10/2012
+Version 1.09 - 4/10/2013
 West Wind jQuery plug-ins and utilities
 
 (c) 2008-2012 Rick Strahl, West Wind Technologies 
@@ -308,7 +308,7 @@ http://en.wikipedia.org/wiki/MIT_License
         if (!_sb) {
             _sb = $("<div id='_statusbar' class='" + self.cssClass + "'>" +
 "<div class='" + self.closeButtonClass + "'>" +
-(self.closable ? " X </div></div>" : ""))
+(self.closable ? "</div></div>" : ""))
  .appendTo(document.body)
  .hide();
         }
@@ -1486,8 +1486,8 @@ http://en.wikipedia.org/wiki/MIT_License
     $.fn.closable = function (options) {
         var opt = {
             handle: null,
-            closeHandler: null,
-            cssClass: "closebox",
+            closeHandler: null,            
+            cssClass: "closebox", // closebox-container
             imageUrl: null,
             fadeOut: null
         };
@@ -1744,7 +1744,7 @@ http://en.wikipedia.org/wiki/MIT_License
         /// <returns type="" /> 
         var el = $("#" + id, context);
         if (el.length < 1)
-            el = $("[id$=_" + id + "],[id*=[" + id + "_]", context);
+            el = $("[id$=_" + id + "],[id*=" + id + "_]", context);
         return el;
     }
 

@@ -46,7 +46,7 @@ using System.Web.Security;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using Westwind.Web;
-using Westwind.Web.Controls.Properties;
+using Westwind.Web.Properties;
 using Westwind.Web.JsonSerializers;
 
 namespace Westwind.Utilities

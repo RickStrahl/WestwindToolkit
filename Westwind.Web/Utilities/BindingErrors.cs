@@ -14,25 +14,6 @@ namespace Westwind.Web.Controls
     /// </summary>
 	public class BindingErrors : List<BindingError>
 	{
-        
-#if false  // Pre-Generics CollectionBase implementation
-        public void Add(BindingError Error)
-        {
-            List.Add(Error);
-        }
-
-        public void Remove(int Index)
-        {
-            if (Index > List.Count - 1 || Index < 0)
-                List.RemoveAt(Index);
-        }
-
-        public BindingError Item(int Index)
-        {
-            return (BindingError)List[Index];
-        }
-#endif
-
         /// <summary>
         /// Formats all the BindingErrors into a rich list of error messages. The error
         ///  messages are marked up with links to the appropriate controls. Format of 
@@ -51,18 +32,32 @@ namespace Westwind.Web.Controls
 	         {	
 		         sb.Append("<li style='margin-left:0px;'>");
                  if (error.ClientID != null && error.ClientID != "")
-                 {                     
-                     sb.Append("<a href='javascript:{}' onclick=\"var T = document.getElementById('" + error.ClientID + "'); if(T == null) { return }; T.style.borderWidth='2px';T.style.borderColor='Red';try {T.focus();} catch(e) {}; " +
-                               @"if (window.onBindingErrorLink) onBindingErrorLink(T); " +
-                               @"window.setTimeout( function() { T=document.getElementById('" + error.ClientID + @"'); " +                               
-                               @"T.style.borderWidth='';T.style.borderColor=''},4000);" + 
-                               "\">" + error.Message + "</a></li>\r\n");
-                 }
+                    sb.Append(LinkedErrorMessage(error.ClientID,error.Message));
+
                  else
                      sb.Append(error.Message + "\r\n");
 	         }
 	         sb.Append("</ul>");
 	         return sb.ToString();
+         }
+
+
+         /// <summary>
+         /// Renders a link with the error message that attempts to find the control on the 
+         /// page and highlights it.
+         /// </summary>
+         /// <param name="clientId"></param>
+         /// <param name="?"></param>
+         /// <returns></returns>
+         private string LinkedErrorMessage(string clientId, string message)
+         {
+            string  link = "<a href='javascript:{}' onclick=\"var T = document.getElementById('" + clientId + "'); if(T == null) { return }; T.style.borderWidth='2px';T.style.borderColor='Red';try {T.focus();} catch(e) {}; " +
+                               @"if (window.onBindingErrorLink) onBindingErrorLink(T); " +
+                               @"window.setTimeout( function() { T=document.getElementById('" + clientId + @"'); " +                               
+                               @"T.style.borderWidth='';T.style.borderColor=''},4000);" + 
+                               "\">" + message + "</a></li>\r\n";
+             return link;
+          
          }
 
 

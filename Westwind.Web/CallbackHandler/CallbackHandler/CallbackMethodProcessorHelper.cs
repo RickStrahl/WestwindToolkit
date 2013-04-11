@@ -4,7 +4,7 @@ using System.Reflection;
 using Westwind.Web.JsonSerializers;
 using Westwind.Utilities;
 using System.Web.Routing;
-using Westwind.Web.Controls.Properties;
+using Westwind.Web.Properties;
 using System.Net;
 
 namespace Westwind.Web
@@ -53,7 +53,7 @@ namespace Westwind.Web
             HttpRequest Request = HttpContext.Current.Request;
             HttpResponse Response = HttpContext.Current.Response;
 
-            object Result = null;
+            object result = null;
 
             // Stores parsed parameters (from string JSON or QUeryString Values)
             object[] adjustedParms = null;
@@ -132,9 +132,9 @@ namespace Westwind.Web
                 parmCounter++;
             }
 
-            Result = MI.Invoke(target, adjustedParms);
+            result = MI.Invoke(target, adjustedParms);
 
-            return Result;
+            return result;
         }
     }
 }

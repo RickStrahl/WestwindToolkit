@@ -32,7 +32,7 @@
 #endregion
 
 using System;
-using Westwind.Web.Controls.Properties;
+using Westwind.Web.Properties;
 
 
 

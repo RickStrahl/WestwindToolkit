@@ -116,7 +116,10 @@ namespace Westwind.Web
         POST = 2,
         PUT = 4,
         DELETE = 8,
-        All = 15,
+        HEAD = 16,
+        PATCH = 32,
+        OPTIONS = 64,
+        All = 127,
         None =0
     }
 }

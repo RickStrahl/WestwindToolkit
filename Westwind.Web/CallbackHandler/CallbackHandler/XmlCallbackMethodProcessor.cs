@@ -42,7 +42,7 @@ using System.Collections.Generic;
 using Westwind.Utilities;
 using System.Drawing;
 using System.Drawing.Imaging;
-using Westwind.Web.Controls.Properties;
+using Westwind.Web.Properties;
 using System.Xml.Serialization;
 
 namespace Westwind.Web

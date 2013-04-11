@@ -61,7 +61,7 @@ using System.Reflection;
 using System.Collections.Specialized;
 
 using Westwind.Utilities;
-using Westwind.Web.Controls.Properties;
+using Westwind.Web.Properties;
 using System.Diagnostics;
 
 

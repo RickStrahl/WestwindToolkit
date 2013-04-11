@@ -57,13 +57,17 @@
     <Compile Include="CallbackHandler\JsonSerializers\WestwindJsonSerializer.cs" />
     <Compile Include="ClientScriptUtilities\ClientScriptProxy.cs" />
     <Compile Include="ClientScriptUtilities\JavaScriptMinifier.cs" />
+    <Compile Include="Properties\Resources1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\WebResources.cs" />
     <Compile Include="Resources\ScriptLoader.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Utilities\ScriptCompressionModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs" />
     <Compile Include="Services\Gravatar.cs" />
     <Compile Include="Services\ShareButtons.cs" />
     <Compile Include="Utilities\BindingErrors.cs" />
@@ -80,13 +84,19 @@
     <EmbeddedResource Include="Resources\ww.jquery.js" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj">
       <Project>{1c9829a8-8979-4493-863c-635726f8a61c}</Project>
       <Name>Westwind.Utilities</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Readme.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

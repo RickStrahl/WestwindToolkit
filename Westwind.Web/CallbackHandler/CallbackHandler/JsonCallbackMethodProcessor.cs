@@ -240,7 +240,8 @@ namespace Westwind.Web
         /// <param name="callbackAttribute"></param>
         /// <param name="Request"></param>
         /// <param name="Response"></param>
-        void HandleSpecialReturnTypes(object Result, CallbackMethodAttribute callbackAttribute, HttpRequest Request, HttpResponse Response)
+        void HandleSpecialReturnTypes(object Result, CallbackMethodAttribute callbackAttribute, 
+                                      HttpRequest Request, HttpResponse Response)
         {
             string format = (Request.Params["Format"] ?? "").ToLower();
             //string format = (Request.Params["ResultFormat"] ?? "").ToLower();

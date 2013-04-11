@@ -34,7 +34,7 @@ namespace Westwind.Web
         /// <summary>
         /// jQuery CDN Url on Google
         /// </summary>
-        public static string jQueryUiCdnUrl = "//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js";
+        public static string jQueryUiCdnUrl = "//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js";
 
         /// <summary>
         /// jQuery UI fallback Url if CDN is unavailable or WebResource is used

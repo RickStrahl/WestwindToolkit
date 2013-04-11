@@ -37,7 +37,7 @@ using System.Text;
 using System.Web.UI;
 using System.Web;
 using Westwind.Utilities;
-using Westwind.Web.Controls.Properties;
+using Westwind.Web.Properties;
 using Westwind.Web.JsonSerializers;
 
 

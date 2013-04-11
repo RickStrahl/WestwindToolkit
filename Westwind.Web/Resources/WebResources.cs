@@ -74,6 +74,7 @@ namespace Westwind.Web
         public const string STR_JavaScriptContentType = "application/x-javascript";
         public const string STR_UrlEncodedContentType = "application/x-www-form-urlencoded";
         public const string STR_XmlContentType = "text/xml";
+        public const string STR_XmlApplicationContentType = "application/xml";
 
          
         /// <summary>
