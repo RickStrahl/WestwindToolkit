@@ -15,4 +15,7 @@ copy ..\Westwind.Web.Mvc\bin\release\Westwind.Web.Mvc.xml
 copy ..\Westwind.Web.WebForms\bin\release\Westwind.Web.Webforms.dll 
 copy ..\Westwind.Web.WebForms\bin\release\Westwind.Web.Webforms.xml 
 
+copy ..\Westwind.Web.WebApi\bin\release\Westwind.Web.WebApi.dll 
+copy ..\Westwind.Web.WebApi\bin\release\Westwind.Web.WebApi.xml 
+
 pause

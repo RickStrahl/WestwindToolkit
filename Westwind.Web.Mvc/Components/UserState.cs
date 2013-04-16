@@ -1,4 +1,6 @@
-﻿using System.Web;
+﻿using System;
+using System.Diagnostics;
+using System.Web;
 using System.Web.Security;
 using Westwind.Utilities;
 
@@ -137,7 +139,7 @@ namespace Westwind.Web.Mvc
         /// <param name="userData"></param>
         /// <returns></returns>
         public static T CreateFromString<T>(string userData)
-            where T : UserState, new()
+            where T :  class, new()
         {
             if (string.IsNullOrEmpty(userData))
                 return null;
@@ -145,10 +147,12 @@ namespace Westwind.Web.Mvc
             T result = null;
             try
             {
-                result = StringSerializer.DeserializeObject(userData, typeof(T)) as T;
+                object res = StringSerializer.DeserializeObject(userData, typeof(T));
+                result = res as T;
             }
-            catch
+            catch(Exception ex)
             {
+                Debug.WriteLine(ex.Message);
                 return new T();
             }
 

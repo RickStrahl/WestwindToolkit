@@ -1304,6 +1304,107 @@
             write out the file to the folder specified. Otherwise an exception occurs.
             </remarks>
         </member>
+        <member name="T:Westwind.Web.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.BitmapOutputReturnedMustSpecifyAContentType">
+            <summary>
+              Looks up a localized string similar to Bitmap output returned must specify a Content type. For example: [CallbackMethod(ContentType=&quot;image/png&quot;)].
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.CanTGetValuesIfAllowUpdatesIsNotSetToTrue">
+            <summary>
+              Looks up a localized string similar to Can&apos;t get values if AllowUpdates is not set to true.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.ERROR_CLASSWRAPPER_FORWCFASMX_REQUIRES_CLIENTPROXYTYPE">
+            <summary>
+              Looks up a localized string similar to In order to call a Wcf or ASMX service you have to specify ClientProxyTargetType of the Web Service instance..
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.ERROR_INVALID_JSON_STRING">
+            <summary>
+              Looks up a localized string similar to Invalid JSON string input..
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.ERROR_ONLYONE_SCRIPTCONTAINER_PER_PAGE_ALLOWED">
+            <summary>
+              Looks up a localized string similar to Only one ScriptContainer is allowed per page..
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.ERROR_ScriptContainer_OnlyWorks_With_PageBasedHandlers">
+            <summary>
+              Looks up a localized string similar to ScriptContainer.Current only works with Page based handlers..
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.ERROR_UnableToConvertContentTypeToImageFormat">
+            <summary>
+              Looks up a localized string similar to Unable to convert content type {0} to ImageFormat.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.ERROR_UnableToConvertImageFormatToContentType">
+            <summary>
+              Looks up a localized string similar to Unable to convert ImageFormat {0} to ContentType.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.InvalidBindingSource">
+            <summary>
+              Looks up a localized string similar to Invalid BindingSource.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.InvalidControl">
+            <summary>
+              Looks up a localized string similar to Invalid Control.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.InvalidControlId">
+            <summary>
+              Looks up a localized string similar to Invalid Control Id.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.InvalidServerMethod">
+            <summary>
+              Looks up a localized string similar to Invalid Server Method..
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.InvalidURLRelativeURLNotAllowed">
+            <summary>
+              Looks up a localized string similar to Invalid URL: Virtual path relative URL (~) not allowed when HttpContext not available..
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.NotAllowedMethodExpectsVerb">
+            <summary>
+              Looks up a localized string similar to Not allowed. Method expects {0}..
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.ServerMethodIsNotAccessibleDueToMissing">
+            <summary>
+              Looks up a localized string similar to Server method is not accessible due to missing CallbackMethod attribute.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.UnsupportedJSONSerializerSpecified">
+            <summary>
+              Looks up a localized string similar to Unsupported JSON Serializer specified. Json.Net and System.Web.Extensions must be explicitly compiled in..
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Properties.Resources.WebResourceNotAvailableForJQueryUI">
+            <summary>
+              Looks up a localized string similar to WebResource not available for jQuery UI.
+            </summary>
+        </member>
         <member name="T:Westwind.Web.WebResources">
             <summary>
             Class is used as to consolidate access to resources
@@ -1447,6 +1548,110 @@
             in Release mode.
             </summary>
         </member>
+        <member name="T:Westwind.Web.UserState">
+            <summary>
+            User information container that can easily 'serialize'
+            to a string and back. Meant to hold basic logon information
+            to avoid trips to the database for common information required
+            by an app to validate and display user info.
+            
+            I use this class a lot to attach as Forms Authentication
+            Ticket data to keep basic user data without having to
+            hit the database
+            </summary>    
+        </member>
+        <member name="M:Westwind.Web.UserState.ToString">
+            <summary>
+            Exports a short string list of Id, Email, Name separated by |
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.UserState.FromString(System.String)">
+            <summary>
+            Imports Id, Email and Name from a | separated string
+            </summary>
+            <param name="itemString"></param>
+        </member>
+        <member name="M:Westwind.Web.UserState.CreateFromString(System.String)">
+            <summary>
+            Creates an instance of a userstate object from serialized
+            data.
+            
+            IsEmpty() will return true if data was not loaded. A 
+            UserData object is always returned.
+            </summary>
+            <param name="userData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.UserState.CreateFromString``1(System.String)">
+            <summary>
+            Creates an instance of a userstate object from serialized
+            data.
+            
+            IsEmpty() will return true if data was not loaded. A 
+            UserData object is always returned.
+            </summary>
+            <param name="userData"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.UserState.CreateFromFormsAuthTicket">
+            <summary>
+            Creates a UserState object from authentication information in the 
+            Forms Authentication ticket.
+            
+            IsEmpty() will return false if no data was loaded but
+            a Userdata object is always returned
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.UserState.CreateFromFormsAuthTicket``1">
+            <summary>
+            Creates a UserState object from authentication information in the 
+            Forms Authentication ticket.
+            
+            IsEmpty() will return false if no data was loaded but
+            a Userdata object is always returned
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.UserState.IsEmpty">
+            <summary>
+            Determines whether UserState instance
+            holds user information.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Westwind.Web.UserState.Name">
+            <summary>
+            The display name for the userId
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.UserState.Email">
+            <summary>
+            The user's email address or login acount
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.UserState.UserId">
+            <summary>
+            The user's user Id as a string
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.UserState.IsAdmin">
+            <summary>
+            The users admin status
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.UserState.UserIdInt">
+            <summary>
+            Returns the User Id as an int if convertiable
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.UserState.SecurityToken">
+            <summary>
+            A unique id created for this entry that can be used to
+            identify the user outside of the UserState context
+            </summary>
+        </member>
         <member name="T:Westwind.Web.ScriptCompressionModule">
             <summary>
             Module that handles compression of JavaScript resources using GZip and
@@ -1571,107 +1776,6 @@
             Item stored in the cache
             </summary>
         </member>
-        <member name="T:Westwind.Web.Controls.Properties.Resources">
-            <summary>
-              A strongly-typed resource class, for looking up localized strings, etc.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.ResourceManager">
-            <summary>
-              Returns the cached ResourceManager instance used by this class.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.Culture">
-            <summary>
-              Overrides the current thread's CurrentUICulture property for all
-              resource lookups using this strongly typed resource class.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.BitmapOutputReturnedMustSpecifyAContentType">
-            <summary>
-              Looks up a localized string similar to Bitmap output returned must specify a Content type. For example: [CallbackMethod(ContentType=&quot;image/png&quot;)].
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.CanTGetValuesIfAllowUpdatesIsNotSetToTrue">
-            <summary>
-              Looks up a localized string similar to Can&apos;t get values if AllowUpdates is not set to true.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.ERROR_CLASSWRAPPER_FORWCFASMX_REQUIRES_CLIENTPROXYTYPE">
-            <summary>
-              Looks up a localized string similar to In order to call a Wcf or ASMX service you have to specify ClientProxyTargetType of the Web Service instance..
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.ERROR_INVALID_JSON_STRING">
-            <summary>
-              Looks up a localized string similar to Invalid JSON string input..
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.ERROR_ONLYONE_SCRIPTCONTAINER_PER_PAGE_ALLOWED">
-            <summary>
-              Looks up a localized string similar to Only one ScriptContainer is allowed per page..
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.ERROR_ScriptContainer_OnlyWorks_With_PageBasedHandlers">
-            <summary>
-              Looks up a localized string similar to ScriptContainer.Current only works with Page based handlers..
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.ERROR_UnableToConvertContentTypeToImageFormat">
-            <summary>
-              Looks up a localized string similar to Unable to convert content type {0} to ImageFormat.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.ERROR_UnableToConvertImageFormatToContentType">
-            <summary>
-              Looks up a localized string similar to Unable to convert ImageFormat {0} to ContentType.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.InvalidBindingSource">
-            <summary>
-              Looks up a localized string similar to Invalid BindingSource.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.InvalidControl">
-            <summary>
-              Looks up a localized string similar to Invalid Control.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.InvalidControlId">
-            <summary>
-              Looks up a localized string similar to Invalid Control Id.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.InvalidServerMethod">
-            <summary>
-              Looks up a localized string similar to Invalid Server Method..
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.InvalidURLRelativeURLNotAllowed">
-            <summary>
-              Looks up a localized string similar to Invalid URL: Virtual path relative URL (~) not allowed when HttpContext not available..
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.NotAllowedMethodExpectsVerb">
-            <summary>
-              Looks up a localized string similar to Not allowed. Method expects {0}..
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.ServerMethodIsNotAccessibleDueToMissing">
-            <summary>
-              Looks up a localized string similar to Server method is not accessible due to missing CallbackMethod attribute.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.UnsupportedJSONSerializerSpecified">
-            <summary>
-              Looks up a localized string similar to Unsupported JSON Serializer specified. Json.Net and System.Web.Extensions must be explicitly compiled in..
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.Properties.Resources.WebResourceNotAvailableForJQueryUI">
-            <summary>
-              Looks up a localized string similar to WebResource not available for jQuery UI.
-            </summary>
-        </member>
         <member name="T:Westwind.Web.Services.Gravatar">
             <summary>
             Implements the Gravatar API for retrieving a Gravatar image to display
@@ -1739,6 +1843,15 @@
             <seealso>Class BindingErrors</seealso>
             </summary>
             <returns>an Html string of the errors</returns>
+        </member>
+        <member name="M:Westwind.Web.Controls.BindingErrors.LinkedErrorMessage(System.String,System.String)">
+            <summary>
+            Renders a link with the error message that attempts to find the control on the 
+            page and highlights it.
+            </summary>
+            <param name="clientId"></param>
+            <param name="?"></param>
+            <returns></returns>
         </member>
         <member name="M:Westwind.Web.Controls.BindingErrors.ToString">
             <summary>

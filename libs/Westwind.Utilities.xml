@@ -3182,7 +3182,7 @@
             <param name="parseFormattedLinks">Allows parsing of links in the following format [text|www.site.com]</param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.UrlParser.ExpandUrls(System.String)">
+        <member name="M:Westwind.Utilities.UrlParser.ExpandUrlsInternal(System.String)">
             <summary>
             Expands links into HTML hyperlinks inside of text or HTML.
             </summary>
@@ -3825,41 +3825,68 @@
         </member>
         <member name="M:Westwind.Utilities.ShellUtils.GoUrl(System.String)">
             <summary>
-            Uses the Shell Extensions to launch a program based or URL moniker.
+            Uses the Shell Extensions to launch a program based on URL moniker or file name
+            Basically a wrapper around ShellExecute
             </summary>
             <param name="url">Any URL Moniker that the Windows Shell understands (URL, Word Docs, PDF, Email links etc.)</param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.ShellUtils.ShowString(System.String,System.String)">
             <summary>
-            Displays an HTML string in a browser window
+            Displays a string in in a browser as HTML. Optionally
+            provide an alternate extension to display in the appropriate
+            text viewer (ie. "txt" likely shows in NotePad)
             </summary>
-            <param name="HtmlString"></param>
+            <param name="text"></param>
+            <param name="extension"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.ShellUtils.ShowHtml(System.String)">
+            <summary>
+            Shows a string as HTML
+            </summary>
+            <param name="htmlString"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.ShellUtils.ShowText(System.String)">
             <summary>
-            Displays a large Text string as a text file.
+            Displays a large Text string as a text file in the
+            systems' default text viewer (ie. NotePad)
             </summary>
             <param name="TextString"></param>
             <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.ShellUtils.HttpGet(System.String)">
+            <summary>
+            Simple method to retrieve HTTP content from the Web quickly
+            </summary>
+            <param name="url">Url to access</param>        
+            <returns>Http response text or null</returns>
         </member>
         <member name="M:Westwind.Utilities.ShellUtils.HttpGet(System.String,System.String@)">
             <summary>
             Simple method to retrieve HTTP content from the Web quickly
             </summary>
-            <param name="url"></param>
+            <param name="url">Url to access</param>
             <param name="errorMessage"></param>
             <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.ShellUtils.HttpGetBytes(System.String)">
+            <summary>
+            Retrieves a buffer of binary data from a URL using
+            a plain HTTP Get.
+            </summary>
+            <param name="url">Url to access</param>
+            <returns>Response bytes or null on error</returns>
         </member>
         <member name="M:Westwind.Utilities.ShellUtils.HttpGetBytes(System.String,System.String@)">
             <summary>
             Retrieves a buffer of binary data from a URL using
             a plain HTTP Get.
             </summary>
-            <param name="url"></param>
-            <param name="errorMessage"></param>
-            <returns></returns>
+            <param name="url">Url to access</param>
+            <param name="errorMessage">ref parm to receive an error message</param>
+            <returns>response bytes or null on error</returns>
         </member>
         <member name="T:Westwind.Utilities.StringUtils">
             <summary>

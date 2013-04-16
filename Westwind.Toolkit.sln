@@ -33,6 +33,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{C15B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WestwindToolkitMvcWeb", "Samples\WestwindToolkitMvcWeb\WestwindToolkitMvcWeb.csproj", "{1C868009-3FF3-4195-A909-2035FE670675}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Web.WebApi", "Westwind.Web.WebApi\Westwind.Web.WebApi.csproj", "{D1431264-23EF-4AAC-B57A-CA68A7C26396}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,6 +90,12 @@ Global
 		{1C868009-3FF3-4195-A909-2035FE670675}.DemoMode|Any CPU.Build.0 = Debug|Any CPU
 		{1C868009-3FF3-4195-A909-2035FE670675}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C868009-3FF3-4195-A909-2035FE670675}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D1431264-23EF-4AAC-B57A-CA68A7C26396}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1431264-23EF-4AAC-B57A-CA68A7C26396}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1431264-23EF-4AAC-B57A-CA68A7C26396}.DemoMode|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1431264-23EF-4AAC-B57A-CA68A7C26396}.DemoMode|Any CPU.Build.0 = Debug|Any CPU
+		{D1431264-23EF-4AAC-B57A-CA68A7C26396}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1431264-23EF-4AAC-B57A-CA68A7C26396}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

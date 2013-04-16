@@ -20,6 +20,13 @@
             ErrorDisplay control that holds page level error information
             </summary>
         </member>
+        <member name="M:Westwind.Web.Mvc.BaseController.CreateUserState">
+            <summary>
+            Override this method to create custom overridden userstate
+            object instances.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Westwind.Web.Mvc.BaseController.CreateViewModel``1">
             <summary>
             Creates or updates a ViewModel and adds values to some of the
@@ -95,6 +102,22 @@
             <returns></returns>
         </member>
         <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorPageResult(Westwind.Web.Mvc.ErrorViewModel)">
+            <summary>
+            Static method that can be called from outside of MVC requests
+            (like in Application_Error) to display an error View.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorPage(System.String,System.String,System.String)">
+            <summary>
+            Static method that can be called from outside of MVC requests
+            (like in Application_Error) to display an error View.
+            </summary>
+            <param name="title"></param>
+            <param name="message"></param>
+            <param name="redirectTo"></param>
+            <param name="messageIsHtml"></param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorPage(Westwind.Web.Mvc.ErrorViewModel)">
             <summary>
             Static method that can be called from outside of MVC requests
             (like in Application_Error) to display an error View.
@@ -191,12 +214,14 @@
         <member name="T:Westwind.Web.Mvc.UserState">
             <summary>
             User information container that can easily 'serialize'
-            to a string and back. Meant to hold basic logon information.
+            to a string and back. Meant to hold basic logon information
+            to avoid trips to the database for common information required
+            by an app to validate and display user info.
             
             I use this class a lot to attach as Forms Authentication
             Ticket data to keep basic user data without having to
             hit the database
-            </summary>
+            </summary>    
         </member>
         <member name="M:Westwind.Web.Mvc.UserState.ToString">
             <summary>
@@ -221,7 +246,28 @@
             <param name="userData"></param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Web.Mvc.UserState.CreateFromString``1(System.String)">
+            <summary>
+            Creates an instance of a userstate object from serialized
+            data.
+            
+            IsEmpty() will return true if data was not loaded. A 
+            UserData object is always returned.
+            </summary>
+            <param name="userData"></param>
+            <returns></returns>
+        </member>
         <member name="M:Westwind.Web.Mvc.UserState.CreateFromFormsAuthTicket">
+            <summary>
+            Creates a UserState object from authentication information in the 
+            Forms Authentication ticket.
+            
+            IsEmpty() will return false if no data was loaded but
+            a Userdata object is always returned
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.UserState.CreateFromFormsAuthTicket``1">
             <summary>
             Creates a UserState object from authentication information in the 
             Forms Authentication ticket.
@@ -261,6 +307,12 @@
         <member name="P:Westwind.Web.Mvc.UserState.UserIdInt">
             <summary>
             Returns the User Id as an int if convertiable
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.UserState.SecurityToken">
+            <summary>
+            A unique id created for this entry that can be used to
+            identify the user outside of the UserState context
             </summary>
         </member>
         <member name="M:Westwind.Web.Mvc.BaseControl.ApplyAttributes">
@@ -462,6 +514,11 @@
         <member name="P:Westwind.Web.Mvc.Properties.Resources.ViewCouldNotBeFound">
             <summary>
               Looks up a localized string similar to View could not be found..
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.Properties.Resources.WeAreSorryButAnUnspecifiedErrorOccurredInT">
+            <summary>
+              Looks up a localized string similar to We are sorry, but an unspecified error occurred in the application. The error has been logged and forwarded to be checked out as soon as possible..
             </summary>
         </member>
         <member name="T:Westwind.Web.Mvc.MvcHtmlUtils">

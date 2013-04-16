@@ -2674,9 +2674,11 @@
         </member>
         <member name="M:Westwind.Web.Controls.ErrorDisplay.Render(System.Web.UI.HtmlTextWriter)">
             <summary>
-            Renders the container
+            Method 
             </summary>
-            <param name="writer"></param>
+            <param name="width"></param>
+            <param name="center"></param>
+            <returns></returns>
         </member>
         <member name="M:Westwind.Web.Controls.ErrorDisplay.ShowError(System.String)">
             <summary>
@@ -2720,11 +2722,6 @@
             For example: Please correct the following:
             </summary>
         </member>
-        <member name="P:Westwind.Web.Controls.ErrorDisplay.ErrorImage">
-            <summary>
-            Image URL to a warning icon displayed with the error message. Defaults to WarningResource which loads an image resource from the assembly. 
-            </summary>
-        </member>
         <member name="P:Westwind.Web.Controls.ErrorDisplay.InfoImage">
             <summary>
             An image Url that is displayed with the ShowMessage method. Defaults to 
@@ -2744,6 +2741,12 @@
             Controls the visibility style attribute.
             </summary>
         </member>
+        <member name="P:Westwind.Web.Controls.ErrorDisplay.HtmlEncodeMessage">
+            <summary>
+            Flag that determines whether the message is displayed
+            as HTML or as text. By default message is encoded as text (true).
+            </summary>
+        </member>
         <member name="P:Westwind.Web.Controls.ErrorDisplay.RenderMode">
             <summary>
             Determines how the error dialog renders
@@ -2754,14 +2757,14 @@
             The width of the ErrorDisplayBox
             </summary>
         </member>
-        <member name="P:Westwind.Web.Controls.ErrorDisplay.CellPadding">
-            <summary>
-            Determines the padding inside of the error display box.
-            </summary>
-        </member>
         <member name="P:Westwind.Web.Controls.ErrorDisplay.CssClass">
             <summary>
             The CSS Class used for the table and column to display this item.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.ErrorDisplay.DisplayErrors">
+            <summary>
+            Holds a modelstate errors collection
             </summary>
         </member>
         <member name="P:Westwind.Web.Controls.ErrorDisplay.DisplayTimeout">
