@@ -8,7 +8,7 @@ using System.Net.Http.Formatting;
 using System.Web.Http;
 
 
-namespace AspNetWebApi
+namespace Westwind.Web.WebApi
 {
     public class UnhandledExceptionFilter : ExceptionFilterAttribute
     {

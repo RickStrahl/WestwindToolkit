@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http.ModelBinding;
 
-namespace AspNetWebApi
+namespace Westwind.Web.WebApi
 {
     /// <summary>
     /// Class that represents an error returned to

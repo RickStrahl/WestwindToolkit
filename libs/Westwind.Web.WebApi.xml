@@ -42,14 +42,14 @@
             <param name="request"></param>
             <returns></returns>
         </member>
-        <member name="T:AspNetWebApi.ApiMessageError">
+        <member name="T:Westwind.Web.WebApi.ApiMessageError">
             <summary>
             Class that represents an error returned to
             the client. Can be explicitly returned or
             as part of the UnhandledExceptionFilter
             </summary>
         </member>
-        <member name="M:AspNetWebApi.ApiMessageError.ParseModelStateErrorMessage(System.String)">
+        <member name="M:Westwind.Web.WebApi.ApiMessageError.ParseModelStateErrorMessage(System.String)">
             <summary>
             Strips off anything after period - line number etc. info
             </summary>

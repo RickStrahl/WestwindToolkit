@@ -930,6 +930,18 @@
             <param name="parameters">DbParameters to fill the SQL statement</param>
             <returns>List of objects</returns>
         </member>
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteReader``1(System.Data.Common.DbCommand,System.String,System.Object[])">
+            <summary>
+            Executes a SQL statement and creates an object list using
+            Reflection.
+            
+            Not very efficient but provides an easy way to retrieve
+            </summary>
+            <typeparam name="T">Entity type to create from DataReader data</typeparam>
+            <param name="sql">Sql string to execute</param>        
+            <param name="parameters">DbParameters to fill the SQL statement</param>
+            <returns>List of objects</returns>
+        </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteStoredProcedureReader(System.String,System.Object[])">
             <summary>
             Calls a stored procedure that returns a cursor results
@@ -957,8 +969,36 @@
             <summary>
             Return a list of entities that are matched to an object
             </summary>
+            <typeparam name="T">Type of object to create from data record</typeparam>
+            <param name="sql">Sql string</param>
+            <param name="parameters">Either object values (@0,@1 syntax) or (@name,@name2 syntax using CreateParameter</param>
+            <returns>An enumerated list of objects or null</returns>
+        </member>
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.Query``1(System.Data.Common.DbCommand,System.Object[])">
+            <summary>
+            Allows querying and return a list of entities.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="command"></param>
+            <param name="parameters"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.QueryWithExclusions``1(System.String,System.String,System.Object[])">
+            <summary>
+            Return a list of entities that are matched to an object
+            </summary>
             <typeparam name="T"></typeparam>
             <param name="sql"></param>
+            <param name="propertiesToExclude">a comma delimited list of fields that can be omitted</param>
+            <param name="parameters">Either object values (@0,@1 syntax) or (@name,@name2 syntax using CreateParameter</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.QueryWithExclusions``1(System.Data.Common.DbCommand,System.String,System.Object[])">
+            <summary>
+            Allows querying and return a list of entities.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="command"></param>
             <param name="parameters"></param>
             <returns></returns>
         </member>
@@ -970,18 +1010,6 @@
             <param name="sql">Sql String to executeTable</param>
             <param name="parameters">Array of DbParameters to pass</param>
             <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteReader``1(System.Data.Common.DbCommand,System.Object[])">
-            <summary>
-            Executes a SQL statement and creates an object list using
-            Reflection.
-            
-            Not very efficient but provides an easy way to retrieve
-            </summary>
-            <typeparam name="T">Entity type to create from DataReader data</typeparam>
-            <param name="sql">Sql string to execute</param>        
-            <param name="parameters">DbParameters to fill the SQL statement</param>
-            <returns>List of objects</returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteTable(System.String,System.Data.Common.DbCommand,System.Object[])">
             <summary>

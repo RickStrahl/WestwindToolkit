@@ -21,9 +21,6 @@ namespace Westwind.Utilities.Data.Tests
         private const string STR_ConnectionString = "WestwindToolkitSamples";
         public SqlDataAccessTests()
         {
-            //
-            // TODO: Add constructor logic here
-            //
         }
 
         private TestContext testContextInstance;
@@ -44,13 +41,11 @@ namespace Westwind.Utilities.Data.Tests
             }
         }
 
-        #region Additional test attributes
-        //
         // You can use the following additional attributes as you write your tests:
         //
         // Use ClassInitialize to run code before running the first test in the class
         [ClassInitialize()]
-        public static void Initialize(TestContext testContext) 
+        public static void Initialize(TestContext testContext)
         {
             DatabaseInitializer.InitializeDatabase();
 
@@ -63,22 +58,76 @@ namespace Westwind.Utilities.Data.Tests
             // warm up DLR load time
             dynamic ddata = data;
             string err = ddata.ErrorMessage;
-            
         }
-        //
-        // Use ClassCleanup to run code after all tests in a class have run
-        // [ClassCleanup()]
-        // public static void MyClassCleanup() { }
-        //
-        // Use TestInitialize to run code before running each test 
-        // [TestInitialize()]
-        // public void MyTestInitialize() { }
-        //
-        // Use TestCleanup to run code after each test has run
-        // [TestCleanup()]
-        // public void MyTestCleanup() { }
-        //
-        #endregion
+
+
+
+        [TestMethod]
+        public void ExecuteReaderTest()
+        {
+            using (var data = new SqlDataAccess(STR_ConnectionString))
+            {
+                var reader = data.ExecuteReader("select * from customers");
+
+                Assert.IsTrue(reader.HasRows);
+                
+                while (reader.Read())
+                {
+                    Console.WriteLine((string)reader["LastName"] + " " + (DateTime)reader["Entered"]);
+                }
+            }
+        }
+
+        [TestMethod]
+        public void ExecuteNonQueryTest()
+        {
+            using (var data = new SqlDataAccess(STR_ConnectionString))
+            {
+                var count = data.ExecuteNonQuery("update Customers set Updated=@1 where id=@0",
+                                                 1, DateTime.Now);
+
+                Assert.IsTrue(count > -1, data.ErrorMessage);
+                Assert.IsTrue(count > 0, "No record found to update");
+
+                Assert.IsTrue(count == 1, "Invalid number of records updated.");
+            }
+        }
+
+        [TestMethod]
+        public void InsertEntityTest()
+        {
+            using (var data = new SqlDataAccess(STR_ConnectionString))
+            {
+
+                Customer customer = new Customer()
+                {
+                    FirstName = "Mike",
+                    LastName = "Smith",
+                    Company = "Smith & Smith",
+                    Entered = DateTime.UtcNow,
+                    Updated = DateTime.UtcNow
+                };
+
+                // insert into customers and skip Id,Order properties and return id
+                object newId = data.InsertEntity(customer, "Customers", "Id,Orders");
+
+                Assert.IsNotNull(newId, data.ErrorMessage);
+                Console.WriteLine(newId);
+            }
+        }
+
+        [TestMethod]
+        public void FindTest()
+        {
+            using (var data = new SqlDataAccess(STR_ConnectionString))
+            {
+                var customer = data.Find<Customer>("select * from customers where id=@0", 1);
+                Assert.IsNotNull(customer, data.ErrorMessage);
+                Console.WriteLine(customer.Company);
+            }
+        }
+
+
 
         [TestMethod]
         public void DataReaderToObjectTest()
@@ -103,56 +152,58 @@ namespace Westwind.Utilities.Data.Tests
         public void ExecuteDataReaderToListTest()
         {
             SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
-            
+
             var swatch = new Stopwatch();
             swatch.Start();
-            
-            var recs = data.ExecuteReader<WebLogEntry>("select * from ApplicationLog").ToList();
-            
+
+            var recs = data.Query<WebLogEntry>("select * from ApplicationLog").ToList();
+
             swatch.Stop();
 
-            Assert.IsNotNull(recs,"Null");
-            Assert.IsTrue(recs.Count > 0,"Count < 1");
+            Assert.IsNotNull(recs, "Null");
+            Assert.IsTrue(recs.Count > 0, "Count < 1");
             Assert.IsTrue(recs[0].Entered > DateTime.MinValue);
 
             Console.WriteLine(swatch.ElapsedMilliseconds);
             Console.WriteLine(recs.Count);
         }
 
+
+
         [TestMethod]
         public void ExecuteDataReaderWithNoMatchingDataTest()
         {
             SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
-            
+
             // no records returned from query
             var reader = data.ExecuteReader("select * from ApplicationLog where 1=2");
-            Assert.IsNotNull(reader, "Reader is null and shouldn't be");            
+            Assert.IsNotNull(reader, "Reader is null and shouldn't be");
         }
 
         [TestMethod]
-        public void ExecuteDataReaderTWithNoMatchingDataTest()
+        public void QueryWithNoMatchingDataTest()
         {
             SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
 
             // no records returned from query
-            var entries = data.ExecuteReader<WebLogEntry>("select * from ApplicationLog where 1=2");
+            var entries = data.Query<WebLogEntry>("select * from ApplicationLog where 1=2");
 
             var ent = entries.ToList();
             Console.WriteLine(ent.Count);
 
-            Assert.IsNotNull(entries, "IEnumerable should not be null - only null on failure.");            
-            
+            Assert.IsNotNull(entries, "IEnumerable should not be null - only null on failure.");
+
         }
 
         [TestMethod]
-        public void ExecuteDataReaderToIEnumerableTest()
+        public void QueryToIEnumerableTest()
         {
             SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
 
             var swatch = new Stopwatch();
             swatch.Start();
 
-            var enumerable = data.ExecuteReader<WebLogEntry>("select * from ApplicationLog");
+            var enumerable = data.Query<WebLogEntry>("select * from ApplicationLog");
 
             var recs = new List<WebLogEntry>();
             foreach (var entry in enumerable)
@@ -170,42 +221,58 @@ namespace Westwind.Utilities.Data.Tests
             Console.WriteLine(recs.Count);
         }
 
+        [TestMethod]
+        public void QueryToCustomer()
+        {
+            using (var data = new SqlDataAccess(STR_ConnectionString))
+            {
+                var custList = data.Query<Customer>("select * from customers where LastName like @0", "S%");
+
+                Assert.IsNotNull(custList, data.ErrorMessage);
+
+                foreach (var customer in custList)
+                {
+                    Console.WriteLine(customer.Company + " " + customer.Entered);
+                }
+            }
+        }
+
 
         [TestMethod]
         public void ExecuteDataReaderToListManualTest()
         {
             SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
-        
+
             var swatch = new Stopwatch();
             swatch.Start();
 
             var entries = new List<WebLogEntry>();
             var reader = data.ExecuteReader("select * from ApplicationLog");
-            
+
             while (reader.Read())
             {
                 WebLogEntry entry = new WebLogEntry();
                 entry.Details = reader["Details"] as string;
                 entry.Entered = (DateTime)reader["Entered"];
-                entry.ErrorLevel = (ErrorLevels) reader["ErrorLevel"];                
+                entry.ErrorLevel = (ErrorLevels)reader["ErrorLevel"];
                 entry.Id = (int)reader["id"];
                 entry.IpAddress = reader["IpAddress"] as string;
                 entry.Message = reader["Message"] as string;
                 entry.PostData = reader["PostData"] as string;
                 entry.QueryString = reader["QueryString"] as string;
                 entry.Referrer = reader["Referrer"] as string;
-                entry.RequestDuration = (decimal)reader["RequestDuration"];                
+                entry.RequestDuration = (decimal)reader["RequestDuration"];
                 entry.Url = reader["Url"] as string;
                 entry.UserAgent = reader["UserAgent"] as string;
 
-                entries.Add(entry);                
+                entries.Add(entry);
             }
             reader.Close();
 
             swatch.Stop();
 
             Console.WriteLine(swatch.ElapsedMilliseconds);
-            Console.WriteLine(entries.Count);            
+            Console.WriteLine(entries.Count);
         }
 
         [TestMethod]
@@ -216,12 +283,13 @@ namespace Westwind.Utilities.Data.Tests
 
             var swatch = Stopwatch.StartNew();
 
-            var reader = data.ExecuteReader( "select * from ApplicationLog where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
+            var reader = data.ExecuteReader("select * from ApplicationLog where entered > @0 and entered < @1 order by Entered", 
+                                            DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
 
             Assert.IsNotNull(reader, data.ErrorMessage);
 
             int readerCount = 0;
-            while(reader.Read())             
+            while (reader.Read())
             {
                 string Message = reader["Message"] as string;
                 string Details = reader["Details"] as string;
@@ -229,10 +297,10 @@ namespace Westwind.Utilities.Data.Tests
                 Console.WriteLine(((DateTime)reader["Entered"]));
                 readerCount++;
             }
+
             swatch.Stop();
             Console.WriteLine(readerCount);
             Console.WriteLine(swatch.ElapsedMilliseconds + "ms");
-
         }
 
         [TestMethod]
@@ -248,14 +316,14 @@ namespace Westwind.Utilities.Data.Tests
 
             var swatch = Stopwatch.StartNew();
 
-            var table = data.ExecuteTable("TLogs","select * from ApplicationLog where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
+            var table = data.ExecuteTable("TLogs", "select * from ApplicationLog where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
 
             Assert.IsNotNull(table, data.ErrorMessage);
 
             Console.WriteLine(table.Rows.Count);
             foreach (DataRow row in table.Rows)
             {
-                Console.WriteLine( ((DateTime) row["Entered"]) );
+                Console.WriteLine(((DateTime)row["Entered"]));
             }
             swatch.Stop();
             Console.WriteLine(swatch.ElapsedMilliseconds + "ms");
@@ -318,7 +386,7 @@ namespace Westwind.Utilities.Data.Tests
                 Assert.IsNotNull(entry2);
                 Assert.AreEqual(entry2.Message, entry.Message);
                 Console.WriteLine(entry2.Entered + " " + entry2.Message);
-            }    
+            }
         }
 
 
@@ -331,8 +399,8 @@ namespace Westwind.Utilities.Data.Tests
                 Assert.IsNotNull(entry, data.ErrorMessage);
                 Console.WriteLine(entry.Entered + " " + entry.Message);
             }
-            
-            
+
+
         }
 
         [TestMethod]
