@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Westwind.Web.WebApi</name>
+    </assembly>
+    <members>
+        <member name="T:Westwind.Web.WebApi.SimplePostVariableParameterBinding">
+            <summary>
+            A Custom HttpParameterBinding to bind multiple parameters from request body
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.WebApi.SimplePostVariableParameterBinding.ExecuteBindingAsync(System.Web.Http.Metadata.ModelMetadataProvider,System.Web.Http.Controllers.HttpActionContext,System.Threading.CancellationToken)">
+            <summary>
+            Check for simple binding parameters in POST data. Bind POST
+            data as well as query string data
+            </summary>
+            <param name="metadataProvider"></param>
+            <param name="actionContext"></param>
+            <param name="cancellationToken"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.WebApi.SimplePostVariableParameterBinding.HookupParameterBinding(System.Web.Http.Controllers.HttpParameterDescriptor)">
+            <summary>
+            Method that implements parameter binding hookup to the global configuration object's
+            ParameterBindingRules collection delegate.
+            
+            This routine filters based on POST/PUT method status and simple parameter
+            types.
+            </summary>
+            <example>
+            GlobalConfiguration.Configuration.
+                  .ParameterBindingRules
+                  .Insert(0,SimplePostVariableParameterBinding.HookupParameterBinding);
+            </example>    
+            <param name="descriptor"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.WebApi.SimplePostVariableParameterBinding.TryReadBody(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Read and cache the request body
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="T:AspNetWebApi.ApiMessageError">
+            <summary>
+            Class that represents an error returned to
+            the client. Can be explicitly returned or
+            as part of the UnhandledExceptionFilter
+            </summary>
+        </member>
+        <member name="M:AspNetWebApi.ApiMessageError.ParseModelStateErrorMessage(System.String)">
+            <summary>
+            Strips off anything after period - line number etc. info
+            </summary>
+            <param name="msg"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Westwind.Web.WebApi.JsonpFormatter">
+            <summary>
+            Handles JsonP requests when requests are fired with text/javascript
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.WebApi.JsonpFormatter.JsonpCallbackFunction">
+            <summary>
+            Captured name of the Jsonp function that the JSON call
+            is wrapped in. Set in GetPerRequestFormatter Instance
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.WebApi.JsonpFormatter.GetPerRequestFormatterInstance(System.Type,System.Net.Http.HttpRequestMessage,System.Net.Http.Headers.MediaTypeHeaderValue)">
+            <summary>
+            Override this method to capture the Request object
+            </summary>
+            <param name="type"></param>
+            <param name="request"></param>
+            <param name="mediaType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.WebApi.JsonpFormatter.GetJsonCallbackFunction(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Retrieves the Jsonp Callback function
+            from the query string
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Westwind.Web.WebApi.JsonpFormatter.JsonpParameterName">
+            <summary>
+             Name of the query string parameter to look for
+             the jsonp function name
+            </summary>
+        </member>
+        <member name="T:System.Web.Http.HttpRequestMessageExtensions">
+            <summary>
+            Extends the HttpRequestMessage collection
+            </summary>
+        </member>
+        <member name="M:System.Web.Http.HttpRequestMessageExtensions.GetQueryStrings(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Returns a dictionary of QueryStrings that's easier to work with 
+            than GetQueryNameValuePairs KevValuePairs collection.
+            
+            If you need to pull a few single values use GetQueryString instead.
+            </summary>
+            <param name="request"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Web.Http.HttpRequestMessageExtensions.GetQueryString(System.Net.Http.HttpRequestMessage,System.String)">
+            <summary>
+            Returns an individual querystring value
+            </summary>
+            <param name="request"></param>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Web.Http.HttpRequestMessageExtensions.GetHeader(System.Net.Http.HttpRequestMessage,System.String)">
+            <summary>
+            Returns an individual HTTP Header value
+            </summary>
+            <param name="request"></param>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Web.Http.HttpRequestMessageExtensions.GetCookie(System.Net.Http.HttpRequestMessage,System.String)">
+            <summary>
+            Retrieves an individual cookie from the cookies collection
+            </summary>
+            <param name="request"></param>
+            <param name="cookieName"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
