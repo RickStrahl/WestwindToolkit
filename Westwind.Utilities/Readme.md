@@ -1,26 +1,22 @@
 #Westwind.Utiltities
 ###A rich library of everyday utilities for .NET development###
 
-<div style="font-size: 0.8em;margin-left: 15px;font-style: italic">
-This is version 2.0 of the West Wind Toolkit that is still
-under full construction.  This version heavily refactors
-the older versions, breaks components out more logically
-and also puts components out on GitHub under their
-separate library trees.
-</div>
-
 Every .NET application requires small, common and ofen repeated tasks.
 This library is a collection of those things that I commonly need on
 a regular basis and have compiled over the years.
 
+* [Get it on NuGet](http://nuget.org/packages/Westwind.Utilities/)
+* [Usage Documentation](http://west-wind.com/westwindtoolkit/docs?page=_3rg13chn1.htm)
+* [Class Documentation](http://west-wind.com/westwindtoolkit/docs/_3rg13chn1.htm)
+
 It includes tools for:
 
-* Configuration settings management with strongly typed classes
+* **Application Configuration** class to create code-first strongly typed configuration classes for your applications
 * A small, extensible logging engine with built-in Database and Xml support
-* A simple Data Access Layer that thinly wraps ADO.NET
-* Many data access helpers for parsing data to objects and dynamics
-* 
-* Many static helper classes with tons of utility features:
+* **Lightweight ADO.NET Data Access Layer** ideal for components or apps
+  that need data access but don't need the bulk of Entity Framework or similar ORM
+* **Application Logging** that is integrated and easy to use and configure
+* **General Purpose Utility Classes**:
 	* StringUtils
     * HtmlUtils
 	* ReflectionUtils
@@ -30,7 +26,10 @@ It includes tools for:
 	* FileUtils
     * TimeUtils
     * XmlUtils    
-
+    * StringSerializer
+    * Expando
+    * Scheduler (for background processing)    
+    * DelegateFactory
 
 and much, much more.
 
