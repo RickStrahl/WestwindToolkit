@@ -11,25 +11,24 @@ a regular basis and have compiled over the years.
 
 It includes tools for:
 
-* **Application Configuration** class to create code-first strongly typed configuration classes for your applications
-* A small, extensible logging engine with built-in Database and Xml support
-* **Lightweight ADO.NET Data Access Layer** ideal for components or apps
+* [**Application Configuration**](http://west-wind.com/westwindtoolkit/docs?page=_2le027umn.htm) class to create code-first strongly typed configuration classes for your applications
+* [**Lightweight ADO.NET Data Access Layer**](http://west-wind.com/westwindtoolkit/docs?=page=_3ou0v2jum.htm) ideal for components or apps
   that need data access but don't need the bulk of Entity Framework or similar ORM
-* **Application Logging** that is integrated and easy to use and configure
+* [**Application Logging**](http://west-wind.com/westwindtoolkit/docs?page=_2mp013ssr.htm) that is integrated and easy to use and configure
 * **General Purpose Utility Classes**:
-	* StringUtils
-    * HtmlUtils
-	* ReflectionUtils
-	* SerializationUtils
-	* DataUtils
-	* EncryptionUtils
-	* FileUtils
-    * TimeUtils
-    * XmlUtils    
-    * StringSerializer
-    * Expando
-    * Scheduler (for background processing)    
-    * DelegateFactory
+	* [StringUtils](http://west-wind.com/westwindtoolkit/docs?topic=Class%20StringUtils)
+    * [HtmlUtils](http://west-wind.com/westwindtoolkit/docs?topic=Class%20HtmlUtils)
+	* [ReflectionUtils](http://west-wind.com/westwindtoolkit/docs?topic=Class%20ReflectionUtils)
+	* [SerializationUtils](http://west-wind.com/westwindtoolkit/docs?topic=Class%20SerializationUtils)
+	* [DataUtils](http://west-wind.com/westwindtoolkit/docs?topic=Class%20DataUtils)	
+	* [FileUtils](http://west-wind.com/westwindtoolkit/docs?topic=Class%20FileUtils)
+    * [TimeUtils](http://west-wind.com/westwindtoolkit/docs?topic=Class%20TimeUtils)	
+    * [XmlUtils](http://west-wind.com/westwindtoolkit/docs?topic=Class%20TimeUtils)	    
+    * [StringSerializer](http://west-wind.com/westwindtoolkit/docs?topic=Class%20StringSerializer)
+    * [Expando](http://west-wind.com/westwindtoolkit/docs?topic=Class%20Expando)
+	* [PropertyBag](http://west-wind.com/westwindtoolkit/docs?topic=Class%20PropertyBag)
+    * [Scheduler](http://west-wind.com/westwindtoolkit/docs?topic=Class%20Scheduler) (for background processing)    
+    * [DelegateFactory](http://west-wind.com/westwindtoolkit/docs?topic=Class%20DelegateFactory)
 
 and much, much more.
 
