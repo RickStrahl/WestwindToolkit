@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 
-namespace Westwind.Web
+namespace System.Web
 {
     /// <summary>
     /// HttpResponse Extension methods to facilitate various output tasks

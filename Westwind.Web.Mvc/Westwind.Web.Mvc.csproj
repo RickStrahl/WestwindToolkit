@@ -62,7 +62,6 @@
     <Compile Include="Filters\CompressContentAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Components\ErrorDisplay.cs" />
-    <Compile Include="Components\UserState.cs" />
     <Compile Include="Controls\BaseControl.cs" />
     <Compile Include="Controls\DateControl.cs" />
     <Compile Include="Extensions\HtmlHelperExtensions.cs" />

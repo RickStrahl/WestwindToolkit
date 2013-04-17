@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Web;
 
-namespace Westwind.Web
+namespace System.Web
 {
     /// <summary>
     /// HttpRequest Extension methods to facilitate various input retrieval tasks tasks
