@@ -1595,12 +1595,12 @@
             </summary>
             <param name="xml"></param>
         </member>
-        <member name="T:Westwind.Utilities.Extensions.MemoryStreamExtensions">
+        <member name="T:System.IO.MemoryStreamExtensions">
             <summary>
             MemoryStream Extension Methods that provide conversions to and from strings
             </summary>
         </member>
-        <member name="M:Westwind.Utilities.Extensions.MemoryStreamExtensions.GetAsString(System.IO.MemoryStream,System.Text.Encoding)">
+        <member name="M:System.IO.MemoryStreamExtensions.AsString(System.IO.MemoryStream,System.Text.Encoding)">
             <summary>
             Returns the content of the stream as a string
             </summary>
@@ -1608,27 +1608,13 @@
             <param name="encoding"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.Extensions.MemoryStreamExtensions.GetAsString(System.IO.MemoryStream)">
-            <summary>
-            Returns the content of the stream as a string
-            </summary>
-            <param name="ms"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.Extensions.MemoryStreamExtensions.WriteString(System.IO.MemoryStream,System.String,System.Text.Encoding)">
+        <member name="M:System.IO.MemoryStreamExtensions.FromString(System.IO.MemoryStream,System.String,System.Text.Encoding)">
             <summary>
             Writes the specified string into the memory stream
             </summary>
             <param name="ms"></param>
             <param name="inputString"></param>
             <param name="encoding"></param>
-        </member>
-        <member name="M:Westwind.Utilities.Extensions.MemoryStreamExtensions.WriteString(System.IO.MemoryStream,System.String)">
-            <summary>
-            Writes the specified string into the memory stream
-            </summary>
-            <param name="ms"></param>
-            <param name="inputString"></param>
         </member>
         <member name="M:Westwind.Utilities.Extensions.GuidExtensions.IsEmpty(System.Guid)">
             <summary>

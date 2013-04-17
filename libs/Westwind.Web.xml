@@ -2035,12 +2035,12 @@
             </summary>
             <param name="Cookie"></param>
         </member>
-        <member name="T:Westwind.Web.HttpRequestBaseExtensions">
+        <member name="T:System.Web.HttpRequestBaseExtensions">
             <summary>
             HttpRequest Extension methods to facilitate various input retrieval tasks tasks
             </summary>
         </member>
-        <member name="M:Westwind.Web.HttpRequestBaseExtensions.IsFormVar(System.Web.HttpRequestBase,System.String)">
+        <member name="M:System.Web.HttpRequestBaseExtensions.IsFormVar(System.Web.HttpRequestBase,System.String)">
             <summary>
             Determines whether a form variable exists
             </summary>
@@ -2048,7 +2048,7 @@
             <param name="formVarName"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Web.HttpRequestBaseExtensions.ParamsInt(System.Web.HttpRequestBase,System.String,System.Int32)">
+        <member name="M:System.Web.HttpRequestBaseExtensions.ParamsInt(System.Web.HttpRequestBase,System.String,System.Int32)">
             <summary>
             Returns a value via Params[] and attempts
             to convert it to an integer.
@@ -2058,7 +2058,7 @@
             <param name="defaultValue"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Web.HttpRequestBaseExtensions.ParamsDecimal(System.Web.HttpRequestBase,System.String,System.Decimal)">
+        <member name="M:System.Web.HttpRequestBaseExtensions.ParamsDecimal(System.Web.HttpRequestBase,System.String,System.Decimal)">
             <summary>
             Returns a value via Params[] and attempts
             to convert it to a decimal value.
@@ -2068,19 +2068,19 @@
             <param name="defaultValue"></param>
             <returns></returns>
         </member>
-        <member name="T:Westwind.Web.HttpResponseExtensions">
+        <member name="T:System.Web.HttpResponseExtensions">
             <summary>
             HttpResponse Extension methods to facilitate various output tasks
             </summary>
         </member>
-        <member name="M:Westwind.Web.HttpResponseExtensions.WriteLine(System.Web.HttpResponse,System.Object)">
+        <member name="M:System.Web.HttpResponseExtensions.WriteLine(System.Web.HttpResponse,System.Object)">
             <summary>
             Writes output as an HTML 'line' by appending a &lt;br /&gt; and linefeed at the end
             </summary>
             <param name="response"></param>
             <param name="output">String to output</param>
         </member>
-        <member name="M:Westwind.Web.HttpResponseExtensions.WriteLine(System.Web.HttpResponse,System.String,System.Object[])">
+        <member name="M:System.Web.HttpResponseExtensions.WriteLine(System.Web.HttpResponse,System.String,System.Object[])">
             <summary>
             Writes formatted output as an HTML 'line' by appending a &lt;br /&gt; and linefeed at the end
             </summary>
@@ -2088,7 +2088,7 @@
             <param name="format">format string</param>
             <param name="args">format string arguments</param>
         </member>
-        <member name="M:Westwind.Web.HttpResponseExtensions.Write(System.Web.HttpResponse,System.String,System.Object[])">
+        <member name="M:System.Web.HttpResponseExtensions.Write(System.Web.HttpResponse,System.String,System.Object[])">
             <summary>
             Writes formatted output into the Response
             </summary>
