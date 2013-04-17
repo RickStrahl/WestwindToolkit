@@ -46,15 +46,17 @@ Create a connection string entry in your .config file, ideally with the same nam
 DbContext, so no parameters are required for the Context to find the connection.
 
 ###Create your Business Object###
-Create an instance of the business object and inherit it from EfCodeFirstBusinessBase,
+Create an instance of the business object and inherit it from EfCodeFirstBusinessBase:
 
-	public class busCustomer : EfCodeFirstBusinessBase<Customer,OrdersContext>
-    { }    
+```C#
+public class busCustomer : EfCodeFirstBusinessBase<Customer,OrdersContext>
+{ }
+```    
 
 You specify a main entity type (Customer in this case) and the DbContext type (OrdersContext). 
-You now have a functioning business object for Customers. 
+You now have a functioning business object for Customers.
 
-Note that you would create many business objects for each **logical** business context
+Note that you create many business objects for each **logical** business context
 or operation which wouldn't necessarily match each entity in the data model. For example,
 you would have an busOrder business object, but likely not a LineItem business object since
 lineitems are logically associated with the Order and managed through an Order business object.
@@ -63,37 +65,39 @@ lineitems are logically associated with the Order and managed through an Order b
 Without adding any functionality the business object is now functional and can run basic
 CRUD operations:
 
-    var customerBus = new busCustomer();
+```C#
+var customerBus = new busCustomer();
     
-	// Add a new customer
-    var customer = customerBus.NewEntity();
-    customer.LastName = "Strahl";
-    customer.FirstName = "Rick";
-    customer.Entered = DateTime.UtcNow;
+// Add a new customer
+var customer = customerBus.NewEntity();
+customer.LastName = "Strahl";
+customer.FirstName = "Rick";
+customer.Entered = DateTime.UtcNow;
     
-    // Save all data since last Save() operation
-	Assert.IsTrue(customerBus.Save(),customerBus.ErrorMessage)
+// Save all data since last Save() operation
+Assert.IsTrue(customerBus.Save(),customerBus.ErrorMessage)
     
-    // new PK gets auto-updated after save
-    int id = customer.Id;
+// new PK gets auto-updated after save
+int id = customer.Id;
     
-    // load a new customer instance by Pk and make a change
-    var customer2 = customerBus.Load(id);
-    customer2.Updated = DateTime.Now;
+// load a new customer instance by Pk and make a change
+var customer2 = customerBus.Load(id);
+customer2.Updated = DateTime.Now;
 
-    // Also use alternate way to add another customer
-    var customer3 = new Customer() {
-         LastName = "Egger",
-         FirstName = "Markus",
-         Entered = DateTime.Now
-    }
-    customerBus.NewEntity(customer3);  // attach customer as new
+// Also use alternate way to add another customer
+var customer3 = new Customer() {
+        LastName = "Egger",
+        FirstName = "Markus",
+        Entered = DateTime.Now
+}
+customerBus.NewEntity(customer3);  // attach customer as new
 
-    // both the updated and the new customer entities are saved
-	Assert.IsTrue(customerBus.Save(),customerBus.ErrorMessage)
+// both the updated and the new customer entities are saved
+Assert.IsTrue(customerBus.Save(),customerBus.ErrorMessage)
         
-    // delete the first customer by pk
-    Assert.IsTrue(customerBus.Delete(id));
+// delete the first customer by pk
+Assert.IsTrue(customerBus.Delete(id));
+```
 
 Although a business object by default maps to an entity type, the business object
 is not bound to the entity. Internally the business object can manipulate the 
@@ -103,13 +107,24 @@ entire model accessible via the Entity instance.
 By default a business object - like a DbContext object - is instantiated with a 
 default constructor which looks for a connection string entry in the .config file
 with the same name as the DbContext instance. This is the recommended way to set
-up the business object since it's easy, yet also very configurable.
+up the business object since it's easy, yet also configurable via the connection
+string entry.
 
 If you require custom connection strings you'll need to create custom constructors
 that point back at the business object base constructor and allow for custom connection
 strings:
 
+```C#
+public class busCustomer : EfCodeFirstBusinessBase<Customer,OrdersContext>
+{ 
+     // uses default connection string (dbContext name)
+     public busCustomer() 
+     { }
 
+     public busCustomer(string connString) : base(connString)
+     { }
+}
+``` 
 
 ###Adding to the Business Object###
 The previous operations are not that different from plain EF CodeFirst operations, except
@@ -120,23 +135,24 @@ and also override a host of provide hook methods for common tasks.
 
 Here are some common hook methods to override:
 
-	public class busCustomer : EfCodeFirstBusinessBase<Customer,OrdersContext>
-    { 
-		public override void OnNewEntity(Customer entity)
-		{
-			entity.Entered = DateTime.UtcNow;
-		}
-		public override bool OnBeforeSave(Customer entity)
-		{
-			entity.Updated = DateTime.UtcNow;
-		}
-		public override void OnValidate(Customer entity)
-		{
-			if (string.Empty(entity.LastName + entity.FirstName + entity.Company)
-				this.ValidationErrors.Add("Please provide at least one name");
-		}
-    }    
-
+```c#
+public class busCustomer : EfCodeFirstBusinessBase<Customer,OrdersContext>
+{ 
+	public override void OnNewEntity(Customer entity)
+	{
+		entity.Entered = DateTime.UtcNow;
+	}
+	public override bool OnBeforeSave(Customer entity)
+	{
+		entity.Updated = DateTime.UtcNow;
+	}
+	public override void OnValidate(Customer entity)
+	{
+		if (string.Empty(entity.LastName + entity.FirstName + entity.Company)
+			this.ValidationErrors.Add("Please provide at least one name");
+	}
+}    
+```
 *under construction - to be continued*
 
 ##How it works##
