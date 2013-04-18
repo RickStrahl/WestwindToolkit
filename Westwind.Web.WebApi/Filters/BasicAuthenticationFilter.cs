@@ -8,7 +8,7 @@ using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 
-namespace MarvelPress.Workflow.WebAPI
+namespace Westwind.Web.WebApi
 {
 
     /// <summary>
