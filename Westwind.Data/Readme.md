@@ -6,33 +6,45 @@ It provides a simple way to encapsulate your business logic in one place, with t
 features:
 
 * Wraps and manages DbContext instance
-* Wrapped CRUD operations with DbContext management (and more)
+* Wrapped CRUD operations with DbContext lifetime management
+* Hooks for common data operations - simplify saving and updating of data consistently
 * Model and code based validatation support
 * Error and data conflict management and reporting
 * Consistent error model and trapping
-* Most CRUD operations include pre and post processing hooks
 * Optional internal Entity member simplifies single model operations
 * Simplifies data access - especially CRUD - to single line operations
+* Full access to EF CodeFirst functionality
 * Optional custom DbContext with low level Data Access Layer
+     * ADO.NET fallback with single line DAL methods
 	 * Handle edge cases and LINQ nightmare code more easily    	
      * Easy Stored Procedure Calls
 	 * String based SQL to read-only Entity mapping
      * Full range of DAL operations
      
+More Info:
+* [Part of the West Wind Toolkit](http://west-wind.com/westwindtoolkit/)
+* [Get it on NuGet](http://nuget.org/packages/Westwind.Data/)
+* Operational Documentation (under construction)
+* [Class Reference](http://west-wind.com/westwindtoolkit/docs/?topic=Class%20EfCodeFirstBusinessBase%3CTEntity,TContext%3E)
+
+
 ##Installation##
-In the current beta status of the library you have to install the library
-from the binaries. There's no NuGet package just yet. The latest binaries
-can be found in the /libs folder.
+The easiest way to install the library is via NuGet. To do this either use the Add Reference | Add Package
+dialog and search for the Westwind.Data package. Or you can type the following into 
+the Package Manager Console in Visual Studio for your project:
 
-Requirements:
-* .NET 4.5 Runtime
-* EntityFramework 5.x (from NuGet)
+    PM > Install-Package Westwind.Data
 
-To run the Westwind.Data framework you will need the following assemblies:
+Alternately you can also download and install the required assemblies from the GIT repository from
+the libs folder. To use this library you need:
 
 * Westwind.Data.dll
 * Westwind.Utilities.dll
 * EntityFramework 5.0 (from NuGet)
+
+Requirements:
+* .NET 4.5 Runtime
+* [EntityFramework 5.x (from NuGet)](http://nuget.org/packages/EntityFramework/5.0.0)
 
 ##Getting Started##
 *under construction*
