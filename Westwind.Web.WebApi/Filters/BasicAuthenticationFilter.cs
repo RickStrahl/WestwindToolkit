@@ -36,10 +36,10 @@ public class BasicAuthenticationFilter : AuthorizationFilterAttribute
     /// filter's behavior. Pass false to disable (same as no filter
     /// but declarative)
     /// </summary>
-    /// <param name="notActive"></param>
-    public BasicAuthenticationFilter(bool notActive)
+    /// <param name="active"></param>
+    public BasicAuthenticationFilter(bool active)
     {
-        Active = false;
+        Active = active;
     }
 
 
