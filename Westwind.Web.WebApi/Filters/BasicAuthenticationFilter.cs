@@ -118,10 +118,7 @@ public class BasicAuthenticationFilter : AuthorizationFilterAttribute
 
         var tokens = authHeader.Split(':');
         if (tokens.Length < 2)
-        {
-            Challenge(actionContext);
             return null;
-        }
 
         return new BasicAuthCredentials()
         {
