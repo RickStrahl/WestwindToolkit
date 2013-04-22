@@ -37,15 +37,31 @@ using System.Text;
 using System.Web.UI;
 using System.Web;
 using Westwind.Utilities;
-using Westwind.Web.Controls.Properties;
+using Westwind.Web.Properties;
+using Westwind.Web.JsonSerializers;
+using System.Reflection;
+using System.Resources;
 
 
 namespace Westwind.Web
 {
     /// <summary>
-    /// Provides an easy way for server code to publish strings into client script 
-    /// code. This object basically provides a mechanism for adding key value pairs
-    ///  and embedding those values into an object that is hosted on the client.
+    /// ScriptVariables allows you to easily push server side values into JavaScript
+    /// code. It allows you add properties to a collection which can then be rendered
+    /// into a JavaScript object using the ToString() or ToHtmlString(). Output is
+    /// rendered as a single JavaScript object literal with properties for each 
+    /// item/value added. Any type of value or object can be added including nested
+    /// objects and collections. It's an easy way to serialize complex data into 
+    /// a JavaScript code from the server.
+    /// 
+    /// The component also supports posting back of updated values from the client
+    /// and a generic Items[] collection that allows page data to update generic
+    /// values and post them back to the server. The items are available
+    ///
+    /// This component produces either straight string output when used directly
+    /// using the ToString() or HtmlString() methods for use in ASP.NET MVC or Web Pages,
+    /// or can be used as WebForms control that automatically handles embedding of
+    /// the script and deserialization of return values on the server.
     /// 
     /// This component supports:&lt;&lt;ul&gt;&gt;
     /// &lt;&lt;li&gt;&gt; Creating individual client side variables
@@ -159,7 +175,7 @@ namespace Westwind.Web
         /// Internal instance of the Json Serializer used to serialize
         /// the object and deserialize the updateable fields
         /// </summary>
-     //   private JSONSerializer xJsonSerializer;
+        private JSONSerializer JsonSerializer;
 
 
         /// <summary>
@@ -167,6 +183,9 @@ namespace Westwind.Web
         /// </summary>
         private StringBuilder sbPrefixScriptCode = new StringBuilder();
 
+        /// <summary>
+        /// Internally tracked postfix code
+        /// </summary>
         private StringBuilder sbPostFixScriptCode = new StringBuilder();
 
 
@@ -174,6 +193,27 @@ namespace Westwind.Web
         /// Internal counter for submit script embedded
         /// </summary>
         private int SubmitCounter = 0;
+
+        public ScriptVariables() : this(null, "serverVars")
+        { }
+
+        /// <summary>
+        /// Constructor that optionally accepts the name of the
+        /// variable that is to be created
+        /// </summary>
+        /// <param name="clientObjectName">Name of the JavaScript variable to create</param>
+        public ScriptVariables(string clientObjectName) : this(null,clientObjectName)
+        {  }
+
+
+
+        /// <summary>
+        /// This constructor only takes an instance of a Control. The name of the
+        /// client object generated will be serverVars.
+        /// </summary>
+        /// <param name="control"></param>
+        public ScriptVariables(Control control) : this(control, "serverVars")
+        { }
 
         /// <summary>
         /// Full constructor that receives an instance of any control object
@@ -185,9 +225,12 @@ namespace Westwind.Web
         public ScriptVariables(Control control, string clientObjectName)
         {
             if (control == null)
+            {
                 // Note: this will fail if called from Page Contstructor
                 //       ie. wwScriptVariables scripVars = new wwScriptVariables();
-                Page = HttpContext.Current.CurrentHandler as Page;
+                if (HttpContext.Current != null)
+                    Page = HttpContext.Current.CurrentHandler as Page;
+            }
             else
                 Page = control.Page;
 
@@ -207,27 +250,7 @@ namespace Westwind.Web
 
 
 
-        /// <summary>
-        /// This constructor only takes an instance of a Control. The name of the
-        /// client object generated will be serverVars.
-        /// </summary>
-        /// <param name="control"></param>
-        public ScriptVariables(Control control)
-            : this(control, "serverVars")
-        {
-        }
-
-        /// <summary>
-        /// This constructor can only be called AFTER a page instance has been created.
-        /// This means OnInit() or later, but not in the constructor of the page.
-        /// 
-        /// The name of the client object generated will be serverVars.
-        /// </summary>
-        public ScriptVariables()
-            : this(null, "serverVars")
-        {
-        }
-
+  
        
         /// <summary>
         /// Implemented after Page's OnPreRender() has fired to ensure all
@@ -273,8 +296,20 @@ namespace Westwind.Web
         public void Add(string variableName, object value)
         {
             ScriptVars[variableName] = value;
-            //ScriptVars.Add(variableName, value);
         }
+
+        /// <summary>
+        /// Adds an entire dictionary of values
+        /// </summary>
+        /// <param name="values"></param>
+        public void Add(IDictionary<string, object> values)
+        {
+            foreach (var item in values)
+            {
+                ScriptVars[item.Key] = item.Value;
+            }
+        }
+
 
         /// <summary>
         /// Adds the dynamic value of a control or any object's property that is picked
@@ -435,11 +470,11 @@ namespace Westwind.Web
         /// <param name="key"></param>
         /// <returns></returns>
         public TType GetItemValue<TType>(string key)
-        {
+        {            
             HttpRequest Request = HttpContext.Current.Request;
 
             if (UpdateMode == AllowUpdateTypes.None || UpdateMode == AllowUpdateTypes.PropertiesOnly)
-                throw new InvalidOperationException(Resources.CanTGetValuesIfAllowUpdatesIsNotSetToTrue);
+                throw new InvalidOperationException(Resources.CanTRetrieveItemsInUpdateMode + UpdateMode.ToString());
 
             if (Request.HttpMethod != "POST")
                 return default(TType); // throw new InvalidOperationException("GetValue can only be called during postback");
@@ -466,6 +501,15 @@ namespace Westwind.Web
 
 
         /// <summary>
+        /// Returns the rendered JavaScript as a string
+        /// </summary>
+        /// <returns>string</returns>
+        public override string ToString()
+        {
+            return ToString(false);
+        }
+
+        /// <summary>
         /// Returns the rendered JavaScript for the generated object and name. 
         /// Note this method returns only the generated object, not the 
         /// related code to save updates.
@@ -474,16 +518,15 @@ namespace Westwind.Web
         /// into the the View page.
         /// <param name="addScriptTags">If provided wraps the script text with script tags</param>
         /// </summary>
-        public string GetClientScript(bool addScriptTags)
+        public string ToString(bool addScriptTags)
         {
-
             if (!AutoRenderClientScript || ScriptVars.Count == 0)
                 return string.Empty;
 
             StringBuilder sb = new StringBuilder();
 
             if (addScriptTags)
-                sb.AppendLine("<script type=\"text/javascript\">");
+                sb.AppendLine("<script>");
 
             // Check for any prefix code and inject it
             if (sbPrefixScriptCode.Length > 0)
@@ -550,8 +593,20 @@ namespace Westwind.Web
 
             
             return sb.ToString();
-            // Use ClientScriptProxy to be MS Ajax compatible - otherwise use ClientScript
-            //scriptProxy.RegisterClientScriptBlock(Page, typeof(ControlResources), "ClientObject_" + ClientObjectName, sb.ToString(), true);
+        }
+
+
+        /// <summary>
+        /// Returns the script as an HTML string. Use this version
+        /// with AsP.NET MVC to force raw unencoded output in Razor:
+        /// 
+        /// @scriptVars.ToHtmlString()
+        /// </summary>
+        /// <param name="addScriptTags"></param>
+        /// <returns></returns>
+        public HtmlString ToHtmlString(bool addScriptTags = false)
+        {
+            return new HtmlString(ToString(addScriptTags));            
         }
 
         /// <summary>
@@ -562,7 +617,7 @@ namespace Westwind.Web
         private void RenderClientScript()
         {
             ClientScriptProxy scriptProxy = ClientScriptProxy.Current;
-            string script = GetClientScript(false);
+            string script = ToString(false);
 
             // TODO: This has to be fixed for ww.jquery.js
             if (UpdateMode != AllowUpdateTypes.None)
@@ -570,7 +625,7 @@ namespace Westwind.Web
                 ScriptLoader.LoadjQuery(Page);
                 ScriptLoader.LoadwwjQuery(Page);
 
-                scriptProxy.RegisterClientScriptBlock(Page, typeof(ControlResources), "submitServerVars", STR_SUBMITSCRIPT, true);
+                scriptProxy.RegisterClientScriptBlock(Page, typeof(WebResources), "submitServerVars", STR_SUBMITSCRIPT, true);
                 scriptProxy.RegisterHiddenField(Page, "__" + ClientObjectName, "");
 
                 
@@ -578,7 +633,7 @@ namespace Westwind.Web
                                          ClientObjectName, Page.Form.ClientID, SubmitCounter++);
             }            
 
-            scriptProxy.RegisterClientScriptBlock(Page, typeof(ControlResources), 
+            scriptProxy.RegisterClientScriptBlock(Page, typeof(WebResources), 
                                 "ClientObject_" + ClientObjectName,script, 
                                  true);
         }
