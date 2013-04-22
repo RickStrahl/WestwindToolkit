@@ -184,4 +184,8 @@
     <value>Unsupported JSON Serializer specified. Json.Net and System.Web.Extensions must be explicitly compiled in.</value>
     <comment>UnsupportedJSONSerializerSpecified description</comment>
   </data>
+  <data name="CanTRetrieveItemsInUpdateMode" xml:space="preserve">
+    <value>Can't retrieve items in update mode </value>
+    <comment>CanTRetrieveItemsInUpdateMode description</comment>
+  </data>
 </root>

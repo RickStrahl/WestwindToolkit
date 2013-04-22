@@ -79,6 +79,15 @@ namespace Westwind.Web.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t retrieve items in update mode .
+        /// </summary>
+        public static string CanTRetrieveItemsInUpdateMode {
+            get {
+                return ResourceManager.GetString("CanTRetrieveItemsInUpdateMode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to In order to call a Wcf or ASMX service you have to specify ClientProxyTargetType of the Web Service instance..
         /// </summary>
         public static string ERROR_CLASSWRAPPER_FORWCFASMX_REQUIRES_CLIENTPROXYTYPE {

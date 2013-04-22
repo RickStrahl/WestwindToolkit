@@ -15,12 +15,12 @@ namespace Westwind.Web.Mvc
         /// <summary>
         /// Contains User state information retrieved from the authentication system
         /// </summary>
-        protected UserState UserState = new UserState();
+        public UserState UserState = new UserState();
 
         /// <summary>
         /// ErrorDisplay control that holds page level error information
         /// </summary>
-        protected ErrorDisplay ErrorDisplay = new ErrorDisplay();
+        public ErrorDisplay ErrorDisplay = new ErrorDisplay();
 
 
         protected override void Initialize(RequestContext requestContext)

@@ -359,44 +359,43 @@ button, input[type=button], input[type=submit], input[type=reset]
  }
 
 
-.errormessage
-{
-	font-weight: bold !important;
-	color: maroon !important;
+
+.errormessage {
+  font-weight: bold !important;
+  color: maroon !important;
 }
-.errorhighlight
-{
-    background-color: #FCEBF2 !important;
-    border-color: Red !important;
-    border-width: 2px !important;  
+.errordisplay {
+  font-weight: normal;
+  color: maroon !important;
+  background-color: khaki !important;
+  border: solid 2px maroon !important;
+  margin: 7px 0;
+  padding: 10px;
+  box-shadow: 3px 3px 5px #535353;
+  border-radius: 4px;
 }
-.errordisplay
-{	
-	font-weight: normal;
-	color: maroon !important;
-	background-color:khaki !important;
-	border: solid 2px maroon !important;	
-	margin: 7px 0;
-	padding: 10px;
-	box-shadow: 3px 3px 5px #535353;
-	border-radius: 3px 3px 3px 3px;
+.errordisplay-warning-icon,
+.errordisplay-info-icon {
+  width: 16px;
+  height: 16px;
+  float: left;
+  margin: 0 5px;
+  background-image: url(images/warning.png);
 }
-.errordisplay td
-{
-    padding: 5px;
-    text-align: left;    
-    vertical-align: top;
+.errordisplay-info-icon {
+  background-image: url(images/info.png);
 }
-.errordisplay td:first-child
-{
-    width: 16px;
-    padding-top: 7px;
-    padding-left: 10px;
-    padding-right: 10px;
+.errordisplay-text {
+  margin-left: 40px;
+  font-weight: bold;
 }
-.errordisplay hr
-{
-	background: maroon;
+.errordisplay hr {
+  background: maroon;
+}
+.errorhighlight {
+  background-color: #FCEBF2 !important;
+  border-color: Red !important;
+  border-width: 2px !important;
 }
 
 .center
@@ -564,7 +563,6 @@ button, input[type=button], input[type=submit], input[type=reset]
 {
     vertical-align: text-bottom;
 }
-
 .hoverbutton.dark, hoverbutton.dark, .hoverbutton.dark a, .hoverbutton.dark a:visited 
 {
     color: white;

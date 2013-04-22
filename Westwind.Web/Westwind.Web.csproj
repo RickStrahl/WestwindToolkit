@@ -55,6 +55,7 @@
     <Compile Include="CallbackHandler\JsonSerializers\JSONSerializer.cs" />
     <Compile Include="CallbackHandler\JsonSerializers\WebExtensionsSerializer.cs" />
     <Compile Include="CallbackHandler\JsonSerializers\WestwindJsonSerializer.cs" />
+    <Compile Include="ClientScriptUtilities\ScriptVariables.cs" />
     <Compile Include="ClientScriptUtilities\ClientScriptProxy.cs" />
     <Compile Include="ClientScriptUtilities\JavaScriptMinifier.cs" />
     <Compile Include="Properties\Resources1.Designer.cs">

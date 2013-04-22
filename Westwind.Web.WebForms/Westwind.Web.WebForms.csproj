@@ -43,13 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientScriptUtilities\ScriptVariables.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Resources\WebResources.cs" />
     <Compile Include="WebFormsControls\Ajax\AjaxMethodCallback.cs" />
     <Compile Include="WebFormsControls\Ajax\Autocomplete.cs" />
     <Compile Include="WebFormsControls\Ajax\DragPanel.cs" />
@@ -88,6 +88,13 @@
       <Project>{0c38b4e1-0c87-4289-a57b-87c1b5be3bbe}</Project>
       <Name>Westwind.Web</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\calendar.gif" />
+    <EmbeddedResource Include="Resources\close.gif" />
+    <EmbeddedResource Include="Resources\help.gif" />
+    <EmbeddedResource Include="Resources\info.gif" />
+    <EmbeddedResource Include="Resources\warning.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
