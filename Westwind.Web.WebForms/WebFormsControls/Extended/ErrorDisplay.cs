@@ -411,6 +411,7 @@ namespace Westwind.Web.Controls
             UserMessage = "";            
             Text = Message;
             Visible = true;
+            ErrorDisplayType = ErrorDisplayTypes.Message;
         }
     }
 

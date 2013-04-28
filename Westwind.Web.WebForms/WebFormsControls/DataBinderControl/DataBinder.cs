@@ -199,7 +199,7 @@ namespace Westwind.Web.Controls
             get
             {
                 if (string.IsNullOrEmpty(_ErrorIconWebResource))
-                    _ErrorIconWebResource = ClientScriptProxy.GetWebResourceUrl(this, GetType(), "Westwind.Web.Controls.Resources.warning.gif");
+                    _ErrorIconWebResource = ClientScriptProxy.GetWebResourceUrl(this, GetType(), "Westwind.Web.WebForms.Resources.warning.gif");
 
                 return _ErrorIconWebResource;
             }

@@ -200,23 +200,23 @@ namespace Westwind.Web.Controls
         /// <summary>
         /// The CSS class that is used to render a selected button. Defaults to selectedtabbutton.
         /// </summary>
-        [Browsable(true), Description("The CSS style used for the selected tab"), DefaultValue("selectedtabbutton")]
+        [Browsable(true), Description("The CSS style used for the selected tab"), DefaultValue("tabbutton-selected")]
         [Category("Tab Styling")]
         public string SelectedTabCssClass
         {
             get { return _SelectedTabCssClass; }
             set { _SelectedTabCssClass = value; }
         }
-        string _SelectedTabCssClass = "selectedtabbutton";
+        string _SelectedTabCssClass = "tabbutton-selected";
 
-        [Browsable(true), Description("The CSS style used for the disabled tab"), DefaultValue("disabledtabbutton")]
+        [Browsable(true), Description("The CSS style used for the disabled tab"), DefaultValue("tabbutton-disabled")]
         [Category("Tab Styling")]
         public string DisabledTabCssClass
         {
             get { return _DisabledTabCssClass; }
             set { _DisabledTabCssClass = value; }
         }
-        private string _DisabledTabCssClass = "disabledtabbutton";
+        private string _DisabledTabCssClass = "tabbutton-disabled";
 
         
         /// <summary>
