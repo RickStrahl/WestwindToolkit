@@ -58,7 +58,7 @@ namespace Westwind.Web
     /// and a generic Items[] collection that allows page data to update generic
     /// values and post them back to the server. The items are available
     ///
-    /// This component produces either straight string output when used directly
+    /// This component produces either straight string or HtmlString output when used directly
     /// using the ToString() or HtmlString() methods for use in ASP.NET MVC or Web Pages,
     /// or can be used as WebForms control that automatically handles embedding of
     /// the script and deserialization of return values on the server.
