@@ -120,6 +120,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\UtilitiesController.cs" />
     <Compile Include="_App_Code\App_Start\BundleConfig.cs" />
     <Compile Include="_App_Code\App_Start\FilterConfig.cs" />
     <Compile Include="_App_Code\App_Start\RouteConfig.cs" />
@@ -142,7 +143,6 @@
     <Content Include="Css\images\DialogSelection.png" />
     <Content Include="Css\images\DialogStrip.png" />
     <Content Include="Css\images\edit.png" />
-    <Content Include="Css\images\HeaderGradient.png" />
     <Content Include="Css\images\help.png" />
     <Content Include="Css\images\home.png" />
     <Content Include="Css\images\info.png" />
@@ -169,11 +169,17 @@
     </Content>
     <None Include="Scripts\jquery-1.9.1.intellisense.js" />
     <Content Include="Scripts\Handlebars.js" />
+    <Content Include="Scripts\jquery-1.9.1.js" />
+    <Content Include="Scripts\jquery-1.9.1.min.js" />
     <Content Include="Scripts\jquery-ui-1.9.2.js" />
     <Content Include="Scripts\jquery-ui-1.9.2.min.js" />
     <Content Include="Scripts\knockout-2.2.1.js" />
     <Content Include="Scripts\knockout-mapping.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\ww.jquery.js" />
+    <Content Include="Scripts\ww.jquery.min.js">
+      <DependentUpon>ww.jquery.js</DependentUpon>
+    </Content>
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -187,10 +193,13 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\index.cshtml" />
+    <Content Include="Views\Utilities\ScriptVariables.cshtml" />
+    <Content Include="Scripts\ww.jquery.min.js.map">
+      <DependentUpon>ww.jquery.js</DependentUpon>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\" />
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>

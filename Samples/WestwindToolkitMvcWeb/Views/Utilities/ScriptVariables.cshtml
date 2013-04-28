@@ -1,0 +1,20 @@
+﻿@{
+    ViewBag.Title = "ScriptVariables";
+
+
+    var scriptVars = new Westwind.Web.ScriptVariables("pageVars");
+
+    scriptVars.Add("appBasePath", Request.ApplicationPath + "/");
+    scriptVars.Add("serverTime", DateTime.Now);       
+}
+
+<h2>ScriptVariables</h2>
+
+@section scripts
+{
+<script>
+    @scriptVars.ToHtmlString() 
+
+    showStatus(pageVars.appBasePath + " " + pageVars.serverTime);
+</script>
+}

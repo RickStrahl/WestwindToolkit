@@ -69,7 +69,7 @@ p
 /* BUILT-IN ELEMENT CUSTOMIZATION */
 body,table,td,th,input,textarea,select
 {
-    font-family: Helvetica, Arial, 'DejaVu Sans', 'Liberation Sans', Freesans, sans-serif
+    font-family: Helvetica, Arial, 'DejaVu Sans', 'Liberation Sans', Freesans, sans-serif;
     font-size: 10.5pt;
 }
 pre
