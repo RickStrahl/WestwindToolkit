@@ -34,30 +34,6 @@ namespace Westwind.Web.Mvc
             }
         }
 
-
-        /// <summary>
-        /// Takes a dictionary of values and turns it into a SelectListItems enumeration.
-        /// Converts the dictionary keys  into the value and the dictionary value into
-        /// the text.
-        /// </summary>
-        /// <remarks>
-        /// Assumes the dictionary keys and values can be turned 
-        /// into strings using ToString()
-        /// </remarks>
-        /// <param name="dict"></param>
-        /// <returns></returns>
-        public static IEnumerable<SelectListItem> SelectListItemsFromDictionary(IDictionary<string,string> dict)
-        {
-            foreach (var kv in dict)
-            {
-                yield return new SelectListItem()
-                {
-                    Text = kv.Value,
-                    Value = kv.Key
-                };
-            }
-        }
-
         /// <summary>
         /// Takes a dictionary of values and turns it into a SelectListItems enumeration.
         /// Converts the dictionary keys  into the value and the dictionary value into
@@ -71,12 +47,15 @@ namespace Westwind.Web.Mvc
         /// <returns></returns>
         public static IEnumerable<SelectListItem> SelectListItemsFromDictionary(IDictionary dict)
         {
-            foreach (var entry in dict)
+            foreach (DictionaryEntry entry in dict)
             {
+                string text = entry.Value.ToString();
+                string val = entry.Key.ToString();
+
                 yield return new SelectListItem()
                 {
-                     Text = dict[entry].ToString(),
-                     Value = entry.ToString()                    
+                     Text = text,
+                     Value = val
                 };
             }
         }
