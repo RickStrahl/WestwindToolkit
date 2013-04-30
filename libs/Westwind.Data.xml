@@ -36,7 +36,7 @@
             <typeparam name="TDbContext"></typeparam>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetWebRequestOrThreadScopedDataContext``1(System.String,System.String)">
+        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetWebRequestOrThreadScopedDataContext``1(System.String)">
             <summary>
             Retrieves a Web Request DbContext if available. If not available will use a thread scoped DbContext instead
             </summary>
@@ -45,7 +45,7 @@
             <param name="key">optional key name of the cached item</param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetWebRequestScopedDbContext``1(System.String,System.String)">
+        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetWebRequestScopedDbContext``1(System.String)">
             <summary>
             Creates a ASP.NET Context scoped instance of a DbContext. This static
             method creates a single instance and reuses it whenever this method is
@@ -57,7 +57,7 @@
             <param name="connectionStringId">optional connectionstring id to load context with</param>
             <param name="key">Optional name of the key to store</param>
         </member>
-        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetThreadScopedDbContext``1(System.String,System.String)">
+        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetThreadScopedDbContext``1(System.String)">
             <summary>
             Creates a Thread Scoped DataContext object that can be reused.
             The DataContext is stored in Thread local storage.
@@ -66,25 +66,6 @@
             <param name="connectionStringId">optional connection string ID from config file</param>
             <param name="key">optional key name of the context to cache</param>     
             <typeparam name="TDbContext">DbContext Parameter</typeparam>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetWebRequestScopedDbContextInternal(System.Type,System.String,System.String)">
-            <summary>
-            Internal method that handles creating a context that is scoped to the HttpContext Items collection
-            by creating and holding the DataContext there.
-            </summary>
-            <param name="type"></param>
-            <param name="key"></param>
-            <param name="connectionString"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Data.EfCodeFirst.DbContextFactory.GetThreadScopedDbContextInternal(System.Type,System.String,System.String)">
-            <summary>
-            Creates a Thread Scoped DataContext object that can be reused.
-            The DataContext is stored in Thread local storage.
-            </summary>
-            <typeparam name="TDataContext"></typeparam>
-            <param name="key"></param>
             <returns></returns>
         </member>
         <member name="T:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2">

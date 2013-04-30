@@ -45,9 +45,33 @@
         <member name="T:Westwind.Web.WebApi.ApiMessageError">
             <summary>
             Class that represents an error returned to
-            the client. Can be explicitly returned or
-            as part of the UnhandledExceptionFilter
+            the client caller. Can be explicitly returned or
+            as part of the UnhandledExceptionFilter.
             </summary>
+        </member>
+        <member name="M:Westwind.Web.WebApi.ApiMessageError.#ctor">
+            <summary>
+            Default constructor creates empty error object
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.WebApi.ApiMessageError.#ctor(System.String)">
+            <summary>
+            Pass in a message string for the exception.
+            </summary>
+            <param name="errorMessage"></param>
+        </member>
+        <member name="M:Westwind.Web.WebApi.ApiMessageError.#ctor(System.Exception)">
+            <summary>
+            Pass in an exception and pick up the message.
+            </summary>
+            <param name="ex"></param>
+        </member>
+        <member name="M:Westwind.Web.WebApi.ApiMessageError.#ctor(System.Web.Http.ModelBinding.ModelStateDictionary)">
+            <summary>
+            Pass in a modelState dictionary to create a list of
+            binding errors from the API error message
+            </summary>
+            <param name="modelState"></param>
         </member>
         <member name="M:Westwind.Web.WebApi.ApiMessageError.ParseModelStateErrorMessage(System.String)">
             <summary>
@@ -55,6 +79,24 @@
             </summary>
             <param name="msg"></param>
             <returns></returns>
+        </member>
+        <member name="P:Westwind.Web.WebApi.ApiMessageError.message">
+            <summary>
+            The text message for the errors
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebApi.ApiMessageError.isCallbackError">
+            <summary>
+            Flag value that indicates to the client that this
+            is an error response
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebApi.ApiMessageError.errors">
+            <summary>
+            An optional list of errors that can be set on the
+            error object. Automatically set when passing in 
+            a model dictionary with errors.
+            </summary>
         </member>
         <member name="T:Westwind.Web.WebApi.BasicAuthenticationFilter">
             <summary>
@@ -76,7 +118,7 @@
             filter's behavior. Pass false to disable (same as no filter
             but declarative)
             </summary>
-            <param name="notActive"></param>
+            <param name="active"></param>
         </member>
         <member name="M:Westwind.Web.WebApi.BasicAuthenticationFilter.OnAuthorization(System.Web.Http.Controllers.HttpActionContext)">
             <summary>
@@ -185,6 +227,30 @@
             <param name="request"></param>
             <param name="cookieName"></param>
             <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.WebApi.BasicAuthenticationHandler.ParseAuthorizationHeader(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Parses the Authorization header and creates user credentials
+            </summary>
+            <param name="actionContext"></param>
+        </member>
+        <member name="M:Westwind.Web.WebApi.BasicAuthenticationHandler.Challenge(System.Net.Http.HttpRequestMessage,System.Net.Http.HttpResponseMessage)">
+            <summary>
+            Send the Authentication Challenge request
+            </summary>
+            <param name="message"></param>
+            <param name="actionContext"></param>
+        </member>
+        <member name="T:Westwind.Web.WebApi.BasicAuthenticationIdentity">
+            <summary>
+            Custom Identity that adds a password captured by basic authentication
+            to allow for an auth filter to do custom authorization
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebApi.BasicAuthenticationIdentity.Password">
+            <summary>
+            Basic Auth Password for custom authentication
+            </summary>
         </member>
     </members>
 </doc>
