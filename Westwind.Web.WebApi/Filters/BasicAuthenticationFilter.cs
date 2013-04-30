@@ -59,7 +59,7 @@ namespace Westwind.Web.WebApi
                 }
 
 
-                if (!OnAuthorizeUser(credentials.Username, credentials.Password, actionContext))
+                if (!OnAuthorizeUser(credentials.Name, credentials.Password, actionContext))
                 {
                     Challenge(actionContext);
                     return;
@@ -89,7 +89,8 @@ namespace Westwind.Web.WebApi
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 return false;
 
-            var principal = new GenericPrincipal(new GenericIdentity(username, "Basic"), null);
+            var identity = new BasicAuthenticationIdentity(username,password);            
+            var principal = new GenericPrincipal(identity, null);
 
             Thread.CurrentPrincipal = principal;
 
@@ -104,7 +105,7 @@ namespace Westwind.Web.WebApi
         /// Parses the Authorization header and creates user credentials
         /// </summary>
         /// <param name="actionContext"></param>
-        protected virtual BasicAuthCredentials ParseAuthorizationHeader(HttpActionContext actionContext)
+        protected virtual BasicAuthenticationIdentity ParseAuthorizationHeader(HttpActionContext actionContext)
         {
             string authHeader = null;
             var auth = actionContext.Request.Headers.Authorization;
@@ -120,11 +121,7 @@ namespace Westwind.Web.WebApi
             if (tokens.Length < 2)
                 return null;
 
-            return new BasicAuthCredentials()
-            {
-                Username = tokens[0],
-                Password = tokens[1]
-            };
+            return new BasicAuthenticationIdentity(tokens[0],tokens[1]);
         }
 
 
@@ -143,9 +140,4 @@ namespace Westwind.Web.WebApi
     }
 
 
-    public class BasicAuthCredentials
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
-    }
 }

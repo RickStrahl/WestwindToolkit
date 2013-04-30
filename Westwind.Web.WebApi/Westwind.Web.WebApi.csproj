@@ -58,6 +58,8 @@
     <Compile Include="Filters\BasicAuthenticationFilter.cs" />
     <Compile Include="Formatters\JsonpFormatter.cs" />
     <Compile Include="Extensions\HttpRequestMessageExtensions.cs" />
+    <Compile Include="Handlers\BasicAuthenticationHandler.cs" />
+    <Compile Include="Security\BasicAuthenticationIdentity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Filters\UnhandledExceptionFilter.cs" />
   </ItemGroup>
