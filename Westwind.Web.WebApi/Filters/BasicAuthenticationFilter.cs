@@ -27,6 +27,13 @@ namespace Westwind.Web.WebApi
     {
         bool Active = true;
 
+        public override bool AllowMultiple
+        {
+            get
+            {
+                return true;
+            }
+        }
 
         public BasicAuthenticationFilter()
         { }
@@ -41,7 +48,7 @@ namespace Westwind.Web.WebApi
         {
             Active = active;
         }
-
+        
 
         /// <summary>
         /// Override to Web API filter method to handle Basic Auth check
@@ -64,9 +71,9 @@ namespace Westwind.Web.WebApi
                     Challenge(actionContext);
                     return;
                 }
-            }
 
-            base.OnAuthorization(actionContext);
+                base.OnAuthorization(actionContext);
+            }
         }
 
         /// <summary>

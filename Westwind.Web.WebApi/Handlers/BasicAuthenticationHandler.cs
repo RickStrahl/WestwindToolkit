@@ -12,9 +12,17 @@ using System.Web;
 namespace Westwind.Web.WebApi
 {
 
+    /// <summary>
+    /// MessageHandler implementation of BasicAuthentication.
+    /// This handler parses out Authorization headers into a
+    /// BasicAuthenticationIdentity and sets it on the thread principle.
+    /// 
+    /// Fires Authentication challenge on outbound 401 Unauthorized responses
+    /// </summary>
     public class BasicAuthenticationHandler : DelegatingHandler
     {
         private const string WWWAuthenticateHeader = "WWW-Authenticate";
+
 
         protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request,
                                                                CancellationToken cancellationToken)
