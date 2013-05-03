@@ -23,6 +23,7 @@ namespace Westwind.Web.WebApi
     /// from client to server in plain text, so make sure SSL is used with basic auth
     /// to encode the Authorization header on all requests (not just the login).
     /// </remarks>
+    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false)]
     public class BasicAuthenticationFilter : AuthorizationFilterAttribute
     {
         bool Active = true;
