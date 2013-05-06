@@ -1,13 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Security.Principal;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace Westwind.Web.WebApi
 {
@@ -18,7 +9,7 @@ namespace Westwind.Web.WebApi
     public class BasicAuthenticationIdentity : GenericIdentity
     {
         public BasicAuthenticationIdentity(string name, string password)
-            : base(name,"Basic")
+            : base(name, "Basic")
         {
             this.Password = password;
         }

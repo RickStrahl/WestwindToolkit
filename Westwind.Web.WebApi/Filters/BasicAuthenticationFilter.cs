@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
-using System.Web.Http;
 using System.Web.Http.Controllers;
 using System.Web.Http.Filters;
 
@@ -28,14 +27,6 @@ namespace Westwind.Web.WebApi
     {
         bool Active = true;
 
-        public override bool AllowMultiple
-        {
-            get
-            {
-                return true;
-            }
-        }
-
         public BasicAuthenticationFilter()
         { }
 
@@ -49,7 +40,7 @@ namespace Westwind.Web.WebApi
         {
             Active = active;
         }
-        
+
 
         /// <summary>
         /// Override to Web API filter method to handle Basic Auth check
@@ -59,19 +50,27 @@ namespace Westwind.Web.WebApi
         {
             if (Active)
             {
-                var credentials = ParseAuthorizationHeader(actionContext);
-                if (credentials == null)
+                var identity = ParseAuthorizationHeader(actionContext);
+                if (identity == null)
                 {
                     Challenge(actionContext);
                     return;
                 }
 
 
-                if (!OnAuthorizeUser(credentials.Name, credentials.Password, actionContext))
+                if (!OnAuthorizeUser(identity.Name, identity.Password, actionContext))
                 {
                     Challenge(actionContext);
                     return;
                 }
+
+                var principal = new GenericPrincipal(identity, null);
+
+                Thread.CurrentPrincipal = principal;
+
+                // inside of ASP.NET this is also required for some async scenarios
+                //if (HttpContext.Current != null)
+                //    HttpContext.Current.User = principal;
 
                 base.OnAuthorization(actionContext);
             }
@@ -97,15 +96,6 @@ namespace Westwind.Web.WebApi
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 return false;
 
-            var identity = new BasicAuthenticationIdentity(username,password);            
-            var principal = new GenericPrincipal(identity, null);
-
-            Thread.CurrentPrincipal = principal;
-
-            // inside of ASP.NET this is requried!
-            //if (HttpContext.Current != null)
-            //    HttpContext.Current.User = principal;
-
             return true;
         }
 
@@ -129,7 +119,7 @@ namespace Westwind.Web.WebApi
             if (tokens.Length < 2)
                 return null;
 
-            return new BasicAuthenticationIdentity(tokens[0],tokens[1]);
+            return new BasicAuthenticationIdentity(tokens[0], tokens[1]);
         }
 
 
@@ -146,6 +136,4 @@ namespace Westwind.Web.WebApi
         }
 
     }
-
-
 }
