@@ -956,9 +956,9 @@ namespace Westwind.Utilities.Data
                 return;
 
             if (Command.Connection != null &&
-                Command.Connection.State == ConnectionState.Open)
+                Command.Connection.State != ConnectionState.Closed)
                 Command.Connection.Close();
-
+            
             _Connection = null;
         }
         /// <summary>
@@ -971,7 +971,7 @@ namespace Westwind.Utilities.Data
                 return;
 
             if (_Connection != null &&
-                _Connection.State == ConnectionState.Open)
+                _Connection.State != ConnectionState.Closed)
                 _Connection.Close();
 
             _Connection = null;
@@ -1241,7 +1241,14 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
                 sb.Append(" [" + Name + "]=" + this.ParameterPrefix +  Name + ",");
 
-                Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value));
+                if (Value == null && Property.PropertyType == typeof(System.Byte[]))
+                {
+                    Command.Parameters.Add(
+                        CreateParameter(ParameterPrefix + Name, DBNull.Value, DataUtils.DotNetTypeToDbType(Property.PropertyType))
+                    );
+                }
+                else
+                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value == null ? DBNull.Value : Value));
             }
 
             object pkValue = ReflectionUtils.GetProperty(entity, keyField);
@@ -1300,7 +1307,14 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
                 sb.Append(" [" + Name + "]=" + ParameterPrefix + Name + ",");
 
-                Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value));
+                if (Value == null && Property.PropertyType == typeof(System.Byte[]))
+                {
+                    Command.Parameters.Add(
+                        CreateParameter(ParameterPrefix + Name, DBNull.Value, DataUtils.DotNetTypeToDbType(Property.PropertyType))
+                    );
+                }
+                else
+                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value == null ? DBNull.Value : Value));              
             }
             object pkValue = ReflectionUtils.GetProperty(Entity, KeyField);
 
@@ -1361,7 +1375,14 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 FieldList.Append("[" + Name + "],");
                 DataList.Append(ParameterPrefix + Name + ",");
 
-                Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value == null ? DBNull.Value : Value));
+                if (Value == null && Property.PropertyType == typeof(System.Byte[]))
+                {
+                    Command.Parameters.Add(
+                        CreateParameter(ParameterPrefix + Name,  DBNull.Value, DataUtils.DotNetTypeToDbType(Property.PropertyType))
+                    );
+                }
+                else
+                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value == null ? DBNull.Value : Value));
             }
 
             Command.CommandText = FieldList.ToString().TrimEnd(',') + ") " +

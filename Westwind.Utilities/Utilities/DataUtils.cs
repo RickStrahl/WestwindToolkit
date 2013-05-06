@@ -527,6 +527,8 @@ namespace Westwind.Utilities
                 return typeof(byte);
             else if (sqlType == DbType.Guid)
                 return typeof(Guid);
+            else if (sqlType == DbType.Binary)
+                return typeof(byte[]);            
 
             throw new InvalidCastException("Unable to convert " + sqlType.ToString() + " to .NET type.");
         }
@@ -563,7 +565,7 @@ namespace Westwind.Utilities
             else if (type == typeof(byte))
                 return DbType.Byte;
             else if (type == typeof(byte[]))
-                return DbType.Object;            
+                return DbType.Binary;            
 
             throw new InvalidCastException(string.Format("Unable to cast {0} to a DbType",type.Name));
         }
