@@ -228,6 +228,15 @@
             <param name="cookieName"></param>
             <returns></returns>
         </member>
+        <member name="T:Westwind.Web.WebApi.BasicAuthenticationHandler">
+            <summary>
+            MessageHandler implementation of BasicAuthentication.
+            This handler parses out Authorization headers into a
+            BasicAuthenticationIdentity and sets it on the thread principle.
+            
+            Fires Authentication challenge on outbound 401 Unauthorized responses
+            </summary>
+        </member>
         <member name="M:Westwind.Web.WebApi.BasicAuthenticationHandler.ParseAuthorizationHeader(System.Net.Http.HttpRequestMessage)">
             <summary>
             Parses the Authorization header and creates user credentials
