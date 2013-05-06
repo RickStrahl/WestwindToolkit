@@ -56,11 +56,11 @@
     <Compile Include="Configuration\StringConfigurationProvider.cs" />
     <Compile Include="Configuration\XmlFileConfigurationProvider.cs" />
     <Compile Include="Data\ConnectionStringInfo.cs" />
-    <Compile Include="Data\DataAccessBase.cs" />
+    <Compile Include="Data\DAL\DataAccessBase.cs" />
     <Compile Include="Data\DataTableExtensions.cs" />
     <Compile Include="Data\DynamicDataReader.cs" />
     <Compile Include="Data\DynamicDataRow.cs" />
-    <Compile Include="Data\SqlDataAccess.cs" />
+    <Compile Include="Data\DAL\SqlDataAccess.cs" />
     <Compile Include="Data\ValidationErrorCollection.cs" />
     <Compile Include="Data\ValidationErrors.cs" />
     <Compile Include="ExensionMethods\DateTimeExtensions.cs" />
