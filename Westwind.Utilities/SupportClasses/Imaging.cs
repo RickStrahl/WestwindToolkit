@@ -61,48 +61,15 @@ namespace Westwind.Utilities
 
 			try 
 			{
-				Bitmap bmp = new Bitmap(filename);
-				ImageFormat format = bmp.RawFormat;
-
-				decimal ratio;
-				int newWidth = 0;
-				int newHeight = 0;
-
-				//*** If the image is smaller than a thumbnail just return it
-				if (bmp.Width < width && bmp.Height < height) 
-					return bmp;
-			
-				if (bmp.Width > bmp.Height)
-				{
-					ratio = (decimal) width / bmp.Width;
-					newWidth = width;
-					decimal lnTemp = bmp.Height * ratio;
-					newHeight = (int)lnTemp;
-				}
-				else 
-				{
-					ratio = (decimal) height / bmp.Height;
-					newHeight = height;
-					decimal lnTemp = bmp.Width * ratio;
-					newWidth = (int) lnTemp;
-				}
-
-				bmpOut = new Bitmap(newWidth, newHeight);
-				Graphics g = Graphics.FromImage(bmpOut);
-				g.InterpolationMode =InterpolationMode.HighQualityBicubic;
-				g.FillRectangle( Brushes.White,0,0,newWidth,newHeight);
-				g.DrawImage(bmp,0,0,newWidth,newHeight);
-
-				//System.Drawing.Image imgOut = loBMP.GetThumbnailImage(lnNewWidth,lnNewHeight,null,IntPtr.Zero);
-				bmp.Dispose();
-                bmpOut.Dispose();
+                using (Bitmap bmp = new Bitmap(filename))
+                {
+                    return ResizeImage(bmp, width, height);
+                }
 			}
 			catch 
 			{
 				return null;
-			}
-		
-			return bmpOut;
+			}					
 		}
 
         /// <summary>
@@ -120,9 +87,50 @@ namespace Westwind.Utilities
 
             try
             {
-                Bitmap bmp = new Bitmap(new MemoryStream(data));
-                ImageFormat format = bmp.RawFormat;
+                using (Bitmap bmp = new Bitmap(new MemoryStream(data)))
+                {
+                    return ResizeImage(bmp, width, height);
+                }
+            }
+            catch
+            {
+                return null;
+            }
+        }
 
+        /// <summary>
+        /// Resizes an image and saves the image to a file
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="outputFilename"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+		public static bool ResizeImage(string filename, string outputFilename, 
+			                           int width, int height)
+		{
+
+            using (var bmpOut = ResizeImage(filename, width, height))
+            {
+                bmpOut.Save(outputFilename, bmpOut.RawFormat);             
+            }
+		
+			return true;
+		}
+
+        /// <summary>
+        /// Resizes an image from a bitmap
+        /// </summary>
+        /// <param name="bmp"></param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        /// <returns></returns>
+        public static Bitmap ResizeImage(Bitmap bmp, int width, int height)
+        {
+            Bitmap bmpOut = null;
+
+            try
+            {                                
                 decimal ratio;
                 int newWidth = 0;
                 int newHeight = 0;
@@ -150,11 +158,7 @@ namespace Westwind.Utilities
                 Graphics g = Graphics.FromImage(bmpOut);
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.FillRectangle(Brushes.White, 0, 0, newWidth, newHeight);
-                g.DrawImage(bmp, 0, 0, newWidth, newHeight);
-
-                //System.Drawing.Image imgOut = loBMP.GetThumbnailImage(lnNewWidth,lnNewHeight,null,IntPtr.Zero);
-                bmp.Dispose();
-                //bmpOut.Dispose();
+                g.DrawImage(bmp, 0, 0, newWidth, newHeight);                
             }
             catch
             {
@@ -164,63 +168,36 @@ namespace Westwind.Utilities
             return bmpOut;
         }
 
-		public static bool ResizeImage(string filename, string outputFilename, 
-			                           int width, int height)
-		{
-			Bitmap bmpOut = null;
 
-			try 
-			{
-				Bitmap bmp = new Bitmap(filename);
-				ImageFormat format = bmp.RawFormat;
+        public static bool RoateImage(string filename, string outputFilename,RotateFlipType type)                                     
+        {
+            Bitmap bmpOut = null;
 
-				decimal ratio;
-				int newWidth = 0;
-				int newHeight = 0;
+            try
+            {                
+                Bitmap bmp = new Bitmap(filename);
+                ImageFormat format = bmp.RawFormat;
+                bmp.RotateFlip(type);
 
-				//*** If the image is smaller than a thumbnail just return it
-				if (bmp.Width < width && bmp.Height < height) 
-				{ 
-                    if (outputFilename != filename)
-					    bmp.Save(outputFilename);
-                    bmp.Dispose();
-					return true;
-				}
 
-				if (bmp.Width > bmp.Height)
-				{
-					ratio = (decimal) width / bmp.Width;
-					newWidth = width;
-					decimal temp = bmp.Height * ratio;
-					newHeight = (int)temp;
-				}
-				else 
-				{
-					ratio = (decimal) height / bmp.Height;
-					newHeight = height;
-					decimal lnTemp = bmp.Width * ratio;
-					newWidth = (int) lnTemp;
-				}
+                bmpOut = new Bitmap(bmp.Width, bmp.Height);
+                Graphics g = Graphics.FromImage(bmpOut);
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;                
+                g.DrawImage(bmp, 0, 0, bmp.Width, bmp.Height);
 
-				bmpOut = new Bitmap(newWidth, newHeight);
-				Graphics g = Graphics.FromImage(bmpOut);
-				g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-				g.FillRectangle( Brushes.White,0,0,newWidth,newHeight);
-				g.DrawImage(bmp,0,0,newWidth,newHeight);
+                //System.Drawing.Image imgOut = loBMP.GetThumbnailImage(lnNewWidth,lnNewHeight,null,IntPtr.Zero);
+                bmp.Dispose();
 
-				//System.Drawing.Image imgOut = loBMP.GetThumbnailImage(lnNewWidth,lnNewHeight,null,IntPtr.Zero);
-				bmp.Dispose();
-
-				bmpOut.Save(outputFilename,format);
-				bmpOut.Dispose();
-			}
-			catch(Exception ex) 
-			{
+                bmpOut.Save(outputFilename, format);
+                bmpOut.Dispose();
+            }
+            catch (Exception ex)
+            {
                 var msg = ex.GetBaseException();
-				return false;
-			}
-		
-			return true;
-		}	
+                return false;
+            }
+
+            return true;
+        }	
 	}
 }
