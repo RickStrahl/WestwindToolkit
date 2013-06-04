@@ -59,7 +59,7 @@ namespace Westwind.Utilities
     /// Dictionary: Any of the extended properties are accessible via IDictionary interface
     /// </summary>
     [Serializable]
-    public class Expando : DynamicObject, IDynamicMetaObjectProvider
+    public class Expando : DynamicObject
     {
         /// <summary>
         /// Instance of object passed in
