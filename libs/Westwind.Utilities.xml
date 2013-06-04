@@ -2636,6 +2636,25 @@
             <param name="height"></param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Utilities.Imaging.ResizeImage(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Resizes an image and saves the image to a file
+            </summary>
+            <param name="filename"></param>
+            <param name="outputFilename"></param>
+            <param name="width"></param>
+            <param name="height"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Imaging.ResizeImage(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            Resizes an image from a bitmap
+            </summary>
+            <param name="bmp"></param>
+            <param name="width"></param>
+            <param name="height"></param>
+            <returns></returns>
+        </member>
         <member name="T:Westwind.Utilities.ObjectFactory`1">
             <summary>
             An object factory that can create instances of types

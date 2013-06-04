@@ -42,7 +42,7 @@ namespace Westwind.Utilities
 	/// <summary>
 	/// Summary description for wwImaging.
 	/// </summary>
-	public class Imaging
+	public static class ImageUtils
 	{
 		/// <summary>
 		/// Creates a resized bitmap from an existing image on disk. Resizes the image by 

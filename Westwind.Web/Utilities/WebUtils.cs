@@ -404,6 +404,21 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
+        /// Checks to see if a form variable exists in the 
+        /// HttpContext. Only works in System.Web based applications
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public static bool IsFormVar(string key)
+        {
+            if (HttpContext.Current == null)
+                return false;
+
+            string val = HttpContext.Current.Request.Form[key];
+            return !string.IsNullOrEmpty(val);
+        }
+
+        /// <summary>
         /// Routine that can be used read Form Variables into an object if the 
         /// object name and form variable names match either exactly or with a specific
         /// prefix.

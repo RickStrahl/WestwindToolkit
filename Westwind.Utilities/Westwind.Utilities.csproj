@@ -83,7 +83,7 @@
     <Compile Include="SupportClasses\DelegateFactory.cs" />
     <Compile Include="SupportClasses\Encryption.cs" />
     <Compile Include="SupportClasses\Expando.cs" />
-    <Compile Include="SupportClasses\Imaging.cs" />
+    <Compile Include="Utilities\ImageUtils.cs" />
     <Compile Include="SupportClasses\ObjectFactory.cs" />
     <Compile Include="SupportClasses\PropertyBag.cs" />
     <Compile Include="SupportClasses\Scheduler.cs" />

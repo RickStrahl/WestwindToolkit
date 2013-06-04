@@ -16,7 +16,7 @@ namespace Westwind.Utilities.Test
             string rotated = @"c:\sailbig.jpg.copy";
 
             File.Copy(orig,work,true);
-            Imaging.RoateImage(work,rotated,RotateFlipType.Rotate270FlipNone);            
+            ImageUtils.RoateImage(work,rotated,RotateFlipType.Rotate270FlipNone);            
             File.Copy(rotated,work,true);
 
         }
@@ -29,7 +29,7 @@ namespace Westwind.Utilities.Test
 
             using (var bmp = new Bitmap(orig))
             {
-                var bmp2 = Imaging.ResizeImage(bmp, 150, 150);
+                var bmp2 = ImageUtils.ResizeImage(bmp, 150, 150);
                 bmp2.Save(copied);
                 bmp2.Dispose();
             }
