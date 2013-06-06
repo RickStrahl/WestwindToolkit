@@ -11,7 +11,7 @@ namespace Westwind.Web.Services
     /// </summary>
     public static class Gravatar
     {
-        public const string GravatarBaseUrl = "http://www.gravatar.com/avatar.php";
+        public static string GravatarBaseUrl = "https://www.gravatar.com/avatar.php";
 
         /// <summary>
         /// Returns a Gravatar image url for an email address

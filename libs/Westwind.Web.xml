@@ -2912,6 +2912,14 @@
             will fail and return false.
             </remarks>
         </member>
+        <member name="M:Westwind.Utilities.WebUtils.IsFormVar(System.String)">
+            <summary>
+            Checks to see if a form variable exists in the 
+            HttpContext. Only works in System.Web based applications
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
         <!-- Badly formed XML comment ignored for member "M:Westwind.Utilities.WebUtils.FormVarsToObject(System.Object,System.String,System.Collections.Generic.Dictionary{System.String,System.String})" -->
         <!-- Badly formed XML comment ignored for member "M:Westwind.Utilities.WebUtils.FormVarsToDataRow(System.Data.DataRow,System.String,System.Collections.Generic.Dictionary{System.String,System.String})" -->
         <member name="M:Westwind.Utilities.WebUtils.ForceReload">

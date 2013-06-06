@@ -2607,12 +2607,12 @@
             
             <returns></returns>
         </member>
-        <member name="T:Westwind.Utilities.Imaging">
+        <member name="T:Westwind.Utilities.ImageUtils">
             <summary>
             Summary description for wwImaging.
             </summary>
         </member>
-        <member name="M:Westwind.Utilities.Imaging.ResizeImage(System.String,System.Int32,System.Int32)">
+        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.String,System.Int32,System.Int32)">
             <summary>
             Creates a resized bitmap from an existing image on disk. Resizes the image by 
             creating an aspect ratio safe image. Image is sized to the larger size of width
@@ -2625,7 +2625,7 @@
             <param name="height"></param>
             <returns>Bitmap or null</returns>
         </member>
-        <member name="M:Westwind.Utilities.Imaging.ResizeImage(System.Byte[],System.Int32,System.Int32)">
+        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.Byte[],System.Int32,System.Int32)">
             <summary>
             Resizes an image from byte array and returns a Bitmap.
             Make sure you Dispose() the bitmap after you're done 
@@ -2636,7 +2636,7 @@
             <param name="height"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.Imaging.ResizeImage(System.String,System.String,System.Int32,System.Int32)">
+        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.String,System.String,System.Int32,System.Int32)">
             <summary>
             Resizes an image and saves the image to a file
             </summary>
@@ -2646,7 +2646,7 @@
             <param name="height"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.Imaging.ResizeImage(System.Drawing.Bitmap,System.Int32,System.Int32)">
+        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.Drawing.Bitmap,System.Int32,System.Int32)">
             <summary>
             Resizes an image from a bitmap
             </summary>
