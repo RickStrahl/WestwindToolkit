@@ -51,12 +51,12 @@ namespace Westwind.Data.EfCodeFirst
         protected DbSet<TEntity> DbSet
         {
             get {
-                if (_DbSet == null)
-                    _DbSet = Context.Set<TEntity>();
-                return _DbSet; 
+                if (_dbSet == null)
+                    _dbSet = Context.Set<TEntity>();
+                return _dbSet; 
             }            
         }
-        private DbSet<TEntity> _DbSet = null;
+        private DbSet<TEntity> _dbSet;
 
         /// <summary>
         /// Get an instance of the underlying object context
@@ -65,12 +65,12 @@ namespace Westwind.Data.EfCodeFirst
         {
             get
             {
-                if (_ObjectContext == null)
-                    _ObjectContext = ((IObjectContextAdapter)Context).ObjectContext;
-            	return _ObjectContext;
+                if (_objectContext == null)
+                    _objectContext = ((IObjectContextAdapter)Context).ObjectContext;
+            	return _objectContext;
             }
         }
-        ObjectContext _ObjectContext = null;
+        ObjectContext _objectContext;
 
         /// <summary>
         /// A collection that can be used to hold errors. This collection
@@ -82,12 +82,12 @@ namespace Westwind.Data.EfCodeFirst
         {
             get
             {
-                if (_ValidationErrors == null)
-                    _ValidationErrors = new ValidationErrorCollection();
-                return _ValidationErrors;
+                if (_validationErrors == null)
+                    _validationErrors = new ValidationErrorCollection();
+                return _validationErrors;
             }
         }
-        ValidationErrorCollection _ValidationErrors;
+        ValidationErrorCollection _validationErrors;
 
         /// <summary>
         /// Determines whether or not the Save operation causes automatic
@@ -129,11 +129,11 @@ namespace Westwind.Data.EfCodeFirst
         [XmlIgnore]
         public Exception ErrorException
         {
-            get { return _ErrorException; }
-            set { _ErrorException = value; }
+            get { return _errorException; }
+            set { _errorException = value; }
         }
         [NonSerialized]
-        private Exception _ErrorException = null;
+        private Exception _errorException;
 
 
         #region ObjectInitializers

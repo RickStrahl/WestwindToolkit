@@ -34,7 +34,7 @@ namespace Westwind.Web
         /// <summary>
         /// jQuery CDN Url on Google
         /// </summary>
-        public static string jQueryUiCdnUrl = "//ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/jquery-ui.min.js";
+        public static string jQueryUiCdnUrl = "//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js";
 
         /// <summary>
         /// jQuery UI fallback Url if CDN is unavailable or WebResource is used
@@ -43,11 +43,11 @@ namespace Westwind.Web
         public static string jQueryUiLocalFallbackUrl = "~/scripts/jquery-ui.min.js";
 
         /// <summary>
-        /// The url the jQuery UI base CSS theme. Used in jQueryUiCssLink. Should point
+        /// The url the jQuery UI *base* CSS theme. Used in jQueryUiCssLink. Should point
         /// at the jQuery UI base theme - the theme is replaced either explicitly or from
-        /// the jQueryUiTheme property value.
+        /// the jQueryUiTheme property value.soap
         /// </summary>
-        public static string jQueryUiCssBaseUrl = "//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/themes/base/jquery.ui.all.css";
+        public static string jQueryUiCssBaseUrl = "//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/base/jquery-ui.css";
 
         /// <summary>
         /// The theme that is applied to the jQueryUiCssBaseUrl

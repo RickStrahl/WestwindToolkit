@@ -1751,7 +1751,7 @@
         </member>
         <member name="F:Westwind.Web.ScriptLoader.jQueryUiCssBaseUrl">
             <summary>
-            The url the jQuery UI base CSS theme. Used in jQueryUiCssLink. Should point
+            The url the jQuery UI *base* CSS theme. Used in jQueryUiCssLink. Should point
             at the jQuery UI base theme - the theme is replaced either explicitly or from
             the jQueryUiTheme property value.
             </summary>
