@@ -83,7 +83,6 @@
     <Compile Include="SupportClasses\DelegateFactory.cs" />
     <Compile Include="SupportClasses\Encryption.cs" />
     <Compile Include="SupportClasses\Expando.cs" />
-    <Compile Include="Utilities\ImageUtils.cs" />
     <Compile Include="SupportClasses\ObjectFactory.cs" />
     <Compile Include="SupportClasses\PropertyBag.cs" />
     <Compile Include="SupportClasses\Scheduler.cs" />
@@ -94,6 +93,7 @@
     <Compile Include="Utilities\FileUtils.cs" />
     <Compile Include="Utilities\GenericUtils.cs" />
     <Compile Include="Utilities\HtmlUtils.cs" />
+    <Compile Include="Utilities\ImageUtils.cs" />
     <Compile Include="Utilities\NetworkUtils.cs" />
     <Compile Include="Utilities\ReflectionUtils.cs" />
     <Compile Include="Utilities\SecurityUtils.cs" />

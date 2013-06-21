@@ -167,8 +167,16 @@ namespace Westwind.Utilities.Logging
         /// </summary>
         Debug = 8,
         /// <summary>
-        /// Empty - not assigned
+        /// Application level information log entries
         /// </summary>
+        ApplicationInfo = 16, 
+        /// <summary>
+        /// Application Level Error entries
+        /// </summary>
+        ApplicationError = 32,
+        /// <summary>
+        /// Empty - not assigned
+        /// </summary>        
         None = 0,
         /// <summary>
         /// All ErrorLevels - used only for querying

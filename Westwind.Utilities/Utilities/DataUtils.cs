@@ -324,7 +324,7 @@ namespace Westwind.Utilities
         /// translation. If not passed automatically created.
         /// </param>
         /// <returns></returns>
-        public static IEnumerable<T> DataReaderToIEnumerable<T>(DbDataReader reader, string fieldsToSkip = null, Dictionary<string, PropertyInfo> piList = null)            
+        public static IEnumerable<T> DataReaderToIEnumerable<T>(IDataReader reader, string fieldsToSkip = null, Dictionary<string, PropertyInfo> piList = null)            
             where T : new()
         {
             if (reader != null)

@@ -202,13 +202,13 @@ select CAST(scope_identity() as integer)
                                            (errorLevel != ErrorLevels.All ? "ErrorLevel = @ErrorLevel and " : "") +
                                            "Entered >= @dateFrom and Entered < @dateTo " +
                                            "order by Entered DESC", LogFilename, count, fieldList);
-
+            
             var reader = data.ExecuteReader(sql,
                 data.CreateParameter("@ErrorLevel", (int)errorLevel),
                 data.CreateParameter("@dateFrom", dateFrom.Value.Date),
                 data.CreateParameter("@dateTo", dateTo.Value.AddDays(1).Date));
-            return reader;
-            
+   
+            return reader;            
         }
 
         //IEnumerable<WebLogEntry> GetEntryList(ErrorLevels errorLevel, int count, DateTime dateFrom, DateTime dateTo, string FieldList);

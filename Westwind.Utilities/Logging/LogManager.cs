@@ -36,6 +36,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using Westwind.Utilities.Data;
 
 namespace Westwind.Utilities.Logging
 {
@@ -280,6 +281,17 @@ namespace Westwind.Utilities.Logging
         public WebLogEntry GetWebLogEntry(int id)
         {
             return LogAdapter.GetEntry(id);
+        }
+
+        public IEnumerable<WebLogEntry> GetEntries(
+                                      ErrorLevels errorLevel = ErrorLevels.All, 
+                                      int count = 200, 
+                                      DateTime? dateFrom = null, 
+                                      DateTime? dateTo = null,
+                                      string fieldList = null)
+        {
+            var reader = LogAdapter.GetEntries(errorLevel, count, dateFrom, dateTo, fieldList);
+            return DataUtils.DataReaderToIEnumerable<WebLogEntry>(reader);            
         }
 
         /// <summary>

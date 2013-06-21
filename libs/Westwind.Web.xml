@@ -1753,7 +1753,7 @@
             <summary>
             The url the jQuery UI *base* CSS theme. Used in jQueryUiCssLink. Should point
             at the jQuery UI base theme - the theme is replaced either explicitly or from
-            the jQueryUiTheme property value.
+            the jQueryUiTheme property value.soap
             </summary>
         </member>
         <member name="F:Westwind.Web.ScriptLoader.jQueryUiTheme">

@@ -1765,10 +1765,20 @@
             Debug message
             </summary>
         </member>
+        <member name="F:Westwind.Utilities.Logging.ErrorLevels.ApplicationInfo">
+            <summary>
+            Application level information log entries
+            </summary>
+        </member>
+        <member name="F:Westwind.Utilities.Logging.ErrorLevels.ApplicationError">
+            <summary>
+            Application Level Error entries
+            </summary>
+        </member>
         <member name="F:Westwind.Utilities.Logging.ErrorLevels.None">
             <summary>
             Empty - not assigned
-            </summary>
+            </summary>        
         </member>
         <member name="F:Westwind.Utilities.Logging.ErrorLevels.All">
             <summary>
@@ -2607,54 +2617,6 @@
             
             <returns></returns>
         </member>
-        <member name="T:Westwind.Utilities.ImageUtils">
-            <summary>
-            Summary description for wwImaging.
-            </summary>
-        </member>
-        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.String,System.Int32,System.Int32)">
-            <summary>
-            Creates a resized bitmap from an existing image on disk. Resizes the image by 
-            creating an aspect ratio safe image. Image is sized to the larger size of width
-            height and then smaller size is adjusted by aspect ratio.
-            
-            Image is returned as Bitmap - call Dispose() on the returned Bitmap object
-            </summary>
-            <param name="filename"></param>
-            <param name="width"></param>
-            <param name="height"></param>
-            <returns>Bitmap or null</returns>
-        </member>
-        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.Byte[],System.Int32,System.Int32)">
-            <summary>
-            Resizes an image from byte array and returns a Bitmap.
-            Make sure you Dispose() the bitmap after you're done 
-            with it!
-            </summary>
-            <param name="data"></param>
-            <param name="width"></param>
-            <param name="height"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.String,System.String,System.Int32,System.Int32)">
-            <summary>
-            Resizes an image and saves the image to a file
-            </summary>
-            <param name="filename"></param>
-            <param name="outputFilename"></param>
-            <param name="width"></param>
-            <param name="height"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.Drawing.Bitmap,System.Int32,System.Int32)">
-            <summary>
-            Resizes an image from a bitmap
-            </summary>
-            <param name="bmp"></param>
-            <param name="width"></param>
-            <param name="height"></param>
-            <returns></returns>
-        </member>
         <member name="T:Westwind.Utilities.ObjectFactory`1">
             <summary>
             An object factory that can create instances of types
@@ -3064,7 +3026,7 @@
             <returns></returns>
             <remarks>DataReader is not closed by this method. Make sure you call reader.close() afterwards</remarks>
         </member>
-        <member name="M:Westwind.Utilities.DataUtils.DataReaderToIEnumerable``1(System.Data.Common.DbDataReader,System.String,System.Collections.Generic.Dictionary{System.String,System.Reflection.PropertyInfo})">
+        <member name="M:Westwind.Utilities.DataUtils.DataReaderToIEnumerable``1(System.Data.IDataReader,System.String,System.Collections.Generic.Dictionary{System.String,System.Reflection.PropertyInfo})">
              <summary>
              Creates an IEnumerable of T from an open DataReader instance.
             
@@ -3398,6 +3360,54 @@
             HTML into plain text, then creates an abstract.
             </summary>
             <param name="html"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Westwind.Utilities.ImageUtils">
+            <summary>
+            Summary description for wwImaging.
+            </summary>
+        </member>
+        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.String,System.Int32,System.Int32)">
+            <summary>
+            Creates a resized bitmap from an existing image on disk. Resizes the image by 
+            creating an aspect ratio safe image. Image is sized to the larger size of width
+            height and then smaller size is adjusted by aspect ratio.
+            
+            Image is returned as Bitmap - call Dispose() on the returned Bitmap object
+            </summary>
+            <param name="filename"></param>
+            <param name="width"></param>
+            <param name="height"></param>
+            <returns>Bitmap or null</returns>
+        </member>
+        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Resizes an image from byte array and returns a Bitmap.
+            Make sure you Dispose() the bitmap after you're done 
+            with it!
+            </summary>
+            <param name="data"></param>
+            <param name="width"></param>
+            <param name="height"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.String,System.String,System.Int32,System.Int32)">
+            <summary>
+            Resizes an image and saves the image to a file
+            </summary>
+            <param name="filename"></param>
+            <param name="outputFilename"></param>
+            <param name="width"></param>
+            <param name="height"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.Drawing.Bitmap,System.Int32,System.Int32)">
+            <summary>
+            Resizes an image from a bitmap
+            </summary>
+            <param name="bmp"></param>
+            <param name="width"></param>
+            <param name="height"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.NetworkUtils.GetBaseDomain(System.String)">
