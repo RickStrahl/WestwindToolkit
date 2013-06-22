@@ -956,8 +956,6 @@ namespace Westwind.Utilities
                     Response.Headers.Remove("Content-Encoding");
                     Response.AppendHeader("Content-Encoding", "deflate");
                 }
-
-
             }
 
             // Allow proxy servers to cache encoded and unencoded versions separately

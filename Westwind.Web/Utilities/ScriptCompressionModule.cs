@@ -247,30 +247,30 @@ namespace Westwind.Web
         /// Sends the output to the client using appropriate cache settings.
         /// Content should be already encoded and ready to be sent as binary.
         /// </summary>
-        /// <param name="Output"></param>
-        /// <param name="UseGZip"></param>
-        private void SendOutput(byte[] Output, bool UseGZip)
+        /// <param name="output"></param>
+        /// <param name="useGZip"></param>
+        private void SendOutput(byte[] output, bool useGZip)
         {
-            SendTextOutput(Output, UseGZip, STR_JavaScript_ContentType);
+            SendTextOutput(output, useGZip, STR_JavaScript_ContentType);
         }
 
-        private void SendTextOutput(byte[] Output, bool UseGZip, string contentType)
+        private void SendTextOutput(byte[] output, bool useGZip, string contentType)
         {
             HttpResponse Response = HttpContext.Current.Response;
             Response.ContentType = contentType;
             Response.Charset = "utf-8";
 
-            if (UseGZip)
+            if (useGZip)
                 Response.AppendHeader("Content-Encoding", "gzip");
 
-            //if (!HttpContext.Current.IsDebuggingEnabled)
-            //{
-            Response.Cache.SetCacheability(HttpCacheability.Public);
-            Response.ExpiresAbsolute = DateTime.UtcNow.AddDays(1);
-            Response.Cache.SetLastModified(DateTime.UtcNow);                
-            //}
+            if (!HttpContext.Current.IsDebuggingEnabled)
+            {
+                Response.AddHeader("Cache-control", "public");
+                Response.AddHeader("Expires", DateTime.UtcNow.AddDays(1).ToString("R"));
+                Response.AddHeader("Last-modified", DateTime.UtcNow.ToString("R"));
+            }
 
-            Response.BinaryWrite(Output);
+            Response.BinaryWrite(output);
             Response.End();
         }
 
@@ -279,26 +279,26 @@ namespace Westwind.Web
         /// Remove any leading white space and any lines starting
         /// with //. 
         /// </summary>
-        /// <param name="Script"></param>
+        /// <param name="script"></param>
         /// <returns></returns>
-        public static string OptimizeScript(string Script)
+        public static string OptimizeScript(string script)
         {
             JavaScriptMinifier min = new JavaScriptMinifier();
-            return min.MinifyString(Script);
+            return min.MinifyString(script);
         }
 
 
         /// <summary>
         /// Finds an assembly in the current loaded assembly list
         /// </summary>
-        /// <param name="TypeName"></param>
+        /// <param name="typeName"></param>
         /// <returns></returns>
-        private Assembly FindAssembly(string TypeName)
+        private Assembly FindAssembly(string typeName)
         {
             foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
             {
                 string fn = ass.FullName;
-                if (ass.FullName == TypeName)
+                if (ass.FullName == typeName)
                     return ass;
             }
 
@@ -308,15 +308,15 @@ namespace Westwind.Web
         /// <summary>
         /// Takes a binary input buffer and GZip encodes the input
         /// </summary>
-        /// <param name="Buffer"></param>
+        /// <param name="buffer"></param>
         /// <returns></returns>
-        public static byte[] GZipMemory(byte[] Buffer)
+        public static byte[] GZipMemory(byte[] buffer)
         {
             MemoryStream ms = new MemoryStream();
 
             GZipStream GZip = new GZipStream(ms, CompressionMode.Compress);
 
-            GZip.Write(Buffer, 0, Buffer.Length);
+            GZip.Write(buffer, 0, buffer.Length);
             GZip.Close();
 
             byte[] Result = ms.ToArray();
@@ -328,11 +328,11 @@ namespace Westwind.Web
         /// <summary>
         /// Takes a string input and GZip encodes the input
         /// </summary>
-        /// <param name="Input"></param>
+        /// <param name="input"></param>
         /// <returns></returns>
-        public static byte[] GZipMemory(string Input)
+        public static byte[] GZipMemory(string input)
         {
-            return GZipMemory(Encoding.UTF8.GetBytes(Input));
+            return GZipMemory(Encoding.UTF8.GetBytes(input));
         }
 
         /// <summary>
