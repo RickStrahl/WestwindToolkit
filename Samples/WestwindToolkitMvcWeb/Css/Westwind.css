@@ -59,7 +59,9 @@ input,select,textarea
 	font-size: inherit;
 	font-weight: inherit;
 	font-style: inherit;
-}	
+    	-moz-box-sizing: border-box;    
+	box-sizing: border-box;	
+}
 p
 {
 	margin: 10px 0;
