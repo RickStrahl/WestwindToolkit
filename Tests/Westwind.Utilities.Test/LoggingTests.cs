@@ -168,6 +168,14 @@ namespace Westwind.Utilities.Logging.Tests
         }
 
         [TestMethod]
+        public void LogManagerSqlGetEntries()
+        {
+            var entries = LogManager.Current.GetEntries();
+            Assert.IsNotNull(entries);
+            Assert.IsTrue(entries.Count() > 0);
+        }
+
+        [TestMethod]
         public void XmlLogAdapterTest()
         {
 

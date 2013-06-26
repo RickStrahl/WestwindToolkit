@@ -198,7 +198,7 @@ select CAST(scope_identity() as integer)
 
             SqlDataAccess data = CreateDal();
             
-            string sql = string.Format("select TOP {1} {2} from [{0}] where " +
+            string sql = string.Format("select TOP {1} {2} * from [{0}] where " +
                                            (errorLevel != ErrorLevels.All ? "ErrorLevel = @ErrorLevel and " : "") +
                                            "Entered >= @dateFrom and Entered < @dateTo " +
                                            "order by Entered DESC", LogFilename, count, fieldList);
