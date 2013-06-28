@@ -38,13 +38,14 @@ using System.Drawing;
 using System.Data.Common;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Data.SqlClient;
 
 namespace Westwind.Utilities.Logging
 {
     /// <summary>
     /// Log adapter that writes to a SQL Server Database
     /// </summary>
-    public class SqlLogAdapter : ILogAdapter
+    public class SqlLogAdapter : ILogAdapter        
     {
         public string ConnectionString
         {
@@ -311,10 +312,54 @@ select CAST(scope_identity() as integer)
             using (SqlDataAccess data = CreateDal())
             {
                 if (data.ExecuteNonQuery(sql) < 0)
-                    throw new InvalidOperationException("Failed to delete table" + LogFilename + ". " + data.ErrorMessage);
+                    throw new InvalidOperationException("Failed to remove entries. " + data.ErrorMessage);
             }
 
             return true;
+        }
+
+        public bool Clear(decimal daysToDelete)
+        {
+            
+            var date = DateTime.UtcNow.Date.AddDays((int) daysToDelete * -1);
+            string sql = "delete [{0}] where entered < @date";
+            sql = string.Format(sql, LogFilename);
+
+            using (SqlDataAccess data = CreateDal())
+            {
+                if (data.ExecuteNonQuery(sql,data.CreateParameter("@date",date)) < 0)
+                    throw new InvalidOperationException("Failed to remove entries. " + data.ErrorMessage);
+            }
+
+            return true;
+            
+        }
+        
+        /// <summary>
+        /// Returns the number of total log entries
+        /// </summary>
+        /// <returns></returns>
+        public int GetEntryCount(ErrorLevels errorLevel = ErrorLevels.All)
+        {
+            using (SqlDataAccess data = CreateDal())
+            {
+                string sql = "select count(id) from " + LogFilename;
+                DbParameter[] parms = null;
+
+                if (!(errorLevel.HasFlag(ErrorLevels.All) || errorLevel.HasFlag(ErrorLevels.None)))
+                {
+                    sql = sql + " where errorlevel = @ErrorLevel";
+                    parms = new DbParameter[1]
+                        { data.CreateParameter("@ErrorLevel",errorLevel.ToString()) };
+                }
+
+                object result = data.ExecuteScalar(sql, parms);
+                if (result == null)
+                    throw new InvalidOperationException("Failed to count entries. " + data.ErrorMessage);
+
+                return (int)result;
+            }
+
         }
 
         #endregion

@@ -99,7 +99,6 @@ namespace Westwind.Utilities.Logging
         /// <returns></returns>
         bool DeleteLog();
 
-
         /// <summary>
         /// Clears the Log store completely
         /// </summary>
@@ -112,6 +111,20 @@ namespace Westwind.Utilities.Logging
         /// <param name="countToLeave"></param>
         /// <returns></returns>
         bool Clear(int countToLeave);
+
+        /// <summary>
+        /// Clears the log by a number of days
+        /// </summary>
+        /// <param name="daysToClear"></param>
+        /// <returns></returns>
+        bool Clear(decimal daysToClear);
+
+        /// <summary>
+        /// Returns a count of total log entries
+        /// </summary>
+        /// <returns></returns>
+        int GetEntryCount(ErrorLevels errorLevel = ErrorLevels.All);
+
     }
 
     public enum LogTypes

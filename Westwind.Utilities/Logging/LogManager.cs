@@ -333,5 +333,15 @@ namespace Westwind.Utilities.Logging
         {
             return LogAdapter.Clear(countToLeave);
         }
+
+        /// <summary>
+        /// Returns count of all entries for a given error level.
+        /// </summary>
+        /// <param name="errorLevel"></param>
+        /// <returns></returns>
+        public int GetEntryCount(ErrorLevels errorLevel = ErrorLevels.All)
+        {
+            return LogAdapter.GetEntryCount(errorLevel);
+        }
     }
 }

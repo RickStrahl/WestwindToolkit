@@ -294,6 +294,21 @@ namespace Westwind.Utilities.Logging
         }
 
         /// <summary>
+        /// Not implemented
+        /// </summary>
+        /// <param name="daysToDelete"></param>
+        /// <returns></returns>
+        public bool Clear(decimal daysToDelete)
+        {
+            throw new NotImplementedException();
+        }
+
+        public int GetEntryCount(ErrorLevels errorLevel = ErrorLevels.All)
+        {
+            throw new NotFiniteNumberException();
+        }
+
+        /// <summary>
         /// Creates a DataTable on the fly
         /// </summary>
         /// <returns></returns>
