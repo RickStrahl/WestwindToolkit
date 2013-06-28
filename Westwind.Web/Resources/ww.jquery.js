@@ -1,7 +1,7 @@
 ﻿/// <reference path="jquery.js" />
 /*
 ww.jQuery.js  
-Version 1.09 - 4/10/2013
+Version 1.10 - 6/26/2013
 West Wind jQuery plug-ins and utilities
 
 (c) 2008-2012 Rick Strahl, West Wind Technologies 
@@ -222,7 +222,12 @@ http://en.wikipedia.org/wiki/MIT_License
 
     ajaxJson = function (url, parm, cb, ecb, options) {
         var ser = parm;
-        var opt = { method: "POST", contentType: "application/json", noPostEncoding: false };
+        var opt = {
+            method: "POST",
+            contentType: "application/json",
+            accepts: "application/json",
+            noPostEncoding: false
+        };
         $.extend(opt, options);
 
         var http = new HttpClient(opt);
@@ -1498,7 +1503,7 @@ http://en.wikipedia.org/wiki/MIT_License
             var pos = el.css("position");
             if (!pos || pos == "static")
                 el.css("position", "relative");
-            var h = opt.handle ? $(opt.handle).css({ position: "relative" }) : el;
+            var h = opt.handle ? $(opt.handle,el).css({ position: "relative" }) : el;
 
             var div = el.find("." + opt.cssClass);
             var exists = true;
