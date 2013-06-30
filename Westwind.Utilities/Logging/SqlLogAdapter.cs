@@ -346,11 +346,11 @@ select CAST(scope_identity() as integer)
                 string sql = "select count(id) from " + LogFilename;
                 DbParameter[] parms = null;
 
-                if (!(errorLevel.HasFlag(ErrorLevels.All) || errorLevel.HasFlag(ErrorLevels.None)))
+                if (!(errorLevel == ErrorLevels.All || errorLevel == ErrorLevels.None))
                 {
                     sql = sql + " where errorlevel = @ErrorLevel";
                     parms = new DbParameter[1]
-                        { data.CreateParameter("@ErrorLevel",errorLevel.ToString()) };
+                        { data.CreateParameter("@ErrorLevel",(int) errorLevel) };
                 }
 
                 object result = data.ExecuteScalar(sql, parms);
