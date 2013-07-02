@@ -5,6 +5,14 @@ using Westwind.Web.Mvc.Properties;
 
 namespace Westwind.Web.Mvc
 {
+
+    /// <summary>
+    /// A generic Error Display class that can be used to display standalone 
+    /// error messages with a single line of code.
+    /// 
+    /// Depends on a Error.cshtml view which is passed
+    /// an ErrorViewModel as a parameter
+    /// </summary>
     public class ErrorController : BaseController
     {
         /// <summary>
@@ -61,6 +69,18 @@ namespace Westwind.Web.Mvc
             return View("Error", errorModel);
         }
 
+        /// <summary>
+        /// This method allows displaying an error page you specify
+        /// and pass an optional ErrorViewModel as a parameter
+        /// </summary>
+        /// <param name="viewPage"></param>
+        /// <param name="errorModel"></param>
+        /// <returns></returns>
+        public ActionResult ShowErrorViewPage(string viewPage, ErrorViewModel errorModel = null)
+        {
+            return View(viewPage, errorModel);
+        }
+        
         
         public ActionResult CauseError()
         {
@@ -163,6 +183,28 @@ namespace Westwind.Web.Mvc
             routeData.Values.Add("errorModel", errorModel);
 
             ((IController)controller).Execute(new RequestContext(new HttpContextWrapper(System.Web.HttpContext.Current), routeData));
+        }
+
+        /// <summary>
+        /// Allows you to display an arbitrary view and pass an optional
+        /// ErrorViewModel for it. In short it's a shortcut way to just
+        /// execute a custom view.
+        /// </summary>
+        /// <param name="viewPage">Path to a ViewPage</param>
+        /// <param name="errorModel">Optional ErrorViewModel to pass to the view</param>
+        public static void ShowErrorPageFromView(string viewPage, ErrorViewModel errorModel = null)
+        {
+            if (errorModel == null)
+                errorModel = new ErrorViewModel();
+
+            ErrorController controller = new ErrorController();
+
+            RouteData routeData = new RouteData();
+            routeData.Values.Add("controller", "Error");
+            routeData.Values.Add("action", "ShowErrorViewPage");
+            routeData.Values.Add("errorModel", errorModel);
+
+            ((IController)controller).Execute(new RequestContext(new HttpContextWrapper(System.Web.HttpContext.Current), routeData));            
         }
 
     }
