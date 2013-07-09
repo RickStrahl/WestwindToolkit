@@ -1684,6 +1684,19 @@
             <param name="countToLeave"></param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Utilities.Logging.ILogAdapter.Clear(System.Decimal)">
+            <summary>
+            Clears the log by a number of days
+            </summary>
+            <param name="daysToClear"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.ILogAdapter.GetEntryCount(Westwind.Utilities.Logging.ErrorLevels)">
+            <summary>
+            Returns a count of total log entries
+            </summary>
+            <returns></returns>
+        </member>
         <member name="P:Westwind.Utilities.Logging.ILogAdapter.ConnectionString">
             <summary>
             ConnectionString or other string that identifies the output medium
@@ -1940,6 +1953,13 @@
             <param name="countToLeave"></param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Utilities.Logging.LogManager.GetEntryCount(Westwind.Utilities.Logging.ErrorLevels)">
+            <summary>
+            Returns count of all entries for a given error level.
+            </summary>
+            <param name="errorLevel"></param>
+            <returns></returns>
+        </member>
         <member name="P:Westwind.Utilities.Logging.LogManager.Current">
             <summary>
             Static instance of the log manager. Used so you can configure
@@ -2094,6 +2114,12 @@
             <param name="countToLeave"></param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Utilities.Logging.SqlLogAdapter.GetEntryCount(Westwind.Utilities.Logging.ErrorLevels)">
+            <summary>
+            Returns the number of total log entries
+            </summary>
+            <returns></returns>
+        </member>
         <member name="P:Westwind.Utilities.Logging.SqlLogAdapter.LogFilename">
             <summary>
             The name of the table that data in SQL Server is written to
@@ -2202,6 +2228,13 @@
             Not Implemented
             </summary>
             <param name="countToLeave"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.XmlLogAdapter.Clear(System.Decimal)">
+            <summary>
+            Not implemented
+            </summary>
+            <param name="daysToDelete"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Logging.XmlLogAdapter.CreateEntryDataTable">

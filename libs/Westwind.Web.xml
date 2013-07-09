@@ -2007,8 +2007,8 @@
             Sends the output to the client using appropriate cache settings.
             Content should be already encoded and ready to be sent as binary.
             </summary>
-            <param name="Output"></param>
-            <param name="UseGZip"></param>
+            <param name="output"></param>
+            <param name="useGZip"></param>
         </member>
         <member name="M:Westwind.Web.ScriptCompressionModule.OptimizeScript(System.String)">
             <summary>
@@ -2016,28 +2016,28 @@
             Remove any leading white space and any lines starting
             with //. 
             </summary>
-            <param name="Script"></param>
+            <param name="script"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Web.ScriptCompressionModule.FindAssembly(System.String)">
             <summary>
             Finds an assembly in the current loaded assembly list
             </summary>
-            <param name="TypeName"></param>
+            <param name="typeName"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Web.ScriptCompressionModule.GZipMemory(System.Byte[])">
             <summary>
             Takes a binary input buffer and GZip encodes the input
             </summary>
-            <param name="Buffer"></param>
+            <param name="buffer"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Web.ScriptCompressionModule.GZipMemory(System.String)">
             <summary>
             Takes a string input and GZip encodes the input
             </summary>
-            <param name="Input"></param>
+            <param name="input"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Web.ScriptCompressionModule.RegisterClientScriptResource(System.Type,System.String)">
@@ -2711,6 +2711,21 @@
             
             Source code is available only in Debug mode and if the source files are available on the server. Some errors that occur
             inside of the .Net runtime itself or in ASP.Net pages also do not show the error.
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.WebErrorHandler.SourceFile">
+            <summary>
+            Retrieves the source file if available
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.WebErrorHandler.SourceMethod">
+            <summary>
+            Method where the error occurred
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.WebErrorHandler.SourceLineNumber">
+            <summary>
+            Line Number if available
             </summary>
         </member>
         <member name="F:Westwind.Web.WebErrorHandler.IPAddress">

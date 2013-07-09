@@ -64,6 +64,15 @@
             <param name="redirectTo"></param>
             <returns></returns>
         </member>
+        <member name="T:Westwind.Web.Mvc.ErrorController">
+            <summary>
+            A generic Error Display class that can be used to display standalone 
+            error messages with a single line of code.
+            
+            Depends on a Error.cshtml view which is passed
+            an ErrorViewModel as a parameter
+            </summary>
+        </member>
         <member name="M:Westwind.Web.Mvc.ErrorController.ShowError(System.String,System.String,System.String,System.Boolean)">
             <summary>
             Displays a generic error message
@@ -78,6 +87,15 @@
             Displays a generic error message but allows passing a view model directly for 
             additional flexibility
             </summary>
+            <param name="errorModel"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorViewPage(System.String,Westwind.Web.Mvc.ErrorViewModel)">
+            <summary>
+            This method allows displaying an error page you specify
+            and pass an optional ErrorViewModel as a parameter
+            </summary>
+            <param name="viewPage"></param>
             <param name="errorModel"></param>
             <returns></returns>
         </member>
@@ -122,6 +140,15 @@
             Static method that can be called from outside of MVC requests
             (like in Application_Error) to display an error View.
             </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorPageFromView(System.String,Westwind.Web.Mvc.ErrorViewModel)">
+            <summary>
+            Allows you to display an arbitrary view and pass an optional
+            ErrorViewModel for it. In short it's a shortcut way to just
+            execute a custom view.
+            </summary>
+            <param name="viewPage">Path to a ViewPage</param>
+            <param name="errorModel">Optional ErrorViewModel to pass to the view</param>
         </member>
         <member name="T:Westwind.Web.Mvc.CompressContentAttribute">
             <summary>

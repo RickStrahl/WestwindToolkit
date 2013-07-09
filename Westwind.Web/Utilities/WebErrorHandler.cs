@@ -68,6 +68,21 @@ namespace Westwind.Web
 		/// </summary>
 		public string SourceCode = "";
 
+        /// <summary>
+        /// Retrieves the source file if available
+        /// </summary>
+	    public string SourceFile = "";
+
+        /// <summary>
+        /// Method where the error occurred
+        /// </summary>
+	    public string SourceMethod = "";
+
+        /// <summary>
+        /// Line Number if available
+        /// </summary>
+	    public int SourceLineNumber = 0; 
+
 		/// <summary>
 		/// The client's IP address
 		/// </summary>
@@ -138,165 +153,177 @@ namespace Westwind.Web
 
 
 
-		/// <summary>
-		/// Parses the Exception into properties of this object. Called internally 
-		/// by LogError, but can also be called externally to get easier information
-		/// about the error through the property interface.
-		/// </summary>
-		public bool Parse() 
-		{
-			if (LastError == null) 
-				return false;
+	    /// <summary>
+	    /// Parses the Exception into properties of this object. Called internally 
+	    /// by LogError, but can also be called externally to get easier information
+	    /// about the error through the property interface.
+	    /// </summary>
+	    public bool Parse()
+	    {
+	        if (LastError == null)
+	            return false;
 
-			IsParsed = true;
+	        IsParsed = true;
 
-			// Use the Inner Exception since that has the actual error info
-			HttpRequest Request = HttpContext.Current.Request;
+	        // Use the Inner Exception since that has the actual error info
+	        HttpRequest Request = HttpContext.Current.Request;
 
-			RawUrl = Request.RawUrl;
+	        RawUrl = Request.RawUrl;
 
-			if ( LastError is System.IO.FileNotFoundException)
-				ErrorMessage = "File not found: " + LastError.Message;
-			else
-				ErrorMessage = LastError.Message;
+	        if (LastError is System.IO.FileNotFoundException)
+	            ErrorMessage = "File not found: " + LastError.Message;
+	        else
+	            ErrorMessage = LastError.Message;
 
-			Time = DateTime.Now;
+	        Time = DateTime.Now;
 
-			if (CompactFormat)
-				return true;
+	        if (CompactFormat)
+	            return true;
 
-			this .StackTrace = LastError.StackTrace;
-			if (RetrieveSourceLines) 
-			{
-				StringBuilder sb = new StringBuilder(1024);
 
-				// Try to retrieve Source Code information
-				StackTrace st = new StackTrace(LastError,true);
-				StackFrame sf = st.GetFrame(0);
-				if (sf != null) 
-				{
-					string Filename = sf.GetFileName();
-	            
-					if (RetrieveSourceLines && Filename != null && File.Exists(Filename)) 
-					{
-						int LineNumber = sf.GetFileLineNumber();
-						if (LineNumber > 0) 
-						{
-							StreamReader sr = new StreamReader(Filename);
+	        this.StackTrace = LastError.StackTrace;
+	        if (RetrieveSourceLines)
+	        {
+	            StringBuilder sb = new StringBuilder(1024);
 
-							// Read over unwanted lines
-							int x = 0;
-							for (x = 0; x < LineNumber - 4; x++ ) 
-								sr.ReadLine();
+	            // Try to retrieve Source Code information
+	            StackTrace st = new StackTrace(LastError, true);
+	            StackFrame sf = st.GetFrame(0);
 
-							sb.AppendLine("--- Code ---");
-							sb.AppendFormat("File: {0}r\n",Filename);
-							sb.AppendFormat("Method: {0}\r\n\r\n",LastError.TargetSite);
-							sb.AppendFormat("Line {0}: {1}\r\n",x + 1,sr.ReadLine());
-							sb.AppendFormat("Line {0}: {1}\r\n",x + 2,sr.ReadLine());
-							sb.AppendFormat("Line {0}: {1}\r\n",x + 3,sr.ReadLine());
-							sb.AppendFormat("<b>Line {0}: {1}</b>\r\n", x+ 4,sr.ReadLine() );
-							sb.AppendFormat("Line {0}: {1}\r\n",x +5,sr.ReadLine());
-							sb.AppendFormat("Line {0}: {1}\r\n",x +6,sr.ReadLine());
-							sb.AppendFormat("Line {0}: {1}\r\n",x +7,sr.ReadLine());
+	            if (sf != null)
+	            {
+	                string Filename = sf.GetFileName();                    
 
-							sr.Close();
-						}
-					}
-				}
+	                if (Filename != null && File.Exists(Filename))
+	                {
+                        SourceFile = Filename;
+	                    SourceLineNumber = sf.GetFileLineNumber();
+	                    SourceMethod = LastError.TargetSite.Name;
 
-				SourceCode = sb.ToString();
-			}
+	                    if (SourceLineNumber > 0)
+	                    {
+	                        StreamReader sr = new StreamReader(Filename);
 
-			FullUrl = string.Format("http://{0}{1}",Request.ServerVariables["SERVER_NAME"],Request.RawUrl);
-			IPAddress = Request.UserHostAddress;
-			
-			if (Request.UrlReferrer != null)
-				Referer = Request.UrlReferrer.ToString();
+	                        // Read over unwanted lines
+	                        int x = 0;
+	                        for (x = 0; x < SourceLineNumber - 4; x++)
+	                            sr.ReadLine();
+	                        
+	                        sb.AppendFormat("  File: {0}\r\n", Filename);
+                            if (SourceLineNumber > 0)
+                                sb.AppendFormat("Line #: {0}\r\n", SourceLineNumber);
+                            sb.AppendFormat("Method: {0}\r\n", LastError.TargetSite);
+	                        sb.AppendLine();
 
-			Browser = Request.UserAgent;
+	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 1, sr.ReadLine());
+	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 2, sr.ReadLine());
+	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 3, sr.ReadLine());
+	                        sb.AppendFormat("<b>Line {0}: {1}</b>\r\n", x + 4, sr.ReadLine());
+	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 5, sr.ReadLine());
+	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 6, sr.ReadLine());
+	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 7, sr.ReadLine());
 
-			if (Request.IsAuthenticated)
-				Login = HttpContext.Current.User.Identity.Name;
-			else
-				Login = "Anonymous";
+	                        sr.Close();
+	                    }
+	                }
+	            }
 
-			// Get the Locale String
-			if (Request.UserLanguages != null) 
-			{
-				string Lang =  Request.UserLanguages[0];
-				if (Lang != null)  
-					Locale = Lang;
-			}
+	            SourceCode = sb.ToString();
+	        }
 
-			if (Request.TotalBytes > 0 && Request.TotalBytes < 2048)  
-			{
-				PostBuffer = Encoding.Default.GetString(Request.BinaryRead(Request.TotalBytes));
-				ContentSize = Request.TotalBytes;
-			}
-			else if (Request.TotalBytes > 2048)  // strip the result
-			{
-				PostBuffer = Encoding.Default.GetString(Request.BinaryRead(2048)) + "...";
-				ContentSize = Request.TotalBytes;
-			}
+	        FullUrl = Request.Url.AbsoluteUri;
+	        //string.Format("http://{0}{1}", Request.ServerVariables["SERVER_NAME"], Request.RawUrl);
+	        IPAddress = Request.UserHostAddress;
+
+	        if (Request.UrlReferrer != null)
+	            Referer = Request.UrlReferrer.ToString();
+
+	        Browser = Request.UserAgent;
+
+	        if (Request.IsAuthenticated)
+	            Login = HttpContext.Current.User.Identity.Name;
+	        else
+	            Login = "Anonymous";
+
+	        // Get the Locale String
+	        if (Request.UserLanguages != null)
+	        {
+	            string Lang = Request.UserLanguages[0];
+	            if (Lang != null)
+	                Locale = Lang;
+	        }
+
+	        if (Request.TotalBytes > 0)
+	        {
+                int bytes = Request.TotalBytes;
+	            if (bytes > 2048)
+	                bytes = 2048;
+
+                PostBuffer = Encoding.Default.GetString(Request.BinaryRead(bytes));
+	            if (bytes == 2048)
+	                PostBuffer += "...";
+
+                ContentSize = Request.TotalBytes;
+            }
 
 			return true;
 		}
 
-		/// <summary>
-		/// Takes the parsed error information from the object properties and parses this information into a string,
-		/// that can be displayed as plain text or in a browser. The string is formatted text and displays well
-		/// in a browser using a PRE tag.
-		///
-		/// Method also displays request information including:
-		/// 
-		/// Full Url
-		/// Refering Url
-		/// IP Address of caller
-		/// Client Browser
-		/// Full POST buffer 
-		/// 
-		/// Full handling also returns:
-		/// 
-		/// Stack Trace
-		/// Source code blocks of the 5 lines before and after failure line if and/or debugging info is available
-		/// <returns>Formatted Error string</returns>
-		public override string ToString() 
-		{
-			if (!IsParsed)
-				Parse();
+	    /// <summary>
+	    /// Takes the parsed error information from the object properties and parses this information into a string,
+	    /// that can be displayed as plain text or in a browser. The string is formatted text and displays well
+	    /// in a browser using a PRE tag.
+	    ///
+	    /// Method also displays request information including:
+	    /// 
+	    /// Full Url
+	    /// Refering Url
+	    /// IP Address of caller
+	    /// Client Browser
+	    /// Full POST buffer 
+	    /// 
+	    /// Full handling also returns:
+	    /// 
+	    /// Stack Trace
+	    /// Source code blocks of the 5 lines before and after failure line if and/or debugging info is available
+	    /// <returns>Formatted Error string</returns>
+	    public override string ToString()
+	    {
+	        if (!IsParsed)
+	            Parse();
 
-			StringBuilder sb = new StringBuilder();
+	        StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine(ErrorMessage + "\r\n\r\n");
+	        sb.AppendLine(ErrorMessage + "\r\n\r\n");
 
-            sb.AppendFormat("{0}\r\n\r\n",RawUrl);
-            			
-            sb.AppendLine(" Exception: " + LastError.ToString());
-			sb.AppendFormat( " on {0}\r\n",DateTime.Now.ToString().ToLower());            
+	        sb.AppendLine("--- Base Error Info ---");
+	        sb.AppendLine("Exception: " + LastError.GetType().Name);
+	        sb.AppendFormat("      Url: {0}\r\n", RawUrl);
+	        sb.AppendFormat("     Time: {0}\r\n", DateTime.Now.ToString("MMM dd, yyyy  HH:mm"));
 
 
-			if (CompactFormat)
-				return sb.ToString();
+	        if (CompactFormat)
+	            return sb.ToString();
 
-			if (StackTrace != "") 
-				sb.AppendFormat( "\r\n--- Stack Trace ---\r\n{0}\r\n\r\n",StackTrace); 	
 
-			if (SourceCode != "")
-				sb.Append(SourceCode);
+            if (!string.IsNullOrEmpty(SourceCode))
+	        {
+	            sb.AppendLine("\r\n--- Code ---");
+	            sb.Append(SourceCode);
+	        }
 
-			sb.Append("--- Request Information ---\r\n");
+	        if (!string.IsNullOrEmpty(StackTrace) )
+	            sb.AppendFormat("\r\n--- Stack Trace ---\r\n{0}\r\n\r\n", StackTrace);	    
+
+    	    sb.Append("\r\n--- Request Information ---\r\n");
 			sb.AppendFormat("  Full Url: {0}\r\n", FullUrl);
-			sb.AppendFormat("        IP: {0}\r\n",IPAddress );
+			sb.AppendFormat(" Client IP: {0}\r\n",IPAddress );
 			
 			if (Referer != "")
 				sb.AppendFormat("   Referer: {0}\r\n",Referer );
 
 			sb.AppendFormat("   Browser: {0}\r\n",Browser);
-
-			
 			sb.AppendFormat("     Login: {0}\r\n",Login);
-
 			sb.AppendFormat("    Locale: {0}\r\n",Locale);
 
 			if (PostBuffer != "")
