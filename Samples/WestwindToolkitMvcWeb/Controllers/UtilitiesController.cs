@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Westwind.Web;
+using Westwind.Web.Mvc;
 
 namespace WestwindToolkitMvcWeb.Controllers
 {
@@ -22,6 +23,14 @@ namespace WestwindToolkitMvcWeb.Controllers
     
 
             return View();
+        }
+
+        public string ViewRenderer()
+        {
+
+            var renderer = new ViewRenderer();
+            return renderer.RenderView("~/Views/Utilities/ScriptVariables.cshtml", null);
+
         }
 
         public string ErrorHandler()

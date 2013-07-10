@@ -24,7 +24,7 @@ namespace WestwindToolkitMvcWeb
             JSONSerializer.DefaultJsonParserType = SupportedJsonParserTypes.JsonNet;
 
             //AreaRegistration.RegisterAllAreas();
-            //WebApiConfig.Register(GlobalConfiguration.Configuration);
+            WebApiConfig.Register(GlobalConfiguration.Configuration);
             //BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);

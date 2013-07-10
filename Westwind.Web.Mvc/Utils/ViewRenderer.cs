@@ -21,9 +21,19 @@ namespace Westwind.Web.Mvc
         /// </summary>
         protected ControllerContext Context { get; set; }
 
-
-        public ViewRenderer(ControllerContext controllerContext)
+        /// <summary>
+        /// Initializes the ViewRenderer with a Context.
+        /// </summary>
+        /// <param name="controllerContext">
+        /// If you are running within the context of an ASP.NET MVC request pass in
+        /// the controller's context. 
+        /// Only leave out the context if no context is otherwise available.
+        /// </param>
+        public ViewRenderer(ControllerContext controllerContext = null)
         {
+            if (controllerContext == null)
+                controllerContext = CreateController<ErrorController>().ControllerContext;
+
             Context = controllerContext;
         }
 
@@ -201,31 +211,31 @@ namespace Westwind.Web.Mvc
         }
 
 
-        /// <summary>
-        /// Creates an instance of an MVC controller from scratch 
-        /// when no existing ControllerContext is present       
-        /// </summary>
-        /// <typeparam name="T">Type of the controller to create</typeparam>
-        /// <returns></returns>
-        public static T CreateController<T>(RouteData routeData = null)
-                 where T : Controller, new()
-        {
-            T controller = new T();
+/// <summary>
+/// Creates an instance of an MVC controller from scratch 
+/// when no existing ControllerContext is present       
+/// </summary>
+/// <typeparam name="T">Type of the controller to create</typeparam>
+/// <returns></returns>
+public static T CreateController<T>(RouteData routeData = null)
+            where T : Controller, new()
+{
+    T controller = new T();
 
-            // Create an MVC Controller Context
-            var wrapper = new HttpContextWrapper(System.Web.HttpContext.Current);
+    // Create an MVC Controller Context
+    var wrapper = new HttpContextWrapper(System.Web.HttpContext.Current);
 
-            if (routeData == null)
-                routeData = new RouteData();
+    if (routeData == null)
+        routeData = new RouteData();
 
-            if (!routeData.Values.ContainsKey("controller") && !routeData.Values.ContainsKey("Controller"))
-                routeData.Values.Add("controller", controller.GetType().Name
-                                                         .ToLower()
-                                                         .Replace("controller", ""));
+    if (!routeData.Values.ContainsKey("controller") && !routeData.Values.ContainsKey("Controller"))
+        routeData.Values.Add("controller", controller.GetType().Name
+                                                    .ToLower()
+                                                    .Replace("controller", ""));
 
-            controller.ControllerContext = new ControllerContext(wrapper, routeData, controller);
-            return controller;
-        }
+    controller.ControllerContext = new ControllerContext(wrapper, routeData, controller);
+    return controller;
+}
 
 
     }
