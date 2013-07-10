@@ -932,8 +932,13 @@ namespace Westwind.Data.EfCodeFirst
         /// <returns></returns>
         protected DbEntityEntry GetEntityEntry(object entity)
         {
-            return Context.ChangeTracker.Entries()
-                            .Where(ent => ent.Entity == entity).FirstOrDefault();
+            var res = Context.ChangeTracker.Entries()
+                          .FirstOrDefault(ent => ent.Entity == entity);
+
+            if (res == null)
+                return null;
+
+            return res;
         }
 
 
