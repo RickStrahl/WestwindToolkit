@@ -12,53 +12,59 @@ using Westwind.Utilities.Properties;
 namespace Westwind.Web
 {
 	/// <summary>
-	/// Class handles generating Error strings for admin email and optional program display
-	/// provides the same information that the ASP.Net error page displays, with the ability
-	/// to retrieve into string and emailing.
+	/// Class that can be used to parse ASP.NET and exception error information
+	/// into an object. This class is ideal for capturing information for logging,
+	/// notification and display of detailed error information.
+	/// 
+	/// Also supports complete Application_Error handling with the HandleError
+	/// method which works off an exception and provides a complete handler for
+	/// processing error information with hooks for logging and displaying
+	/// of an error page. 
 	/// </summary>
 	public class WebErrorHandler
-	{
-		/// <summary>
-		/// Name of the logfile. Filename is relative to the virtual Web root.
-		/// </summary>
-		public string LogFileName = "Errorlog.xml";
+	{		
+        /// <summary>
+        /// The last exception that the error parsing uses
+        /// for creating the error properties when calling
+        /// Parse().
+        /// </summary>
+        public Exception LastException { get; set;  }
 
-		public Exception LastError = null;
 		protected object WriteLock = new object();
 		protected bool IsParsed = false;
 		
 		/// <summary>
 		/// If true returns only the error message and URL.
 		/// </summary>
-		public bool CompactFormat = false;
+        public bool CompactFormat { get; set; }
 
 		/// <summary>
 		/// Determines whether the routines attempt to retrieve Source Code lines.
 		/// </summary>
-		public bool RetrieveSourceLines = true;
+        public bool RetrieveSourceLines { get; set;  }
 
 
 		/// <summary>
 		/// The runtime error message thrown by the application.
 		/// </summary>
-		public string ErrorMessage = "";
+        public string ErrorMessage { get; set; }
 
 		/// <summary>
 		/// The raw Web relative URL that caused this exception to occur. 
 		/// Example: /WebStore/Item.aspx?sku=WWHELP
 		/// </summary>
-		public string RawUrl = "";
+		public string RawUrl  {get; set;}
 
 		/// <summary>
 		/// The completely qualified Url to this request.
 		/// Example: http://www.west-wind.com/webstore/item.aspx?sku=WWSTOREDOTNET
 		/// </summary>
-		public string FullUrl = "";
+		public string FullUrl {get; set; }
 
 		/// <summary>
 		/// Stack trace listing as available from the runtime compiler
 		/// </summary>
-		public string StackTrace = "";
+        public string StackTrace { get; set; }
 
 		/// <summary>
 		/// The source code if available for the error that occurred. The code will include the 5 surrounding lines before and after.
@@ -66,68 +72,72 @@ namespace Westwind.Web
 		/// Source code is available only in Debug mode and if the source files are available on the server. Some errors that occur
 		/// inside of the .Net runtime itself or in ASP.Net pages also do not show the error.
 		/// </summary>
-		public string SourceCode = "";
+        public string SourceCode { get; set;  }
 
         /// <summary>
         /// Retrieves the source file if available
         /// </summary>
-	    public string SourceFile = "";
+        public string SourceFile { get; set; }
 
         /// <summary>
         /// Method where the error occurred
         /// </summary>
-	    public string SourceMethod = "";
+        public string SourceMethod { get; set;  }
 
         /// <summary>
         /// Line Number if available
         /// </summary>
-	    public int SourceLineNumber = 0; 
+        public int SourceLineNumber { get; set;  }
 
 		/// <summary>
 		/// The client's IP address
 		/// </summary>
-		public string IPAddress = "";
+		public string IPAddress  {get; set;}
 
 		/// <summary>
 		/// The username of the user attached if the user is authenticated. 
 		/// </summary>
-		public string Login = "";
+		public string Login {get; set; }
 
 		/// <summary>
 		/// The client's browser string.
 		/// </summary>
-		public string Browser = "";
+		public string Browser {get; set;}
 
 		/// <summary>
 		/// The referring Url that was used to access the current page that caused the error. 
 		/// </summary>
-		public string Referer = "";
+		public string Referer {get; set; }
 
 		/// <summary>
 		/// Content of the POST buffer if the page was posted. The size is limited to 2k. Larger buffers are stripped.
 		/// </summary>
-		public string PostBuffer = "";
+		public string PostBuffer {get; set; }
 
 		/// <summary>
 		/// The size of the POST buffer if data was posted.
 		/// </summary>
-		public int ContentSize = 0;
+		public int ContentSize {get; set; }
 
 		/// <summary>
 		/// The complete querystring.
 		/// </summary>
-		public string QueryString = "";
+		public string QueryString { get; set; }
 
 		/// <summary>
 		/// The Locale string returned by the browser
 		/// </summary>
-		public string Locale = "";
+		public string Locale {get; set; }
 
 		/// <summary>
 		/// The time the error was logged.
 		/// </summary>
-		public DateTime Time = DateTime.Now;
+		public DateTime Time  {get; set; }
 
+        /// <summary>
+        /// List of all server variables
+        /// </summary>
+        public string ServerVariables {get; set;}
 		
 		/// <summary>
 		/// Public constructor requires that an exception is passed in. Generally you'll want to do this is in Application_Error
@@ -135,22 +145,20 @@ namespace Westwind.Web
 		/// 
 		/// WebErrorHandler Handler = new WebErrorHandler(Server.GetLastError().InnerException);
 		/// </summary>
-		/// <param name="lastError">The Exception to log</param>
-		public WebErrorHandler(Exception lastError) 
+		/// <param name="lastException">The Exception to log</param>
+		public WebErrorHandler(Exception lastException = null) 
 		{
-			this.LastError = lastError;
+		    if (lastException == null && HttpContext.Current != null)
+		    {
+		        lastException = HttpContext.Current.Server.GetLastError();
+		        if (lastException != null)
+		            lastException = lastException.GetBaseException();
+		    }
+            
+            LastException = lastException;
+            RetrieveSourceLines = true;
 		}
 		
-		
-		/// <summary>
-		/// Parameterless constructor. Use only if you want to use the 
-		/// maintenance methods (Show, ClearLog etc)  of this class. All
-		/// processinging functions require that the Exception is passed.
-		/// </summary>
-		public WebErrorHandler() 
-		{
-		}
-
 
 
 	    /// <summary>
@@ -160,7 +168,7 @@ namespace Westwind.Web
 	    /// </summary>
 	    public bool Parse()
 	    {
-	        if (LastError == null)
+	        if (LastException == null)
 	            return false;
 
 	        IsParsed = true;
@@ -170,67 +178,16 @@ namespace Westwind.Web
 
 	        RawUrl = Request.RawUrl;
 
-	        if (LastError is System.IO.FileNotFoundException)
-	            ErrorMessage = "File not found: " + LastError.Message;
+	        if (LastException is System.IO.FileNotFoundException)
+	            ErrorMessage = "File not found: " + LastException.Message;
 	        else
-	            ErrorMessage = LastError.Message;
+	            ErrorMessage = LastException.Message;
 
 	        Time = DateTime.Now;
 
 	        if (CompactFormat)
 	            return true;
-
-
-	        this.StackTrace = LastError.StackTrace;
-	        if (RetrieveSourceLines)
-	        {
-	            StringBuilder sb = new StringBuilder(1024);
-
-	            // Try to retrieve Source Code information
-	            StackTrace st = new StackTrace(LastError, true);
-	            StackFrame sf = st.GetFrame(0);
-
-	            if (sf != null)
-	            {
-	                string Filename = sf.GetFileName();                    
-
-	                if (Filename != null && File.Exists(Filename))
-	                {
-                        SourceFile = Filename;
-	                    SourceLineNumber = sf.GetFileLineNumber();
-	                    SourceMethod = LastError.TargetSite.Name;
-
-	                    if (SourceLineNumber > 0)
-	                    {
-	                        StreamReader sr = new StreamReader(Filename);
-
-	                        // Read over unwanted lines
-	                        int x = 0;
-	                        for (x = 0; x < SourceLineNumber - 4; x++)
-	                            sr.ReadLine();
-	                        
-	                        sb.AppendFormat("  File: {0}\r\n", Filename);
-                            if (SourceLineNumber > 0)
-                                sb.AppendFormat("Line #: {0}\r\n", SourceLineNumber);
-                            sb.AppendFormat("Method: {0}\r\n", LastError.TargetSite);
-	                        sb.AppendLine();
-
-	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 1, sr.ReadLine());
-	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 2, sr.ReadLine());
-	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 3, sr.ReadLine());
-	                        sb.AppendFormat("<b>Line {0}: {1}</b>\r\n", x + 4, sr.ReadLine());
-	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 5, sr.ReadLine());
-	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 6, sr.ReadLine());
-	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 7, sr.ReadLine());
-
-	                        sr.Close();
-	                    }
-	                }
-	            }
-
-	            SourceCode = sb.ToString();
-	        }
-
+	        
 	        FullUrl = Request.Url.AbsoluteUri;
 	        //string.Format("http://{0}{1}", Request.ServerVariables["SERVER_NAME"], Request.RawUrl);
 	        IPAddress = Request.UserHostAddress;
@@ -266,8 +223,85 @@ namespace Westwind.Web
                 ContentSize = Request.TotalBytes;
             }
 
+	        ParseServerVariables();
+
+            ParseSourceCode();
+
 			return true;
 		}
+
+        /// <summary>
+        /// Parses all ServerVariables into a string
+        /// </summary>
+        private void ParseServerVariables()
+        {
+            var serverVars = HttpContext.Current.Request.ServerVariables;
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < serverVars.Count; i++)
+            {
+                string value = serverVars[i];
+                string key = serverVars.Keys[i];
+                sb.AppendFormat("{0:30}: {1}\r\n", key, value);
+            }
+            ServerVariables = sb.ToString();
+        }
+
+        /// <summary>
+        /// Parses source code related properties
+        /// </summary>
+	    private void ParseSourceCode()
+	    {
+            StackTrace = LastException.StackTrace;
+	        if (RetrieveSourceLines)
+	        {
+	            StringBuilder sb = new StringBuilder(1024);
+
+	            // Try to retrieve Source Code information
+	            StackTrace st = new StackTrace(LastException, true);
+	            StackFrame sf = st.GetFrame(0);
+
+	            if (sf != null)
+	            {
+	                string Filename = sf.GetFileName();                    
+
+	                if (Filename != null && File.Exists(Filename))
+	                {
+                        SourceFile = Filename;
+	                    SourceLineNumber = sf.GetFileLineNumber();
+	                    SourceMethod = LastException.TargetSite.Name;
+
+	                    if (SourceLineNumber > 0)
+	                    {
+	                        StreamReader sr = new StreamReader(Filename);
+
+	                        // Read over unwanted lines
+	                        int x = 0;
+	                        for (x = 0; x < SourceLineNumber - 4; x++)
+	                            sr.ReadLine();
+	                        
+	                        sb.AppendFormat("  File: {0}\r\n", Filename);
+                            if (SourceLineNumber > 0)
+                                sb.AppendFormat("Line #: {0}\r\n", SourceLineNumber);
+                            sb.AppendFormat("Method: {0}\r\n", LastException.TargetSite);
+	                        sb.AppendLine();
+
+	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 1, sr.ReadLine());
+	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 2, sr.ReadLine());
+	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 3, sr.ReadLine());
+	                        sb.AppendFormat("<b>Line {0}: {1}</b>\r\n", x + 4, sr.ReadLine());
+	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 5, sr.ReadLine());
+	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 6, sr.ReadLine());
+	                        sb.AppendFormat("Line {0}: {1}\r\n", x + 7, sr.ReadLine());
+
+	                        sr.Close();
+	                    }
+	                }
+	            }
+	            SourceCode = sb.ToString();
+	        }
+
+	    }
 
 	    /// <summary>
 	    /// Takes the parsed error information from the object properties and parses this information into a string,
@@ -297,7 +331,7 @@ namespace Westwind.Web
 	        sb.AppendLine(ErrorMessage + "\r\n\r\n");
 
 	        sb.AppendLine("--- Base Error Info ---");
-	        sb.AppendLine("Exception: " + LastError.GetType().Name);
+	        sb.AppendLine("Exception: " + LastException.GetType().Name);
 	        sb.AppendFormat("      Url: {0}\r\n", RawUrl);
 	        sb.AppendFormat("     Time: {0}\r\n", DateTime.Now.ToString("MMM dd, yyyy  HH:mm"));
 
@@ -319,15 +353,19 @@ namespace Westwind.Web
 			sb.AppendFormat("  Full Url: {0}\r\n", FullUrl);
 			sb.AppendFormat(" Client IP: {0}\r\n",IPAddress );
 			
-			if (Referer != "")
+			if (!string.IsNullOrEmpty(Referer))
 				sb.AppendFormat("   Referer: {0}\r\n",Referer );
 
 			sb.AppendFormat("   Browser: {0}\r\n",Browser);
 			sb.AppendFormat("     Login: {0}\r\n",Login);
 			sb.AppendFormat("    Locale: {0}\r\n",Locale);
 
-			if (PostBuffer != "")
+			if (!string.IsNullOrEmpty(PostBuffer))
 				sb.AppendFormat("\r\n\r\n--- Raw Post Buffer ---\r\n\r\n{0}",PostBuffer);
+
+
+            if (!string.IsNullOrEmpty(ServerVariables))
+                sb.AppendFormat("\r\n\r\n--- All Server Variables ---\r\n\r\n{0}", ServerVariables);
 
 			return sb.ToString();
 		}
@@ -367,7 +405,7 @@ namespace Westwind.Web
             if (LogManagerConfiguration.Current.LogErrors &&
                 resultCode < 400 || resultCode > 410)
             {                
-                OnLogError(errorHandler, LastError);
+                OnLogError(errorHandler, LastException);
             }
 
             var model = new ErrorViewModel();

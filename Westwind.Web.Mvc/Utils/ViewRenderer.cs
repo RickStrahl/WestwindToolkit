@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Web;
 using System.Web.Mvc;
 using System.IO;
@@ -104,7 +101,7 @@ namespace Westwind.Web.Mvc
                 ViewRenderer renderer = new ViewRenderer(controllerContext);
                 return renderer.RenderView(viewPath, model);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 errorMessage = ex.GetBaseException().Message;
             }
@@ -185,7 +182,7 @@ namespace Westwind.Web.Mvc
                 throw new FileNotFoundException(Resources.ViewCouldNotBeFound);
 
             // get the view and attach the model to view data
-            var view = viewEngineResult.View;            
+            var view = viewEngineResult.View;
             Context.Controller.ViewData.Model = model;
 
             string result = null;
@@ -195,7 +192,7 @@ namespace Westwind.Web.Mvc
                 var ctx = new ViewContext(Context, view,
                                             Context.Controller.ViewData,
                                             Context.Controller.TempData,
-                                            sw);                                
+                                            sw);
                 view.Render(ctx, sw);
                 result = sw.ToString();
             }
@@ -213,22 +210,23 @@ namespace Westwind.Web.Mvc
         public static T CreateController<T>(RouteData routeData = null)
                  where T : Controller, new()
         {
-            T controller = new T();            
-            
+            T controller = new T();
+
             // Create an MVC Controller Context
             var wrapper = new HttpContextWrapper(System.Web.HttpContext.Current);
-            
+
             if (routeData == null)
                 routeData = new RouteData();
 
             if (!routeData.Values.ContainsKey("controller") && !routeData.Values.ContainsKey("Controller"))
                 routeData.Values.Add("controller", controller.GetType().Name
                                                          .ToLower()
-                                                         .Replace("controller",""));
-            
+                                                         .Replace("controller", ""));
+
             controller.ControllerContext = new ControllerContext(wrapper, routeData, controller);
             return controller;
         }
-       
+
+
     }
 }

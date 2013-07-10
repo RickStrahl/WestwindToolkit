@@ -24,5 +24,21 @@ namespace WestwindToolkitMvcWeb.Controllers
             return View();
         }
 
+        public string ErrorHandler()
+        {
+            try
+            {
+                string x = null;
+                x.ToString();
+            }
+            catch (Exception ex)
+            {
+                var eh = new WebErrorHandler(ex);
+                return eh.ToString();
+            }
+
+            return null;
+        }
+
     }
 }
