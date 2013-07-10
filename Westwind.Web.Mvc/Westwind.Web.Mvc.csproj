@@ -83,7 +83,6 @@
     <Compile Include="ViewEngines\ThemeableVirtualPathProviderViewEngine.cs" />
     <Compile Include="ViewEngines\ThemeableWebformViewEngine.cs" />
     <Compile Include="ViewModelsAndHelpers\baseViewModel.cs" />
-    <Compile Include="ViewModelsAndHelpers\ErrorViewModel.cs" />
     <Compile Include="ViewModelsAndHelpers\PagingDetails.cs" />
   </ItemGroup>
   <ItemGroup>
