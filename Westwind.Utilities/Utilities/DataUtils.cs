@@ -224,7 +224,7 @@ namespace Westwind.Utilities
         /// <param name="target">The object to copy to</param>
         /// <param name="excludedProperties">A comma delimited list of properties that should not be copied</param>
         /// <param name="memberAccess">Reflection binding access</param>
-        public static void CopyObjectData(object source, object target, string excludedProperties, BindingFlags memberAccess)
+        public static void CopyObjectData(object source, object target, string excludedProperties = null, BindingFlags memberAccess = MemberAccess)
         {
             string[] excluded = null;
             if (!string.IsNullOrEmpty(excludedProperties))

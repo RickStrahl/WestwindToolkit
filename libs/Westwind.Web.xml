@@ -2797,6 +2797,41 @@
             </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Westwind.Web.WebErrorHandler.ToString" -->
+        <member name="M:Westwind.Web.WebErrorHandler.HandleError(Westwind.Web.ErrorHandlingModes)">
+            <summary>
+            Semi generic Application_Error handler method that can be used
+            to handle errors without additional code. You should implement
+            the DisplayError event and LogError Event methods to display
+            a message when ErrorHandlingModes is not Default
+            </summary>
+            <param name="errorHandlingMode"></param>
+        </member>
+        <member name="M:Westwind.Web.WebErrorHandler.OnLogError(Westwind.Web.WebErrorHandler,System.Exception)">
+            <summary>
+            Allows overriding for logging error information in a subclass
+            </summary>
+            <param name="error"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="M:Westwind.Web.WebErrorHandler.OnDisplayError(Westwind.Web.WebErrorHandler,Westwind.Web.ErrorViewModel)">
+            <summary>
+            Allows overriding of DisplayError
+            </summary>
+            <param name="error"></param>
+            <param name="model"></param>
+        </member>
+        <member name="E:Westwind.Web.WebErrorHandler.LogError">
+            <summary>
+            Fired when all error information has been collected and 
+            the information is ready for logging.
+            </summary>
+        </member>
+        <member name="E:Westwind.Web.WebErrorHandler.DisplayError">
+            <summary>
+            Fired when at the end of the error handling process when an error page 
+            needs to be displayed
+            </summary>
+        </member>
         <member name="T:Westwind.Utilities.WebUtils">
             <summary>
             Summary description for wwWebUtils.

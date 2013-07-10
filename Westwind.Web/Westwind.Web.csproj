@@ -67,6 +67,7 @@
     <Compile Include="Resources\ScriptLoader.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="WebErrorHandler\ErrorHandlingModes.cs" />
     <Compile Include="Utilities\UserState.cs" />
     <Compile Include="Utilities\ScriptCompressionModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -78,7 +79,8 @@
     <Compile Include="Utilities\ExtensionMethods\HttpResponseExtensions.cs" />
     <Compile Include="Utilities\FormVariableBinder.cs" />
     <Compile Include="Utilities\ResponseFilterStream.cs" />
-    <Compile Include="Utilities\WebErrorHandler.cs" />
+    <Compile Include="WebErrorHandler\ErrorViewModel.cs" />
+    <Compile Include="WebErrorHandler\WebErrorHandler.cs" />
     <Compile Include="Utilities\WebUtils.cs" />
   </ItemGroup>
   <ItemGroup>

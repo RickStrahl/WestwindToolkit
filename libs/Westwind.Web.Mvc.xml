@@ -82,7 +82,7 @@
             <param name="redirectTo"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorFromModel(Westwind.Web.Mvc.ErrorViewModel)">
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorFromModel(Westwind.Web.ErrorViewModel)">
             <summary>
             Displays a generic error message but allows passing a view model directly for 
             additional flexibility
@@ -90,7 +90,7 @@
             <param name="errorModel"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorViewPage(System.String,Westwind.Web.Mvc.ErrorViewModel)">
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorViewPage(System.String,Westwind.Web.ErrorViewModel)">
             <summary>
             This method allows displaying an error page you specify
             and pass an optional ErrorViewModel as a parameter
@@ -119,7 +119,7 @@
             <param name="redirectTo"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorPageResult(Westwind.Web.Mvc.ErrorViewModel)">
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorPageResult(Westwind.Web.ErrorViewModel)">
             <summary>
             Static method that can be called from outside of MVC requests
             (like in Application_Error) to display an error View.
@@ -135,13 +135,13 @@
             <param name="redirectTo"></param>
             <param name="messageIsHtml"></param>
         </member>
-        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorPage(Westwind.Web.Mvc.ErrorViewModel)">
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorPage(Westwind.Web.ErrorViewModel)">
             <summary>
             Static method that can be called from outside of MVC requests
             (like in Application_Error) to display an error View.
             </summary>
         </member>
-        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorPageFromView(System.String,Westwind.Web.Mvc.ErrorViewModel)">
+        <member name="M:Westwind.Web.Mvc.ErrorController.ShowErrorPageFromView(System.String,Westwind.Web.ErrorViewModel)">
             <summary>
             Allows you to display an arbitrary view and pass an optional
             ErrorViewModel for it. In short it's a shortcut way to just
@@ -573,6 +573,14 @@
             <param name="model">Model to render the view with</param>
             <param name="partial">Determines whether to render a full or partial view</param>
             <returns>String of the rendered view</returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.CreateController``1(System.Web.Routing.RouteData)">
+            <summary>
+            Creates an instance of an MVC controller from scratch 
+            when no existing ControllerContext is present       
+            </summary>
+            <typeparam name="T">Type of the controller to create</typeparam>
+            <returns></returns>
         </member>
         <member name="P:Westwind.Web.Mvc.ViewRenderer.Context">
             <summary>

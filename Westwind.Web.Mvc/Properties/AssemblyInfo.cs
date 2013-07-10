@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Westwind.Web.Mvc")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("ASP.NET MVC Helper, Utilities and Widgets")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Westwind Technologies")]
 [assembly: AssemblyProduct("Westwind.Web.Mvc")]
-[assembly: AssemblyCopyright("Copyright © West Wind Technologies, 2011-2012")]
+[assembly: AssemblyCopyright("Copyright © West Wind Technologies, 2011-2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
