@@ -211,31 +211,44 @@ namespace Westwind.Web.Mvc
         }
 
 
-/// <summary>
-/// Creates an instance of an MVC controller from scratch 
-/// when no existing ControllerContext is present       
-/// </summary>
-/// <typeparam name="T">Type of the controller to create</typeparam>
-/// <returns></returns>
-public static T CreateController<T>(RouteData routeData = null)
-            where T : Controller, new()
-{
-    T controller = new T();
+        /// <summary>
+        /// Creates an instance of an MVC controller from scratch 
+        /// when no existing ControllerContext is present       
+        /// </summary>
+        /// <typeparam name="T">Type of the controller to create</typeparam>
+        /// <returns></returns>
+        public static T CreateController<T>(RouteData routeData = null)
+                    where T : Controller, new()
+        {
+            T controller = new T();
 
-    // Create an MVC Controller Context
-    var wrapper = new HttpContextWrapper(System.Web.HttpContext.Current);
+            // Create an MVC Controller Context
+            HttpContextBase wrapper = null;
+            if (HttpContext.Current != null)
+                wrapper = new HttpContextWrapper(System.Web.HttpContext.Current);
+            else
+                wrapper = CreateHttpContextBase(new StringWriter());
 
-    if (routeData == null)
-        routeData = new RouteData();
 
-    if (!routeData.Values.ContainsKey("controller") && !routeData.Values.ContainsKey("Controller"))
-        routeData.Values.Add("controller", controller.GetType().Name
-                                                    .ToLower()
-                                                    .Replace("controller", ""));
+            if (routeData == null)
+                routeData = new RouteData();
 
-    controller.ControllerContext = new ControllerContext(wrapper, routeData, controller);
-    return controller;
-}
+            if (!routeData.Values.ContainsKey("controller") && !routeData.Values.ContainsKey("Controller"))
+                routeData.Values.Add("controller", controller.GetType().Name
+                                                            .ToLower()
+                                                            .Replace("controller", ""));
+
+            controller.ControllerContext = new ControllerContext(wrapper, routeData, controller);
+            return controller;
+        }
+
+        static HttpContextBase CreateHttpContextBase(TextWriter writer)
+        {
+            return new HttpContextWrapper(new HttpContext(
+                new HttpRequest("", "http://localhost", ""),
+                new HttpResponse(writer)
+            ));
+        }
 
 
     }
