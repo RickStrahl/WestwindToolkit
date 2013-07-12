@@ -478,6 +478,16 @@
             applications that have an active ControllerContext.
             </summary>
         </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.#ctor(System.Web.Mvc.ControllerContext)">
+            <summary>
+            Initializes the ViewRenderer with a Context.
+            </summary>
+            <param name="controllerContext">
+            If you are running within the context of an ASP.NET MVC request pass in
+            the controller's context. 
+            Only leave out the context if no context is otherwise available.
+            </param>
+        </member>
         <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderView(System.String,System.Object)">
             <summary>
             Renders a full MVC view to a string. Will render with the full MVC

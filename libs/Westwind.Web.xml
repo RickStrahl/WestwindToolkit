@@ -1840,6 +1840,29 @@
             in Release mode.
             </summary>
         </member>
+        <member name="F:Westwind.Web.ErrorHandlingModes.Default">
+            <summary>
+            Default error display mode uses ASP.NET default
+            behavior: Yellow screen of death or ASP.NET 
+            error display configured.
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.ErrorHandlingModes.ApplicationErrorMessage">
+            <summary>
+            An application specific error message meant to 
+            be seen by end users. Typically this mode display
+            only a fixed error message and no or limited
+            error details.
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.ErrorHandlingModes.DeveloperErrorMessage">
+            <summary>
+            Display the application specific error message
+            but also adds additional developer information 
+            that provides debugging information to a developer
+            while the app is running in production.
+            </summary>
+        </member>
         <member name="T:Westwind.Web.UserState">
             <summary>
             User information container that can easily 'serialize'
@@ -2661,116 +2684,56 @@
             
             </summary>
         </member>
+        <member name="T:Westwind.Web.ApplicationErrorModule">
+            <summary>
+            Application Error Module that can be used to handle
+            errors.
+            
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.ApplicationErrorModule.OnInitializeErrorHandlingMode">
+            <summary>
+             Override this method to set the error handling mode
+            which is configured when the appplication starts.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.ApplicationErrorModule.OnDisplayError(Westwind.Web.WebErrorHandler,Westwind.Web.ErrorViewModel)">
+            <summary>
+            Override this method to handle displaying of error information.
+            You can write to the HTTP output stream. If using MVC you can
+            use the Westwind.Web.ViewRenderer class to easily display an
+            MVC view.
+            </summary>
+            <param name="errorHandler"></param>
+            <param name="model"></param>
+        </member>
+        <member name="M:Westwind.Web.ApplicationErrorModule.OnLogError(Westwind.Web.WebErrorHandler,System.Exception)">
+            <summary>
+            Override this method to handle logging of errors. Gets passed
+            the WebErrorHandler instance that is fully parsed and filled
+            with the error and Http request data.
+            </summary>
+            <param name="errorHandler"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="P:Westwind.Web.ApplicationErrorModule.ErrorHandlingMode">
+            <summary>
+            Determines the error handling mode - 
+            if you want to customize this value override it
+            in your application's startup code or from a configuration
+            value by overriding the Init().
+            </summary>
+        </member>
         <member name="T:Westwind.Web.WebErrorHandler">
             <summary>
-            Class handles generating Error strings for admin email and optional program display
-            provides the same information that the ASP.Net error page displays, with the ability
-            to retrieve into string and emailing.
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.LogFileName">
-            <summary>
-            Name of the logfile. Filename is relative to the virtual Web root.
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.CompactFormat">
-            <summary>
-            If true returns only the error message and URL.
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.RetrieveSourceLines">
-            <summary>
-            Determines whether the routines attempt to retrieve Source Code lines.
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.ErrorMessage">
-            <summary>
-            The runtime error message thrown by the application.
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.RawUrl">
-            <summary>
-            The raw Web relative URL that caused this exception to occur. 
-            Example: /WebStore/Item.aspx?sku=WWHELP
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.FullUrl">
-            <summary>
-            The completely qualified Url to this request.
-            Example: http://www.west-wind.com/webstore/item.aspx?sku=WWSTOREDOTNET
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.StackTrace">
-            <summary>
-            Stack trace listing as available from the runtime compiler
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.SourceCode">
-            <summary>
-            The source code if available for the error that occurred. The code will include the 5 surrounding lines before and after.
+            Class that can be used to parse ASP.NET and exception error information
+            into an object. This class is ideal for capturing information for logging,
+            notification and display of detailed error information.
             
-            Source code is available only in Debug mode and if the source files are available on the server. Some errors that occur
-            inside of the .Net runtime itself or in ASP.Net pages also do not show the error.
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.SourceFile">
-            <summary>
-            Retrieves the source file if available
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.SourceMethod">
-            <summary>
-            Method where the error occurred
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.SourceLineNumber">
-            <summary>
-            Line Number if available
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.IPAddress">
-            <summary>
-            The client's IP address
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.Login">
-            <summary>
-            The username of the user attached if the user is authenticated. 
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.Browser">
-            <summary>
-            The client's browser string.
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.Referer">
-            <summary>
-            The referring Url that was used to access the current page that caused the error. 
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.PostBuffer">
-            <summary>
-            Content of the POST buffer if the page was posted. The size is limited to 2k. Larger buffers are stripped.
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.ContentSize">
-            <summary>
-            The size of the POST buffer if data was posted.
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.QueryString">
-            <summary>
-            The complete querystring.
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.Locale">
-            <summary>
-            The Locale string returned by the browser
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.WebErrorHandler.Time">
-            <summary>
-            The time the error was logged.
+            Also supports complete Application_Error handling with the HandleError
+            method which works off an exception and provides a complete handler for
+            processing error information with hooks for logging and displaying
+            of an error page. 
             </summary>
         </member>
         <member name="M:Westwind.Web.WebErrorHandler.#ctor(System.Exception)">
@@ -2780,20 +2743,23 @@
             
             WebErrorHandler Handler = new WebErrorHandler(Server.GetLastError().InnerException);
             </summary>
-            <param name="lastError">The Exception to log</param>
-        </member>
-        <member name="M:Westwind.Web.WebErrorHandler.#ctor">
-            <summary>
-            Parameterless constructor. Use only if you want to use the 
-            maintenance methods (Show, ClearLog etc)  of this class. All
-            processinging functions require that the Exception is passed.
-            </summary>
+            <param name="lastException">The Exception to log</param>
         </member>
         <member name="M:Westwind.Web.WebErrorHandler.Parse">
             <summary>
             Parses the Exception into properties of this object. Called internally 
             by LogError, but can also be called externally to get easier information
             about the error through the property interface.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.WebErrorHandler.ParseServerVariables">
+            <summary>
+            Parses all ServerVariables into a string
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.WebErrorHandler.ParseSourceCode">
+            <summary>
+            Parses source code related properties
             </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Westwind.Web.WebErrorHandler.ToString" -->
@@ -2819,6 +2785,123 @@
             </summary>
             <param name="error"></param>
             <param name="model"></param>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.LastException">
+            <summary>
+            The last exception that the error parsing uses
+            for creating the error properties when calling
+            Parse().
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.CompactFormat">
+            <summary>
+            If true returns only the error message and URL.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.RetrieveSourceLines">
+            <summary>
+            Determines whether the routines attempt to retrieve Source Code lines.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.ErrorMessage">
+            <summary>
+            The runtime error message thrown by the application.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.RawUrl">
+            <summary>
+            The raw Web relative URL that caused this exception to occur. 
+            Example: /WebStore/Item.aspx?sku=WWHELP
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.FullUrl">
+            <summary>
+            The completely qualified Url to this request.
+            Example: http://www.west-wind.com/webstore/item.aspx?sku=WWSTOREDOTNET
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.StackTrace">
+            <summary>
+            Stack trace listing as available from the runtime compiler
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.SourceCode">
+            <summary>
+            The source code if available for the error that occurred. The code will include the 5 surrounding lines before and after.
+            
+            Source code is available only in Debug mode and if the source files are available on the server. Some errors that occur
+            inside of the .Net runtime itself or in ASP.Net pages also do not show the error.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.SourceFile">
+            <summary>
+            Retrieves the source file if available
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.SourceMethod">
+            <summary>
+            Method where the error occurred
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.SourceLineNumber">
+            <summary>
+            Line Number if available
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.IPAddress">
+            <summary>
+            The client's IP address
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.Login">
+            <summary>
+            The username of the user attached if the user is authenticated. 
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.Browser">
+            <summary>
+            The client's browser string.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.Referer">
+            <summary>
+            The referring Url that was used to access the current page that caused the error. 
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.PostBuffer">
+            <summary>
+            Content of the POST buffer if the page was posted. The size is limited to 2k. Larger buffers are stripped.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.ContentSize">
+            <summary>
+            The size of the POST buffer if data was posted.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.QueryString">
+            <summary>
+            The complete querystring.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.Locale">
+            <summary>
+            The Locale string returned by the browser
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.Time">
+            <summary>
+            The time the error was logged.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.ServerVariables">
+            <summary>
+            List of all server variables
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebErrorHandler.OriginalHttpStatusCode">
+            <summary>
+            Gets the HTTP Status Code
+            </summary>
         </member>
         <member name="E:Westwind.Web.WebErrorHandler.LogError">
             <summary>

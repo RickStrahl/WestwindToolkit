@@ -138,6 +138,11 @@ namespace Westwind.Web
         /// List of all server variables
         /// </summary>
         public string ServerVariables {get; set;}
+
+        /// <summary>
+        /// Gets the HTTP Status Code
+        /// </summary>
+        public int OriginalHttpStatusCode { get; set;  }
 		
 		/// <summary>
 		/// Public constructor requires that an exception is passed in. Generally you'll want to do this is in Application_Error
@@ -352,13 +357,14 @@ namespace Westwind.Web
     	    sb.Append("\r\n--- Request Information ---\r\n");
 			sb.AppendFormat("  Full Url: {0}\r\n", FullUrl);
 			sb.AppendFormat(" Client IP: {0}\r\n",IPAddress );
-			
+	        			
 			if (!string.IsNullOrEmpty(Referer))
 				sb.AppendFormat("   Referer: {0}\r\n",Referer );
 
 			sb.AppendFormat("   Browser: {0}\r\n",Browser);
 			sb.AppendFormat("     Login: {0}\r\n",Login);
 			sb.AppendFormat("    Locale: {0}\r\n",Locale);
+            sb.AppendFormat("    Status: {0}\r\n", OriginalHttpStatusCode);
 
 			if (!string.IsNullOrEmpty(PostBuffer))
 				sb.AppendFormat("\r\n\r\n--- Raw Post Buffer ---\r\n\r\n{0}",PostBuffer);
@@ -392,18 +398,18 @@ namespace Westwind.Web
 
             var ex = Server.GetLastError().GetBaseException();
 
-            int resultCode = 200;
+            OriginalHttpStatusCode = 500;
             if (ex is HttpException)
             {
                 var httpException = (HttpException)ex;
-                resultCode = httpException.GetHttpCode();
+                OriginalHttpStatusCode = httpException.GetHttpCode();
             }
 
             var errorHandler = new WebErrorHandler(ex);
             errorHandler.Parse();
 
             if (LogManagerConfiguration.Current.LogErrors &&
-                resultCode < 400 || resultCode > 410)
+                OriginalHttpStatusCode < 400 || OriginalHttpStatusCode > 410)
             {                
                 OnLogError(errorHandler, LastException);
             }
