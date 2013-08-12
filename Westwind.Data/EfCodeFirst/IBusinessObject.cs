@@ -8,6 +8,6 @@ namespace Westwind.Data.EfCodeFirst
     /// </summary>
     public interface IBusinessObject<TContext>
     {
-        TContext Context { get; }
+        TContext Context { get; set; }
     }
 }

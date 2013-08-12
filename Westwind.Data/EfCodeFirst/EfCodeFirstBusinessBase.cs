@@ -19,20 +19,33 @@ namespace Westwind.Data.EfCodeFirst
 {
     
     /// <summary>
-    /// Business object base class that acts as a container for a base entity
-    /// type and a DbContext instance. Subclasses of this business object
-    /// should be used to implement most data related logic that deals with
-    /// creating, updating, removing and querying of data use EF Code First.
+    /// Light weight Entity Framework Code First Business object base class
+    /// that acts as a logic container for an entity DbContext instance. 
+    /// 
+    /// Subclasses of this business object should be used to implement most data
+    /// related logic that deals with creating, updating, removing and querying 
+    /// of data use EF Code First.
     /// 
     /// The business object provides base CRUD methods like Load, NewEntity,
-    /// Remove. The Save() method uses the EF specific context based SaveChanges
+    /// Remove that act on the specified entity type. The Save() method uses
+    /// the EF specific context based SaveChanges
     /// which saves all pending changes (not just those for the current entity 
-    /// and its relations). As such these business objects should be used as
-    /// atomically as possible and call Save() as often as possible to change
-    /// pending data.
+    /// and its relations). 
+    /// 
+    /// These business objects should be used as atomically as possible and 
+    /// call Save() as often as possible to update pending data.
     /// </summary>
-    /// <typeparam name="TEntity"></typeparam>
-    /// <typeparam name="TContext"></typeparam>
+    /// <typeparam name="TEntity">
+    /// The type of the 'primary' entity that this business object is tied to. 
+    /// Note that you can access any of the context's entities - this entity
+    /// is meant as a 'top level' entity that controls the operations of
+    /// the CRUD methods.
+    /// Maps to the Entity property.
+    /// </typeparam>
+    /// <typeparam name="TContext">
+    /// The type of the context that is attached to the this business object.
+    /// Maps to the Context property. 
+    /// </typeparam>
     public class EfCodeFirstBusinessBase<TEntity, TContext> : IDisposable, IBusinessObject<TContext>
         where TEntity : class, new()
         where TContext : DbContext,new()
@@ -124,7 +137,7 @@ namespace Westwind.Data.EfCodeFirst
 
         /// <summary>
         /// Instance of an exception object that caused the last error
-        /// </summary>            img
+        /// </summary>
         [NotMapped]
         [XmlIgnore]
         public Exception ErrorException
@@ -174,7 +187,7 @@ namespace Westwind.Data.EfCodeFirst
         public EfCodeFirstBusinessBase(IBusinessObject<TContext> parentBusinessObject)
         {
             InitializeInternal(); 
-            Context = parentBusinessObject.Context as TContext;
+            Context = parentBusinessObject.Context;
             Initialize();
         }
 
@@ -709,13 +722,16 @@ namespace Westwind.Data.EfCodeFirst
 
         /// <summary>
         /// Validate() is used to validate business rules on the business object. 
-        /// Generally this method consists of a bunch of if statements that validate 
-        /// the data of the business object and adds any errors to the 
-        /// <see>wwBusiness.ValidationErrors</see> collection.
+        /// Validates both EF entity validation rules on pending changes as well
+        /// as any custom validation rules you implement in the OnValidate() method.
         /// 
-        /// If the <see>wwBusiness.AutoValidate</see> flag is set to true causes Save()
-        ///  to automatically call this method. Must be overridden to perform any 
+        /// Do not override this method for custom Validation(). Instead override
+        /// OnValidate() or add error entries to the ValidationErrors collection.        
+        /// <remarks>
+        /// If the AutoValidate flag is set to true causes Save()
+        /// to automatically call this method. Must be overridden to perform any 
         /// validation.
+        /// </remarks>
         /// <seealso>Class wwBusiness Class ValidationErrorCollection</seealso>
         /// </summary>
         /// <param name="entity">Optional entity to validate. Defaults to this.Entity</param>
@@ -854,13 +870,14 @@ namespace Westwind.Data.EfCodeFirst
         #endregion
 
         /// <summary>
-        /// Passes the DbContext from the current business object to the 
-        /// a child business object so all operations are running
-        /// in the same context. This allows sharing of Business
-        /// object logic in the same context
+        /// Makes a separate business object a child business object,
+        /// which inherits the DbContext instance of its parent.
+        ///
+        /// Use this method to make both parent and child business
+        /// object to share a single DbContext.
         /// </summary>
         /// <param name="childBusObject"></param>
-        protected void SetChildBusinessObject(EfCodeFirstBusinessBase<TEntity, TContext> childBusObject)
+        protected void SetChildBusinessObject(IBusinessObject<TContext> childBusObject)
         {
             childBusObject.Context = Context;
         }
