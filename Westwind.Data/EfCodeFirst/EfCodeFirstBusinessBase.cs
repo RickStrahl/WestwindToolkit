@@ -86,8 +86,8 @@ namespace Westwind.Data.EfCodeFirst
         ObjectContext _objectContext;
 
         /// <summary>
-        /// A collection that can be used to hold errors. This collection
-        /// is set by the AddValidationError method.
+        /// A collection that can be used to hold errors or
+        /// validation errors. This 
         /// </summary>
         [XmlIgnore]
         [NotMapped]
