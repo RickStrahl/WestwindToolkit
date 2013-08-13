@@ -185,7 +185,7 @@ namespace Westwind.Utilities.Configuration
                     ReflectionUtils.SetPropertyEx(config, fieldName,
                         ReflectionUtils.StringToTypedValue(value, fieldType, CultureInfo.InvariantCulture));
                 }
-                catch { ;}
+                catch { }
             }
 
             // We have to write any missing keys

@@ -45,152 +45,26 @@ using System.Diagnostics;
 
 namespace Westwind.Utilities.Configuration
 {
+
     /// <summary>
-    /// This class provides a strongly typed configuration base class that can read
-    ///  and write configuration data from various configuration stores including 
-    /// .NET .config files, plain XML files, strings and SQL Server databases.
+    /// This class provides a base class for code-first, strongly typed configuration 
+    /// settings in .NET. It supports storing of configuration data in
+    /// .NET .config files, plain XML files, strings and SQL Server databases and
+    /// custom providers.
     /// 
-    /// This mechanism uses a class-first approach to configuration management 
-    /// where you declare your configuration settings as simple class properties on
-    ///  a subclass of this abstract class. The class then automatically reads 
-    /// configuration information from the configuration store into the class' 
-    /// properties. If settings don't exist they are auto-created, permissions 
-    /// permitting. You can create multiple configuration objects. The advantage of
-    ///  this class centric approach is that your configuration is not bound to any
-    ///  particular environment - you can use the configuration in a Web, desktop, 
-    /// console or service app using the same mechanism.
+    /// Using this class is easy: Create a subclass of AppConfiguration and 
+    /// then simply add properties to the class. Then instantiate the class, 
+    /// call Initialize(), then simply access the class 
+    /// properties to read configuration values.
     /// 
-    /// Using this class is easy: You create a subclass of AppConfiguration add a 
-    /// constructor (or two) and then simply add properties to the class. The 
-    /// implementation will handle persistence transparently. Typical 
-    /// implementation defines the configuration class as a static property on a 
-    /// global object of some sort (ie. App.Configuration.MySetting).
-    /// 
-    /// Storage is configured via a configuration provider that configures provider
-    ///  specific features. The configuration class then uses the provider to read 
-    /// and write data from the configuration store. The base providers also 
-    /// support encryption of individual fields.
+    /// The default implementation uses standard .NET configuration files and a 
+    /// custom section within that file to hold configuration values. Other 
+    /// providers can be used to store data to different stores and you can create 
+    /// your own custom providers to store configuration data in yet other stores.
     /// <seealso>Managing Configuration Settings with AppConfiguration</seealso>
     /// </summary>
-    /// <example>
-    /// &lt;&lt;/pre&gt;&gt;&lt;&lt;b&gt;&gt;Class Implementation&lt;&lt;/b&gt;&gt;    
-    /// &lt;&lt;code lang=&quot;C#&quot;&gt;&gt;/// &lt;summary&gt;
-    /// /// Your application specific config class
-    /// /// &lt;/summary&gt;
-    /// public class ApplicationConfiguration : 
-    /// Westwind.Utilities.Configuration.AppConfiguration
-    /// {
-    ///     public ApplicationConfiguration()
-    ///     { }
-    /// 
-    ///     public ApplicationConfiguration(IConfigurationProvider provider)
-    ///         : base(provider, "&quot;ApplicationConfiguration&quot;)
-    ///     {
-    ///         if (provider == null)
-    ///         {
-    ///             Provider = new
-    ///                  
-    /// ConfigationFileConfigurationProvider&lt;ApplicationConfiguration&gt;()
-    ///             {
-    ///                 PropertiesToEncrypt = 
-    /// &quot;MailServerPassword,ConnectionString&quot;,
-    ///                 EncryptionKey = &quot;secret&quot;,
-    ///                 ConfigurationSection = &quot;ApplicationConfiguration&quot;
-    ///             };
-    /// 
-    ///             // Example of Sql configuration
-    ///             //Provider = new
-    ///             //   
-    /// SqlServerConfigurationProvider&lt;ApplicationConfiguration&gt;()
-    ///             //{
-    ///             //    FieldsToEncrypt = 
-    /// &quot;MailServerPassword,ConnectionString&quot;,
-    ///             //    EncryptKey = &quot;secret&quot;,
-    ///             //    ConnectionString = &quot;DevSampleConnectionString&quot;,
-    ///             //    Tablename = &quot;Configuration&quot;,
-    ///             //    Key = 1
-    ///             //};
-    ///             // Example of external XML configuration
-    ///             //Provider = new 
-    /// XmlFileConfigurationProvider&lt;ApplicationConfiguration&gt;()
-    ///             //{
-    ///             //    FieldsToEncrypt = 
-    /// &quot;MailServerPassword,ConnectionString&quot;,
-    ///             //    EncryptKey = &quot;secret&quot;,
-    ///             //    XmlConfigurationFile =
-    ///             //         
-    /// HttpContext.Current.Server.MapPath(&quot;~/Configuration.xml&quot;)
-    ///             //};
-    ///         }
-    ///         else
-    ///             Provider = provider;
-    /// 
-    ///         Provider.Read(this);
-    ///     }
-    /// 
-    /// 	// persisted configuration properties - note type suppport
-    ///     public string ApplicationTitle
-    ///     {
-    ///         get { return _ApplicationTitle; }
-    ///         set { _ApplicationTitle = value; }
-    ///     }
-    ///     private string _ApplicationTitle = &quot;West Wind Web Toolkit&quot;;
-    /// 
-    ///     public string ConnectionString
-    ///     {
-    ///         get { return _ConnectionString; }
-    ///         set { _ConnectionString = value; }
-    ///     }
-    ///     private string _ConnectionString = &quot;&quot;;
-    /// 
-    ///     public DebugModes DebugMode
-    ///     {
-    ///         get { return _DebugMode; }
-    ///         set { _DebugMode = value; }
-    ///     }
-    ///     private DebugModes _DebugMode =
-    ///                            DebugModes.ApplicationErrorMessage;
-    /// 
-    ///     public int MaxPageItems
-    ///     {
-    ///         get { return _MaxPageItems; }
-    ///         set { _MaxPageItems = value; }
-    ///     }
-    ///     private int _MaxPageItems = 20;
-    /// }&lt;&lt;/code&gt;&gt;
-    /// 
-    /// &lt;&lt;b&gt;&gt;Class Hookup as a static Property&lt;&lt;/b&gt;&gt;
-    /// 
-    /// &lt;&lt;code lang=&quot;C#&quot;&gt;&gt;public class App
-    /// {
-    ///     public static ApplicationConfiguration Configuration
-    ///     {
-    ///         get { return _Configuration; }
-    ///         set { _Configuration = value; }
-    ///     }
-    ///     private static ApplicationConfiguration _Configuration;
-    /// 
-    ///     static App()
-    ///     {
-    ///         /// Load the general Application config properties from the Config 
-    /// file
-    ///         Configuration = new ApplicationConfiguration(null);
-    /// 
-    ///     }
-    /// }
-    /// &lt;&lt;/code&gt;&gt;
-    /// 
-    /// &lt;&lt;b&gt;&gt;Usage from anywhere in the Application&lt;&lt;/b&gt;&gt;
-    /// 
-    /// &lt;&lt;code lang=&quot;C#&quot;&gt;&gt;var title = 
-    /// App.Configuration.ApplicationTitle;
-    /// if (App.Configuration.DebugMode == DebugModes.Default)
-    ///    throw new ApplicationException(&quot;Boo&quot;);
-    /// &lt;&lt;/code&gt;&gt;
-    /// </example>
     public abstract class AppConfiguration
     {
-
         /// <summary>
         /// An instance of a IConfigurationProvider that
         /// needs to be passed in via constructor or set
@@ -267,10 +141,10 @@ namespace Westwind.Utilities.Configuration
         /// If all you need is to create a default provider configuration
         /// use the OnCreateDefaultProvider() method to override instead.
         /// Use this method if you need to perform custom actions beyond
-        /// standard instantiation.
+        /// provider instantiation.
         /// </summary>
-        /// <param name="provider">Provider value - can be null</param>
-        /// <param name="sectionName">Sub Section name - can be null</param>
+        /// <param name="provider">Provider value - can be null in which case ConfigurationFileProvider is used</param>
+        /// <param name="sectionName">Sub Section name - can be null. Classname is used if null. Can be "appSettings" </param>
         /// <param name="configData">
         /// Any additional configuration data that can be used to
         /// configure the provider.
