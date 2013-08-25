@@ -473,9 +473,6 @@
             <summary>
             Class that renders MVC views to a string using the
             standard MVC View Engine to render the view. 
-            
-            Note: This class can only be used within MVC 
-            applications that have an active ControllerContext.
             </summary>
         </member>
         <member name="M:Westwind.Web.Mvc.ViewRenderer.#ctor(System.Web.Mvc.ControllerContext)">
@@ -590,7 +587,8 @@
             when no existing ControllerContext is present       
             </summary>
             <typeparam name="T">Type of the controller to create</typeparam>
-            <returns></returns>
+            <returns>Controller Context for T</returns>
+            <exception cref="T:System.InvalidOperationException">thrown if HttpContext not available</exception>
         </member>
         <member name="P:Westwind.Web.Mvc.ViewRenderer.Context">
             <summary>
