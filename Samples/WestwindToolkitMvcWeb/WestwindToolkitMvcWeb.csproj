@@ -131,7 +131,6 @@
   <ItemGroup>
     <Compile Include="Controllers\UtilitiesApiController.cs" />
     <Compile Include="Controllers\UtilitiesController.cs" />
-    <Compile Include="GlimpseSecurityPolicy.cs" />
     <Compile Include="_App_Code\App_Start\BundleConfig.cs" />
     <Compile Include="_App_Code\App_Start\FilterConfig.cs" />
     <Compile Include="_App_Code\App_Start\RouteConfig.cs" />

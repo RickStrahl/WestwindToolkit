@@ -13,12 +13,25 @@ namespace Westwind.Utilities.Test
         {
             string orig = @"c:\sailbig.jpg";
             string work = @"c:\sailbig2.jpg";
-            string rotated = @"c:\sailbig.jpg.copy";
+            string rotated = @"c:\sailbig.copy.jpg";
 
             File.Copy(orig,work,true);
             ImageUtils.RoateImage(work,rotated,RotateFlipType.Rotate270FlipNone);            
             File.Copy(rotated,work,true);
 
+        }
+
+        [TestMethod]
+        public void RotateFileToSelfFileTest()
+        {
+            string orig = @"c:\sailbig.jpg";
+
+            // work on sailbig3 and write output to sailbig3
+            string work = @"c:\sailbig3.jpg";
+            string rotated = @"c:\sailbig3.jpg";
+
+            File.Copy(orig, work, true);
+            ImageUtils.RoateImage(work, rotated, RotateFlipType.Rotate270FlipNone);            
         }
 
         [TestMethod]

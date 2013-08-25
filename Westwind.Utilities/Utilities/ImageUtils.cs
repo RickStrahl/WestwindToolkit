@@ -155,6 +155,8 @@ namespace Westwind.Utilities
                 }
 
                 bmpOut = new Bitmap(newWidth, newHeight);
+                bmpOut.SetResolution(bmp.HorizontalResolution, bmp.VerticalResolution);
+
                 Graphics g = Graphics.FromImage(bmpOut);
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;
                 g.FillRectangle(Brushes.White, 0, 0, newWidth, newHeight);
@@ -169,23 +171,34 @@ namespace Westwind.Utilities
         }
 
 
-        public static bool RoateImage(string filename, string outputFilename,RotateFlipType type)                                     
+        /// <summary>
+        /// Rotates an image and writes out the rotated image to a file.
+        /// </summary>
+        /// <param name="filename">The original image to roatate</param>
+        /// <param name="outputFilename">The output file of the rotated image file. If not passed the original file is overwritten</param>
+        /// <param name="type">Type of rotation to perform</param>
+        /// <returns></returns>
+        public static bool RoateImage(string filename, string outputFilename = null,RotateFlipType type = RotateFlipType.Rotate90FlipNone)                                     
         {
             Bitmap bmpOut = null;
+
+            if (string.IsNullOrEmpty(outputFilename))
+                outputFilename = filename;
 
             try
             {                
                 Bitmap bmp = new Bitmap(filename);
                 ImageFormat format = bmp.RawFormat;
                 bmp.RotateFlip(type);
+                                
+                bmpOut = new Bitmap(bmp.Width,bmp.Height);
+                bmpOut.SetResolution(bmp.HorizontalResolution,bmp.VerticalResolution);
 
-
-                bmpOut = new Bitmap(bmp.Width, bmp.Height);
                 Graphics g = Graphics.FromImage(bmpOut);
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;                
-                g.DrawImage(bmp, 0, 0, bmp.Width, bmp.Height);
+                g.DrawImage(bmp, 0, 0, bmpOut.Width, bmpOut.Height);                
 
-                //System.Drawing.Image imgOut = loBMP.GetThumbnailImage(lnNewWidth,lnNewHeight,null,IntPtr.Zero);
+                //System.Drawing.Image imgOut = loBMP.GetThumbnailImage(lnNewWidth,lnNewHeight,null,IntPtr.Zero);                
                 bmp.Dispose();
 
                 bmpOut.Save(outputFilename, format);
