@@ -188,4 +188,7 @@
     <value>Can't retrieve items in update mode </value>
     <comment>CanTRetrieveItemsInUpdateMode description</comment>
   </data>
+  <data name="AnErrorOccurredInYourApplication" xml:space="preserve">
+    <value>An error occurred in your Application</value>
+  </data>
 </root>

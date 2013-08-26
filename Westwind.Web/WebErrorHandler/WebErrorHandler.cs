@@ -6,7 +6,7 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 using Westwind.Utilities.Logging;
-using Westwind.Utilities.Properties;
+using Westwind.Web.Properties;
 
 
 namespace Westwind.Web
@@ -392,7 +392,7 @@ namespace Westwind.Web
             if (Response.Filter != null)
             {
                 var f = Response.Filter;
-                f = null;  // REQUIRED - w/o this null setting doesn't work
+                f = null;  // REQUIRED! - w/o this null setting doesn't work
                 Response.Filter = null;
             }
 
@@ -406,17 +406,22 @@ namespace Westwind.Web
             }
 
             var errorHandler = new WebErrorHandler(ex);
+            errorHandler.RetrieveSourceLines = this.RetrieveSourceLines;
             errorHandler.Parse();
 
             if (LogManagerConfiguration.Current.LogErrors &&
+                // don't log URL link errors
                 OriginalHttpStatusCode < 400 || OriginalHttpStatusCode > 410)
             {                
                 OnLogError(errorHandler, LastException);
             }
 
             var model = new ErrorViewModel();
-            model.WebErrorHandler = this;
-            model.ErrorHandlingMode = errorHandlingMode;
+            model.Title = Resources.AnErrorOccurredInYourApplication;
+            model.Message = errorHandler.ErrorMessage;
+            
+            model.WebErrorHandler = errorHandler;
+            model.ErrorHandlingMode = errorHandlingMode;            
 
             if (errorHandlingMode == ErrorHandlingModes.Default)
             {
@@ -424,17 +429,7 @@ namespace Westwind.Web
                 // Yellow Screen of Death or ASP.NET DisplayErrors form
                 Response.TrySkipIisCustomErrors = true;
                 return;
-            }
-            
-            //if (errorHandlingMode == ErrorHandlingModes.DeveloperErrorMessage)
-            //{
-            //    model.Message = errorHandler.ToString();
-            //    model.MessageIsHtml = true;
-            //}
-            //else if (errorHandlingMode == ErrorHandlingModes.ApplicationErrorMessage)
-            //{
-            //    // do nothing - already got our message
-            //}
+            }        
 
             Response.ClearContent();
             Response.ClearHeaders();
