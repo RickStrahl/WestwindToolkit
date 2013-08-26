@@ -2692,9 +2692,18 @@
         <member name="T:Westwind.Web.ApplicationErrorModule">
             <summary>
             Application Error Module that can be used to handle
-            errors.
-            
+            errors. Uses WebErrorHandler to collect error and
+            request information in a single place, and abstracts
+            the error handling to OnLogError and OnDisplayError
+            hooks to manage only the parts that we are typically
+            interested in in error processing.
             </summary>
+        </member>
+        <member name="M:Westwind.Web.ApplicationErrorModule.Init(System.Web.HttpApplication)">
+            <summary>
+            Hook up Application.Error event
+            </summary>
+            <param name="context"></param>
         </member>
         <member name="M:Westwind.Web.ApplicationErrorModule.OnInitializeErrorHandlingMode">
             <summary>
@@ -2709,8 +2718,12 @@
             use the Westwind.Web.ViewRenderer class to easily display an
             MVC view.
             </summary>
-            <param name="errorHandler"></param>
-            <param name="model"></param>
+            <param name="errorHandler">Contains error and request information</param>
+            <param name="model">
+            Model that contains a few simple properties like title and message
+            as well as an instance of the errorHandler object passed in to allow
+            for error pages that can provide a wealth of detail if desired.
+            </param>
         </member>
         <member name="M:Westwind.Web.ApplicationErrorModule.OnLogError(Westwind.Web.WebErrorHandler,System.Exception)">
             <summary>
@@ -2718,8 +2731,8 @@
             the WebErrorHandler instance that is fully parsed and filled
             with the error and Http request data.
             </summary>
-            <param name="errorHandler"></param>
-            <param name="ex"></param>
+            <param name="errorHandler">Contains formatted error and request information</param>
+            <param name="ex">The original exception that caused the error</param>
         </member>
         <member name="P:Westwind.Web.ApplicationErrorModule.ErrorHandlingMode">
             <summary>

@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 
 namespace Westwind.Web
 {
     /// <summary>
     /// Application Error Module that can be used to handle
-    /// errors.
-    /// 
+    /// errors. Uses WebErrorHandler to collect error and
+    /// request information in a single place, and abstracts
+    /// the error handling to OnLogError and OnDisplayError
+    /// hooks to manage only the parts that we are typically
+    /// interested in in error processing.
     /// </summary>
     public abstract class ApplicationErrorModule : IHttpModule
     {
@@ -22,6 +21,10 @@ namespace Westwind.Web
         /// </summary>
         public static ErrorHandlingModes ErrorHandlingMode { get; set; }
        
+        /// <summary>
+        /// Hook up Application.Error event
+        /// </summary>
+        /// <param name="context"></param>
         public virtual void Init(HttpApplication context)
         {
             OnInitializeErrorHandlingMode();
@@ -38,8 +41,7 @@ namespace Westwind.Web
             handler.HandleError(ErrorHandlingMode);
 
             handler.LogError -= OnLogError;
-            handler.DisplayError -= OnDisplayError;
-            
+            handler.DisplayError -= OnDisplayError;            
             handler = null;
         }
 
@@ -49,8 +51,7 @@ namespace Westwind.Web
         /// which is configured when the appplication starts.
         /// </summary>
         protected virtual void OnInitializeErrorHandlingMode()
-        {
-            
+        {            
         }
 
         /// <summary>
@@ -59,11 +60,14 @@ namespace Westwind.Web
         /// use the Westwind.Web.ViewRenderer class to easily display an
         /// MVC view.
         /// </summary>
-        /// <param name="errorHandler"></param>
-        /// <param name="model"></param>
+        /// <param name="errorHandler">Contains error and request information</param>
+        /// <param name="model">
+        /// Model that contains a few simple properties like title and message
+        /// as well as an instance of the errorHandler object passed in to allow
+        /// for error pages that can provide a wealth of detail if desired.
+        /// </param>
         protected virtual void  OnDisplayError(WebErrorHandler errorHandler, ErrorViewModel model)
-        {
-            
+        {            
         }
 
         /// <summary>
@@ -71,16 +75,14 @@ namespace Westwind.Web
         /// the WebErrorHandler instance that is fully parsed and filled
         /// with the error and Http request data.
         /// </summary>
-        /// <param name="errorHandler"></param>
-        /// <param name="ex"></param>
+        /// <param name="errorHandler">Contains formatted error and request information</param>
+        /// <param name="ex">The original exception that caused the error</param>
         protected virtual void OnLogError(WebErrorHandler errorHandler, Exception ex)
-        {
-               
+        {               
         }
 
         public void Dispose()
-        {
-            
+        {            
         }
     }
 }
