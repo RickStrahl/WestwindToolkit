@@ -11,10 +11,9 @@ namespace WestwindToolkitMvcWeb.Controllers
     public class UtilitiesApiController : ApiController
     {
         [HttpGet]
-        public string ViewRenderer()
-        {
-            var renderer = new ViewRenderer();
-            return renderer.RenderView("~/Views/Utilities/ScriptVariables.cshtml", null);
+        public string RenderView()
+        {            
+            return ViewRenderer.RenderView("~/Views/Utilities/ScriptVariables.cshtml", null);
         }
     }
 }

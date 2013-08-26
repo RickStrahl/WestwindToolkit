@@ -25,12 +25,12 @@ namespace WestwindToolkitMvcWeb.Controllers
             return View();
         }
 
-        public string ViewRenderer()
+        public string RenderView()
         {
+            var r = new ViewRenderer();
+            return r.RenderViewToString("~/Views/Utilities/ScriptVariables.cshtml");
 
-            var renderer = new ViewRenderer();
-            return renderer.RenderView("~/Views/Utilities/ScriptVariables.cshtml", null);
-
+            return ViewRenderer.RenderView("~/Views/Utilities/ScriptVariables.cshtml");
         }
 
         public string ErrorHandler()

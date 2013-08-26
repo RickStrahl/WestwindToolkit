@@ -168,4 +168,7 @@
   <data name="ObjectCouldNotBeDeserializedFromXml" xml:space="preserve">
     <value>Object could not be deserialized from Xml.</value>
   </data>
+  <data name="An_error_occurred_in_your_Application" xml:space="preserve">
+    <value>An error occurred in your Application</value>
+  </data>
 </root>
