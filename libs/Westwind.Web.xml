@@ -1607,6 +1607,11 @@
               resource lookups using this strongly typed resource class.
             </summary>
         </member>
+        <member name="P:Westwind.Web.Properties.Resources.AnErrorOccurredInYourApplication">
+            <summary>
+              Looks up a localized string similar to An error occurred in your Application.
+            </summary>
+        </member>
         <member name="P:Westwind.Web.Properties.Resources.BitmapOutputReturnedMustSpecifyAContentType">
             <summary>
               Looks up a localized string similar to Bitmap output returned must specify a Content type. For example: [CallbackMethod(ContentType=&quot;image/png&quot;)].

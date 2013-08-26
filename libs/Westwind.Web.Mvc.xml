@@ -485,7 +485,7 @@
             Only leave out the context if no context is otherwise available.
             </param>
         </member>
-        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderView(System.String,System.Object)">
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderViewToString(System.String,System.Object)">
             <summary>
             Renders a full MVC view to a string. Will render with the full MVC
             View engine including running _ViewStart and merging into _Layout        
@@ -497,7 +497,7 @@
             <param name="model">The model to render the view with</param>
             <returns>String of the rendered view or null on error</returns>
         </member>
-        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderPartialView(System.String,System.Object)">
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderPartialViewToString(System.String,System.Object)">
             <summary>
             Renders a partial MVC view to string. Use this method to render
             a partial view that doesn't merge with _Layout and doesn't fire
@@ -524,21 +524,6 @@
             <param name="controllerContext">Active Controller context</param>
             <returns>String of the rendered view or null on error</returns>
         </member>
-        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderView(System.String,System.Object,System.Web.Mvc.ControllerContext,System.String@)">
-            <summary>
-            Renders a partial MVC view to string. Use this method to render
-            a partial view that doesn't merge with _Layout and doesn't fire
-            _ViewStart.
-            </summary>
-            <param name="viewPath">
-            The path to the view to render. Either in same controller, shared by 
-            name or as fully qualified ~/ path including extension
-            </param>
-            <param name="model">The model to pass to the viewRenderer</param>
-            <param name="controllerContext">Active Controller context</param>
-            <param name="errorMessage">optional out parameter that captures an error message instead of throwing</param>
-            <returns>String of the rendered view or null on error</returns>
-        </member>
         <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderPartialView(System.String,System.Object,System.Web.Mvc.ControllerContext)">
             <summary>
             Renders a partial MVC view to string. Use this method to render
@@ -551,21 +536,6 @@
             </param>
             <param name="model">The model to pass to the viewRenderer</param>
             <param name="controllerContext">Active controller context</param>
-            <returns>String of the rendered view or null on error</returns>
-        </member>
-        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderPartialView(System.String,System.Object,System.Web.Mvc.ControllerContext,System.String@)">
-            <summary>
-            Renders a partial MVC view to string. Use this method to render
-            a partial view that doesn't merge with _Layout and doesn't fire
-            _ViewStart.
-            </summary>
-            <param name="viewPath">
-            The path to the view to render. Either in same controller, shared by 
-            name or as fully qualified ~/ path including extension
-            </param>
-            <param name="model">The model to pass to the viewRenderer</param>
-            <param name="controllerContext">Active controller context</param>
-            <param name="errorMessage">optional output parameter to receive an error message on failure</param>
             <returns>String of the rendered view or null on error</returns>
         </member>
         <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderViewToStringInternal(System.String,System.Object,System.Boolean)">
@@ -593,6 +563,13 @@
         <member name="P:Westwind.Web.Mvc.ViewRenderer.Context">
             <summary>
             Required Controller Context
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.Mvc.EmptyController">
+            <summary>
+            Empty MVC Controller instance used to 
+            instantiate and provide a new ControllerContext
+            for the ViewRenderer
             </summary>
         </member>
         <member name="T:Westwind.Web.Mvc.PagingDetails">

@@ -2155,6 +2155,11 @@
               Looks up a localized string similar to A connection string must be passed to the constructor.
             </summary>
         </member>
+        <member name="P:Westwind.Utilities.Properties.Resources.An_error_occurred_in_your_Application">
+            <summary>
+              Looks up a localized string similar to An error occurred in your Application.
+            </summary>
+        </member>
         <member name="P:Westwind.Utilities.Properties.Resources.ByteValueGreaterThan20megsAreNotSupported">
             <summary>
               Looks up a localized string similar to Byte[] value greater than 20megs are not supported.
