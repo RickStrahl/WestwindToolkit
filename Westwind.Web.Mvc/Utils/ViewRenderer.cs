@@ -10,6 +10,9 @@ namespace Westwind.Web.Mvc
     /// <summary>
     /// Class that renders MVC views to a string using the
     /// standard MVC View Engine to render the view. 
+    /// 
+    /// Requires that ASP.NET HttpContext is present to
+    /// work, but works outside of the context of MVC
     /// </summary>
     public class ViewRenderer
     {
