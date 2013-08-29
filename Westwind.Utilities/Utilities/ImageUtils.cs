@@ -135,23 +135,28 @@ namespace Westwind.Utilities
                 int newWidth = 0;
                 int newHeight = 0;
 
-                //*** If the image is smaller than a thumbnail just return it
+                // If the image is smaller than a thumbnail just return original size
                 if (bmp.Width < width && bmp.Height < height)
-                    return bmp;
-
-                if (bmp.Width > bmp.Height)
                 {
-                    ratio = (decimal)width / bmp.Width;
-                    newWidth = width;
-                    decimal lnTemp = bmp.Height * ratio;
-                    newHeight = (int)lnTemp;
+                    newWidth = bmp.Width;
+                    newHeight = bmp.Height;
                 }
                 else
                 {
-                    ratio = (decimal)height / bmp.Height;
-                    newHeight = height;
-                    decimal lnTemp = bmp.Width * ratio;
-                    newWidth = (int)lnTemp;
+                    if (bmp.Width > bmp.Height)
+                    {
+                        ratio = (decimal) width/bmp.Width;
+                        newWidth = width;
+                        decimal lnTemp = bmp.Height*ratio;
+                        newHeight = (int) lnTemp;
+                    }
+                    else
+                    {
+                        ratio = (decimal) height/bmp.Height;
+                        newHeight = height;
+                        decimal lnTemp = bmp.Width*ratio;
+                        newWidth = (int) lnTemp;
+                    }
                 }
 
                 bmpOut = new Bitmap(newWidth, newHeight);
