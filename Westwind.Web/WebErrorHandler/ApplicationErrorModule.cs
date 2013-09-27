@@ -39,10 +39,6 @@ namespace Westwind.Web
             handler.DisplayError += OnDisplayError;
 
             handler.HandleError(ErrorHandlingMode);
-
-            handler.LogError -= OnLogError;
-            handler.DisplayError -= OnDisplayError;            
-            handler = null;
         }
 
 

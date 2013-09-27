@@ -196,10 +196,12 @@ select CAST(scope_identity() as integer)
                 dateFrom = DateTime.Now.Date.AddDays(-2);
             if (dateTo ==null)
                 dateTo = DateTime.Now.Date.AddDays(1);
+            if (fieldList == null)
+                fieldList = "*";
 
             SqlDataAccess data = CreateDal();
             
-            string sql = string.Format("select TOP {1} {2} * from [{0}] where " +
+            string sql = string.Format("select TOP {1} {2} from [{0}] where " +
                                            (errorLevel != ErrorLevels.All ? "ErrorLevel = @ErrorLevel and " : "") +
                                            "Entered >= @dateFrom and Entered < @dateTo " +
                                            "order by Entered DESC", LogFilename, count, fieldList);
@@ -306,7 +308,7 @@ select CAST(scope_identity() as integer)
         /// <returns></returns>
         public bool Clear(int countToLeave)
         {
-            string sql = "delete [{0}] where Id not in (select top {1} Id from ApplicationWebLog)";
+            string sql = "delete [{0}] where Id not in (select top {1} Id from [{0}] order by entered desc)";
             sql = string.Format(sql,LogFilename,countToLeave);
 
             using (SqlDataAccess data = CreateDal())
