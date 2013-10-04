@@ -2021,7 +2021,7 @@ mind + '}' : '{' + partial.join(',') + '}'; gap = mind; return v;
     }());
 
     if (this.JSON && !this.JSON.parseWithDate) {
-        var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)?)Z$/;
+        var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)(?:Z)?)$/;            
         var reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
 
         JSON.parseWithDate = function (json) {
