@@ -964,13 +964,13 @@ namespace Westwind.Data.EfCodeFirst
         /// the database.
         /// 
         /// Format can either be named parameters (@pk, @name)
-        /// with DbParameter objects (CreateParameter) or by using @0,@1 for
+        /// with DbParameter objects (CreateParameter) or by using {0},{1} for
         /// positional parameters and passing in the actual values.
         /// 
         /// Uses the Entity Sql Connection
         /// </summary>
         /// <param name="sql">Sql statement as a string</param>
-        /// <param name="parameters">Named parameter objects</param>
+        /// <param name="parameters">Named parameter objects referenced with {0}-{n} in the Sql command</param>
         /// <returns></returns>
         public int ExecuteNonQuery(string sql, params object[] parameters)
         {
@@ -993,7 +993,7 @@ namespace Westwind.Data.EfCodeFirst
         /// provider and return the result as an Entity collection
         /// 
         /// Format can either be named parameters (@pk, @name)
-        /// with DbParameter objects (CreateParameter) or by using @p0,p1 for
+        /// with DbParameter objects (CreateParameter) or by using {0}, {1} for
         /// positional parameters and passing in the actual values.
         /// </summary>
         /// <typeparam name="TResult"></typeparam>

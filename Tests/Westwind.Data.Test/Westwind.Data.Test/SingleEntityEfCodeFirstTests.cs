@@ -233,6 +233,32 @@ namespace Westwind.Data.Test
         }
 
         [TestMethod]
+        public void TestExecuteNonQuery()
+        {
+            var custBo = new busCustomer(); 
+
+            int count = custBo.ExecuteNonQuery("update customers set updated = getDate() where Id={0}", 3);
+
+            Console.WriteLine(count);
+            Console.WriteLine(custBo.ErrorMessage);
+            
+            Assert.IsTrue(count > -1);
+        }
+
+        [TestMethod]
+        public void TestContextExecuteNonQuery()
+        {
+            var custBo = new busCustomer();
+
+            int count = custBo.Context.Db.ExecuteNonQuery("update customers set updated = getDate() where Id=@0", 3);
+
+            Console.WriteLine(count);
+            Console.WriteLine(custBo.Context.Db.ErrorMessage);
+
+            Assert.IsTrue(count > -1);
+        }
+
+        [TestMethod]
         public void AttachWithChildExistingTest()
         {
             var orderBo = new busOrder();

@@ -57,8 +57,6 @@ namespace Westwind.Utilities
 		/// <returns>Bitmap or null</returns>
 		public static Bitmap ResizeImage(string filename,int width, int height)
 		{
-			Bitmap bmpOut = null;
-
 			try 
 			{
                 using (Bitmap bmp = new Bitmap(filename))
@@ -83,8 +81,6 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static Bitmap ResizeImage(byte[] data, int width, int height)
         {
-            Bitmap bmpOut = null;
-
             try
             {
                 using (Bitmap bmp = new Bitmap(new MemoryStream(data)))

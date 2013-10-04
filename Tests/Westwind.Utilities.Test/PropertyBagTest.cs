@@ -104,7 +104,8 @@ namespace Westwind.Utilities.Tests
         [TestMethod]
         public void JavaScriptSerializerTest()
         {
-            var bag = new Dictionary<string, object>();
+            var bag = new PropertyBag();      
+            /// new Dictionary<string, object>();
 
             bag.Add("key", "Value");
             bag.Add("Key2", 100.10M);
@@ -117,10 +118,15 @@ namespace Westwind.Utilities.Tests
             Entered = DateTime.Now,
             Count = 10 });
 
-            JavaScriptSerializer ser = new JavaScriptSerializer();
-            var json = ser.Serialize(bag);
 
-            //TestContext.WriteLine(json);
+            var json = JsonConvert.SerializeObject(bag);
+
+
+            JavaScriptSerializer ser = new JavaScriptSerializer();            
+            var json = ser.Serialize(bag);
+            //var json = JsonConvert.SerializeObject(bag);
+
+            Console.WriteLine(json);
 
             var bag2 = ser.Deserialize<Dictionary<string, object>>(json);
             Assert.IsNotNull(bag2);

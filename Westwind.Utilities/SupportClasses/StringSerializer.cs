@@ -134,7 +134,7 @@ public static class StringSerializer
                 {
                     value = ReflectionUtils.StringToTypedValue(token, prop.PropertyType);
                 }
-                catch (InvalidCastException ex)
+                catch (InvalidCastException)
                 {
                     // skip over unsupported types 
                 }
