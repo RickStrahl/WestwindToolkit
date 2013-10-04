@@ -27,14 +27,14 @@ namespace Westwind.Utilities
 
         /// <summary>
         /// The frequency in how often the main method is executed.
-        /// Given in seconds.
+        /// Given in milli-seconds.
         /// </summary>
         public int CheckFrequency
         {
             get { return _CheckFrequency; }
             set { _CheckFrequency = value; }
         }
-        private int _CheckFrequency = 60;
+        private int _CheckFrequency = 60000;
 
         /// <summary>
         /// Optional URL that is pinged occasionally to
@@ -128,7 +128,7 @@ namespace Westwind.Utilities
         {
             // Start out waiting for the timeout period defined 
             // on the scheduler
-            this._WaitHandle.WaitOne(this.CheckFrequency * 1000, true);
+            this._WaitHandle.WaitOne(this.CheckFrequency, true);
 
             while (!Cancelled)
             {
@@ -152,7 +152,7 @@ namespace Westwind.Utilities
                     this.PingServer();
 
                 // Wait for the specified time out
-                this._WaitHandle.WaitOne(this.CheckFrequency * 1000, true);
+                this._WaitHandle.WaitOne(this.CheckFrequency, true);
             }
         }
 
@@ -242,9 +242,10 @@ namespace Westwind.Utilities
         /// 
         /// Use this to avoid IIS shutting down your AppPools
         /// </summary>
-        public void PingServer()
+        public void PingServer(string url = null)
         {
-            string Url = this.WebServerPingUrl;
+            if (string.IsNullOrEmpty(url))
+                url = this.WebServerPingUrl;
 
             //if (Url.StartsWith("~") && HttpContext.Current != null)
             //    Url = wwUtils.ResolveUrl(Url);
@@ -252,12 +253,9 @@ namespace Westwind.Utilities
             try
             {
                 WebClient http = new WebClient();
-                string Result = http.DownloadString(Url);
+                string Result = http.DownloadString(url);
             }
-            catch (Exception ex)
-            {
-                string Message = ex.Message;
-            }
+            catch {}
         }
 
 

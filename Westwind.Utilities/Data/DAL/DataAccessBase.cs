@@ -553,9 +553,8 @@ namespace Westwind.Utilities.Data
         /// <typeparam name="T">Entity type to create from DataReader data</typeparam>
         /// <param name="sql">Sql string to execute</param>        
         /// <param name="parameters">DbParameters to fill the SQL statement</param>
-        /// <returns>List of objects or null. Null is returned if there are no matches</returns>
-        [Obsolete("Use the Query method instead with the same syntax")]
-        public virtual IEnumerable<T> ExecuteReader<T>(string sql, params object[] parameters)            
+        /// <returns>List of objects or null. Null is returned if there are no matches</returns>       
+        public virtual IEnumerable<T> Query<T>(string sql, params object[] parameters)            
             where T : class, new()
         {
             var reader = ExecuteReader(sql, parameters);
@@ -584,9 +583,8 @@ namespace Westwind.Utilities.Data
         /// <param name="sql">Sql string to execute</param>        
         /// <param name="propertiesToExclude">Comma delimited list of properties that are not to be updated</param>
         /// <param name="parameters">DbParameters to fill the SQL statement</param>
-        /// <returns>List of objects</returns>
-        [Obsolete("Use the Query method instead with the same syntax")]
-        public virtual IEnumerable<T> ExecuteReader<T>(string sql, string propertiesToExclude, params object[] parameters)            
+        /// <returns>List of objects</returns>        
+        public virtual IEnumerable<T> Query<T>(string sql, string propertiesToExclude, params object[] parameters)            
             where T: class, new()
         {
             IEnumerable<T> result;
@@ -620,7 +618,7 @@ namespace Westwind.Utilities.Data
         /// <param name="sql">Sql string to execute</param>        
         /// <param name="parameters">DbParameters to fill the SQL statement</param>
         /// <returns>List of objects</returns>
-        public virtual IEnumerable<T> ExecuteReader<T>(DbCommand sqlCommand, string propertiesToExclude, params object[] parameters)
+        public virtual IEnumerable<T> Query<T>(DbCommand sqlCommand, string propertiesToExclude, params object[] parameters)
             where T : class, new()
         {
             var reader = ExecuteReader(sqlCommand, parameters);
@@ -697,10 +695,11 @@ namespace Westwind.Utilities.Data
         /// <param name="sql">Sql string</param>
         /// <param name="parameters">Either object values (@0,@1 syntax) or (@name,@name2 syntax using CreateParameter</param>
         /// <returns>An enumerated list of objects or null</returns>
-        public virtual IEnumerable<T> Query<T>(string sql, params object[] parameters)
+        [Obsolete("Use the Query method instead with the same syntax")]
+        public virtual IEnumerable<T> ExecuteReader<T>(string sql, params object[] parameters)
             where T: class, new()
         {
-            return ExecuteReader<T>(sql, null, parameters);
+            return Query<T>(sql, null, parameters);
         }
 
         /// <summary>
@@ -710,10 +709,11 @@ namespace Westwind.Utilities.Data
         /// <param name="command"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public virtual IEnumerable<T> Query<T>(DbCommand command, params object[] parameters)
+        [Obsolete("Use the Query method instead with the same syntax")]
+        public virtual IEnumerable<T> ExecuteReader<T>(DbCommand command, params object[] parameters)
             where T : class, new()
         {
-            return ExecuteReader<T>(command, null, parameters);
+            return Query<T>(command, null, parameters);
         }
 
 
