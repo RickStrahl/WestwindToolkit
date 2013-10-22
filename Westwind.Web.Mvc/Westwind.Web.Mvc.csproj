@@ -72,7 +72,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Utils\DummyWorkerRequest.cs" />
     <Compile Include="Utils\MvcHandlerSTA.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
