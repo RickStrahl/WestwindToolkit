@@ -1,5 +1,6 @@
 using System;
 using System.Data.Entity;
+using System.Data.Entity.Core.Objects;
 using System.Xml.Serialization;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Validation;
@@ -8,12 +9,10 @@ using System.Data;
 using System.Collections.Generic;
 using Westwind.Data.Properties;
 using System.Linq;
-using System.Data.Objects;
 using Westwind.Utilities;
 using System.Linq.Expressions;
 using System.Transactions;
 using System.ComponentModel.DataAnnotations.Schema;
-using Westwind.Utilities.Data;
 
 namespace Westwind.Data.EfCodeFirst
 {
@@ -435,7 +434,7 @@ namespace Westwind.Data.EfCodeFirst
             else
             {
                 Entity = DbSet.Attach(entity);
-                GetEntityEntry(Entity).State = System.Data.EntityState.Modified;
+                GetEntityEntry(Entity).State = EntityState.Modified;
             }
 
             return Entity;
@@ -451,7 +450,7 @@ namespace Westwind.Data.EfCodeFirst
         /// <param name="markAsModified"></param>
         /// <param name="addNew"></param>
         /// <returns></returns>
-        public object Attach(object entity, bool addNew = false, System.Data.EntityState entityState = System.Data.EntityState.Modified )
+        public object Attach(object entity, bool addNew = false, EntityState entityState = EntityState.Modified )
         {
             var dbSet = Context.Set(entity.GetType());
 
@@ -897,7 +896,7 @@ namespace Westwind.Data.EfCodeFirst
             if (entry == null)
                 throw new ArgumentException(Resources.EntityIsNotPartOfTheContext);
             
-            return entry.State == System.Data.EntityState.Added;
+            return entry.State == EntityState.Added;
         }
 
         /// <summary>
@@ -912,7 +911,7 @@ namespace Westwind.Data.EfCodeFirst
             if (entry == null)
                 throw new ArgumentException(Resources.EntityIsNotPartOfTheContext);
 
-            return entry.State == System.Data.EntityState.Added;
+            return entry.State == EntityState.Added;
         }
 
 
