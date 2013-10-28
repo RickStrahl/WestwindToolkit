@@ -2021,7 +2021,7 @@ mind + '}' : '{' + partial.join(',') + '}'; gap = mind; return v;
     }());
 
     if (this.JSON && !this.JSON.parseWithDate) {
-        var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*)(?:Z)?)$/;            
+        var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z)?$/;
         var reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
 
         JSON.parseWithDate = function (json) {
@@ -2037,8 +2037,8 @@ mind + '}' : '{' + partial.join(',') + '}'; gap = mind; return v;
             function (key, value) {
                 if (typeof value === 'string') {
                     var a = reISO.exec(value);
-                    if (a)
-                        return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4], +a[5], +a[6]));
+                    if (a)                         
+                        return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4], +a[5], +a[6]));                                            
                     a = reMsAjax.exec(value);
                     if (a) {
                         var b = a[1].split(/[-+,.]/);
@@ -2074,12 +2074,23 @@ mind + '}' : '{' + partial.join(',') + '}'; gap = mind; return v;
                 return value;
             })
         };
-        JSON.dateStringToDate = function (dtString) {
+        JSON.dateStringToDate = function (dtString, nullDateVal) {
             /// <summary>
-            /// Converts a JSON ISO or MSAJAX string into a date object
+            /// Converts a JSON ISO or MSAJAX string into a date object.
+            /// If you pass a date the date is just returned. If you pass null
+            /// null is returned.
             /// </summary>    
-            /// <param name="" type="var">Date String</param>
-            /// <returns type="date or null if invalid" /> 
+            /// <param name="dtString" type="var">Date String in ISO or MSAJAX format</param>
+            /// <param name="nullDateVal" type="var">value to return if date can't be parsed</param>
+            /// <returns type="date or the nullDateVal (null by default)" /> 
+            if (!nullDateVal)
+                nullDateVal = null;
+            if (!dtString)
+                return nullDateVal;  // empty
+
+            if (dtString.getTime)
+                return dtString; // already a date
+            
             var a = reISO.exec(dtString);
             if (a)
                 return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4], +a[5], +a[6]));
@@ -2088,7 +2099,7 @@ mind + '}' : '{' + partial.join(',') + '}'; gap = mind; return v;
                 var b = a[1].split(/[-,.]/);
                 return new Date(+b[0]);
             }
-            return null;
+            return nullDateVal;
         };
     }
 })(jQuery);
