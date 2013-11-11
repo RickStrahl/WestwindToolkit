@@ -123,7 +123,7 @@ namespace Westwind.Utilities.Tests
 
 
             JavaScriptSerializer ser = new JavaScriptSerializer();            
-            var json = ser.Serialize(bag);
+            json = ser.Serialize(bag);
             //var json = JsonConvert.SerializeObject(bag);
 
             Console.WriteLine(json);
