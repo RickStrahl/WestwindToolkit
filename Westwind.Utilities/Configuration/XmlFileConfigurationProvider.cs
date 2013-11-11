@@ -105,9 +105,8 @@ namespace Westwind.Utilities.Configuration
             
             bool result = SerializationUtils.SerializeObject(config, XmlConfigurationFile, UseBinarySerialization);
             
-            if (result)
-                // Have to decrypt again to make sure the properties are readable afterwards
-                DecryptFields(config);
+            // Have to decrypt again to make sure the properties are readable afterwards
+            DecryptFields(config);
 
             return result;
  	    }

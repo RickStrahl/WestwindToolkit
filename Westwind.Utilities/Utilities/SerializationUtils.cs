@@ -303,7 +303,7 @@ namespace Westwind.Utilities
                     serializer = new XmlSerializer(objectType);
 
                     // A FileStream is needed to read the XML document.
-                    fs = new FileStream(fileName, FileMode.Open);
+                    fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
                     reader = new XmlTextReader(fs);
 
                     instance = serializer.Deserialize(reader);
@@ -334,9 +334,8 @@ namespace Westwind.Utilities
                 try
                 {
                     serializer = new BinaryFormatter();
-                    fs = new FileStream(fileName, FileMode.Open);
+                    fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
                     instance = serializer.Deserialize(fs);
-
                 }
                 catch
                 {
