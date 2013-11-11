@@ -338,7 +338,7 @@ namespace Westwind.Utilities.Data.Tests
                 //var cmd = data.CreateCommand("select * from ApplicationLog where entered > @0 and entered > @1",CommandType.Text, DateTime.Now.AddYears(-10), DateTime.Now.AddYears(-));
                 //var table = data.ExecuteTable("TLogs", cmd);
                 var swatch = Stopwatch.StartNew();
-                var entries = data.ExecuteReader<WebLogEntry>("select * from ApplicationLog where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
+                var entries = data.Query<WebLogEntry>("select * from ApplicationLog where entered > @0 and entered < @1 order by Entered", DateTime.Now.AddYears(-115), DateTime.Now.AddYears(-1));
                 var logEntries = entries.ToList();
                 Assert.IsNotNull(logEntries, data.ErrorMessage);
                 Console.WriteLine(logEntries.Count);

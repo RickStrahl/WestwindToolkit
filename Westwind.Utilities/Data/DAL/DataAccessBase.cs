@@ -574,6 +574,35 @@ namespace Westwind.Utilities.Data
         }
 
         /// <summary>
+        /// Executes a SQL command and creates an object list using
+        /// Reflection.
+        /// 
+        /// Not very efficient but provides an easy way to retrieve
+        /// </summary>
+        /// <typeparam name="T">Entity type to create from DataReader data</typeparam>
+        /// <param name="command">Command object containing configured SQL command to execute</param>        
+        /// <param name="parameters">DbParameters to fill the SQL statement</param>
+        /// <returns>List of objects or null. Null is returned if there are no matches</returns>   
+        public virtual IEnumerable<T> Query<T>(DbCommand command, params object[] parameters)
+            where T : class, new()
+        {
+            var reader = ExecuteReader(command, parameters);
+
+            if (reader == null)
+                return null;
+
+            try
+            {
+                return DataUtils.DataReaderToIEnumerable<T>(reader, null);
+            }
+            catch (Exception ex)
+            {
+                SetError(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Executes a SQL statement and creates an object list using
         /// Reflection.
         /// 
@@ -584,7 +613,7 @@ namespace Westwind.Utilities.Data
         /// <param name="propertiesToExclude">Comma delimited list of properties that are not to be updated</param>
         /// <param name="parameters">DbParameters to fill the SQL statement</param>
         /// <returns>List of objects</returns>        
-        public virtual IEnumerable<T> Query<T>(string sql, string propertiesToExclude, params object[] parameters)            
+        public virtual IEnumerable<T> QueryWithExclusions<T>(string sql, string propertiesToExclude, params object[] parameters)            
             where T: class, new()
         {
             IEnumerable<T> result;
@@ -618,7 +647,7 @@ namespace Westwind.Utilities.Data
         /// <param name="sql">Sql string to execute</param>        
         /// <param name="parameters">DbParameters to fill the SQL statement</param>
         /// <returns>List of objects</returns>
-        public virtual IEnumerable<T> Query<T>(DbCommand sqlCommand, string propertiesToExclude, params object[] parameters)
+        public virtual IEnumerable<T> QueryWithExclusions<T>(DbCommand sqlCommand, string propertiesToExclude, params object[] parameters)
             where T : class, new()
         {
             var reader = ExecuteReader(sqlCommand, parameters);
@@ -713,37 +742,23 @@ namespace Westwind.Utilities.Data
         public virtual IEnumerable<T> ExecuteReader<T>(DbCommand command, params object[] parameters)
             where T : class, new()
         {
-            return Query<T>(command, null, parameters);
+            return ExecuteReader<T>(command, null, parameters);
         }
 
 
         
-        /// <summary>
-        /// Return a list of entities that are matched to an object
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql"></param>
-        /// <param name="propertiesToExclude">a comma delimited list of fields that can be omitted</param>
-        /// <param name="parameters">Either object values (@0,@1 syntax) or (@name,@name2 syntax using CreateParameter</param>
-        /// <returns></returns>
-        public virtual IEnumerable<T> QueryWithExclusions<T>(string sql, string propertiesToExclude, params object[] parameters)
-            where T: class, new()
-        {
-            return ExecuteReader<T>(sql, propertiesToExclude, parameters);
-        }
-
-        /// <summary>
-        /// Allows querying and return a list of entities.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="command"></param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        public virtual IEnumerable<T> QueryWithExclusions<T>(DbCommand command, string propertiesToExclude, params object[] parameters)
-            where T : class, new()
-        {
-            return ExecuteReader<T>(command, propertiesToExclude, parameters);
-        }
+        //  /// <summary>
+        ///// Allows querying and return a list of entities.
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="command"></param>
+        ///// <param name="parameters"></param>
+        ///// <returns></returns>
+        //public virtual IEnumerable<T> QueryWithExclusions<T>(DbCommand command, string propertiesToExclude, params object[] parameters)
+        //    where T : class, new()
+        //{
+        //    return ExecuteReader<T>(command, propertiesToExclude, parameters);
+        //}
         
 
         /// <summary>

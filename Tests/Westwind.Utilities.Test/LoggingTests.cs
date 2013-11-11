@@ -171,8 +171,11 @@ namespace Westwind.Utilities.Logging.Tests
         public void LogManagerSqlGetEntries()
         {
             var entries = LogManager.Current.GetEntries();
+            int count = entries.Count();
+
             Assert.IsNotNull(entries);
-            Assert.IsTrue(entries.Count() > 0);
+            Assert.IsTrue(count > 0);
+            Console.WriteLine(count);
         }
 
         [TestMethod]
