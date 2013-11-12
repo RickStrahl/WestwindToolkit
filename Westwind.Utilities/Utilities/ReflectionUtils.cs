@@ -43,6 +43,7 @@ using System.Linq.Expressions;
 using Westwind.Utilities.Properties;
 using System.Runtime.InteropServices;
 
+
 namespace Westwind.Utilities
 {
     /// <summary>
@@ -521,14 +522,14 @@ namespace Westwind.Utilities
             if (type != null)
                 return type;
 
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             // try to find manually
-            foreach (Assembly ass in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (Assembly asm in assemblies)
             {
-                type = ass.GetType(typeName, false);
+                type = asm.GetType(typeName, false);
 
                 if (type != null)
                     break;
-
             }
             return type;
         }
