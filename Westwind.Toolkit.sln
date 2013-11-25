@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Utilities", "Westwind.Utilities\Westwind.Utilities.csproj", "{1C9829A8-8979-4493-863C-635726F8A61C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3CB4166E-C005-4928-BB9C-736DB354362B}"
@@ -20,6 +22,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Web.Mvc", "Westwin
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{249FED4B-16EC-4AA1-9833-78817B104241}"
 	ProjectSection(SolutionItems) = preProject
+		Changelog.md = Changelog.md
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject

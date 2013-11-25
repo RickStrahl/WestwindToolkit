@@ -252,7 +252,7 @@
             <param name="entity"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Attach(System.Object,System.Boolean,System.Data.EntityState)">
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Attach(System.Object,System.Boolean,System.Data.Entity.EntityState)">
             <summary>
             Attaches an untracked entity to an entity set and marks it as modified.
             Note: child elements need to be manually added.
@@ -469,13 +469,13 @@
             the database.
             
             Format can either be named parameters (@pk, @name)
-            with DbParameter objects (CreateParameter) or by using @0,@1 for
+            with DbParameter objects (CreateParameter) or by using {0},{1} for
             positional parameters and passing in the actual values.
             
             Uses the Entity Sql Connection
             </summary>
             <param name="sql">Sql statement as a string</param>
-            <param name="parameters">Named parameter objects</param>
+            <param name="parameters">Named parameter objects referenced with {0}-{n} in the Sql command</param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Execute``1(System.String,System.Object[])">
@@ -484,7 +484,7 @@
             provider and return the result as an Entity collection
             
             Format can either be named parameters (@pk, @name)
-            with DbParameter objects (CreateParameter) or by using @p0,p1 for
+            with DbParameter objects (CreateParameter) or by using {0}, {1} for
             positional parameters and passing in the actual values.
             </summary>
             <typeparam name="TResult"></typeparam>

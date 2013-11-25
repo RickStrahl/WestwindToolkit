@@ -42,6 +42,28 @@
             <param name="request"></param>
             <returns></returns>
         </member>
+        <member name="M:System.Web.Http.ApiControllerExtensions.ThrowHttpException(System.Web.Http.ApiController,System.Net.HttpStatusCode,System.String)">
+            <summary>
+            Throws a safe exception that results in a consistent error message being returned.
+            </summary>
+            <param name="statusCode"></param>
+            <param name="message"></param>
+        </member>
+        <member name="M:System.Web.Http.ApiControllerExtensions.ThrowHttpException(System.Web.Http.ApiController,System.Net.HttpStatusCode,System.Exception)">
+            <summary>
+            Turn a regular exception into an ApiMessageError exception to display for the client.
+            </summary>
+            <param name="controller"></param>
+            <param name="statusCode"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="M:System.Web.Http.ApiControllerExtensions.ThrowHttpException(System.Web.Http.ApiController,System.Net.HttpStatusCode)">
+            <summary>
+            Just returns an empty response with just the specified status code. No error message is sent.
+            </summary>
+            <param name="controller"></param>
+            <param name="statusCode"></param>
+        </member>
         <member name="T:Westwind.Web.WebApi.ApiMessageError">
             <summary>
             Class that represents an error returned to

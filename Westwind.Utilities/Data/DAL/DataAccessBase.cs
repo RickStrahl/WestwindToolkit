@@ -192,6 +192,19 @@ namespace Westwind.Utilities.Data
         protected DbConnection _Connection = null;
 
         /// <summary>
+        /// The Sql Command execution Timeout in seconds.
+        /// Set to -1 for whatever the system default is.
+        /// Set to 0 to never timeout (not recommended).
+        /// </summary>
+        public int Timeout
+        {
+            get { return _timeout; }
+            set { _timeout = value; }
+        }
+        private int _timeout = -1;
+        
+
+        /// <summary>
         /// Determines whether extended schema information is returned for 
         /// queries from the server. Useful if schema needs to be returned
         /// as part of DataSet XML creation 
@@ -243,7 +256,7 @@ namespace Westwind.Utilities.Data
                         _Connection.ConnectionString = ConnectionString;
                     }
                 }
-
+                
                 if (_Connection.State != ConnectionState.Open)
                     _Connection.Open();
             }
@@ -281,7 +294,9 @@ namespace Westwind.Utilities.Data
             DbCommand command = dbProvider.CreateCommand();
             command.CommandType = commandType;
             command.CommandText = sql;
-    
+            if (Timeout > -1)
+                command.CommandTimeout = Timeout;
+
             try
             {
                 if (Transaction != null)

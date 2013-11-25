@@ -52,12 +52,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration\AppConfiguration.cs" />
-    <Compile Include="Configuration\ConfigurationFileConfigurationProvider.cs" />
-    <Compile Include="Configuration\ConfigurationProviderBase.cs" />
-    <Compile Include="Configuration\IConfigurationProvider.cs" />
-    <Compile Include="Configuration\SqlServerConfigurationProvider.cs" />
-    <Compile Include="Configuration\StringConfigurationProvider.cs" />
-    <Compile Include="Configuration\XmlFileConfigurationProvider.cs" />
+    <Compile Include="Configuration\Providers\ConfigurationFileConfigurationProvider.cs" />
+    <Compile Include="Configuration\Providers\ConfigurationProviderBase.cs" />
+    <Compile Include="Configuration\Providers\IConfigurationProvider.cs" />
+    <Compile Include="Configuration\Providers\JsonFileConfigurationProvider.cs" />
+    <Compile Include="Configuration\Providers\SqlServerConfigurationProvider.cs" />
+    <Compile Include="Configuration\Providers\StringConfigurationProvider.cs" />
+    <Compile Include="Configuration\Providers\XmlFileConfigurationProvider.cs" />
     <Compile Include="Data\ConnectionStringInfo.cs" />
     <Compile Include="Data\DAL\DataAccessBase.cs" />
     <Compile Include="Data\DataTableExtensions.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Utilities\GenericUtils.cs" />
     <Compile Include="Utilities\HtmlUtils.cs" />
     <Compile Include="Utilities\ImageUtils.cs" />
+    <Compile Include="Utilities\JsonSerializationUtils.cs" />
     <Compile Include="Utilities\NetworkUtils.cs" />
     <Compile Include="Utilities\ReflectionUtils.cs" />
     <Compile Include="Utilities\SecurityUtils.cs" />

@@ -663,6 +663,7 @@ namespace Westwind.Utilities
         }
 
         #region UrlEncoding and UrlDecoding without System.Web
+
         /// <summary>
         /// UrlEncodes a string without the requirement for System.Web
         /// </summary>
@@ -673,9 +674,20 @@ namespace Westwind.Utilities
         {
             if (string.IsNullOrEmpty(text))
                 return string.Empty;
+            
+            return Uri.EscapeDataString(text);
+        }
 
-            // Sytem.Uri provides reliable parsing
-            return System.Uri.EscapeDataString(text);
+        /// <summary>
+        /// Encodes a few additional characters for use in paths
+        /// Encodes: . #
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string UrlEncodePathSafe(string text)
+        { 
+            string escaped = UrlEncode(text);
+            return escaped.Replace(".", "%2E").Replace("#", "%23");
         }
 
         /// <summary>
@@ -688,7 +700,7 @@ namespace Westwind.Utilities
             // pre-process for + sign space formatting since System.Uri doesn't handle it
             // plus literals are encoded as %2b normally so this should be safe
             text = text.Replace("+", " ");
-            string decoded = System.Uri.UnescapeDataString(text);
+            string decoded = Uri.UnescapeDataString(text);
             return decoded;
         }
 
