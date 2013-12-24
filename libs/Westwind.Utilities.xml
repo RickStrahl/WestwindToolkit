@@ -1163,6 +1163,13 @@
             The SQL Connection object used for connections
             </summary>
         </member>
+        <member name="P:Westwind.Utilities.Data.DataAccessBase.Timeout">
+            <summary>
+            The Sql Command execution Timeout in seconds.
+            Set to -1 for whatever the system default is.
+            Set to 0 to never timeout (not recommended).
+            </summary>
+        </member>
         <member name="P:Westwind.Utilities.Data.DataAccessBase.ExecuteWithSchema">
             <summary>
             Determines whether extended schema information is returned for 
@@ -4151,6 +4158,13 @@
             <param name="hex">BinHex string (just two byte hex digits strung together)</param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Utilities.StringUtils.BinaryToBinHex(System.Byte[])">
+            <summary>
+            Converts a byte array into a BinHex string
+            </summary>
+            <param name="data">Raw data to send</param>
+            <returns>string or null if input is null</returns>
+        </member>
         <member name="M:Westwind.Utilities.StringUtils.GetProperty(System.String,System.String)">
             <summary>
             Retrieves a value from an XML-like string
@@ -4175,7 +4189,7 @@
             <param name="String"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.StringUtils.UrlEncodeSafe(System.String)">
+        <member name="M:Westwind.Utilities.StringUtils.UrlEncodePathSafe(System.String)">
             <summary>
             Encodes a few additional characters for use in paths
             Encodes: . #
