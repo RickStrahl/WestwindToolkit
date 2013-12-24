@@ -613,6 +613,24 @@ namespace Westwind.Utilities
             return ret;
         }
 
+        /// <summary>
+        /// Converts a byte array into a BinHex string
+        /// </summary>
+        /// <param name="data">Raw data to send</param>
+        /// <returns>string or null if input is null</returns>
+        public static string BinaryToBinHex(byte[] data)
+        {
+            if (data == null)
+                return null;
+
+            StringBuilder sb = new StringBuilder(data.Length * 2);
+            foreach (byte val in data)
+            {
+                sb.AppendFormat("{0:x2}", val);
+            }
+            return sb.ToString();
+        }
+
         static int ParseHexChar(char c)
         {
             if (c >= '0' && c <= '9')

@@ -31,6 +31,16 @@
     <RegisterForComInterop>false</RegisterForComInterop>
     <DocumentationFile>bin\Release\Westwind.Web.WebForms.XML</DocumentationFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SandBox|AnyCPU'">
+    <OutputPath>bin\SandBox\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>bin\Release\Westwind.Web.WebForms.XML</DocumentationFile>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -78,16 +88,6 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj">
-      <Project>{1c9829a8-8979-4493-863c-635726f8a61c}</Project>
-      <Name>Westwind.Utilities</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Westwind.Web\Westwind.Web.csproj">
-      <Project>{0c38b4e1-0c87-4289-a57b-87c1b5be3bbe}</Project>
-      <Name>Westwind.Web</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\calendar.gif" />
