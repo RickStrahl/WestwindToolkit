@@ -237,6 +237,20 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
+        /// Parses a string into an array of lines broken
+        /// by \r\n or \n
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static string[] GetLines(string s)
+        {
+            if (s == null)
+                return null;
+            s = s.Replace("\r\n", "\n");
+            return s.Split('\n');
+        }
+
+        /// <summary>
         /// Return a string in proper Case format
         /// </summary>
         /// <param name="Input"></param>
