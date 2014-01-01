@@ -99,6 +99,20 @@ namespace Westwind.Utilities
             return BitConverter.ToInt64(bytes, 0);
         }
 
+        static Random rnd = new Random();
+
+        /// <summary>
+        /// Returns a random integer in a range of numbers
+        /// a single seed value.
+        /// </summary>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
+        public static int GetRandomNumber(int min, int max)
+        {
+            return rnd.Next(min, max);
+        }
+
         /// <summary>
         /// Copies the content of a data row to another. Runs through the target's fields
         /// and looks for fields of the same name in the source row. Structure must mathc

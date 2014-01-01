@@ -11,9 +11,8 @@ library that's left at 4.0 is Westwind.Utilities since it has no
 specific 4.5 dependencies at this point.
 
 * **Switch to new .NET libraries for MVC5, WebAPI2 and EF6**<br/>
-Updated to the latest version of the VS2013 release cycle. Updated
-all libraries to use the latest NuGet components and fixed up any 
-code changes
+Updated to VS2013 RTM. Updated all libraries to use the RTM NuGet 
+components and fixed up any code changes.
 
 * **JSON File Provider added**<br/>
 You can now store configuration optionally using JSON. The new JsonFileConfigurationProvider
@@ -28,3 +27,7 @@ runs before it times out (maps to Command.CommandTimeout).
 
 * **StringUtils.GetLines**<br/>
 Splits a string into lines based on \r\n or \n separators.
+
+* **DataUtils.GetRandomNumber**
+Returns a random integer in a range between high and low
+values. Uses the Random class with a static key.

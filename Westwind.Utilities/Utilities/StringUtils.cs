@@ -247,7 +247,7 @@ namespace Westwind.Utilities
             if (s == null)
                 return null;
             s = s.Replace("\r\n", "\n");
-            return s.Split('\n');
+            return s.Split(new char[] {'\n'});
         }
 
         /// <summary>
