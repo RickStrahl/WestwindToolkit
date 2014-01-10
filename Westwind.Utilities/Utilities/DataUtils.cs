@@ -105,12 +105,12 @@ namespace Westwind.Utilities
         /// Returns a random integer in a range of numbers
         /// a single seed value.
         /// </summary>
-        /// <param name="min"></param>
-        /// <param name="max"></param>
+        /// <param name="min">The minimum value</param>
+        /// <param name="max">The max value *including* this value (unlike Random.Next() which doesn't include it)</param>
         /// <returns></returns>
         public static int GetRandomNumber(int min, int max)
         {
-            return rnd.Next(min, max);
+            return rnd.Next(min, max + 1);
         }
 
         /// <summary>
