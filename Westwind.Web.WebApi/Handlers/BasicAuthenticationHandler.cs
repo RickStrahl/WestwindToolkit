@@ -69,11 +69,15 @@ namespace Westwind.Web.WebApi
 
             authHeader = Encoding.Default.GetString(Convert.FromBase64String(authHeader));
 
-            var tokens = authHeader.Split(':');
-            if (tokens.Length < 2)
+            // find first : as password allows for :
+            int idx = authHeader.IndexOf(':');
+            if (idx < 0)
                 return null;
 
-            return new BasicAuthenticationIdentity(tokens[0], tokens[1]);
+            string username = authHeader.Substring(0, idx);
+            string password = authHeader.Substring(idx + 1);            
+
+            return new BasicAuthenticationIdentity(username, password);
         }
 
 
