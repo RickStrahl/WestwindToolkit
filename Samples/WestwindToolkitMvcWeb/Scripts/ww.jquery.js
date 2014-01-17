@@ -1,10 +1,10 @@
 ﻿/// <reference path="jquery.js" />
 /*
 ww.jQuery.js  
-Version 1.10 - 6/26/2013
+Version 1.11 - 1/2/2014
 West Wind jQuery plug-ins and utilities
 
-(c) 2008-2012 Rick Strahl, West Wind Technologies 
+(c) 2008-2014 Rick Strahl, West Wind Technologies 
 www.west-wind.com
 
 Licensed under MIT License
@@ -26,77 +26,77 @@ http://en.wikipedia.org/wiki/MIT_License
         this.headers = {};
         $.extend(_I, opt);
 
-        this.appendHeader = function (header, value) {
+        this.appendHeader = function(header, value) {
             _I.headers[header] = value;
-        }
-        this.send = function (url, postData, completed, errorHandler) {
+        };
+        this.send = function(url, postData, completed, errorHandler) {
             completed = completed || _I.completed;
             errorHandler = errorHandler || _I.errorHandler;
 
             $.ajax(
-           {
-               url: url,
-               data: postData,
-               type: (postData ? "POST" : _I.method),
-               processData: false,  // always process on our own!
-               contentType: _I.contentType,
-               timeout: _I.timeout,
-               dataType: "text",
-               global: false,
-               async: _I.async,
-               beforeSend: function (xhr) {
-                   for (var header in _I.headers) xhr.setRequestHeader(header, _I.headers[header]);
-                   if (_I.accepts)
-                       xhr.setRequestHeader("Accept", _I.accepts);
-               },
-               success: function (result, status) {
-                   var errorException = null;
-                   if (_I.evalResult) {
-                       try {
-                           result = JSON.parseWithDate(result);
-                           if (result && result.hasOwnProperty("d"))
-                               result = result.d;
-                       }
-                       catch (e)
-                       { errorException = new CallbackException(e); }
-                   }
-                   if (errorException || (result && (result.isCallbackError || result.iscallbackerror))) {
-                       if (result)
-                           errorException = result;
-                       if (errorHandler)
-                           errorHandler(errorException, _I);
-                       return;
-                   }
-                   if (completed)
-                       completed(result, _I);
-               },
-               error: function (xhr, status) {
-                   var err = null;
-                   if (xhr.readyState == 4) {
-                       var res = xhr.responseText;
-                       if (res && res.charAt(0) == '{')
-                           err = JSON.parseWithDate(res);
-                       if (!err) {
-                           if (xhr.status && xhr.status != 200)
-                               err = new CallbackException(xhr.status + " " + xhr.statusText);
-                           else
-                               err = new CallbackException("Callback Error: " + status);
-                           err.detail = res;
-                       }
-                   }
-                   if (!err)
-                       err = new CallbackException("Callback Error: " + status);
+            {
+                url: url,
+                data: postData,
+                type: (postData ? "POST" : _I.method),
+                processData: false, // always process on our own!
+                contentType: _I.contentType,
+                timeout: _I.timeout,
+                dataType: "text",
+                global: false,
+                async: _I.async,
+                beforeSend: function(xhr) {
+                    for (var header in _I.headers) xhr.setRequestHeader(header, _I.headers[header]);
+                    if (_I.accepts)
+                        xhr.setRequestHeader("Accept", _I.accepts);
+                },
+                success: function(result, status) {
+                    var errorException = null;
+                    if (_I.evalResult) {
+                        try {
+                            result = JSON.parseWithDate(result);
+                            if (result && result.hasOwnProperty("d"))
+                                result = result.d;
+                        } catch (e) {
+                            errorException = new CallbackException(e);
+                        }
+                    }
+                    if (errorException || (result && (result.isCallbackError || result.iscallbackerror))) {
+                        if (result)
+                            errorException = result;
+                        if (errorHandler)
+                            errorHandler(errorException, _I);
+                        return;
+                    }
+                    if (completed)
+                        completed(result, _I);
+                },
+                error: function(xhr, status) {
+                    var err = null;
+                    if (xhr.readyState == 4) {
+                        var res = xhr.responseText;
+                        if (res && res.charAt(0) == '{')
+                            err = JSON.parseWithDate(res);
+                        if (!err) {
+                            if (xhr.status && xhr.status != 200)
+                                err = new CallbackException(xhr.status + " " + xhr.statusText);
+                            else
+                                err = new CallbackException("Callback Error: " + status);
+                            err.detail = res;
+                        }
+                    }
+                    if (!err)
+                        err = new CallbackException("Callback Error: " + status);
 
-                   if (errorHandler)
-                       errorHandler(err, _I, xhr);
-               }
-           });
-        }
-        this.returnError = function (message) {
+                    if (errorHandler)
+                        errorHandler(err, _I, xhr);
+                }
+            });            
+        };
+        this.returnError = function(message) {
             var error = new CallbackException(message);
             if (_I.errorHandler)
                 _I.errorHandler(error, _I);
-        }
+        };
     }
 
     ServiceProxy = function (serviceUrl) {
@@ -2021,7 +2021,7 @@ mind + '}' : '{' + partial.join(',') + '}'; gap = mind; return v;
     }());
 
     if (this.JSON && !this.JSON.parseWithDate) {
-        var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z)?$/;
+        var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
         var reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
 
         JSON.parseWithDate = function (json) {
@@ -2038,7 +2038,7 @@ mind + '}' : '{' + partial.join(',') + '}'; gap = mind; return v;
                 if (typeof value === 'string') {
                     var a = reISO.exec(value);
                     if (a)                         
-                        return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4], +a[5], +a[6]));                                            
+                        return new Date(value);                                            
                     a = reMsAjax.exec(value);
                     if (a) {
                         var b = a[1].split(/[-+,.]/);
@@ -2093,7 +2093,7 @@ mind + '}' : '{' + partial.join(',') + '}'; gap = mind; return v;
             
             var a = reISO.exec(dtString);
             if (a)
-                return new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4], +a[5], +a[6]));
+                return new Date(dtString);
             a = reMsAjax.exec(dtString);
             if (a) {
                 var b = a[1].split(/[-,.]/);
