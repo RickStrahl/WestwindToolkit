@@ -57,10 +57,18 @@ namespace Westwind.Web
             {
                 if (string.IsNullOrEmpty(UserId))
                     return 0;
-                return int.Parse(UserId);
+
+                int id = -1;
+                if (!int.TryParse(UserId, out id))
+                    return -1;
+
+                return id;
             }
             set
             {
+                if (value == -1)
+                    return;
+
                 UserId = value.ToString();
             }
         }
