@@ -2892,6 +2892,15 @@
         </member>
         <!-- Badly formed XML comment ignored for member "M:Westwind.Utilities.DataUtils.GenerateUniqueId(System.Int32)" -->
         <!-- Badly formed XML comment ignored for member "M:Westwind.Utilities.DataUtils.GenerateUniqueNumericId" -->
+        <member name="M:Westwind.Utilities.DataUtils.GetRandomNumber(System.Int32,System.Int32)">
+            <summary>
+            Returns a random integer in a range of numbers
+            a single seed value.
+            </summary>
+            <param name="min">The minimum value</param>
+            <param name="max">The max value *including* this value (unlike Random.Next() which doesn't include it)</param>
+            <returns></returns>
+        </member>
         <member name="M:Westwind.Utilities.DataUtils.CopyDataRow(System.Data.DataRow,System.Data.DataRow)">
             <summary>
             Copies the content of a data row to another. Runs through the target's fields
@@ -4003,6 +4012,14 @@
             </summary>
             <param name="s"></param>
             <param name="list"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.StringUtils.GetLines(System.String)">
+            <summary>
+            Parses a string into an array of lines broken
+            by \r\n or \n
+            </summary>
+            <param name="s"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.StringUtils.ProperCase(System.String)">

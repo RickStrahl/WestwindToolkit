@@ -8,7 +8,7 @@ namespace Westwind.Web
     /// client can check for Result.IsCallbackError to see if a 
     /// a failure occured on the server.
     /// </summary>    
-    public class CallbackException
+    public class CallbackException : Exception
     {
         public CallbackException()
         {
@@ -19,8 +19,10 @@ namespace Westwind.Web
         public string message { get; set; }
         public string stackTrace  { get; set; }
     }
+
     /// <summary>
     /// Special return type that can be used to return messages to the
+    /// caller directly rather than throwing an exception.
     /// </summary>    
     public class CallbackMessage
     {
