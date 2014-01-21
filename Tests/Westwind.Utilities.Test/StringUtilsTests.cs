@@ -234,5 +234,49 @@ namespace Westwind.Utilities.Tests
             Assert.AreEqual(extract, "<rant />");
 
         }
+
+        [TestMethod]
+        public void GetLinesTest()
+        {
+            string s = 
+@"this is test
+with
+multiple lines";
+
+            var strings = StringUtils.GetLines(s);
+            Assert.IsNotNull(strings);
+            Assert.IsTrue(strings.Length == 3);
+
+
+            s = string.Empty;
+            strings = StringUtils.GetLines(s);
+            Assert.IsNotNull(strings);
+            Assert.IsTrue(strings.Length == 1);
+
+            s = null;
+            strings = StringUtils.GetLines(s);
+            Assert.IsNull(strings);            
+        }
+
+        [TestMethod]
+        public void CountLinesTest()
+        {
+            string s = 
+"this is test\r\n" + 
+"with\n" +
+"multiple lines";
+
+            int count = StringUtils.CountLines(s);            
+            Assert.IsTrue(count == 3);
+
+            s = string.Empty;
+            count = StringUtils.CountLines(s);
+            Assert.IsTrue(count == 0);
+
+            s = null;
+            count = StringUtils.CountLines(s);
+            Assert.IsTrue(count == 0);
+        }
+
     }
 }

@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Westwind.Utilities.Test;
 
-namespace Westwind.Utilities.Configuration.Tests.SupportClasses
+namespace Westwind.Utilities.Configuration.Tests
 {
     [TestClass]
     public class JsonNetSerializationUtilsTests

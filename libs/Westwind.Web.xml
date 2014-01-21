@@ -84,6 +84,7 @@
         <member name="T:Westwind.Web.CallbackMessage">
             <summary>
             Special return type that can be used to return messages to the
+            caller directly rather than throwing an exception.
             </summary>    
         </member>
         <member name="T:Westwind.Web.CallbackHandler">
