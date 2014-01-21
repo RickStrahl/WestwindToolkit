@@ -2,7 +2,7 @@
 
 
 ###Version 2.50
-* January 20th, 2014
+January 20th, 2014
 
 * **Libraries moved to .NET 4.50**<br/>
 In order to update to the latest versions of MVC5, WebAPI2 and EF6
@@ -57,7 +57,7 @@ uses JSON.NET to provide the same string and file serialization
 services with single method calls. JSON.NET dependency is a 
 soft, dynamic reference so there's no hard dependency on JSON.NET.
 
-* Bug Fixes
+* **Bug Fixes**
   * Westwind.Web: UserState parsing when the userID is a string
     Fixes issue where missing UserIdInt was failing and setting
     the string to 0.
