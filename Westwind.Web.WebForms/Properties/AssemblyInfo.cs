@@ -2,6 +2,10 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+// Not sure why this is needed but without it get errors in Globalization project:
+//  Inheritance security rules violated by type: 'Westwind.Web.Controls.ScriptContainerDesigner'. Derived types must either match the security accessibility of the base type or be less accessible.
+[assembly: System.Security.SecurityRules(System.Security.SecurityRuleSet.Level1)]
+
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
