@@ -1,6 +1,5 @@
 #West Wind Toolkit Change Log
 
-
 ###Version 2.50
 January 20th, 2014
 
@@ -10,7 +9,7 @@ we need to target .NET 4.50. Updated libraries to match this. Only
 library that's left at 4.0 is Westwind.Utilities since it has no
 specific 4.5 dependencies at this point.
 
-* **Switch to new .NET libraries for MVC5, WebAPI2 and EF6**<br/>
+* **Switch to new .NET libraries for MVC5.1, WebAPI2.1 and EF6**<br/>
 Updated to VS2013 RTM. Updated all libraries to use the RTM NuGet 
 components and fixed up any code changes.
 

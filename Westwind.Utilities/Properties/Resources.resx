@@ -171,4 +171,10 @@
   <data name="An_error_occurred_in_your_Application" xml:space="preserve">
     <value>An error occurred in your Application</value>
   </data>
+  <data name="ErrorColon" xml:space="preserve">
+    <value>Error: </value>
+  </data>
+  <data name="CouldntLoadEntityInvalidKeyProvided" xml:space="preserve">
+    <value>Couldn't load entity - invalid key provided.</value>
+  </data>
 </root>
