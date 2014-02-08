@@ -709,7 +709,7 @@ namespace Westwind.Utilities.Data
 
             command.CommandType = CommandType.StoredProcedure;
 
-            return ExecuteReader<T>(command,null);
+            return Query<T>(command,null);
         }
 
         /// <summary>
@@ -757,7 +757,7 @@ namespace Westwind.Utilities.Data
         public virtual IEnumerable<T> ExecuteReader<T>(DbCommand command, params object[] parameters)
             where T : class, new()
         {
-            return ExecuteReader<T>(command, null, parameters);
+            return Query<T>(command, parameters);
         }
 
 
