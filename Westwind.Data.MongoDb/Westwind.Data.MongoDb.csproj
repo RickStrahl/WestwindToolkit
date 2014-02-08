@@ -40,16 +40,14 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IEntity.cs" />
-    <Compile Include="MongoContext.cs" />
+    <Compile Include="MongoDbContext.cs" />
     <Compile Include="MongoDbBusinessBase.cs" />
     <Compile Include="IBusinessObject.cs" />
     <Compile Include="Pluralizer.cs" />

@@ -60,6 +60,56 @@ namespace Westwind.Web.Mvc
             }
         }
 
+        /// <summary>
+        /// Returns a select list of months of the year set with 01-12 and
+        /// a custom format display string (01 - January by default)
+        /// </summary>
+        /// <param name="formatString">Optional format string to format the month string. Based on a Date variable</param>
+        /// <returns></returns>
+        public static IEnumerable<SelectListItem> SelectListMonths(string formatString = "MM - MMMM")
+        {
+            var monthList = new SelectListItem[12];
+            for (int i = 0; i < 12; i++)
+            {
+                var date = new DateTime(2000, i + 1, 1);
+                var number = (i + 1).ToString().PadLeft(2, '0');
+                var month = date.ToString(formatString);
+                monthList[i] = new SelectListItem
+                {
+                    Value = number,
+                    Text = month
+                };
+            }
+            return monthList;
+        }
+
+        /// <summary>
+        /// Gets a select list of years.
+        /// </summary>
+        /// <param name="numberOfYears">Number of years to display</param>
+        /// <param name="startYear">Year to start. If 0 starts current year</param>
+        /// <returns></returns>
+        public static IEnumerable<SelectListItem> SelectListYears(int numberOfYears = 10, int startYear = 0)
+        {
+            if (startYear == 0)
+                startYear = DateTime.Now.Year; 
+
+            var yearList = new SelectListItem[numberOfYears];
+            for (int i = 0; i < numberOfYears; i++)
+            {
+                
+
+                string dt = (startYear + i).ToString();
+                yearList[i] = new SelectListItem
+                {
+                    Value = dt,
+                    Text = dt                    
+                };
+            }
+
+            return yearList;
+        }
+
 
     }
 }

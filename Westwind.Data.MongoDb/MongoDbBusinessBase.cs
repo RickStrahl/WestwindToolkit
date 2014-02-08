@@ -1,9 +1,6 @@
 using System;
 using System.Linq.Expressions;
-using System.Runtime.Remoting.Contexts;
 using System.Xml.Serialization;
-using System.Data.Common;
-using System.Data;
 using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
@@ -48,9 +45,9 @@ namespace Westwind.Data.MongoDb
     /// </typeparam>
     public class MongoDbBusinessBase<TEntity,TMongoContext> : IDisposable, IBusinessObject
         where TEntity : class, new()
-        where TMongoContext : MongoContext, new()
+        where TMongoContext : MongoDbContext, new()
     {
-        protected MongoDatabase Database { get; set; }
+        public MongoDatabase Database { get; set; }
         protected string CollectionName { get; set; }
         protected Type EntityType = typeof (TEntity);
         protected TMongoContext Context = new TMongoContext();
@@ -209,6 +206,39 @@ namespace Westwind.Data.MongoDb
 
         #endregion
 
+
+        public IEnumerable<TEntity> Find(IMongoQuery query, string collectionName = null)
+        {
+            if (string.IsNullOrEmpty(collectionName))
+                collectionName = CollectionName;
+
+            return Database.GetCollection<TEntity>(collectionName).Find(query);
+        }
+
+        public IEnumerable<T> Find<T>(IMongoQuery query, string collectionName = null)
+        {
+            if (string.IsNullOrEmpty(collectionName))
+                collectionName = CollectionName;
+
+            return Database.GetCollection<T>(collectionName).Find(query);
+        }
+
+        public IEnumerable<TEntity> FindAll(string collectionName = null)
+        {
+            if (string.IsNullOrEmpty(collectionName))
+                collectionName = CollectionName;
+
+            return Database.GetCollection<TEntity>(collectionName).FindAll();
+        }
+
+        public IEnumerable<T> FindAll<T>(string collectionName = null)
+        {
+            if (string.IsNullOrEmpty(collectionName))
+                collectionName = CollectionName;
+
+            return Database.GetCollection<T>(collectionName).FindAll();
+        }
+
         /// <summary>
         /// Allows you to query Mongo using a Mongo Shell query 
         /// string.
@@ -216,7 +246,7 @@ namespace Westwind.Data.MongoDb
         /// <param name="jsonQuery">Json object query string</param>
         /// <param name="collectionName">Optional - name of the collection to search</param>
         /// <returns>Collection of items or null if none</returns>
-        public IEnumerable<TEntity> QueryFromString(string jsonQuery, string collectionName = null)
+        public IEnumerable<TEntity> FindFromString(string jsonQuery, string collectionName = null)
         {
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = CollectionName;
@@ -236,7 +266,7 @@ namespace Westwind.Data.MongoDb
         /// <param name="jsonQuery">Json object query string</param>
         /// <param name="collectionName">Optional - name of the collection to search</param>
         /// <returns>Collection of items or null if none</returns>    
-        public IEnumerable<T> QueryFromString<T>(string jsonQuery, string collectionName = null)
+        public IEnumerable<T> FindFromString<T>(string jsonQuery, string collectionName = null)
         {
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = CollectionName;
@@ -259,7 +289,7 @@ namespace Westwind.Data.MongoDb
         /// <param name="queryObject">Any .NET object that conforms to Mongo query object structure</param>
         /// <param name="collectionName">Optional - name of the collection to search</param>
         /// <returns>Collection of items or null if none</returns>
-        public IEnumerable<TEntity> QueryFromObject(object queryObject, string collectionName = null)
+        public IEnumerable<TEntity> FindFromObject(object queryObject, string collectionName = null)
         {
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = CollectionName;
@@ -282,7 +312,7 @@ namespace Westwind.Data.MongoDb
         /// <param name="queryObject">Any .NET object that conforms to Mongo query object structure</param>
         /// <param name="collectionName">Optional - name of the collection to search</param>
         /// <returns>Collection of items or null if none</returns>
-        public IEnumerable<T> QueryFromObject<T>(object queryObject, string collectionName = null)
+        public IEnumerable<T> FindFromObject<T>(object queryObject, string collectionName = null)
         {
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = CollectionName;
@@ -402,7 +432,6 @@ namespace Westwind.Data.MongoDb
 
             try
             {
-
                 var query = Query<TEntity>.Where(whereClauseLambda);
                 Entity = Database.GetCollection<TEntity>(CollectionName).FindOneAs<TEntity>(query);
 
@@ -552,15 +581,15 @@ namespace Westwind.Data.MongoDb
 
         //protected DbTransaction BeginTransaction(IsolationLevel level = IsolationLevel.Unspecified)
         //{
-        //    if (Context.Database.Connection.State != ConnectionState.Open)
-        //        Context.Database.Connection.Open();
+        //    if (Context.DatabaseName.Connection.State != ConnectionState.Open)
+        //        Context.DatabaseName.Connection.Open();
 
-        //    return Context.Database.Connection.BeginTransaction(level);
+        //    return Context.DatabaseName.Connection.BeginTransaction(level);
         //}
 
         //public void CommitTransaction()
         //{
-        //    Context.Database.Connection.
+        //    Context.DatabaseName.Connection.
         //}
 
         //public void RollbackTransaction()
@@ -579,8 +608,12 @@ namespace Westwind.Data.MongoDb
         /// object instances with separate contexts.
         /// </remarks>
         /// <returns></returns>
-        public bool Save(TEntity entity = null)
+        public bool Save(TEntity entity = null, string collectionName = null)
         {
+            if (string.IsNullOrEmpty(collectionName))
+                collectionName = CollectionName;
+
+
             if (entity == null)
                 entity = Entity;
 
@@ -614,6 +647,46 @@ namespace Westwind.Data.MongoDb
                     return false;
 
 
+            return true;
+        }
+
+        /// <summary>
+        /// Saves an entity based on a provided type.
+        /// </summary>
+        /// <remarks>
+        /// This version of Save() does not run Validation, or
+        /// before and after save events since it's not tied to
+        /// the current entity type. If you want the full featured
+        /// save use the non-generic Save() operation.
+        /// </remarks>
+        /// <returns></returns>
+        public bool Save<T>(T entity, string collectionName = null) 
+            where T: class, new()
+        {
+            if (string.IsNullOrEmpty(collectionName))
+                collectionName = CollectionName;
+
+            if (entity == null)
+            {
+                SetError("No entity to save passed.");
+                return false;
+            }
+
+            try
+            {
+                var result = Collection.Save(entity);
+                if (result.HasLastErrorMessage)
+                {
+                    SetError(result.LastErrorMessage);
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                SetError(ex, true);
+                return false;
+            }
+            
             return true;
         }
 
