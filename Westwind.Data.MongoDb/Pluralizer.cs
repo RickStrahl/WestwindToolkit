@@ -6,12 +6,20 @@ using System.Threading.Tasks;
 
 namespace Westwind.Data.MongoDb
 {
+
+    /// <summary>
+    /// Overly simplistic pluralizer that is used
+    /// to pluralize words by appending an s to the
+    /// name and add additional words via dictionary
+    /// overrides
+    /// </summary>
     public class Pluralizer
     {
         public static Dictionary<string, string> Exceptions =
         new Dictionary<string,string> {
             {"Quiz", "Quizzes"},            
-            {"Mouse", "Mice"}
+            {"Mouse", "Mice"},
+            {"Man", "Men"}            
         };
 
 

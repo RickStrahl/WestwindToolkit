@@ -55,7 +55,7 @@ namespace Westwind.Data.MongoDb
         /// <summary>
         /// Internally re-usable Collection instance.
         /// </summary>
-        protected MongoCollection<TEntity> Collection
+        public MongoCollection<TEntity> Collection
         {
             get
             {
@@ -150,7 +150,12 @@ namespace Westwind.Data.MongoDb
             Database = GetDatabase(collection, database, connectionString);
 
             if (!Database.CollectionExists(CollectionName))
-                CollectionName = null;
+            {
+                if (string.IsNullOrEmpty(CollectionName))
+                    CollectionName = Pluralizer.Pluralize(EntityType.Name); 
+                
+                Database.CreateCollection(CollectionName);                
+            }
 
             Initialize();
         }
