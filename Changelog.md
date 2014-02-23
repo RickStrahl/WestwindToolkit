@@ -1,5 +1,25 @@
 #West Wind Toolkit Change Log
 
+###Version 2.51
+* under construction *
+* **Added Slide Transition plug-in to ww.jquery**
+This tiny plug-in provides slideUp()/slideDown() like behavior for jquery
+using CSS transitions. These transitions tend to be very jerky on mobile
+so having a universal replacement is a common scenario.
+
+* **Fixed up tests**
+Fixed entity framework DbInitializer to properly autocreate testdata
+and run. Db Tests still fail occasionally on first run, but succeed
+on subsequent runs. Also fixed several tests by moving hard coded
+resources into the output folder under SupportFiles.
+
+* **Experimental: Westwind.Data.MongoDb**
+Created a MongoDb version of the Westwind.Data component that provides
+most of the same CRUD and Validation functionality of the Westwind.Data
+libraries. Wraps many of Mongo's data features. No documentation yet.
+
+
+
 ###Version 2.50
 January 20th, 2014
 

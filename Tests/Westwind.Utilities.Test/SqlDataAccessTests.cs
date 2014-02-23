@@ -62,8 +62,6 @@ namespace Westwind.Utilities.Data.Tests
             string err = ddata.ErrorMessage;
         }
 
-
-
         [TestMethod]
         public void ExecuteReaderTest()
         {
