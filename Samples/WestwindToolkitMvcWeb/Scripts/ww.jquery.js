@@ -1,7 +1,7 @@
 ﻿/// <reference path="jquery.js" />
 /*
 ww.jQuery.js  
-Version 1.11 - 1/2/2014
+Version 1.13 - 2/21/2014
 West Wind jQuery plug-ins and utilities
 
 (c) 2008-2014 Rick Strahl, West Wind Technologies 
@@ -415,8 +415,9 @@ http://en.wikipedia.org/wiki/MIT_License
             forceAbsolute: false,
             container: window,    // selector of element to center in
             completed: null,
-            centerOnceOnly: false
-        };
+            centerOnceOnly: false,            
+            keepCentered: false  // keep window centered as it's resized
+    };
         $.extend(opt, options);
 
         return this.each(function (i) {
@@ -430,6 +431,16 @@ http://en.wikipedia.org/wiki/MIT_License
             }
             else
                 el.data("_centerOnce", null);
+            
+            if (opt.keepCentered) {
+                if (!el.data("_keepCentered")) {
+                    el.data("_keepCentered", true);
+                    $(window).resize(function() {
+                        if (el.is(":visible"))
+                            setTimeout(function() { el.centerInClient(opt); });
+                    });
+                }
+            }
 
             var jWin = $(opt.container);
             var isWin = opt.container == window;
@@ -477,16 +488,16 @@ http://en.wikipedia.org/wiki/MIT_License
         return sum;
     }
 
-    $.fn.makeAbsolute = function (rebase) {
+    $.fn.makeAbsolute = function(rebase) {
         /// <summary>
         /// Makes an element absolute
         /// </summary>    
         /// <param name="rebase" type="boolean">forces element onto the body tag. Note: might effect rendering or references</param>    
         /// </param>    
         /// <returns type="jQuery" /> 
-        return this.each(function () {
+        return this.each(function() {
             var el = $(this);
-            
+
             var isvis = true;
             if (!el.is(":visible")) {
                 el.show();
@@ -495,16 +506,84 @@ http://en.wikipedia.org/wiki/MIT_License
             var pos = el.position();
             if (!isvis)
                 el.hide();
-            
+
             el.css({
                 position: "absolute",
-                marginLeft: 0, marginTop: 0,
-                top: pos.top, left: pos.left
+                marginLeft: 0,
+                marginTop: 0,
+                top: pos.top,
+                left: pos.left
             });
             if (rebase)
                 el.remove().appendTo("body");
         });
+    };
+    $.fn.slideUpTransition = function () {        
+        return this.each(function () {
+            var $el = $(this);
+            $el.css("max-height", "0");
+            $el.addClass("height-transition-hidden");
+            console.log('up', $el);
+        });
+    };
+
+    $.fn.slideDownTransition = function () {
+        /*
+    jquery.slide-transition plug-in
+
+    Requirements:
+    -------------
+    You'll need to define these two styles to make this work:
+
+    .height-transition {
+        -webkit-transition: max-height 0.5s ease-in-out;
+        -moz-transition: max-height 0.5s ease-in-out;
+        -o-transition: max-height 0.5s ease-in-out;
+        transition: max-height 0.5s ease-in-out;
+        overflow-y: hidden;            
     }
+    .height-transition-hidden {            
+        max-height: 0;            
+    }
+
+    You need to wrap your actual content that you
+    plan to slide up and down into a container. This
+    container has to have a class of height-transition
+    and optionally height-transition-hidden to initially
+    hide the container (collapsed).
+
+    <div id="SlideContainer" 
+            class="height-transition height-transition-hidden">
+        <div id="Actual">
+            Your actual content to slide up or down goes here
+        </div>
+    </div>
+
+    To call it:
+    -----------
+    var $sw = $("#SlideWrapper");
+
+    if (!$sw.hasClass("height-transition-hidden"))
+        $sw.slideUpTransition();                      
+    else 
+        $sw.slideDownTransition();
+           */
+        return this.each(function () {
+            var $el = $(this);
+            $el.removeClass("height-transition-hidden");
+
+            // temporarily make visible to get the size
+            $el.css("max-height", "none");
+            var height = $el.outerHeight();
+
+            // reset to 0 then animate with small delay
+            $el.css("max-height", "0");
+
+            setTimeout(function () {
+                $el.css({ "max-height": height });
+            }, 1);
+        });
+    };
 
     $.fn.stretchToBottom = function (options) {
         /// <summary>
@@ -731,7 +810,7 @@ http://en.wikipedia.org/wiki/MIT_License
 
     $.fn.tooltip = function (msg, timeout, options) {
         var opt = {
-            cssClass: "",
+            cssClass: "tooltip",
             isHtml: false,
             shadowOffset: 2,
             onRelease: null
@@ -778,7 +857,9 @@ http://en.wikipedia.org/wiki/MIT_License
                         background: "cornsilk",
                         border: "solid 1px gray",
                         fontSize: "8pt",
-                        padding: 2
+                        padding: 2,
+                        "border-radius": "2px",
+                        "box-shadow": "1px 1px 1px #535353"
                     });
 
                 if (isHtml)
@@ -801,7 +882,6 @@ http://en.wikipedia.org/wiki/MIT_License
                     width: Width
                 });
                 tt.show();
-                tt.shadow({ offset: opt.shadowOffset });
 
                 if (timeout && timeout > 0)
                     setTimeout(function () {
@@ -809,13 +889,13 @@ http://en.wikipedia.org/wiki/MIT_License
                             _I.onRelease.call(el, _I);
                         _I.hide();
                     }, timeout);
-            }
-            this.hide = function () {
+            };
+            this.hide = function() {
                 if (tt.length > 0)
-                    tt.fadeOut("slow", function () { tt.shadow("hide") });
-            }
+                    tt.fadeOut("slow", function() { tt.shadow("hide") });
+            };
         }
-    }
+    };
 
     $.fn.watch = function (props, func, interval, id) {
         /// <summary>
@@ -991,7 +1071,7 @@ http://en.wikipedia.org/wiki/MIT_License
             sels.push(opts.eq(i).val());
         }
         return sels;
-    }
+    };
 
     HoverPanel = function (sel, opt) {
         var _I = this;
@@ -1734,9 +1814,20 @@ http://en.wikipedia.org/wiki/MIT_License
             return func(data);
         } catch (e) { err = e.message; }
         return "< # ERROR: " + err.htmlEncode() + " # >";
-    }
+    };
 
-    $$ = function (id, context) {
+    isElementInViewport = function(el) {
+        var rect = el.getBoundingClientRect();
+
+        return (
+            rect.top >= 0 &&
+                rect.left >= 0 &&
+                rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) && /*or $(window).height() */
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth) /*or $(window).width() */
+        );
+    };
+
+    $$ = function(id, context) {
         /// <summary>
         /// Searches for an ID based on ASP.NET naming container syntax.
         /// First search by ID as is, then uses attribute based lookup.
@@ -1751,7 +1842,7 @@ http://en.wikipedia.org/wiki/MIT_License
         if (el.length < 1)
             el = $("[id$=_" + id + "],[id*=" + id + "_]", context);
         return el;
-    }
+    };
 
     String.prototype.htmlEncode = function () {
         var div = document.createElement('div');
@@ -2020,80 +2111,111 @@ mind + '}' : '{' + partial.join(',') + '}'; gap = mind; return v;
         }
     }());
 
-    if (this.JSON && !this.JSON.parseWithDate) {
-        var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.\d*))(?:Z|(\+|-)([\d|:]*))?$/;
+    if (this.JSON && !this.JSON.dateParser) {
+        var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.{0,1}\d*))(?:Z|(\+|-)([\d|:]*))?$/;
         var reMsAjax = /^\/Date\((d|-|.*)\)[\/|\\]$/;
+
+        /// <summary>
+        /// set this if you want MS Ajax Dates parsed
+        /// before calling any of the other functions
+        /// </summary>
+        JSON.parseMsAjaxDate = false;
+
+        JSON.useDateParser = function (reset) {
+            /// <summary>
+            /// Globally enables JSON date parsing for JSON.parse().
+            /// replaces the 
+            /// </summary>    
+            /// <param name="reset" type="bool">when set restores the original JSON.parse() function</param>
+
+            // if any parameter is passed reset
+            if (typeof reset != "undefined") {
+                if (JSON._parseSaved) {
+                    JSON.parse = JSON._parseSaved;
+                    JSON._parseSaved = null;
+                }
+            } else {
+                if (!JSON.parseSaved) {
+                    JSON._parseSaved = JSON.parse;
+                    JSON.parse = JSON.parseWithDate;
+                }
+            }
+        };
+
+        JSON.dateParser = function (key, value) {
+            /// <summary>
+            /// Globally enables JSON date parsing for JSON.parse().
+            /// Replaces the default JSON.parse() method and adds
+            /// the datePaser() extension to the processing chain.
+            /// </summary>    
+            /// <param name="key" type="string">property name that is parsed</param>
+            /// <param name="value" type="any">property value</param>
+            /// <returns type="date">returns date or the original value if not a date string</returns>
+            if (typeof value === 'string') {
+                var a = reISO.exec(value);
+                if (a)
+                    return new Date(value);
+
+                if (!JSON.parseMsAjaxDate)
+                    return value;
+
+                a = reMsAjax.exec(value);
+                if (a) {
+                    var b = a[1].split(/[-+,.]/);
+                    return new Date(b[0] ? +b[0] : 0 - +b[1]);
+                }
+            }
+            return value;
+        };
 
         JSON.parseWithDate = function (json) {
             /// <summary>
-            /// parses a JSON string and turns ISO or MSAJAX date strings
-            /// into native JS date objects
+            /// Wrapper around the JSON.parse() function that adds a date
+            /// filtering extension. Returns all dates as real JavaScript dates.
             /// </summary>    
-            /// <param name="json" type="var">json with dates to parse</param>        
-            /// </param>
-            /// <returns type="value, array or object" />
+            /// <param name="json" type="string">JSON to be parsed</param>
+            /// <returns type="any">parsed value or object</returns>
+            var parse = JSON._parseSaved ? JSON._parseSaved : JSON.parse;
             try {
-                var res = JSON.parse(json,
-            function (key, value) {
-                if (typeof value === 'string') {
-                    var a = reISO.exec(value);
-                    if (a)                         
-                        return new Date(value);                                            
-                    a = reMsAjax.exec(value);
-                    if (a) {
-                        var b = a[1].split(/[-+,.]/);
-                        return new Date(b[0] ? +b[0] : 0 - +b[1]);
-                    }
-                }
-                return value;
-            });
+                var res = parse(json, JSON.dateParser);
                 return res;
             } catch (e) {
                 // orignal error thrown has no error message so rethrow with message
                 throw new Error("JSON content could not be parsed");
-                return null;
             }
         };
-        JSON.stringifyWcf = function (json) {
-            /// <summary>
-            /// Wcf specific stringify that encodes dates in the
-            /// a WCF compatible format ("/Date(9991231231)/")
-            /// Note: this format works ONLY with WCF. 
-            ///       ASMX can use ISO dates as of .NET 3.5 SP1
-            /// </summary>
-            /// <param name="key" type="var">property name</param>
-            /// <param name="value" type="var">value of the property</param>         
-            return JSON.stringify(json, function (key, value) {
-                if (typeof value == "string") {
-                    var a = reISO.exec(value);
-                    if (a) {
-                        var val = '/Date(' + new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4], +a[5], +a[6])).getTime() + ')/';
-                        return val;
-                    }
-                }
-                return value;
-            })
-        };
+
         JSON.dateStringToDate = function (dtString, nullDateVal) {
             /// <summary>
-            /// Converts a JSON ISO or MSAJAX string into a date object.
-            /// If you pass a date the date is just returned. If you pass null
-            /// null is returned.
+            /// Converts a JSON ISO or MSAJAX date or real date a date value.
+            /// Supports both JSON encoded dates or plain date formatted strings
+            /// (without the JSON string quotes).
+            /// If you pass a date the date is returned as is. If you pass null
+            /// null or the nullDateVal is returned.
             /// </summary>    
             /// <param name="dtString" type="var">Date String in ISO or MSAJAX format</param>
             /// <param name="nullDateVal" type="var">value to return if date can't be parsed</param>
-            /// <returns type="date or the nullDateVal (null by default)" /> 
+            /// <returns type="date">date or the nullDateVal (null by default)</returns> 
             if (!nullDateVal)
                 nullDateVal = null;
+
             if (!dtString)
-                return nullDateVal;  // empty
+                return nullDateVal; // empty
 
             if (dtString.getTime)
                 return dtString; // already a date
-            
+
+            if (dtString[0] === '"' || dtString[0] === "'")
+                // strip off JSON quotes
+                dtString = dtString.substr(1, dtString.length - 2);
+
             var a = reISO.exec(dtString);
             if (a)
                 return new Date(dtString);
+
+            if (!JSON.parseMsAjaxDate)
+                return nullDateVal;
+
             a = reMsAjax.exec(dtString);
             if (a) {
                 var b = a[1].split(/[-,.]/);
