@@ -73,13 +73,45 @@ namespace Westwind.Utilities.Logging.Tests
         [ClassInitialize]
         public static void ClassInitialize(TestContext testContext)
         {
-            DatabaseInitializer.InitializeDatabase();
+            //DatabaseInitializer.InitializeDatabase();
 
             // Set up the LogManager once
             SqlLogAdapter adapter = new SqlLogAdapter(STR_ConnectionString);
             adapter.LogFilename = STR_TestLogFile;
             LogManager.Create(adapter);
         }
+
+
+        //[TestMethod]
+        //public void CreateLog()
+        //{
+        //    LogManager manager = LogManager.Create();                
+
+        //    try
+        //    {
+        //        for (int i = 0; i < 250; i++)
+        //        {
+        //            var entry = new WebLogEntry()
+        //            {
+        //                Entered = DateTime.Now.AddDays(i * -1),
+        //                ErrorLevel = ErrorLevels.Info,
+        //                Message = StringUtils.RandomString(50, true),
+        //                Details = StringUtils.RandomString(60, true),
+        //                QueryString = StringUtils.RandomString(20, true),
+        //                ErrorType = (i % 2 == 0 ? "Info" : "Error"),
+        //                IpAddress = StringUtils.RandomString(12),
+        //                RequestDuration = i * 1.10M
+
+        //            };
+        //            manager.WriteEntry(entry);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        string message = ex.Message;
+        //    }  
+            
+        //}
 
         [TestMethod]
         public void CreateDeleteLogWithSqlAdapterTest()

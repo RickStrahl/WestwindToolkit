@@ -21,7 +21,7 @@ namespace Westwind.Utilities.Extensions
         /// Serializes the dictionary to an XML string
         /// </summary>
         /// <returns></returns>
-        public static string ToXmlz(this IDictionary items, string root = "root")
+        public static string ToXml(this IDictionary items, string root = "root")
         {
             var rootNode = new XElement(root);
 
@@ -63,7 +63,7 @@ namespace Westwind.Utilities.Extensions
         /// Loads the dictionary from an Xml string
         /// </summary>
         /// <param name="xml"></param>
-        public static void FromXmlz(this IDictionary items, string xml)
+        public static void FromXml(this IDictionary items, string xml)
         {
             items.Clear();
 

@@ -438,7 +438,7 @@ namespace Westwind.Data.MongoDb
             try
             {
                 var query = Query<TEntity>.Where(whereClauseLambda);
-                Entity = Database.GetCollection<TEntity>(CollectionName).FindOneAs<TEntity>(query);
+                Entity = Database.GetCollection<TEntity>(CollectionName).FindOne(query);
 
                 if (Entity != null)
                     OnEntityLoaded(Entity);
@@ -669,7 +669,7 @@ namespace Westwind.Data.MongoDb
             where T: class, new()
         {
             if (string.IsNullOrEmpty(collectionName))
-                collectionName = CollectionName;
+                collectionName = Pluralizer.Pluralize(typeof(T).Name);
 
             if (entity == null)
             {
@@ -679,7 +679,7 @@ namespace Westwind.Data.MongoDb
 
             try
             {
-                var result = Collection.Save(entity);
+                var result = Database.GetCollection(collectionName).Save<T>(entity);
                 if (result.HasLastErrorMessage)
                 {
                     SetError(result.LastErrorMessage);

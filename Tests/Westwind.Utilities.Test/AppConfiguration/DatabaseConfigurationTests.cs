@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using Westwind.Data.Test;
 using Westwind.Utilities.Test;
 
 namespace Westwind.Utilities.Configuration.Tests

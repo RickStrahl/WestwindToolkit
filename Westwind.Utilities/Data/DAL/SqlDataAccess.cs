@@ -34,14 +34,7 @@
 //#define SupportWebRequestProvider
 
 using System;
-using System.Data;
-using System.Data.SqlClient;
-using System.Reflection;
-using System.Text;
-using System.Configuration;
 using System.Data.Common;
-using System.Data.OleDb;
-using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities.Data
 {

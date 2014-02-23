@@ -40,11 +40,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EntityFramework">
-      <HintPath>..\..\..\packages\EntityFramework.6.0.1\lib\net45\EntityFramework.dll</HintPath>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework.SqlServer">
-      <HintPath>..\..\..\packages\EntityFramework.6.0.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <HintPath>..\..\..\packages\EntityFramework.6.0.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -64,14 +65,6 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Models\BusinessObjects\busCustomer.cs" />
-    <Compile Include="Models\BusinessObjects\busLineItem.cs" />
-    <Compile Include="Models\BusinessObjects\busOrder.cs" />
-    <Compile Include="Models\Entities\Customer.cs" />
-    <Compile Include="Models\DataBaseInitializer.cs" />
-    <Compile Include="Models\Entities\LineItem.cs" />
-    <Compile Include="Models\Entities\Order.cs" />
-    <Compile Include="Models\Entities\WebStoreContext.cs" />
     <Compile Include="SingleEntityEfCodeFirstTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlNativeTests.cs" />
@@ -84,6 +77,10 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\WestWind.Data.Models\WestWind.Data.Models.csproj">
+      <Project>{c5e78920-d93a-49c2-884e-39611dd5b660}</Project>
+      <Name>WestWind.Data.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Westwind.Data\Westwind.Data.csproj">
       <Project>{1618c87c-1c5b-4e50-bb14-f6663fe4c0b6}</Project>
       <Name>Westwind.Data</Name>

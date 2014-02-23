@@ -469,6 +469,22 @@
             <param name="dict"></param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Web.Mvc.MvcHtmlUtils.SelectListMonths(System.String)">
+            <summary>
+            Returns a select list of months of the year set with 01-12 and
+            a custom format display string (01 - January by default)
+            </summary>
+            <param name="formatString">Optional format string to format the month string. Based on a Date variable</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.MvcHtmlUtils.SelectListYears(System.Int32,System.Int32)">
+            <summary>
+            Gets a select list of years.
+            </summary>
+            <param name="numberOfYears">Number of years to display</param>
+            <param name="startYear">Year to start. If 0 starts current year</param>
+            <returns></returns>
+        </member>
         <member name="T:Westwind.Web.Mvc.ViewRenderer">
             <summary>
             Class that renders MVC views to a string using the

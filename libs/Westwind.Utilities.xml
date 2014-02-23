@@ -1486,13 +1486,13 @@
             Extends dictionary classes with XML 
             </summary>
         </member>
-        <member name="M:Westwind.Utilities.Extensions.DictionaryExtensions.ToXmlz(System.Collections.IDictionary,System.String)">
+        <member name="M:Westwind.Utilities.Extensions.DictionaryExtensions.ToXml(System.Collections.IDictionary,System.String)">
             <summary>
             Serializes the dictionary to an XML string
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.Extensions.DictionaryExtensions.FromXmlz(System.Collections.IDictionary,System.String)">
+        <member name="M:Westwind.Utilities.Extensions.DictionaryExtensions.FromXml(System.Collections.IDictionary,System.String)">
             <summary>
             Loads the dictionary from an Xml string
             </summary>
@@ -1518,13 +1518,6 @@
             <param name="ms"></param>
             <param name="inputString"></param>
             <param name="encoding"></param>
-        </member>
-        <member name="M:Westwind.Utilities.Extensions.GuidExtensions.IsEmpty(System.Guid)">
-            <summary>
-            Determines whether this is an empty guid
-            </summary>
-            <param name="guid"></param>
-            <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Logging.ILogAdapter.WriteEntry(Westwind.Utilities.Logging.WebLogEntry)">
             <summary>
@@ -2199,9 +2192,19 @@
               Looks up a localized string similar to This Configuration method is no longer supported. Use a Provider configuration instead..
             </summary>
         </member>
+        <member name="P:Westwind.Utilities.Properties.Resources.CouldntLoadEntityInvalidKeyProvided">
+            <summary>
+              Looks up a localized string similar to Couldn&apos;t load entity - invalid key provided..
+            </summary>
+        </member>
         <member name="P:Westwind.Utilities.Properties.Resources.DataReaderPassedToDataReaderToObjectCannot">
             <summary>
               Looks up a localized string similar to DataReader passed to DataReaderToObject cannot be closed.
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.Properties.Resources.ErrorColon">
+            <summary>
+              Looks up a localized string similar to Error: .
             </summary>
         </member>
         <member name="P:Westwind.Utilities.Properties.Resources.InvalidConnectionString">

@@ -8,12 +8,17 @@ namespace Westwind.Utilities.Test
     [TestClass]
     public class ImagingTests
     {
+        private string ImageFile = @"supportfiles\sailbig.jpg";
+        private string ImageFileWork = @"supportfiles\sailbigWork.jpg";
+        private string ImageFileRotated = @"supportfiles\sailbigRotated.jpg";
+
+
         [TestMethod]
         public void RotateFileToFileTest()
         {
-            string orig = @"c:\sailbig.jpg";
-            string work = @"c:\sailbig2.jpg";
-            string rotated = @"c:\sailbig.copy.jpg";
+            string orig = ImageFile;
+            string work = ImageFileWork;
+            string rotated = ImageFileRotated;
 
             File.Copy(orig,work,true);
             ImageUtils.RoateImage(work,rotated,RotateFlipType.Rotate270FlipNone);            
@@ -24,11 +29,11 @@ namespace Westwind.Utilities.Test
         [TestMethod]
         public void RotateFileToSelfFileTest()
         {
-            string orig = @"c:\sailbig.jpg";
+            string orig = ImageFile;
 
             // work on sailbig3 and write output to sailbig3
-            string work = @"c:\sailbig3.jpg";
-            string rotated = @"c:\sailbig3.jpg";
+            string work = ImageFileWork;
+            string rotated = ImageFileRotated;
 
             File.Copy(orig, work, true);
             ImageUtils.RoateImage(work, rotated, RotateFlipType.Rotate270FlipNone);            
@@ -37,8 +42,8 @@ namespace Westwind.Utilities.Test
         [TestMethod]
         public void ResizeBitMap()
         {
-            string orig = @"c:\sailbig.jpg";
-            string copied = @"c:\sailbig2.jpg";
+            string orig = ImageFile;
+            string copied = ImageFileWork;
 
             using (var bmp = new Bitmap(orig))
             {
