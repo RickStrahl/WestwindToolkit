@@ -4614,15 +4614,6 @@
             <param name="size"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.InternetTools.HttpClient.GetUrlBytes(System.String,System.Int64)">
-            <summary>
-            Retrieves URL into an Byte Array.
-            </summary>
-            <remarks>Fires the ReceiveData Event</remarks>
-            <param name="Url">Url to read</param>
-            <param name="bufferSize">Size of the buffer for each read. 0 = 8192</param>
-            <returns></returns>
-        </member>
         <member name="M:Westwind.Utilities.InternetTools.HttpClient.DownloadBytes(System.String,System.Int64)">
             <summary>
             Retrieves URL into an Byte Array.

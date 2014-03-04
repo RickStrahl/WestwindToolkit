@@ -653,37 +653,39 @@ namespace Westwind.Utilities.InternetTools
 				}
 
 				// Deal with the POST buffer if any
-				if (_PostData != null) 
+				if (_PostData != null)
 				{
-					WebRequest.Method = "POST";
+				    if (WebRequest.Method == "GET")
+				        WebRequest.Method = "POST";
 
-                        switch (_PostMode)
-                        {
-                            case HttpPostMode.UrlEncoded:
-                                WebRequest.ContentType = "application/x-www-form-urlencoded";
-                                break;
-                            case HttpPostMode.MultiPart:
-                                WebRequest.ContentType = "multipart/form-data; boundary=" + _MultiPartBoundary;
-                                _PostData.Write(Encoding.GetEncoding(1252).GetBytes("--" + _MultiPartBoundary + "--\r\n"));
-                                break;
-                            case HttpPostMode.Xml:
-                                WebRequest.ContentType = "text/xml";
-                                break;
-                            case HttpPostMode.Json:
-                                WebRequest.ContentType = "application/json";
-                                break;
-                            case HttpPostMode.Raw:
-                                //WebRequest.ContentType = "application/octet-stream";
-                                break;
-                            default:
-                                goto case HttpPostMode.UrlEncoded;
-                    }
+				    switch (_PostMode)
+				    {
+				        case HttpPostMode.UrlEncoded:
+				            WebRequest.ContentType = "application/x-www-form-urlencoded";
+				            break;
+				        case HttpPostMode.MultiPart:
+				            WebRequest.ContentType = "multipart/form-data; boundary=" + _MultiPartBoundary;
+				            _PostData.Write(Encoding.GetEncoding(1252).GetBytes("--" + _MultiPartBoundary + "--\r\n"));
+				            break;
+				        case HttpPostMode.Xml:
+				            WebRequest.ContentType = "text/xml";
+				            break;
+				        case HttpPostMode.Json:
+				            WebRequest.ContentType = "application/json";
+				            break;
+				        case HttpPostMode.Raw:
+				            //WebRequest.ContentType = "application/octet-stream";
+				            break;
+				        default:
+				            goto case HttpPostMode.UrlEncoded;
+				    }
 
-                    if (!string.IsNullOrEmpty(ContentType))
+				    if (!string.IsNullOrEmpty(ContentType))
                         WebRequest.ContentType = ContentType;
 
 					Stream requestStream = WebRequest.GetRequestStream();
 					
+                    
 					if (SendData == null)
 						_PostStream.WriteTo(requestStream);  // Simplest version - no events
 					else 
@@ -742,44 +744,31 @@ namespace Westwind.Utilities.InternetTools
 				{
 					if (Response.Cookies.Count > 0)  
 					{
-						if (_Cookies == null)  
-						{
-							_Cookies = Response.Cookies;
-						}
-						else 
-						{
-							// ** If we already have cookies update the list
-							foreach (Cookie oRespCookie in Response.Cookies)  
-							{
-								bool bMatch = false;
-								foreach(Cookie oReqCookie in _Cookies)  
-								{
-									if (oReqCookie.Name == oRespCookie.Name)  
-									{
-										oReqCookie.Value = oRespCookie.Value;
-										bMatch = true;
-										break; // 
-									}
-								} // for each ReqCookies
-								if (!bMatch)
-									_Cookies.Add(oRespCookie);
-							} // for each Response.Cookies
-						}  // Cookies == null
-					} // if Response.Cookie.Count > 0
-				}  // if bHandleCookies = 0
-
+					    if (_Cookies == null)
+					        _Cookies = Response.Cookies;
+					    else
+					    {
+					        // ** If we already have cookies update the list
+					        foreach (Cookie oRespCookie in Response.Cookies)
+					        {
+					            bool bMatch = false;
+					            foreach (Cookie oReqCookie in _Cookies)
+					            {
+					                if (oReqCookie.Name == oRespCookie.Name)
+					                {
+					                    oReqCookie.Value = oRespCookie.Value;
+					                    bMatch = true;
+					                    break; // 
+					                }
+					            } // for each ReqCookies
+					            if (!bMatch)
+					                _Cookies.Add(oRespCookie);
+					        }
+					    } 
+					} 
+				}  
 				
 				return Response;
-            //}
-            //catch (Exception e)
-            //{
-            //    if (_ThrowExceptions)
-            //        throw e;
-
-            //    _ErrorMessage = e.Message;
-            //    _Error = true;
-            //    return null;
-            //}
 		}
 
 		/// <summary>
@@ -961,15 +950,7 @@ namespace Westwind.Utilities.InternetTools
         }
 
     
-		/// <summary>
-		/// Retrieves URL into an Byte Array.
-		/// </summary>
-		/// <remarks>Fires the ReceiveData Event</remarks>
-		/// <param name="Url">Url to read</param>
-		/// <param name="bufferSize">Size of the buffer for each read. 0 = 8192</param>
-		/// <returns></returns>
         [Obsolete("Use DownloadBytes() method.")]
-
 		public byte[] GetUrlBytes(string url,long bufferSize=8192) 
 		{   
            return DownloadBytes(url, bufferSize);
@@ -986,10 +967,31 @@ namespace Westwind.Utilities.InternetTools
         {         
 			HttpWebResponse Response = DownloadResponse(url);
             if (Response == null)
-                return null;            
+                return null;
 
-			BinaryReader responseReader = 
-				new BinaryReader(Response.GetResponseStream()); 		
+            long responseSize = bufferSize;
+            if (Response.ContentLength > 0)
+                responseSize = _WebResponse.ContentLength;
+            else
+                // No content size provided
+                responseSize = -1;
+
+            Stream responseStream = null;
+            if (Response.ContentEncoding.ToLower().Contains("gzip"))
+            {
+                responseStream = new GZipStream(Response.GetResponseStream(), CompressionMode.Decompress);
+                responseSize = -1; // we don't have a size
+            }
+            else if (Response.ContentEncoding.ToLower().Contains("deflate"))
+            {
+                responseStream = new DeflateStream(Response.GetResponseStream(), CompressionMode.Decompress);
+                responseSize = -1; // we don't have a size
+            }
+            else
+                responseStream = Response.GetResponseStream();
+
+            BinaryReader responseReader =
+                new BinaryReader(responseStream); //Response.GetResponseStream()); 		
 
 			if (responseReader == null)
 				return null;
@@ -997,16 +999,9 @@ namespace Westwind.Utilities.InternetTools
 			if (bufferSize < 1)
 				bufferSize = 8192;
 
-			long responseSize = bufferSize;
-			if (Response.ContentLength > 0)
-				responseSize = _WebResponse.ContentLength;
-			else
-                // No content size provided
-				responseSize = -1;
-
             // pre-allocate the buffer
-            MemoryStream ms = new MemoryStream();
-            
+            MemoryStream ms = new MemoryStream(8192);
+
             byte[] buffer = new byte[bufferSize];
 
 			ReceiveDataEventArgs args = new ReceiveDataEventArgs();
@@ -1020,7 +1015,6 @@ namespace Westwind.Utilities.InternetTools
 			{
                 if (responseSize != -1 && totalBytes + bufferSize >  responseSize)
 					bufferSize = responseSize - totalBytes;
-
                     
 				bytesRead = responseReader.Read(buffer,0,(int) bufferSize);
                 if (bytesRead > 0)
@@ -1048,8 +1042,6 @@ namespace Westwind.Utilities.InternetTools
                         }
                     }
                 }
-                else
-                    break;
 			} // while
 
 

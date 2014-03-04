@@ -18,6 +18,10 @@ Created a MongoDb version of the Westwind.Data component that provides
 most of the same CRUD and Validation functionality of the Westwind.Data
 libraries. Wraps many of Mongo's data features. No documentation yet.
 
+* ** Fix auto Gzip/Deflate decompression for in Memory Results
+Fix automatic Gzip/Deflate decompression in HttpClient class. This was
+previously working for file and stream based responses but not for 
+string and byte[] results of the HttpClient class.
 
 
 ###Version 2.50
