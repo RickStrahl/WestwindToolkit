@@ -47,13 +47,18 @@ namespace Westwind.Data.MongoDb
         where TEntity : class, new()
         where TMongoContext : MongoDbContext, new()
     {
+
+        /// <summary>
+        /// Instance of the MongoDb core database instance.
+        /// </summary>
         public MongoDatabase Database { get; set; }
+
         protected string CollectionName { get; set; }
         protected Type EntityType = typeof (TEntity);
         protected TMongoContext Context = new TMongoContext();
 
         /// <summary>
-        /// Internally re-usable Collection instance.
+        /// Internally re-usable MongoDb Collection instance.
         /// </summary>
         public MongoCollection<TEntity> Collection
         {
@@ -64,7 +69,6 @@ namespace Westwind.Data.MongoDb
                 return _collection;
             }
         }
-
         private MongoCollection<TEntity> _collection;
 
 
@@ -83,7 +87,6 @@ namespace Westwind.Data.MongoDb
                 return _validationErrors;
             }
         }
-
         private ValidationErrorCollection _validationErrors;
 
         /// <summary>
@@ -617,7 +620,6 @@ namespace Westwind.Data.MongoDb
         {
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = CollectionName;
-
 
             if (entity == null)
                 entity = Entity;
