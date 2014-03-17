@@ -3,25 +3,38 @@
 ###Version 2.51
 * under construction *
 * **Added Slide Transition plug-in to ww.jquery**
+<small>Westwind.Web</small>
 This tiny plug-in provides slideUp()/slideDown() like behavior for jquery
 using CSS transitions. These transitions tend to be very jerky on mobile
 so having a universal replacement is a common scenario.
 
 * **Fixed up tests**
+<small>Westwind.Utilies</small>
 Fixed entity framework DbInitializer to properly autocreate testdata
 and run. Db Tests still fail occasionally on first run, but succeed
 on subsequent runs. Also fixed several tests by moving hard coded
 resources into the output folder under SupportFiles.
+
+* **Fix auto Gzip/Deflate decompression for in Memory Results**
+<small>Westwind.Utilies</small>
+Fix automatic Gzip/Deflate decompression in HttpClient class. This was
+previously working for file and stream based responses but not for 
+string and byte[] results of the HttpClient class.
+
+* **Add JsonNetResult**
+<small>Westwind.Web.Mvc</small>
+Add JsonNet ActionResult class that allows returning JSON using JSON.NET
+formatting instead of the default JavaScriptSerializer. JSON.NET is faster
+and serializes more cleanly. (Note: this affects only JSON output - not 
+inbound JSON parsing. Since formatting differs slightly for some times - 
+namely dictionaries - you might not get two-way fidelity).
 
 * **Experimental: Westwind.Data.MongoDb**
 Created a MongoDb version of the Westwind.Data component that provides
 most of the same CRUD and Validation functionality of the Westwind.Data
 libraries. Wraps many of Mongo's data features. No documentation yet.
 
-* ** Fix auto Gzip/Deflate decompression for in Memory Results
-Fix automatic Gzip/Deflate decompression in HttpClient class. This was
-previously working for file and stream based responses but not for 
-string and byte[] results of the HttpClient class.
+
 
 
 ###Version 2.50

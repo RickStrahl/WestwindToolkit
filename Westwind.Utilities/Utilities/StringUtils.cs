@@ -291,7 +291,7 @@ namespace Westwind.Utilities
 
             foreach (char ch in phrase)
             {
-                if (char.IsWhiteSpace(ch) || char.IsPunctuation(ch) || char.IsSeparator(ch))
+                if (char.IsWhiteSpace(ch) || char.IsPunctuation(ch) || char.IsSeparator(ch) || ch > 32 && ch < 48)
                 {
                     nextUpper = true;
                     continue;
