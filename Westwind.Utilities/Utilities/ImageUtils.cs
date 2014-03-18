@@ -139,7 +139,7 @@ namespace Westwind.Utilities
                 }
                 else
                 {
-                    if (bmp.Width > bmp.Height)
+                    if (bmp.Width >= bmp.Height)
                     {
                         ratio = (decimal) width/bmp.Width;
                         newWidth = width;
