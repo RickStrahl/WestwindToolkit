@@ -127,6 +127,9 @@
     <Content Include="SupportFiles\SailBig.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SupportFiles\SquareImage.jpg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\WestWind.Data.Models\WestWind.Data.Models.csproj">

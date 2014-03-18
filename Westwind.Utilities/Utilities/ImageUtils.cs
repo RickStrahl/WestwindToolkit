@@ -55,13 +55,13 @@ namespace Westwind.Utilities
 		/// <param name="width"></param>
 		/// <param name="height"></param>
 		/// <returns>Bitmap or null</returns>
-		public static Bitmap ResizeImage(string filename,int width, int height)
+		public static Bitmap ResizeImage(string filename,int width, int height, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
 		{
 			try 
 			{
                 using (Bitmap bmp = new Bitmap(filename))
                 {
-                    return ResizeImage(bmp, width, height);
+                    return ResizeImage(bmp, width, height, mode);
                 }
 			}
 			catch 
@@ -79,13 +79,13 @@ namespace Westwind.Utilities
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        public static Bitmap ResizeImage(byte[] data, int width, int height)
+        public static Bitmap ResizeImage(byte[] data, int width, int height, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
         {
             try
             {
                 using (Bitmap bmp = new Bitmap(new MemoryStream(data)))
                 {
-                    return ResizeImage(bmp, width, height);
+                    return ResizeImage(bmp, width, height, mode);
                 }
             }
             catch
@@ -103,12 +103,16 @@ namespace Westwind.Utilities
         /// <param name="height"></param>
         /// <returns></returns>
 		public static bool ResizeImage(string filename, string outputFilename, 
-			                           int width, int height)
+			                           int width, int height, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
 		{
 
-            using (var bmpOut = ResizeImage(filename, width, height))
+            using (var bmpOut = ResizeImage(filename, width, height, mode))
             {
-                bmpOut.Save(outputFilename, bmpOut.RawFormat);             
+                if (Path.GetExtension(filename).ToLower() == ".jpg")
+                    // This will result in a much smaller file size if the image is a JPEG
+                    bmpOut.Save(outputFilename, System.Drawing.Imaging.ImageFormat.Jpeg);             
+                else
+                    bmpOut.Save(outputFilename, bmpOut.RawFormat);             
             }
 		
 			return true;
@@ -121,7 +125,7 @@ namespace Westwind.Utilities
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        public static Bitmap ResizeImage(Bitmap bmp, int width, int height)
+        public static Bitmap ResizeImage(Bitmap bmp, int width, int height, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
         {
             Bitmap bmpOut = null;
 
@@ -139,7 +143,7 @@ namespace Westwind.Utilities
                 }
                 else
                 {
-                    if (bmp.Width > bmp.Height)
+                    if (bmp.Width >= bmp.Height)
                     {
                         ratio = (decimal) width/bmp.Width;
                         newWidth = width;
@@ -159,7 +163,7 @@ namespace Westwind.Utilities
                 bmpOut.SetResolution(bmp.HorizontalResolution, bmp.VerticalResolution);
 
                 Graphics g = Graphics.FromImage(bmpOut);
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.InterpolationMode = mode;
                 g.FillRectangle(Brushes.White, 0, 0, newWidth, newHeight);
                 g.DrawImage(bmp, 0, 0, newWidth, newHeight);                
             }

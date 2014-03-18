@@ -46,9 +46,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Westwind.Utilities, Version=2.50.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Westwind.QueueMessageManager\packages\Westwind.Utilities.2.50.01\lib\net40\Westwind.Utilities.dll</HintPath>
+    <Reference Include="Westwind.Utilities">
+      <HintPath>..\Westwind.Utilities\bin\Release\Westwind.Utilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -11,7 +11,7 @@ namespace Westwind.Utilities.Test
         private string ImageFile = @"supportfiles\sailbig.jpg";
         private string ImageFileWork = @"supportfiles\sailbigWork.jpg";
         private string ImageFileRotated = @"supportfiles\sailbigRotated.jpg";
-
+        private string SquareImageFile = @"supportfiles\SquareImage.jpg";
 
         [TestMethod]
         public void RotateFileToFileTest()
@@ -48,6 +48,23 @@ namespace Westwind.Utilities.Test
             using (var bmp = new Bitmap(orig))
             {
                 var bmp2 = ImageUtils.ResizeImage(bmp, 150, 150);
+                bmp2.Save(copied);
+                bmp2.Dispose();
+            }
+        }
+
+        [TestMethod]
+        public void ResizeSquareBitMap()
+        {
+            string orig = SquareImageFile;
+            string copied = ImageFileWork;
+
+            using (var bmp = new Bitmap(orig))
+            {
+                var bmp2 = ImageUtils.ResizeImage(bmp, 100, 150);
+
+                Assert.IsTrue(bmp2.Width == 100, "Image was not resized correctly.");
+
                 bmp2.Save(copied);
                 bmp2.Dispose();
             }
