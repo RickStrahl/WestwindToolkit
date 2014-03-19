@@ -150,6 +150,11 @@
             <param name="viewPage">Path to a ViewPage</param>
             <param name="errorModel">Optional ErrorViewModel to pass to the view</param>
         </member>
+        <member name="T:Westwind.Web.Mvc.Controllers.JsonNetResult">
+            <summary>
+            Works like JsonResult but uses Json.NET for serialization in MVC
+            </summary>
+        </member>
         <member name="T:Westwind.Web.Mvc.CompressContentAttribute">
             <summary>
             Attribute that can be added to controller methods to force content

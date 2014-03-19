@@ -3320,7 +3320,7 @@
             Summary description for wwImaging.
             </summary>
         </member>
-        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.String,System.Int32,System.Int32)">
+        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.String,System.Int32,System.Int32,System.Drawing.Drawing2D.InterpolationMode)">
             <summary>
             Creates a resized bitmap from an existing image on disk. Resizes the image by 
             creating an aspect ratio safe image. Image is sized to the larger size of width
@@ -3333,7 +3333,7 @@
             <param name="height"></param>
             <returns>Bitmap or null</returns>
         </member>
-        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.Byte[],System.Int32,System.Int32)">
+        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.Byte[],System.Int32,System.Int32,System.Drawing.Drawing2D.InterpolationMode)">
             <summary>
             Resizes an image from byte array and returns a Bitmap.
             Make sure you Dispose() the bitmap after you're done 
@@ -3344,7 +3344,7 @@
             <param name="height"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.String,System.String,System.Int32,System.Int32)">
+        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.String,System.String,System.Int32,System.Int32,System.Drawing.Drawing2D.InterpolationMode)">
             <summary>
             Resizes an image and saves the image to a file
             </summary>
@@ -3354,9 +3354,12 @@
             <param name="height"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.Drawing.Bitmap,System.Int32,System.Int32)">
+        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.Drawing.Bitmap,System.Int32,System.Int32,System.Drawing.Drawing2D.InterpolationMode)">
             <summary>
-            Resizes an image from a bitmap
+            Resizes an image from a bitmap.
+            
+            Note it will size to the larger of the sides 
+            
             </summary>
             <param name="bmp"></param>
             <param name="width"></param>

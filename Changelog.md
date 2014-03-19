@@ -1,12 +1,21 @@
 #West Wind Toolkit Change Log
 
 ###Version 2.51
-* under construction *
+* not released *
+
 * **Added Slide Transition plug-in to ww.jquery**
-<small>Westwind.Web</small>
+<small>Westwind.Web/ww.jquery.js</small>
 This tiny plug-in provides slideUp()/slideDown() like behavior for jquery
 using CSS transitions. These transitions tend to be very jerky on mobile
 so having a universal replacement is a common scenario.
+
+* **Add JsonNetResult**
+<small>Westwind.Web.Mvc</small>
+Add JsonNet ActionResult class that allows returning JSON using JSON.NET
+formatting instead of the default JavaScriptSerializer. JSON.NET is faster
+and serializes more cleanly. (Note: this affects only JSON output - not 
+inbound JSON parsing. Since formatting differs slightly for some times - 
+namely dictionaries - you might not get two-way fidelity).
 
 * **Fixed up tests**
 <small>Westwind.Utilies</small>
@@ -21,19 +30,16 @@ Fix automatic Gzip/Deflate decompression in HttpClient class. This was
 previously working for file and stream based responses but not for 
 string and byte[] results of the HttpClient class.
 
-* **Add JsonNetResult**
-<small>Westwind.Web.Mvc</small>
-Add JsonNet ActionResult class that allows returning JSON using JSON.NET
-formatting instead of the default JavaScriptSerializer. JSON.NET is faster
-and serializes more cleanly. (Note: this affects only JSON output - not 
-inbound JSON parsing. Since formatting differs slightly for some times - 
-namely dictionaries - you might not get two-way fidelity).
+* **Fix image resizing algorithm for square images**
+Fix small bug with image resizing when the image is square. Now
+properly resizes to the largest width/height dimension specified.
+Previously always used width. Also added ImageInterpolationMode
+to the full signature. Thanks to Matt Slay for his help on these.
 
 * **Experimental: Westwind.Data.MongoDb**
 Created a MongoDb version of the Westwind.Data component that provides
 most of the same CRUD and Validation functionality of the Westwind.Data
 libraries. Wraps many of Mongo's data features. No documentation yet.
-
 
 
 
