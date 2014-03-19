@@ -63,7 +63,7 @@ namespace Westwind.Utilities.Test
             {
                 var bmp2 = ImageUtils.ResizeImage(bmp, 100, 150);
 
-                Assert.IsTrue(bmp2.Width == 100, "Image was not resized correctly.");
+                Assert.IsTrue(bmp2.Width == 150, "Image was not resized correctly.");
 
                 bmp2.Save(copied);
                 bmp2.Dispose();

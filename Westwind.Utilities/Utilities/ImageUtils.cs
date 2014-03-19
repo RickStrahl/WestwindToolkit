@@ -119,16 +119,20 @@ namespace Westwind.Utilities
 		}
 
         /// <summary>
-        /// Resizes an image from a bitmap
+        /// Resizes an image from a bitmap.
+        /// 
+        /// Note it will size to the larger of the sides 
+        /// 
         /// </summary>
         /// <param name="bmp"></param>
         /// <param name="width"></param>
         /// <param name="height"></param>
         /// <returns></returns>
-        public static Bitmap ResizeImage(Bitmap bmp, int width, int height, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
+        public static Bitmap ResizeImage(Bitmap bmp, int width, int height, 
+                                         InterpolationMode mode = InterpolationMode.HighQualityBicubic)
         {
             Bitmap bmpOut = null;
-
+            
             try
             {                                
                 decimal ratio;
@@ -143,7 +147,20 @@ namespace Westwind.Utilities
                 }
                 else
                 {
-                    if (bmp.Width >= bmp.Height)
+                    if (bmp.Width == bmp.Height)
+                    {
+                        if (height > width)
+                        {
+                            newHeight = height;
+                            newWidth = height;
+                        }
+                        else
+                        {
+                            newHeight = width;
+                            newWidth = width;                         
+                        }
+                    }
+                    else if (bmp.Width >= bmp.Height)
                     {
                         ratio = (decimal) width/bmp.Width;
                         newWidth = width;
