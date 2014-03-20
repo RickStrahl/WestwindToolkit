@@ -103,22 +103,50 @@ namespace Westwind.Utilities
         /// <param name="height"></param>
         /// <returns></returns>
 		public static bool ResizeImage(string filename, string outputFilename, 
-			                           int width, int height, InterpolationMode mode = InterpolationMode.HighQualityBicubic)
+			                           int width, int height, 
+                                       InterpolationMode mode = InterpolationMode.HighQualityBicubic)
 		{
 
-            using (var bmpOut = ResizeImage(filename, width, height, mode))
+            using (var bmpOut = ResizeImage(filename, width, height, mode) )
             {
-                if (Path.GetExtension(filename).ToLower() == ".jpg")
-                    // This will result in a much smaller file size if the image is a JPEG
-                    bmpOut.Save(outputFilename, System.Drawing.Imaging.ImageFormat.Jpeg);             
-                else
-                    bmpOut.Save(outputFilename, bmpOut.RawFormat);             
+                var imageFormat = GetImageFormatFromFilename(filename);
+                if (imageFormat == ImageFormat.Emf)
+                   imageFormat = bmpOut.RawFormat; 
+
+                bmpOut.Save(outputFilename, imageFormat);
             }
-		
-			return true;
+
+            return true;
 		}
 
+
         /// <summary>
+        /// Tries to return an image format 
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns>Image format or ImageFormat.Emf if no match was found</returns>
+	    public static ImageFormat GetImageFormatFromFilename(string filename)
+	    {
+	        Bitmap bmpOut;
+	        string ext = Path.GetExtension(filename).ToLower();
+	        
+            ImageFormat imageFormat;
+
+	        if (ext == ".jpg" || ext == "jpeg")
+	            imageFormat = ImageFormat.Jpeg;
+	        else if (ext == ".png")
+	            imageFormat = ImageFormat.Png;
+	        else if (ext == ".gif")
+	            imageFormat = ImageFormat.Gif;
+	        else if (ext == ".bmp")
+	            imageFormat = ImageFormat.Bmp;
+	        else
+	            imageFormat = ImageFormat.Emf;
+
+	        return imageFormat;
+	    }
+
+	    /// <summary>
         /// Resizes an image from a bitmap.
         /// 
         /// Note it will size to the larger of the sides 
@@ -176,7 +204,8 @@ namespace Westwind.Utilities
                     }
                 }
 
-                bmpOut = new Bitmap(newWidth, newHeight);
+                //bmpOut = new Bitmap(bmp, new Size( newWidth, newHeight));                     
+                bmpOut = new Bitmap(newWidth, newHeight);                
                 bmpOut.SetResolution(bmp.HorizontalResolution, bmp.VerticalResolution);
 
                 Graphics g = Graphics.FromImage(bmpOut);
@@ -200,7 +229,8 @@ namespace Westwind.Utilities
         /// <param name="outputFilename">The output file of the rotated image file. If not passed the original file is overwritten</param>
         /// <param name="type">Type of rotation to perform</param>
         /// <returns></returns>
-        public static bool RoateImage(string filename, string outputFilename = null,RotateFlipType type = RotateFlipType.Rotate90FlipNone)                                     
+        public static bool RoateImage(string filename, string outputFilename = null,
+                                      RotateFlipType type = RotateFlipType.Rotate90FlipNone)                                     
         {
             Bitmap bmpOut = null;
 
@@ -210,7 +240,12 @@ namespace Westwind.Utilities
             try
             {                
                 Bitmap bmp = new Bitmap(filename);
-                ImageFormat format = bmp.RawFormat;
+
+                ImageFormat imageFormat;
+                imageFormat = GetImageFormatFromFilename(filename);
+                if (imageFormat == ImageFormat.Emf)
+                    imageFormat = bmp.RawFormat;
+
                 bmp.RotateFlip(type);
                                 
                 bmpOut = new Bitmap(bmp.Width,bmp.Height);
@@ -220,10 +255,9 @@ namespace Westwind.Utilities
                 g.InterpolationMode = InterpolationMode.HighQualityBicubic;                
                 g.DrawImage(bmp, 0, 0, bmpOut.Width, bmpOut.Height);                
 
-                //System.Drawing.Image imgOut = loBMP.GetThumbnailImage(lnNewWidth,lnNewHeight,null,IntPtr.Zero);                
                 bmp.Dispose();
 
-                bmpOut.Save(outputFilename, format);
+                bmpOut.Save(outputFilename, imageFormat);
                 bmpOut.Dispose();
             }
             catch (Exception ex)

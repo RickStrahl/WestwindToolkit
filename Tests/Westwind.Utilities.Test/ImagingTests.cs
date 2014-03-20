@@ -1,4 +1,5 @@
 using System;
+using System.Drawing.Imaging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
 using System.IO;
@@ -53,6 +54,18 @@ namespace Westwind.Utilities.Test
             }
         }
 
+
+        [TestMethod] 
+        public void ResizeBitMapFile()
+        {
+            string orig = ImageFile;
+            string copied = ImageFileWork;
+
+            bool res = ImageUtils.ResizeImage(orig,copied, 150, 150);
+
+            Assert.IsTrue(res);
+        }
+
         [TestMethod]
         public void ResizeSquareBitMap()
         {
@@ -65,9 +78,15 @@ namespace Westwind.Utilities.Test
 
                 Assert.IsTrue(bmp2.Width == 150, "Image was not resized correctly.");
 
-                bmp2.Save(copied);
+                Console.WriteLine(bmp2.RawFormat.Guid + " (New)");
+                Console.WriteLine(bmp.RawFormat.Guid + " (File)");
+                Console.WriteLine(ImageFormat.Jpeg.Guid + " (Jpeg)");
+                               
+                bmp2.Save(copied,ImageFormat.Jpeg);
                 bmp2.Dispose();
             }
         }
+
+
     }
 }
