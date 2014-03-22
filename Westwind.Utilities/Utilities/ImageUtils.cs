@@ -132,7 +132,7 @@ namespace Westwind.Utilities
 	        
             ImageFormat imageFormat;
 
-	        if (ext == ".jpg" || ext == "jpeg")
+	        if (ext == ".jpg" || ext == ".jpeg")
 	            imageFormat = ImageFormat.Jpeg;
 	        else if (ext == ".png")
 	            imageFormat = ImageFormat.Png;
