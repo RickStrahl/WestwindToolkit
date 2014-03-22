@@ -3354,6 +3354,13 @@
             <param name="height"></param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Utilities.ImageUtils.GetImageFormatFromFilename(System.String)">
+            <summary>
+            Tries to return an image format 
+            </summary>
+            <param name="filename"></param>
+            <returns>Image format or ImageFormat.Emf if no match was found</returns>
+        </member>
         <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.Drawing.Bitmap,System.Int32,System.Int32,System.Drawing.Drawing2D.InterpolationMode)">
             <summary>
             Resizes an image from a bitmap.

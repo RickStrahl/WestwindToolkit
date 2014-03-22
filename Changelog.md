@@ -31,12 +31,14 @@ previously working for file and stream based responses but not for
 string and byte[] results of the HttpClient class.
 
 * **Fix image resizing algorithm for square images**
+<small>Westwind.Utilies</small>
 Fix small bug with image resizing when the image is square. Now
 properly resizes to the largest width/height dimension specified.
 Previously always used width. Also added ImageInterpolationMode
 to the full signature. Thanks to Matt Slay for his help on these.
 
 * **Experimental: Westwind.Data.MongoDb**
+<small>Westwind.Data.MongoDb</small>
 Created a MongoDb version of the Westwind.Data component that provides
 most of the same CRUD and Validation functionality of the Westwind.Data
 libraries. Wraps many of Mongo's data features. No documentation yet.
