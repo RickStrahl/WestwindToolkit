@@ -286,20 +286,69 @@ namespace Westwind.Utilities
         /// <summary>
         /// Sets the culture and UI culture to a specific culture. Allows overriding of currency
         /// and optionally disallows setting the UI culture.
+        /// 
+        /// You can also limit the locales that are allowed in order to minimize
+        /// resource access for locales that aren't implemented at all.
         /// </summary>
-        /// <param name="culture"></param>
-        /// <param name="uiCulture"></param>
-        /// <param name="currencySymbol"></param>
+        /// <param name="culture">ietf string code for the Culture to set. Examples: en-US or en</param>
+        /// <param name="uiCulture">ietf string code for UiCulture to set</param>
+        /// <param name="currencySymbol">Force currency symbol</param>
         /// <param name="setUiCulture"></param>
-        public static void SetUserLocale(string culture = null, string uiCulture = null, string currencySymbol = null, bool setUiCulture = true)
+        /// <param name="allowedLocales">
+        /// Names of 2 letter locales you want to allow
+        /// Any other locales are assumed use the default locale.
+        /// Useful reducing overhead in looking up resource sets that
+        /// don't exist.
+        /// Example: de,fr,it
+        /// </param>
+        public static void SetUserLocale(string culture = null, 
+            string uiCulture = null, 
+            string currencySymbol = null, 
+            bool setUiCulture = true,
+            string allowedLocales = null)
         {
+            // Use browser detection
             if (string.IsNullOrEmpty(culture))
             {
                 HttpRequest Request = HttpContext.Current.Request;
                 if (Request.UserLanguages == null)
+                {
+                    // Always create a new writable CultureInfo
+                    Thread.CurrentThread.CurrentCulture = new CultureInfo(Thread.CurrentThread.CurrentCulture.IetfLanguageTag);
+                    if (setUiCulture)
+                        Thread.CurrentThread.CurrentUICulture = new CultureInfo(Thread.CurrentThread.CurrentUICulture.IetfLanguageTag);
+                    
                     return;
+                }
 
                 culture = Request.UserLanguages[0];
+            }
+            else
+                culture = culture.ToLower();
+
+            if (!string.IsNullOrEmpty(uiCulture))
+                setUiCulture = true;
+
+            if (!string.IsNullOrEmpty(culture) && !string.IsNullOrEmpty(allowedLocales))
+            {
+                allowedLocales = "," + allowedLocales.ToLower() + ",";
+                if (!allowedLocales.Contains("," + culture + ","))
+                {
+                    int i = culture.IndexOf('-');
+                    if (i > 0)
+                    {
+                        culture = culture.Substring(0, i);
+                        if (!allowedLocales.Contains("," + culture + ","))
+                        {
+                            // Create a new writable CultureInfo
+                            Thread.CurrentThread.CurrentCulture = new CultureInfo(Thread.CurrentThread.CurrentCulture.IetfLanguageTag);
+                            if (setUiCulture)
+                                Thread.CurrentThread.CurrentUICulture = new CultureInfo(Thread.CurrentThread.CurrentUICulture.IetfLanguageTag);
+                    
+                            return;
+                        }
+                    }
+                }
             }
 
             if (string.IsNullOrEmpty(culture))
@@ -311,24 +360,20 @@ namespace Westwind.Utilities
             try
             {
                 CultureInfo Culture = new CultureInfo(culture);
+                
                 if (currencySymbol != null && currencySymbol != "")
                     Culture.NumberFormat.CurrencySymbol = currencySymbol;
 
                 Thread.CurrentThread.CurrentCulture = Culture;
 
-                var UICulture = Culture;
-
-                if (culture != uiCulture)
-                    UICulture = new CultureInfo(uiCulture);
-
                 if (setUiCulture)
+                {                    
+                    var UICulture = new CultureInfo(uiCulture);
                     Thread.CurrentThread.CurrentUICulture = UICulture;
+                }
             }
-            catch
-            { ;}
+            catch { }            
         }
-
-
 
         /// <summary>
         /// Finds a Control recursively. Note finds the first match and exits
@@ -1386,5 +1431,12 @@ namespace Westwind.Utilities
             return -1M;
         }
     }
+
+    public class UserLocaleResult
+    {
+        public CultureInfo Culture;
+        public CultureInfo UiCulture;
+    }
+
 
 }

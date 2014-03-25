@@ -1,7 +1,7 @@
 #West Wind Toolkit Change Log
 
 ###Version 2.51
-* not released *
+* not released yet *
 
 * **Added Slide Transition plug-in to ww.jquery**
 <small>Westwind.Web/ww.jquery.js</small>
@@ -16,6 +16,16 @@ formatting instead of the default JavaScriptSerializer. JSON.NET is faster
 and serializes more cleanly. (Note: this affects only JSON output - not 
 inbound JSON parsing. Since formatting differs slightly for some times - 
 namely dictionaries - you might not get two-way fidelity).
+
+* **WebUtils.SetUserLocale allowedLocales Option**
+<small>Westwind.Web</small>
+Method now adds a allowedLocales parameter where you can specify
+any language codes you want to support. Any non-supported languages
+or language prefixes are automatically mapped to the default locale
+of the server. This reduces the amount of lookups for invalid locales
+in your localization providers when automatically mapping browser
+resources to localized resources as each locale referenced must be
+looked up in the resource loaders.
 
 * **Fixed up tests**
 <small>Westwind.Utilies</small>
