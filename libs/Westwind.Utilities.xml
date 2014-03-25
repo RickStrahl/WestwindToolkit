@@ -4054,7 +4054,7 @@
             Takes a phrase and turns it into CamelCase text.
             White Space, punctuation and separators are stripped
             </summary>
-            <param name="?"></param>
+            <param name="phrase">Text to convert to CamelCase</param>
         </member>
         <member name="M:Westwind.Utilities.StringUtils.FromCamelCase(System.String)">
             <summary>
@@ -4095,7 +4095,7 @@
         </member>
         <member name="M:Westwind.Utilities.StringUtils.StringToBytes(System.String,System.Text.Encoding)">
             <summary>
-            Converts a string into bytes for storage in any byte[] type
+            Converts a string into bytes for storage in any byte[] types
             buffer or stream format (like MemoryStream).
             </summary>
             <param name="text"></param>

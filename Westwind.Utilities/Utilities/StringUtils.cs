@@ -278,7 +278,7 @@ namespace Westwind.Utilities
         /// Takes a phrase and turns it into CamelCase text.
         /// White Space, punctuation and separators are stripped
         /// </summary>
-        /// <param name="?"></param>
+        /// <param name="phrase">Text to convert to CamelCase</param>
         public static string ToCamelCase(string phrase)
         {
             if (phrase == null)
@@ -296,6 +296,12 @@ namespace Westwind.Utilities
                     nextUpper = true;
                     continue;
                 }
+                if (char.IsDigit(ch))
+                {
+                    sb.Append(ch);
+                    nextUpper = true;
+                    continue;
+                }                       
 
                 if (nextUpper)
                     sb.Append(char.ToUpper(ch));
@@ -331,7 +337,7 @@ namespace Westwind.Utilities
             {
                 if (!first &&
                      (char.IsUpper(ch) ||
-                       char.IsDigit(ch) && !char.IsDigit(lastChar)))
+                      char.IsDigit(ch) && !char.IsDigit(lastChar)))
                     sb.Append(' ');
 
                 sb.Append(ch);
@@ -421,7 +427,7 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Converts a string into bytes for storage in any byte[] type
+        /// Converts a string into bytes for storage in any byte[] types
         /// buffer or stream format (like MemoryStream).
         /// </summary>
         /// <param name="text"></param>
