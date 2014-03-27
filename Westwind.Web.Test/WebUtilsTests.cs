@@ -14,9 +14,6 @@ namespace Westwind.Web.Test
             var curculture = Thread.CurrentThread.CurrentCulture;
             var curuiculture = Thread.CurrentThread.CurrentUICulture;
 
- 
-            
-
             WebUtils.SetUserLocale("de-de", "de-de");
             var culture = Thread.CurrentThread.CurrentCulture;
             var uiCulture = Thread.CurrentThread.CurrentUICulture;
@@ -24,6 +21,15 @@ namespace Westwind.Web.Test
             Console.WriteLine(culture.IetfLanguageTag);
             Assert.IsTrue(culture.IetfLanguageTag == "de-DE");
 
+            curculture = Thread.CurrentThread.CurrentCulture;
+            curuiculture = Thread.CurrentThread.CurrentUICulture;
+
+            WebUtils.SetUserLocale("de-de", "de-de",allowedLocales: "en,de");
+            culture = Thread.CurrentThread.CurrentCulture;
+            uiCulture = Thread.CurrentThread.CurrentUICulture;
+
+            Console.WriteLine(culture.IetfLanguageTag);
+            Assert.IsTrue(culture.IetfLanguageTag == "de-DE", "Invalid: " + culture.IetfLanguageTag);
 
             // reset 
             Thread.CurrentThread.CurrentUICulture = curuiculture;
