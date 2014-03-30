@@ -86,6 +86,7 @@
     <Compile Include="AppConfiguration\ConfigurationClasses\CustomConfigFileConfiguration.cs" />
     <Compile Include="AppConfiguration\ConfigurationClasses\DatabaseConfiguration.cs" />
     <Compile Include="AppConfiguration\ConfigurationClasses\JsonFileConfiguration.cs" />
+    <Compile Include="AppConfiguration\ConfigurationClasses\LicenseInformation.cs" />
     <Compile Include="AppConfiguration\ConfigurationClasses\StringConfigFileConfiguration.cs" />
     <Compile Include="AppConfiguration\ConfigurationClasses\XmlFileConfiguration.cs" />
     <Compile Include="AppConfiguration\CustomConfigFileConfigurationTests.cs" />

@@ -1,6 +1,6 @@
 #West Wind Toolkit Change Log
 
-###Version 2.51
+###Version 2.52
 * not released yet *
 
 * **Added Slide Transition plug-in to ww.jquery**
@@ -8,6 +8,12 @@
 This tiny plug-in provides slideUp()/slideDown() like behavior for jquery
 using CSS transitions. These transitions tend to be very jerky on mobile
 so having a universal replacement is a common scenario.
+
+* **ConfigurationFile Configuration Provider support for Complex Types**
+<small>Westwind.Utilies</small>
+Added another option for serialization of flat complex objects, by 
+implementing additional checks for a static FromString() method that
+if found can be used to deserialize object. [more info](http://west-wind.com/westwindtoolkit/docs/?page=_1cx0ymket.htm)
 
 * **Add JsonNetResult**
 <small>Westwind.Web.Mvc</small>

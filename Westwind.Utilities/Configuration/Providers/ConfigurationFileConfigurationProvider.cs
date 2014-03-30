@@ -33,10 +33,14 @@
 
 using System;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Configuration;
+using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Globalization;
+using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities.Configuration
 {
@@ -183,7 +187,7 @@ namespace Westwind.Utilities.Configuration
                 {
                     // Assign the value to the property
                     ReflectionUtils.SetPropertyEx(config, fieldName,
-                        ReflectionUtils.StringToTypedValue(value, fieldType, CultureInfo.InvariantCulture));
+                        StringToTypedValue(value, fieldType, CultureInfo.InvariantCulture));
                 }
                 catch { }
             }
@@ -291,7 +295,7 @@ namespace Westwind.Utilities.Configuration
 
                 // Assign the Property
                 ReflectionUtils.SetPropertyEx(config, Fieldname,
-                                     ReflectionUtils.StringToTypedValue(Value, FieldType, CultureInfo.InvariantCulture));
+                                     StringToTypedValue(Value, FieldType, CultureInfo.InvariantCulture));
             }
 
             // We have to write any missing keys
@@ -359,7 +363,7 @@ namespace Westwind.Utilities.Configuration
                     if (Field.Name == "ErrorMessage" || Field.Name == "Provider")
                         continue;
 
-                    Value = ReflectionUtils.TypedValueToString(RawValue, CultureInfo.InvariantCulture);
+                    Value = TypedValueToString(RawValue, CultureInfo.InvariantCulture);
 
                     // Encrypt the field if in list
                     if (fieldsToEncrypt.IndexOf("," + Field.Name.ToLower() + ",") > -1)
@@ -523,6 +527,215 @@ namespace Westwind.Utilities.Configuration
             return Parent;
         }
 
+
+        /// <summary>
+        /// Converts a type to string if possible. This method supports an optional culture generically on any value.
+        /// It calls the ToString() method on common types and uses a type converter on all other objects
+        /// if available
+        /// </summary>
+        /// <param name="rawValue">The Value or Object to convert to a string</param>
+        /// <param name="culture">Culture for numeric and DateTime values</param>
+        /// <param name="unsupportedReturn">Return string for unsupported types</param>
+        /// <returns>string</returns>
+        static string TypedValueToString(object rawValue, CultureInfo culture = null, string unsupportedReturn = null)
+        {
+            if (rawValue == null)
+                return string.Empty;
+
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
+            Type valueType = rawValue.GetType();
+            string returnValue = null;
+
+            if (valueType == typeof(string))
+                returnValue = rawValue as string;
+            else if (valueType == typeof(int) || valueType == typeof(decimal) ||
+                valueType == typeof(double) || valueType == typeof(float) || valueType == typeof(Single))
+                returnValue = string.Format(culture.NumberFormat, "{0}", rawValue);
+            else if (valueType == typeof(DateTime))
+                returnValue = string.Format(culture.DateTimeFormat, "{0}", rawValue);
+            else if (valueType == typeof(bool) || valueType == typeof(Byte) || valueType.IsEnum)
+                returnValue = rawValue.ToString();
+            else if (valueType == typeof(Guid?))
+            {
+                if (rawValue == null)
+                    returnValue = string.Empty;
+                else
+                    return rawValue.ToString();
+            }
+            else
+            {
+                // Any type that supports a type converter
+                TypeConverter converter = TypeDescriptor.GetConverter(valueType);
+                if (converter != null && converter.CanConvertTo(typeof(string)) && converter.CanConvertFrom(typeof(string)))
+                    returnValue = converter.ConvertToString(null, culture, rawValue);
+                else
+                {
+                    // Last resort - just call ToString() on unknown type
+                    if (!string.IsNullOrEmpty(unsupportedReturn))
+                        returnValue = unsupportedReturn;
+                    else
+                        returnValue = rawValue.ToString();
+                }
+            }
+
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Turns a string into a typed value generically.
+        /// Explicitly assigns common types and falls back
+        /// on using type converters for unhandled types.         
+        /// 
+        /// Common uses: 
+        /// * UI -&gt; to data conversions
+        /// * Parsers
+        /// <seealso>Class ReflectionUtils</seealso>
+        /// </summary>
+        /// <param name="sourceString">
+        /// The string to convert from
+        /// </param>
+        /// <param name="targetType">
+        /// The type to convert to
+        /// </param>
+        /// <param name="culture">
+        /// Culture used for numeric and datetime values.
+        /// </param>
+        /// <returns>object. Throws exception if it cannot be converted.</returns>
+        static object StringToTypedValue(string sourceString, Type targetType, CultureInfo culture = null)
+        {
+            object result = null;
+
+            bool isEmpty = string.IsNullOrEmpty(sourceString);
+
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
+            if (targetType == typeof(string))
+                result = sourceString;
+            else if (targetType == typeof(Int32) || targetType == typeof(int))
+            {
+                if (isEmpty)
+                    result = 0;
+                else
+                    result = Int32.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
+            }
+            else if (targetType == typeof(Int64))
+            {
+                if (isEmpty)
+                    result = (Int64)0;
+                else
+                    result = Int64.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
+            }
+            else if (targetType == typeof(Int16))
+            {
+                if (isEmpty)
+                    result = (Int16)0;
+                else
+                    result = Int16.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
+            }
+            else if (targetType == typeof(decimal))
+            {
+                if (isEmpty)
+                    result = 0M;
+                else
+                    result = decimal.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
+            }
+            else if (targetType == typeof(DateTime))
+            {
+                if (isEmpty)
+                    result = DateTime.MinValue;
+                else
+                    result = Convert.ToDateTime(sourceString, culture.DateTimeFormat);
+            }
+            else if (targetType == typeof(byte))
+            {
+                if (isEmpty)
+                    result = 0;
+                else
+                    result = Convert.ToByte(sourceString);
+            }
+            else if (targetType == typeof(double))
+            {
+                if (isEmpty)
+                    result = 0F;
+                else
+                    result = Double.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
+            }
+            else if (targetType == typeof(Single))
+            {
+                if (isEmpty)
+                    result = 0F;
+                else
+                    result = Single.Parse(sourceString, NumberStyles.Any, culture.NumberFormat);
+            }
+            else if (targetType == typeof(bool))
+            {
+                if (!isEmpty &&
+                    sourceString.ToLower() == "true" || sourceString.ToLower() == "on" || sourceString == "1")
+                    result = true;
+                else
+                    result = false;
+            }
+            else if (targetType == typeof(Guid))
+            {
+                if (isEmpty)
+                    result = Guid.Empty;
+                else
+                    result = new Guid(sourceString);
+            }
+            else if (targetType.IsEnum)
+                result = Enum.Parse(targetType, sourceString);
+            else if (targetType == typeof(byte[]))
+            {
+                // TODO: Convert HexBinary string to byte array
+                result = null;
+            }
+
+            // Handle nullables explicitly since type converter won't handle conversions
+            // properly for things like decimal separators currency formats etc.
+            // Grab underlying type and pass value to that
+            else if (targetType.Name.StartsWith("Nullable`"))
+            {
+                if (sourceString.ToLower() == "null" || sourceString == string.Empty)
+                    result = null;
+                else
+                {
+                    targetType = Nullable.GetUnderlyingType(targetType);
+                    result = StringToTypedValue(sourceString, targetType);
+                }
+            }
+            else
+            {
+                // Check for TypeConverters or FromString static method
+                TypeConverter converter = TypeDescriptor.GetConverter(targetType);
+                if (converter != null && converter.CanConvertFrom(typeof(string)))
+                    result = converter.ConvertFromString(null, culture, sourceString);
+                else
+                {
+                    // Try to invoke a static FromString method if it exists
+                    try
+                    {
+                        var mi = targetType.GetMethod("FromString");
+                        if (mi != null)
+                        {
+                            return mi.Invoke(null, new object[1] {sourceString});
+                        }
+                    }
+                    catch
+                    {
+                        // ignore error and assume not supported 
+                    }
+
+                    Debug.Assert(false, string.Format("Type Conversion not handled in StringToTypedValue for {0} {1}",
+                                                        targetType.Name, sourceString));
+                    throw (new InvalidCastException(Resources.StringToTypedValueValueTypeConversionFailed + targetType.Name));
+                }
+            }
+
+            return result;
+        }
 
     }
 }

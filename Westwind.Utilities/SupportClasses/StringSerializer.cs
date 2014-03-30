@@ -115,6 +115,8 @@ namespace Westwind.Utilities
             //.ToArray();
 
             string[] tokens = serialized.Split(new string[] { separator }, StringSplitOptions.None);
+            if (tokens == null || tokens.Length < 1)
+                return null;
 
             for (int i = 0; i < properties.Length; i++)
             {

@@ -18,6 +18,7 @@ namespace Westwind.Utilities.Configuration.Tests
         public bool SendAdminEmailConfirmations { get; set; }
         public string Password { get; set; }
         public string AppConnectionString { get; set; }
+        public LicenseInformation ComplexType { get; set; }
 
         public CustomConfigFileConfiguration()
         {
@@ -27,6 +28,12 @@ namespace Westwind.Utilities.Configuration.Tests
             SendAdminEmailConfirmations = false;
             Password = "seekrit";
             AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
+            ComplexType = new LicenseInformation()
+            {
+                Company = "West Wind",
+                Name = "Rick", 
+                LicenseKey = 10
+            };
         }
 
         /// <summary>

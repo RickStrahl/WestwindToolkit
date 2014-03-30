@@ -550,60 +550,60 @@ namespace Westwind.Utilities
             return Activator.CreateInstance(type);
         }
 
-/// <summary>
-/// Converts a type to string if possible. This method supports an optional culture generically on any value.
-/// It calls the ToString() method on common types and uses a type converter on all other objects
-/// if available
-/// </summary>
-/// <param name="rawValue">The Value or Object to convert to a string</param>
-/// <param name="culture">Culture for numeric and DateTime values</param>
-/// <param name="unsupportedReturn">Return string for unsupported types</param>
-/// <returns>string</returns>
-public static string TypedValueToString(object rawValue, CultureInfo culture =  null, string unsupportedReturn = null)
-{
-    if (rawValue == null)
-        return string.Empty;
-
-    if (culture == null)
-        culture = CultureInfo.CurrentCulture;
-
-    Type valueType = rawValue.GetType();
-    string returnValue = null;
-
-    if (valueType == typeof(string))
-        returnValue = rawValue as string;
-    else if (valueType == typeof(int) || valueType == typeof(decimal) ||
-        valueType == typeof(double) || valueType == typeof(float) || valueType == typeof(Single))
-        returnValue = string.Format(culture.NumberFormat, "{0}", rawValue);
-    else if (valueType == typeof(DateTime))
-        returnValue = string.Format(culture.DateTimeFormat, "{0}", rawValue);
-    else if (valueType == typeof(bool) || valueType == typeof(Byte) || valueType.IsEnum)
-        returnValue = rawValue.ToString();
-    else if (valueType == typeof(Guid?))
-    {
-        if (rawValue == null)
-            returnValue = string.Empty;
-        else
-            return rawValue.ToString();
-    }
-    else
-    {
-        // Any type that supports a type converter
-        TypeConverter converter = TypeDescriptor.GetConverter(valueType);        
-        if (converter != null && converter.CanConvertTo(typeof(string)) && converter.CanConvertFrom(typeof(string)) )
-            returnValue = converter.ConvertToString(null, culture, rawValue);
-        else
+        /// <summary>
+        /// Converts a type to string if possible. This method supports an optional culture generically on any value.
+        /// It calls the ToString() method on common types and uses a type converter on all other objects
+        /// if available
+        /// </summary>
+        /// <param name="rawValue">The Value or Object to convert to a string</param>
+        /// <param name="culture">Culture for numeric and DateTime values</param>
+        /// <param name="unsupportedReturn">Return string for unsupported types</param>
+        /// <returns>string</returns>
+        public static string TypedValueToString(object rawValue, CultureInfo culture =  null, string unsupportedReturn = null)
         {
-            // Last resort - just call ToString() on unknown type
-            if (!string.IsNullOrEmpty(unsupportedReturn))
-                returnValue = unsupportedReturn;
-            else                        
-                returnValue = rawValue.ToString();
-        }
-    }
+            if (rawValue == null)
+                return string.Empty;
 
-    return returnValue;
-}
+            if (culture == null)
+                culture = CultureInfo.CurrentCulture;
+
+            Type valueType = rawValue.GetType();
+            string returnValue = null;
+
+            if (valueType == typeof(string))
+                returnValue = rawValue as string;
+            else if (valueType == typeof(int) || valueType == typeof(decimal) ||
+                valueType == typeof(double) || valueType == typeof(float) || valueType == typeof(Single))
+                returnValue = string.Format(culture.NumberFormat, "{0}", rawValue);
+            else if (valueType == typeof(DateTime))
+                returnValue = string.Format(culture.DateTimeFormat, "{0}", rawValue);
+            else if (valueType == typeof(bool) || valueType == typeof(Byte) || valueType.IsEnum)
+                returnValue = rawValue.ToString();
+            else if (valueType == typeof(Guid?))
+            {
+                if (rawValue == null)
+                    returnValue = string.Empty;
+                else
+                    return rawValue.ToString();
+            }
+            else
+            {
+                // Any type that supports a type converter
+                TypeConverter converter = TypeDescriptor.GetConverter(valueType);        
+                if (converter != null && converter.CanConvertTo(typeof(string)) && converter.CanConvertFrom(typeof(string)) )
+                    returnValue = converter.ConvertToString(null, culture, rawValue);
+                else
+                {
+                    // Last resort - just call ToString() on unknown type
+                    if (!string.IsNullOrEmpty(unsupportedReturn))
+                        returnValue = unsupportedReturn;
+                    else                        
+                        returnValue = rawValue.ToString();
+                }
+            }
+
+            return returnValue;
+        }
 
 /// <summary>
 /// Turns a string into a typed value generically.

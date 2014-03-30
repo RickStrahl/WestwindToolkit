@@ -106,6 +106,12 @@ namespace Westwind.Utilities.Configuration.Tests
             config.DebugMode = DebugModes.DeveloperErrorMessage;
             config.ApplicationName = "Changed";
             config.SendAdminEmailConfirmations = true;
+            
+            // update complex type
+            config.License.Company = "Updated Company";
+            config.License.Name = "New User";
+            config.License.LicenseKey = 22;
+
             config.Write();
 
             string text = File.ReadAllText(TestHelpers.GetTestConfigFilePath());
@@ -115,11 +121,14 @@ namespace Westwind.Utilities.Configuration.Tests
             Assert.IsTrue(text.Contains(@"<add key=""MaxDisplayListItems"" value=""12"" />"));
             Assert.IsTrue(text.Contains(@"<add key=""SendAdminEmailConfirmations"" value=""True"" />"));
 
+            Assert.IsTrue(text.Contains(@"<add key=""License"" value=""New User,Updated Company,22"" />"));
+
             var config2 = new AutoConfigFileConfiguration();
             config2.Initialize();
 
             Assert.AreEqual(config2.MaxDisplayListItems, 12);
             Assert.AreEqual(config2.ApplicationName, "Changed");
+            Assert.AreEqual("Updated Company",config2.License.Company);
 
             // reset to default val
             config2.MaxDisplayListItems = 15;

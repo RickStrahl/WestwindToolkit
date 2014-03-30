@@ -448,6 +448,39 @@
             <param name="configSection"></param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Utilities.Configuration.ConfigurationFileConfigurationProvider`1.TypedValueToString(System.Object,System.Globalization.CultureInfo,System.String)">
+            <summary>
+            Converts a type to string if possible. This method supports an optional culture generically on any value.
+            It calls the ToString() method on common types and uses a type converter on all other objects
+            if available
+            </summary>
+            <param name="rawValue">The Value or Object to convert to a string</param>
+            <param name="culture">Culture for numeric and DateTime values</param>
+            <param name="unsupportedReturn">Return string for unsupported types</param>
+            <returns>string</returns>
+        </member>
+        <member name="M:Westwind.Utilities.Configuration.ConfigurationFileConfigurationProvider`1.StringToTypedValue(System.String,System.Type,System.Globalization.CultureInfo)">
+            <summary>
+            Turns a string into a typed value generically.
+            Explicitly assigns common types and falls back
+            on using type converters for unhandled types.         
+            
+            Common uses: 
+            * UI -&gt; to data conversions
+            * Parsers
+            <seealso>Class ReflectionUtils</seealso>
+            </summary>
+            <param name="sourceString">
+            The string to convert from
+            </param>
+            <param name="targetType">
+            The type to convert to
+            </param>
+            <param name="culture">
+            Culture used for numeric and datetime values.
+            </param>
+            <returns>object. Throws exception if it cannot be converted.</returns>
+        </member>
         <member name="P:Westwind.Utilities.Configuration.ConfigurationFileConfigurationProvider`1.ConfigurationFile">
             <summary>
             Optional - the Configuration file where configuration settings are
