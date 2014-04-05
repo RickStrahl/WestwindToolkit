@@ -553,7 +553,8 @@ namespace Westwind.Utilities
         public static int ParseInt(string input, int defaultValue, IFormatProvider numberFormat)
         {
             int val = defaultValue;
-            int.TryParse(input, NumberStyles.Any, numberFormat, out val);
+            if (!int.TryParse(input, NumberStyles.Any, numberFormat, out val))
+                return defaultValue;
             return val;
         }
 
@@ -579,7 +580,8 @@ namespace Westwind.Utilities
         public static decimal ParseDecimal(string input, decimal defaultValue, IFormatProvider numberFormat)
         {
             decimal val = defaultValue;
-            decimal.TryParse(input, NumberStyles.Any, numberFormat, out val);
+            if (!decimal.TryParse(input, NumberStyles.Any, numberFormat, out val))
+                    return defaultValue;
             return val;
         }
 
