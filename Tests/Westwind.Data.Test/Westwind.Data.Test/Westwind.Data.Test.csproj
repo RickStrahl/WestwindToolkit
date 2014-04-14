@@ -81,6 +81,10 @@
       <Project>{c5e78920-d93a-49c2-884e-39611dd5b660}</Project>
       <Name>WestWind.Data.Models</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Westwind.Data.MongoDb\Westwind.Data.MongoDb.csproj">
+      <Project>{0ce58260-3b66-480c-8394-35ba649f77d6}</Project>
+      <Name>Westwind.Data.MongoDb</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Westwind.Data\Westwind.Data.csproj">
       <Project>{1618c87c-1c5b-4e50-bb14-f6663fe4c0b6}</Project>
       <Name>Westwind.Data</Name>
@@ -89,6 +93,9 @@
       <Project>{1c9829a8-8979-4493-863c-635726f8a61c}</Project>
       <Name>Westwind.Utilities</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="MongoDb\" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

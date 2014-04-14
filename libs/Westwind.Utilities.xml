@@ -4180,18 +4180,9 @@
             Parses an string into an integer. If the value can't be parsed
             a default value is returned instead
             </summary>
-            <param name="input"></param>
-            <param name="defaultValue"></param>
-            <param name="formatProvider"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.StringUtils.ParseInt(System.String,System.Int32)">
-            <summary>
-            Parses an string into an integer. If the value can't be parsed
-            a default value is returned instead
-            </summary>
-            <param name="input"></param>
-            <param name="defaultValue"></param>
+            <param name="input">Input numeric string to be parsed</param>
+            <param name="defaultValue">Optional default value if parsing fails</param>
+            <param name="formatProvider">Optional NumberFormat provider. Defaults to current culture's number format</param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.StringUtils.ParseDecimal(System.String,System.Decimal,System.IFormatProvider)">

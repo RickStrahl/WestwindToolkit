@@ -413,8 +413,6 @@ namespace Westwind.Data.MongoDb
         /// <returns></returns>
         protected virtual TEntity LoadBase(string id)
         {
-            var q = Query.EQ("Id",new BsonString(id));
-            
             Entity = Collection.FindOneByIdAs(typeof(TEntity), new BsonString(id)) as TEntity;            
 
             if (Entity == null)
@@ -463,6 +461,7 @@ namespace Westwind.Data.MongoDb
             return null;
         }
 
+
         /// <summary>
         /// Fired after an entity has been loaded with the .Load() method
         /// </summary>
@@ -471,12 +470,6 @@ namespace Westwind.Data.MongoDb
         {
 
         }
-
-
-
-
-
-
 
 
         /// <summary>
@@ -523,7 +516,7 @@ namespace Westwind.Data.MongoDb
         /// <returns></returns>
         public virtual bool Delete(string id)
         {
-            var query = Query.EQ("Id", new BsonString(id));
+            var query = Query.EQ("_id", new BsonString(id));
             var result = Collection.Remove(query);
             if (result.HasLastErrorMessage)
             {
@@ -543,7 +536,7 @@ namespace Westwind.Data.MongoDb
 
             try
             {
-                var query = Query.EQ("Id", new BsonString(((dynamic) entity).Id.ToString()));
+                var query = Query.EQ("_id", new BsonString(((dynamic) entity).Id.ToString()));
                 var result = Collection.Remove(query);
 
                 if (result.HasLastErrorMessage)

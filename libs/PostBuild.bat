@@ -6,6 +6,9 @@ copy ..\Westwind.Utilities\bin\release\Westwind.Utilities.xml
 copy ..\Westwind.Data\bin\release\Westwind.Data.dll 
 copy ..\Westwind.Data\bin\release\Westwind.Data.xml 
 
+copy ..\Westwind.Data.MongoDb\bin\release\Westwind.Data.MongoDb.dll 
+copy ..\Westwind.Data.MongoDb\bin\release\Westwind.Data.MongoDb.xml
+
 copy ..\Westwind.Web\bin\release\Westwind.Web.dll 
 copy ..\Westwind.Web\bin\release\Westwind.Web.xml 
 
@@ -17,5 +20,7 @@ copy ..\Westwind.Web.WebForms\bin\release\Westwind.Web.Webforms.xml
 
 copy ..\Westwind.Web.WebApi\bin\release\Westwind.Web.WebApi.dll 
 copy ..\Westwind.Web.WebApi\bin\release\Westwind.Web.WebApi.xml 
+
+
 
 pause

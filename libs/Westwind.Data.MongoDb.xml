@@ -1,0 +1,480 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Westwind.Data.MongoDb</name>
+    </assembly>
+    <members>
+        <member name="T:Westwind.Data.MongoDb.IEntity">
+            <summary>
+            Marker interface for Mongo Entities that ensures that
+            each entity has an Id property    
+            </summary>
+        </member>
+        <member name="T:Westwind.Data.MongoDb.MongoDbContext">
+            <summary>
+            Describes a Mongo Applications overall connectivity and 
+            status for a MongoDb connection.
+            
+            This class handles some connection and Configuration
+            tasks for Mongo globally.
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbContext.SetConventions(System.Collections.Generic.IEnumerable{MongoDB.Bson.Serialization.Conventions.IConvention})">
+            <summary>
+            Sets MongoDb global Conventions
+            
+            This method should be called only once on startup
+            </summary>
+            <param name="conventions"></param>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbContext.GetDatabase(System.String,System.String)">
+            <summary>
+            Creates a connection to a databaseName based on the Databasename and 
+            optional server connection string.
+            
+            Returned Mongo DatabaseName 'connection' can be cached and reused.
+            </summary>
+            <param name="connectionString">Mongo server connection string.
+            Can either be a connection string entry name from the ConnectionStrings
+            section in the config file or a full server string.        
+            If not specified looks for connectionstring entry in  same name as
+            the context. Failing that mongodb://localhost is used.
+             
+            Examples:
+            MyDatabaseConnectionString   (ConnectionStrings Config Name)       
+            mongodb://localhost
+            mongodb://localhost:22011/MyDatabase
+            mongodb://username:password@localhost:22011/MyDatabase        
+            </param>        
+            <param name="databaseName">Name of the databaseName to work with if not specified on the connection string</param>
+            <returns>Database instance</returns>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbContext.ConnectionString">
+            <summary>
+            A full connection string to a MongoDb server
+            Optionally include the database name as a path        
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbContext.DatabaseName">
+            <summary>
+            The name of the database to access if not specified
+            on the connectionstring path.
+            </summary>
+        </member>
+        <member name="T:Westwind.Data.MongoDb.MongoDbBusinessBase`2">
+            <summary>
+            Light weight Entity Framework Code First Business object base class
+            that acts as a logic container for an entity DbContext instance. 
+            
+            Subclasses of this business object should be used to implement most data
+            related logic that deals with creating, updating, removing and querying 
+            of data use EF Code First.
+            
+            The business object provides base CRUD methods like Load, NewEntity,
+            Remove that act on the specified entity type. The Save() method uses
+            the EF specific context based SaveChanges
+            which saves all pending changes (not just those for the current entity 
+            and its relations). 
+            
+            These business objects should be used as atomically as possible and 
+            call Save() as often as possible to update pending data.
+            </summary>
+            <typeparam name="TEntity">
+            The type of the 'primary' entity that this business object is tied to. 
+            Note that you can access any of the context's entities - this entity
+            is meant as a 'top level' entity that controls the operations of
+            the CRUD methods.
+            Maps to the Entity property.
+            </typeparam>
+            <typeparam name="TContext">
+            The type of the context that is attached to the this business object.
+            Maps to the Context property. 
+            </typeparam>
+        </member>
+        <member name="T:Westwind.Data.MongoDb.IBusinessObject">
+            <summary>
+            Marker interface for business object and so we have access to
+            DbContext instance.
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.#ctor(System.String,System.String,System.String)">
+            <summary>
+            Base constructor using default behavior loading context by 
+            connectionstring name.
+            </summary>
+            <param name="connectionString">Connection string name</param>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.GetDatabase(System.String,System.String,System.String)">
+            <summary>
+            Specialized CreateContext that accepts a connection string and provider.
+            Creates a new context based on a Connection String name or
+            connection string.
+            </summary>
+            <param name="connectionString"></param>
+            <returns></returns>
+            <remarks>Important: 
+            This only works if you implement a DbContext contstructor on your custom context
+            that accepts a connectionString parameter.
+            </remarks>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Initialize">
+            <summary>
+            Override to hook post Context intialization
+            Fired by all constructors.
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.InitializeInternal">
+            <summary>
+            Internal common pre-Context creation initialization code
+            fired by all constructors
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.FindFromString(System.String,System.String)">
+            <summary>
+            Allows you to query Mongo using a Mongo Shell query 
+            string.
+            </summary>
+            <param name="jsonQuery">Json object query string</param>
+            <param name="collectionName">Optional - name of the collection to search</param>
+            <returns>Collection of items or null if none</returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.FindFromString``1(System.String,System.String)">
+            <summary>
+            Allows you to query Mongo using a Mongo Shell query 
+            string and explicitly specify the result type.
+            </summary>
+            <param name="jsonQuery">Json object query string</param>
+            <param name="collectionName">Optional - name of the collection to search</param>
+            <returns>Collection of items or null if none</returns>    
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.FindFromObject(System.Object,System.String)">
+            <summary>
+            Allows you to query Mongo using a Mongo Shell query 
+            by providing a .NET object that is translated into
+            the appropriate JSON/BSON structure. 
+            
+            This might be easier to write by hand than JSON strings
+            in C# code.
+            </summary>
+            <param name="queryObject">Any .NET object that conforms to Mongo query object structure</param>
+            <param name="collectionName">Optional - name of the collection to search</param>
+            <returns>Collection of items or null if none</returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.FindFromObject``1(System.Object,System.String)">
+            <summary>
+            Allows you to query Mongo using a Mongo Shell query 
+            by providing a .NET object that is translated into
+            the appropriate JSON/BSON structure. This version
+            allows you to specify the result type explicitly.
+            
+            This might be easier to write by hand than JSON strings
+            in C# code.
+            </summary>
+            <param name="queryObject">Any .NET object that conforms to Mongo query object structure</param>
+            <param name="collectionName">Optional - name of the collection to search</param>
+            <returns>Collection of items or null if none</returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.GetQueryFromString(System.String)">
+            <summary>
+            Creates a Bson Query document from a Json String.
+            
+            You can pass this as a Query operation to any of the
+            Collection methods that expect a query.
+            </summary>
+            <param name="jsonQuery"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.NewEntity">
+            <summary>
+            Creates a new instance of an Entity tracked
+            by the DbContext.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.NewEntity(`0)">
+            <summary>
+            Adds a new entity as if it was created and fires
+            the OnNewEntity internally. If NULL is passed in
+            a brand new entity is created and passed back.
+            
+            This allows for external creation of the entity
+            and then adding the entity to the context after
+            the fact.
+            </summary>
+            <param name="entity">An entity instance</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.OnNewEntity(`0)">
+            <summary>
+            Overridable method that allows adding post NewEntity functionaly
+            </summary>
+            <param name="entity"></param>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Load(System.String)">
+            <summary>
+            Loads in instance based on its string id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.LoadBase(System.String)">
+            <summary>
+            Loads an instance based on its key field id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.LoadBase(System.Linq.Expressions.Expression{System.Func{`0,System.Boolean}})">
+            <summary>
+            Loads an entity based on a Lambda expression
+            </summary>
+            <param name="whereClauseLambda"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.OnEntityLoaded(`0)">
+            <summary>
+            Fired after an entity has been loaded with the .Load() method
+            </summary>
+            <param name="entity"></param>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Delete(`0)">
+            <summary>
+            removes an individual entity instance.
+            
+            This method allows specifying an entity in a dbSet other
+            then the main one as long as it's specified by the dbSet
+            parameter.
+            </summary>
+            <param name="entity"></param>
+            <param name="dbSet">Optional - 
+            Allows specifying the Collection to which the entity passed belongs.
+            If not specified the current Collection for the current entity is used </param>
+            <param name="saveChanges">Optional - 
+            If true does a Context.SaveChanges. Set to false
+            when other changes in the Context are pending and you don't want them to commit
+            immediately
+            </param>
+            <param name="noTransaction">Optional - 
+            If true the Delete operation is wrapped into a TransactionScope transaction that
+            ensures that OnBeforeDelete and OnAfterDelete all fire within the same Transaction scope.
+            Defaults to false as to improve performance.
+            </param>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Delete(System.String)">
+            <summary>
+            Deletes an entity from the main entity set
+            based on a key value.
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.DeleteInternal(`0)">
+            <summary>
+            Actual delete operation that removes an entity
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.OnBeforeDelete(`0)">
+            <summary>
+            Called before a delete operation occurs
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.OnAfterDelete(`0)">
+            <summary>
+            Called after a resource is deleted. Runs within the same
+            transaction scope
+            </summary>
+            <param name="entity"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Save(`0,System.String)">
+            <summary>
+            Saves all changes. 
+            </summary>
+            <remarks>
+            This method calls Context.SaveChanges() so it saves
+            all changes made in the context not just changes made
+            to the current entity. It's crucial to Save() as
+            atomically as possible or else use separate Business
+            object instances with separate contexts.
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Save``1(``0,System.String)">
+            <summary>
+            Saves an entity based on a provided type.
+            </summary>
+            <remarks>
+            This version of Save() does not run Validation, or
+            before and after save events since it's not tied to
+            the current entity type. If you want the full featured
+            save use the non-generic Save() operation.
+            </remarks>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.OnBeforeSave(`0)">
+            <summary>
+            Hook point fired just before the save method is called.
+            
+            Override this method to fix up entity values before a save
+            operation occurs.                
+            </summary>
+            <returns>return true to save or false to avoid saving</returns>
+            <param name="entity"></param>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.OnAfterSave(`0)">
+            <summary>
+            Hook point fired after the Save operation has completed
+            successfully. Note doesn't fire if the Save() operation
+            fails.
+            
+            Override this method to fix up or fire actions after
+            the Save operation completes.
+            </summary>
+            <param name="entity"></param>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Validate(`0,System.Boolean)">
+            <summary>
+            Validate() is used to validate business rules on the business object. 
+            Validates both EF entity validation rules on pending changes as well
+            as any custom validation rules you implement in the OnValidate() method.
+            
+            Do not override this method for custom Validation(). Instead override
+            OnValidate() or add error entries to the ValidationErrors collectionName.        
+            <remarks>
+            If the AutoValidate flag is set to true causes Save()
+            to automatically call this method. Must be overridden to perform any 
+            validation.
+            </remarks>
+            <seealso>Class wwBusiness Class ValidationErrorCollection</seealso>
+            </summary>
+            <param name="entity">Optional entity to validate. Defaults to this.Entity</param>
+            <param name="clearValidationErrors">If true clears all validation errors before processing rules</param>
+            <returns>True or False.</returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.OnValidate(`0)">
+            <summary>
+            Method that should be overridden in a business object to handle actual validation. 
+            This method is called from the Validate method.
+            
+            This method should add any errors to the <see cref="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ValidationErrors"/> collectionName.
+            </summary>
+            <param name="entity">The entity to be validated</param>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.GetProperty(System.String)">
+            <summary>
+            Retrieves a value from the Properties collectionName safely.
+            If the value doesn't exist null is returned.
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.GetProperties(System.String,System.Object)">
+            <summary>
+            Loads the Properties dictionary with values from a Properties property of 
+            an entity object. Once loaded you can access the dictionary to read and write
+            values from it arbitrarily and use SetProperties to write the values back
+            in serialized form to the underlying property for database storage.
+            </summary>
+            <param name="stringFieldNameToLoadFrom">The name of the field to load the XML properties from.</param>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.SetProperties(System.String,System.Object)">
+            <summary>
+            Saves the Properties Dictionary - in serialized string form - to a specified entity field which 
+            in turn allows writing the data back to the database.
+            </summary>
+            <param name="stringFieldToSaveTo"></param>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.SetError(System.String)">
+            <summary>
+            Sets an internal error message.
+            </summary>
+            <param name="Message"></param>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.SetError(System.Exception,System.Boolean)">
+            <summary>
+            Sets an internal error exception
+            </summary>
+            <param name="ex"></param>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.SetError">
+            <summary>
+            Clear out errors
+            </summary>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ToString">
+            <summary>
+            Overridden to display error messages if one exists
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Database">
+            <summary>
+            Instance of the MongoDb core database instance.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Collection">
+            <summary>
+            Internally re-usable MongoDb Collection instance.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ValidationErrors">
+            <summary>
+            A collectionName that can be used to hold errors or
+            validation errors. This 
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.AutoValidate">
+            <summary>
+            Determines whether or not the Save operation causes automatic
+            validation
+            </summary>                        
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Entity">
+            <summary>
+            Internally loaded instance from load and newentity calls
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ErrorMessage">
+            <summary>
+            Error Message of the last exception
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ErrorException">
+            <summary>
+            Instance of an exception object that caused the last error
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Properties" -->
+        <member name="T:Westwind.Data.MongoDb.Pluralizer">
+            <summary>
+            Overly simplistic pluralizer that is used
+            to pluralize words by appending an s to the
+            name and add additional words via dictionary
+            overrides
+            </summary>
+        </member>
+        <member name="T:Westwind.Data.MongoDb.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.Properties.Resources.CouldntLoadEntityInvalidKeyProvided">
+            <summary>
+              Looks up a localized string similar to Couldn&apos;t load Entity - invalid key provided..
+            </summary>
+        </member>
+    </members>
+</doc>
