@@ -265,7 +265,7 @@ namespace Westwind.Utilities
                         var ass = AppDomain.CurrentDomain.Load("Newtonsoft.Json");
                         json = ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonSerializer");
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         if (throwExceptions)
                             throw;

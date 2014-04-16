@@ -1,7 +1,9 @@
+using System;
 using System.Web.Mvc;
 using System.Web.Security;
 using System.Web.Routing;
 using System.Web;
+using Westwind.Utilities;
 
 
 namespace Westwind.Web.Mvc
@@ -119,6 +121,36 @@ namespace Westwind.Web.Mvc
             return controller.ShowError(title, message, redirectTo,isHtml);
         }
 
+
+        /// <summary>
+        /// Returns a Json error response to the client
+        /// </summary>
+        /// <param name="errorMessage">Message of the error to return</param>
+        /// <param name="statusCode">Optional status code.</param>
+        /// <returns></returns>
+        public JsonResult ReturnAjaxError(string errorMessage, int statusCode = 500)
+        {
+            Response.Clear();
+            Response.StatusCode = statusCode;
+            return Json(new CallbackException() {message = errorMessage});
+        }
+
+        /// <summary>
+        /// Returns a JSON error response to the client
+        /// </summary>
+        /// <param name="ex">Exception that generates the error message and info to return</param>
+        /// <param name="statusCode">Optional status code</param>
+        /// <returns></returns>
+        public JsonResult ReturnAjaxError(Exception ex, int statusCode = 500)
+        {
+            Response.Clear();
+            Response.StatusCode = statusCode;
+
+            var cb = new CallbackException() {message = ex.Message};
+            cb.stackTrace = ex.StackTrace;
+            
+            return Json(cb);
+        }
 
     }
 }
