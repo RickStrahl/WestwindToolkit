@@ -15,6 +15,12 @@ Added another option for serialization of flat complex objects, by
 implementing additional checks for a static FromString() method that
 if found can be used to deserialize object. [more info](http://west-wind.com/westwindtoolkit/docs/?page=_1cx0ymket.htm)
 
+* **ConfigurationFile Configuration Provider support for IList**
+You can now also add properties based on IList that can create simple
+enumerations in your key value configs. List elements are rendered
+as ListName1, ListName2, ListName3. Lists and list elements must
+have parameterless constructors in order to be readable.
+
 * **Add JsonNetResult**
 <small>Westwind.Web.Mvc</small>
 Add JsonNet ActionResult class that allows returning JSON using JSON.NET

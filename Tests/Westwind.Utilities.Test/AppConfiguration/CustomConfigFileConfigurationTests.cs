@@ -59,6 +59,10 @@ namespace Westwind.Utilities.Configuration.Tests
             config.Password = "seekrit2";
             config.AppConnectionString = "server=.;database=unsecured";
 
+            // Complex Types
+            config.ComplexType.Company = "Updated Company";
+            config.ServerList[0] = "UpdatedServerName";
+
             config.Write();
             
             string text = File.ReadAllText(TestHelpers.GetTestConfigFilePath());
@@ -70,7 +74,65 @@ namespace Westwind.Utilities.Configuration.Tests
 
             // Password and AppSettings  should be encrypted in config file
             Assert.IsTrue(text.Contains(@"<add key=""Password"" value=""ADoCNO6L1HIm8V7TyI4deg=="" />"));
-            Assert.IsTrue(text.Contains(@"<add key=""AppConnectionString"" value=""z6+T5mzXbtJBEgWqpQNYbBss0csbtw2b/qdge7PUixE="" />"));            
+            Assert.IsTrue(text.Contains(@"<add key=""AppConnectionString"" value=""z6+T5mzXbtJBEgWqpQNYbBss0csbtw2b/qdge7PUixE="" />"));
+
+            // Complex Value
+            Assert.IsTrue(text.Contains(@"Updated Company"));
+
+            // List values
+            Assert.IsTrue(text.Contains(@"<add key=""ServerList1"""));
+            Assert.IsTrue(text.Contains(@"UpdatedServerName"));
+
+
+
+        }
+
+        [TestMethod]
+        public void WriteAndReadConfigurationTest()
+        {
+            var config = new CustomConfigFileConfiguration();
+            config.Initialize();
+
+            config.MaxDisplayListItems = 12;
+            config.DebugMode = DebugModes.DeveloperErrorMessage;
+            config.ApplicationName = "Changed";
+            config.SendAdminEmailConfirmations = true;
+
+            // secure properties
+            config.Password = "seekrit2";
+            config.AppConnectionString = "server=.;database=unsecured";
+
+            config.ComplexType.Company = "Updated Company";
+            config.ServerList[0] = "UpdatedServerName";
+
+            config.Write();
+
+            string text = File.ReadAllText(TestHelpers.GetTestConfigFilePath());
+            Console.WriteLine(text);
+
+            Assert.IsTrue(text.Contains(@"<add key=""DebugMode"" value=""DeveloperErrorMessage"" />"));
+            Assert.IsTrue(text.Contains(@"<add key=""MaxDisplayListItems"" value=""12"" />"));
+            Assert.IsTrue(text.Contains(@"<add key=""SendAdminEmailConfirmations"" value=""True"" />"));
+
+            // Password and AppSettings  should be encrypted in config file
+            Assert.IsTrue(text.Contains(@"<add key=""Password"" value=""ADoCNO6L1HIm8V7TyI4deg=="" />"));
+            Assert.IsTrue(text.Contains(@"<add key=""AppConnectionString"" value=""z6+T5mzXbtJBEgWqpQNYbBss0csbtw2b/qdge7PUixE="" />"));
+
+            // Complex Value
+            Assert.IsTrue(text.Contains(@"Updated Company"));
+
+            // List values
+            Assert.IsTrue(text.Contains(@"<add key=""ServerList1"""));
+            Assert.IsTrue(text.Contains(@"UpdatedServerName"));
+
+            
+            var config2 = new CustomConfigFileConfiguration();
+            config2.Initialize();
+            config2.Read();
+
+            Assert.IsTrue(config2.ComplexType.Company == "Updated Company");
+            Assert.IsTrue(config2.ServerList[0] == "UpdatedServerName");
+
         }
 
         [TestMethod]

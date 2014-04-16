@@ -53,8 +53,9 @@ namespace Westwind.Utilities.Configuration
     /// and specification of the configuration section that settings are
     /// applied to.
     /// </summary>
-    public class ConfigurationFileConfigurationProvider<TAppConfiguration> : ConfigurationProviderBase<TAppConfiguration>
-        where TAppConfiguration: AppConfiguration, new()
+    public class ConfigurationFileConfigurationProvider<TAppConfiguration> :
+        ConfigurationProviderBase<TAppConfiguration>
+        where TAppConfiguration : AppConfiguration, new()
     {
 
         /// <summary>
@@ -62,7 +63,7 @@ namespace Westwind.Utilities.Configuration
         /// stored in. If not specified uses the default Configuration Manager
         /// and its default store.
         /// </summary>
-        public string ConfigurationFile {get; set; }
+        public string ConfigurationFile { get; set; }
 
         /// <summary>
         /// Optional The Configuration section where settings are stored.
@@ -95,7 +96,7 @@ namespace Westwind.Utilities.Configuration
         /// <returns></returns>
         public override TAppConfig Read<TAppConfig>()
         {
-            TAppConfig config = Activator.CreateInstance(typeof(TAppConfig), true) as TAppConfig;
+            TAppConfig config = Activator.CreateInstance(typeof (TAppConfig), true) as TAppConfig;
             if (!Read(config))
                 return null;
 
@@ -113,11 +114,13 @@ namespace Westwind.Utilities.Configuration
         {
             // Config reading from external files works a bit differently 
             // so use a separate method to handle it
-           if (!string.IsNullOrEmpty(ConfigurationFile))
-                return Read(config,ConfigurationFile);
+            if (!string.IsNullOrEmpty(ConfigurationFile))
+                return Read(config, ConfigurationFile);
 
             Type typeWebConfig = config.GetType();
-            MemberInfo[] Fields = typeWebConfig.GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.GetField);
+            MemberInfo[] Fields =
+                typeWebConfig.GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty |
+                                         BindingFlags.GetField);
 
             // Set a flag for missing fields
             // If we have any we'll need to write them out into .config
@@ -132,28 +135,37 @@ namespace Westwind.Utilities.Configuration
                 ConfigurationManager.RefreshSection("appSettings");
             else
                 ConfigurationManager.RefreshSection(ConfigurationSection);
-                
+
+            NameValueCollection configManager;
+
+            configManager = string.IsNullOrEmpty(ConfigurationSection)
+                ? ConfigurationManager.GetSection("AppSettings") as NameValueCollection
+                : ConfigurationManager.GetSection(ConfigurationSection) as NameValueCollection;
             
+
+            if (configManager == null)
+            {
+                Write(config);
+                return true;
+            }
+
+
             // Loop through all fields and properties                 
             foreach (MemberInfo Member in Fields)
             {
-                string typeName = null;
-
                 FieldInfo field = null;
                 PropertyInfo property = null;
                 Type fieldType = null;
 
                 if (Member.MemberType == MemberTypes.Field)
                 {
-                    field = (FieldInfo)Member;
+                    field = (FieldInfo) Member;
                     fieldType = field.FieldType;
-                    typeName = fieldType.Name.ToLower();
                 }
                 else if (Member.MemberType == MemberTypes.Property)
                 {
-                    property = (PropertyInfo)Member;
+                    property = (PropertyInfo) Member;
                     fieldType = property.PropertyType;
-                    typeName = fieldType.Name.ToLower();
                 }
                 else
                     continue;
@@ -164,36 +176,61 @@ namespace Westwind.Utilities.Configuration
                 if (fieldName == "errormessage" || fieldName == "provider")
                     continue;
 
-                string value = null;
-                if (string.IsNullOrEmpty(ConfigurationSection))
-                    value = ConfigurationManager.AppSettings[fieldName];
+                if (!IsIList(fieldType))
+                {
+                    // Single value
+                    string value = configManager[fieldName];
+
+                    if (value == null)
+                    {
+                        missingFields = true;
+                        continue;
+                    }
+
+                    // If we're encrypting decrypt any field that are encyrpted
+                    if (value != string.Empty && fieldsToEncrypt.IndexOf("," + fieldName + ",") > -1)
+                        value = Encryption.DecryptString(value, EncryptionKey);
+
+                    try
+                    {
+                        // Assign the value to the property
+                        ReflectionUtils.SetPropertyEx(config, Member.Name,
+                            StringToTypedValue(value, fieldType, CultureInfo.InvariantCulture));
+                    }
+                    catch
+                    {
+                    }
+                }
                 else
                 {
-                    NameValueCollection Values =
-                        ConfigurationManager.GetSection(ConfigurationSection) as NameValueCollection;
-                    if (Values != null)
-                        value = Values[fieldName];
+                    // List Value
+                    var list = Activator.CreateInstance(fieldType) as IList;
+                    var elType = fieldType.GetElementType();
+                    if (elType == null)
+                    {
+                        var generic = fieldType.GetGenericArguments();
+                        if (generic != null && generic.Length > 0)
+                            elType = generic[0];
+                    }
+
+                    int count = 1;
+                    string value = string.Empty;
+
+                    while (value != null)
+                    {
+                        value = configManager[fieldName + count];                        
+                        if (value == null)
+                            break;
+                        list.Add(StringToTypedValue(value, elType, CultureInfo.InvariantCulture));
+                        count++;
+                    }
+
+                    try
+                    {
+                        ReflectionUtils.SetPropertyEx(config, Member.Name, list);
+                    }
+                    catch { }
                 }
-
-                if (value == null)
-                {
-                    missingFields = true;
-                    continue;
-                }
-
-                // If we're encrypting decrypt any field that are encyrpted
-                if (value != string.Empty && fieldsToEncrypt.IndexOf("," + fieldName + ",") > -1)
-                    value = Encryption.DecryptString(value, EncryptionKey);
-
-                try
-                {
-
-
-                    // Assign the value to the property
-                    ReflectionUtils.SetPropertyEx(config, fieldName,
-                        StringToTypedValue(value, fieldType, CultureInfo.InvariantCulture));
-                }
-                catch { }
             }
 
             // We have to write any missing keys
@@ -201,6 +238,21 @@ namespace Westwind.Utilities.Configuration
                 Write(config);
 
             return true;
+        }
+
+
+
+
+        bool IsIList(Type type)
+        {            
+            // Enumerable types explicitly supported as 'simple values'
+            if (type == typeof(string) || type == typeof( byte[]) )
+                return false;
+
+            if (type.GetInterface("IList") != null)
+                return true;
+
+            return false;
         }
 
 
@@ -214,11 +266,13 @@ namespace Westwind.Utilities.Configuration
         /// <param name="config">Configuration instance</param>
         /// <param name="filename">Filename to read from</param>
         /// <returns></returns>
-        public override bool Read(AppConfiguration config, string filename)            
+        public override bool Read(AppConfiguration config, string filename)
         {
+
+
             Type typeWebConfig = config.GetType();
             MemberInfo[] Fields = typeWebConfig.GetMembers(BindingFlags.Public |
-               BindingFlags.Instance);
+                                                           BindingFlags.Instance);
 
             // Set a flag for missing fields
             // If we have any we'll need to write them out 
@@ -228,12 +282,12 @@ namespace Westwind.Utilities.Configuration
 
             try
             {
-                Dom.Load(filename);                
+                Dom.Load(filename);
             }
             catch
             {
                 // Can't open or doesn't exist - so try to create it
-                if (!Write(config)) 
+                if (!Write(config))
                     return false;
 
                 // Now load again
@@ -260,13 +314,13 @@ namespace Westwind.Utilities.Configuration
 
                 if (Member.MemberType == MemberTypes.Field)
                 {
-                    Field = (FieldInfo)Member;
+                    Field = (FieldInfo) Member;
                     FieldType = Field.FieldType;
                     TypeName = Field.FieldType.Name.ToLower();
                 }
                 else if (Member.MemberType == MemberTypes.Property)
                 {
-                    Property = (PropertyInfo)Member;
+                    Property = (PropertyInfo) Member;
                     FieldType = Property.PropertyType;
                     TypeName = Property.PropertyType.Name.ToLower();
                 }
@@ -299,7 +353,7 @@ namespace Westwind.Utilities.Configuration
 
                 // Assign the Property
                 ReflectionUtils.SetPropertyEx(config, Fieldname,
-                                     StringToTypedValue(Value, FieldType, CultureInfo.InvariantCulture));
+                    StringToTypedValue(Value, FieldType, CultureInfo.InvariantCulture));
             }
 
             // We have to write any missing keys
@@ -308,7 +362,8 @@ namespace Westwind.Utilities.Configuration
 
             return true;
         }
-        
+
+
         public override bool Write(AppConfiguration config)
         {
             lock (syncWriteLock)
@@ -367,10 +422,10 @@ namespace Westwind.Utilities.Configuration
 
                     string value = TypedValueToString(rawValue, CultureInfo.InvariantCulture);
 
-                    if (value == "IENUMERABLE_TYPE")
+                    if (value == "ILIST_TYPE")
                     {
                         var count = 0;
-                        foreach (var item in rawValue as IEnumerable)
+                        foreach (var item in rawValue as IList)
                         {
                             value = TypedValueToString(item, CultureInfo.InvariantCulture);
                             WriteConfigurationValue(Field.Name + ++count, value, Field, Dom, ConfigSection);
@@ -584,8 +639,8 @@ namespace Westwind.Utilities.Configuration
                 else
                     return rawValue.ToString();
             }
-            else if (rawValue is IEnumerable)
-                return "IENUMERABLE_TYPE";
+            else if (rawValue is IList)
+                return "ILIST_TYPE";
             else
             {
                 // Any type that supports a type converter
@@ -721,10 +776,6 @@ namespace Westwind.Utilities.Configuration
                     result = StringToTypedValue(sourceString, targetType);
                 }
             }
-            if (targetType.GetInterface("IEnumerable") != null)
-            {
-                return "IENUMERABLE_TYPE";
-            }
             else
             {
                 // Check for TypeConverters or FromString static method
@@ -759,8 +810,5 @@ namespace Westwind.Utilities.Configuration
 
     }
 
-    internal enum ConfigReturnType
-    {
-        IEnumerable
-    }
+
 }
