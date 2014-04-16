@@ -32,6 +32,8 @@
 #endregion
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Configuration;
@@ -185,6 +187,8 @@ namespace Westwind.Utilities.Configuration
 
                 try
                 {
+
+
                     // Assign the value to the property
                     ReflectionUtils.SetPropertyEx(config, fieldName,
                         StringToTypedValue(value, fieldType, CultureInfo.InvariantCulture));
@@ -339,70 +343,43 @@ namespace Westwind.Utilities.Configuration
                 Type typeWebConfig = config.GetType();
                 MemberInfo[] Fields = typeWebConfig.GetMembers(BindingFlags.Instance | BindingFlags.GetField | BindingFlags.GetProperty | BindingFlags.Public);
 
-                string fieldsToEncrypt = "," + PropertiesToEncrypt.ToLower() + ",";
-
+                
                 string ConfigSection = "appSettings";
                 if (!string.IsNullOrEmpty(ConfigurationSection))
                     ConfigSection = ConfigurationSection;
 
+                // make sure we're getting the latest values before we write
                 ConfigurationManager.RefreshSection(ConfigSection);
 
                 foreach (MemberInfo Field in Fields)
                 {
-                    // If we can't find the key - write it out to the document
-                    string Value = null;
-                    object RawValue = null;
-                    if (Field.MemberType == MemberTypes.Field)
-                        RawValue = ((FieldInfo)Field).GetValue(config);
-                    else if (Field.MemberType == MemberTypes.Property)
-                        RawValue = ((PropertyInfo)Field).GetValue(config, null);
-                    else
-                        continue; // not a property or field
-
                     // Don't persist ErrorMessage property
                     if (Field.Name == "ErrorMessage" || Field.Name == "Provider")
                         continue;
 
-                    Value = TypedValueToString(RawValue, CultureInfo.InvariantCulture);
+                    object rawValue = null;
+                    if (Field.MemberType == MemberTypes.Field)
+                        rawValue = ((FieldInfo)Field).GetValue(config);
+                    else if (Field.MemberType == MemberTypes.Property)
+                        rawValue = ((PropertyInfo)Field).GetValue(config, null);
+                    else
+                        continue;
 
-                    // Encrypt the field if in list
-                    if (fieldsToEncrypt.IndexOf("," + Field.Name.ToLower() + ",") > -1)
-                        Value = Encryption.EncryptString(Value, EncryptionKey);
+                    string value = TypedValueToString(rawValue, CultureInfo.InvariantCulture);
 
-                    XmlNode Node = Dom.DocumentElement.SelectSingleNode(
-                        XmlNamespacePrefix + ConfigSection + "/" +
-                        XmlNamespacePrefix + "add[@key='" + Field.Name + "']", XmlNamespaces);
-
-                    if (Node == null)
+                    if (value == "IENUMERABLE_TYPE")
                     {
-                        // Create the node and attributes and write it
-                        Node = Dom.CreateNode(XmlNodeType.Element, "add", Dom.DocumentElement.NamespaceURI);
-
-                        XmlAttribute Attr2 = Dom.CreateAttribute("key");
-                        Attr2.Value = Field.Name;
-                        XmlAttribute Attr = Dom.CreateAttribute("value");
-                        Attr.Value = Value;
-
-                        Node.Attributes.Append(Attr2);
-                        Node.Attributes.Append(Attr);
-
-                        XmlNode Parent = Dom.DocumentElement.SelectSingleNode(
-                            XmlNamespacePrefix + ConfigSection, XmlNamespaces);
-
-                        if (Parent == null)
-                            Parent = CreateConfigSection(Dom, ConfigSection);
-
-                        Parent.AppendChild(Node);
+                        var count = 0;
+                        foreach (var item in rawValue as IEnumerable)
+                        {
+                            value = TypedValueToString(item, CultureInfo.InvariantCulture);
+                            WriteConfigurationValue(Field.Name + ++count, value, Field, Dom, ConfigSection);
+                        }
                     }
                     else
                     {
-                        // just write the value into the attribute
-                        Node.Attributes.GetNamedItem("value").Value = Value;
+                            WriteConfigurationValue(Field.Name, value, Field, Dom, ConfigSection);
                     }
-
-
-                    string XML = Node.OuterXml;
-
                 } // for each
 
 
@@ -420,7 +397,48 @@ namespace Westwind.Utilities.Configuration
             }
             return true;
         }
-        
+
+        private void WriteConfigurationValue(string keyName, string Value, MemberInfo Field, XmlDocument Dom, string ConfigSection)
+        {
+            string fieldsToEncrypt = "," + PropertiesToEncrypt.ToLower() + ",";
+
+            // Encrypt the field if in list
+            if (fieldsToEncrypt.IndexOf("," + Field.Name.ToLower() + ",") > -1)
+                Value = Encryption.EncryptString(Value, EncryptionKey);
+
+           
+            XmlNode Node = Dom.DocumentElement.SelectSingleNode(
+                XmlNamespacePrefix + ConfigSection + "/" +
+                XmlNamespacePrefix + "add[@key='" + keyName + "']", XmlNamespaces);
+
+            if (Node == null)
+            {
+                // Create the node and attributes and write it
+                Node = Dom.CreateNode(XmlNodeType.Element, "add", Dom.DocumentElement.NamespaceURI);
+
+                XmlAttribute Attr2 = Dom.CreateAttribute("key");
+                Attr2.Value = keyName;
+                XmlAttribute Attr = Dom.CreateAttribute("value");
+                Attr.Value = Value;
+
+                Node.Attributes.Append(Attr2);
+                Node.Attributes.Append(Attr);
+
+                XmlNode Parent = Dom.DocumentElement.SelectSingleNode(
+                    XmlNamespacePrefix + ConfigSection, XmlNamespaces);
+
+                if (Parent == null)
+                    Parent = CreateConfigSection(Dom, ConfigSection);
+
+                Parent.AppendChild(Node);
+            }
+            else
+            {
+                // just write the value into the attribute
+                Node.Attributes.GetNamedItem("value").Value = Value;
+            }
+        }
+
         /// <summary>
         /// Returns a single value from the XML in a configuration file.
         /// </summary>
@@ -557,6 +575,8 @@ namespace Westwind.Utilities.Configuration
                 returnValue = string.Format(culture.DateTimeFormat, "{0}", rawValue);
             else if (valueType == typeof(bool) || valueType == typeof(Byte) || valueType.IsEnum)
                 returnValue = rawValue.ToString();
+            else if (valueType == typeof (byte[]))
+                returnValue = Convert.ToBase64String(rawValue as byte[]);
             else if (valueType == typeof(Guid?))
             {
                 if (rawValue == null)
@@ -564,6 +584,8 @@ namespace Westwind.Utilities.Configuration
                 else
                     return rawValue.ToString();
             }
+            else if (rawValue is IEnumerable)
+                return "IENUMERABLE_TYPE";
             else
             {
                 // Any type that supports a type converter
@@ -687,15 +709,8 @@ namespace Westwind.Utilities.Configuration
             }
             else if (targetType.IsEnum)
                 result = Enum.Parse(targetType, sourceString);
-            else if (targetType == typeof(byte[]))
-            {
-                // TODO: Convert HexBinary string to byte array
-                result = null;
-            }
-
-            // Handle nullables explicitly since type converter won't handle conversions
-            // properly for things like decimal separators currency formats etc.
-            // Grab underlying type and pass value to that
+            else if (targetType == typeof (byte[]))
+                result = Convert.FromBase64String(sourceString);
             else if (targetType.Name.StartsWith("Nullable`"))
             {
                 if (sourceString.ToLower() == "null" || sourceString == string.Empty)
@@ -706,11 +721,15 @@ namespace Westwind.Utilities.Configuration
                     result = StringToTypedValue(sourceString, targetType);
                 }
             }
+            if (targetType.GetInterface("IEnumerable") != null)
+            {
+                return "IENUMERABLE_TYPE";
+            }
             else
             {
                 // Check for TypeConverters or FromString static method
                 TypeConverter converter = TypeDescriptor.GetConverter(targetType);
-                if (converter != null && converter.CanConvertFrom(typeof(string)))
+                if (converter != null && converter.CanConvertFrom(typeof (string)))
                     result = converter.ConvertFromString(null, culture, sourceString);
                 else
                 {
@@ -729,13 +748,19 @@ namespace Westwind.Utilities.Configuration
                     }
 
                     Debug.Assert(false, string.Format("Type Conversion not handled in StringToTypedValue for {0} {1}",
-                                                        targetType.Name, sourceString));
-                    throw (new InvalidCastException(Resources.StringToTypedValueValueTypeConversionFailed + targetType.Name));
+                        targetType.Name, sourceString));
+                    throw (new InvalidCastException(Resources.StringToTypedValueValueTypeConversionFailed +
+                                                    targetType.Name));
                 }
             }
 
             return result;
         }
 
+    }
+
+    internal enum ConfigReturnType
+    {
+        IEnumerable
     }
 }
