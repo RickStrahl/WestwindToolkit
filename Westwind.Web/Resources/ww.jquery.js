@@ -1,7 +1,7 @@
 ﻿/// <reference path="jquery.js" />
 /*
 ww.jQuery.js  
-Version 1.13 - 2/21/2014
+Version 1.13 - 4/27/2014
 West Wind jQuery plug-ins and utilities
 
 (c) 2008-2014 Rick Strahl, West Wind Technologies 
@@ -2043,7 +2043,14 @@ http://en.wikipedia.org/wiki/MIT_License
             alert("Assert failed\r\n" + (msg ? msg : "") + "\r\n" +
               (arguments.callee.caller ? "in " + arguments.callee.caller.toString() : ""));
         }
-    }    
+    }
+
+    $.expr[":"].containsNoCase = function (el, i, m) {
+        var search = m[3];
+        if (!search) return false;
+        return eval("/" + search + "/i").test($(el).text());
+    };
+
     /*
     http://www.JSON.org/json2.js
     2009-04-16
@@ -2103,6 +2110,7 @@ mind + '}' : '{' + partial.join(',') + '}'; gap = mind; return v;
             };
         }
     }());
+
 
     if (this.JSON && !this.JSON.dateParser) {
         var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.{0,1}\d*))(?:Z|(\+|-)([\d|:]*))?$/;

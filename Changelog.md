@@ -1,6 +1,6 @@
 #West Wind Toolkit Change Log
 
-###Version 2.52
+###Version 2.55
 * not released yet *
 
 * **Added Slide Transition plug-in to ww.jquery**
@@ -8,6 +8,12 @@
 This tiny plug-in provides slideUp()/slideDown() like behavior for jquery
 using CSS transitions. These transitions tend to be very jerky on mobile
 so having a universal replacement is a common scenario.
+
+* **Add :containsNoCase and :startsWith jQuery Filters to ww.jquery
+<small>Westwind.Web/ww.jquery.js</small>
+Added these two filters that provide jQuery search filters. The former
+filter is especially useful to do dynamic page searches that show only
+content that matches typed text in search boxes.
 
 * **ConfigurationFile Configuration Provider support for Complex Types**
 <small>Westwind.Utilies</small>
