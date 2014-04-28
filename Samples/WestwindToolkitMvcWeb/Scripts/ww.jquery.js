@@ -1,7 +1,7 @@
 ﻿/// <reference path="jquery.js" />
 /*
 ww.jQuery.js  
-Version 1.13 - 2/21/2014
+Version 1.13 - 4/27/2014
 West Wind jQuery plug-ins and utilities
 
 (c) 2008-2014 Rick Strahl, West Wind Technologies 
@@ -12,7 +12,7 @@ http://en.wikipedia.org/wiki/MIT_License
 */
 (function ($,undefined) {
     HttpClient = function (opt) {
-        var _I = this;
+        var self = this;
 
         this.completed = null;
         this.errorHandler = null;
@@ -24,34 +24,35 @@ http://en.wikipedia.org/wiki/MIT_License
         this.method = "GET";
         this.timeout = 20000;
         this.headers = {};
-        $.extend(_I, opt);
+
+        $.extend(self, opt);
 
         this.appendHeader = function(header, value) {
-            _I.headers[header] = value;
+            self.headers[header] = value;
         };
         this.send = function(url, postData, completed, errorHandler) {
-            completed = completed || _I.completed;
-            errorHandler = errorHandler || _I.errorHandler;
+            completed = completed || self.completed;
+            errorHandler = errorHandler || self.errorHandler;
 
             $.ajax(
             {
                 url: url,
                 data: postData,
-                type: (postData ? "POST" : _I.method),
+                type: (postData ? "POST" : self.method),
                 processData: false, // always process on our own!
-                contentType: _I.contentType,
-                timeout: _I.timeout,
+                contentType: self.contentType,
+                timeout: self.timeout,
                 dataType: "text",
                 global: false,
-                async: _I.async,
+                async: self.async,
                 beforeSend: function(xhr) {
-                    for (var header in _I.headers) xhr.setRequestHeader(header, _I.headers[header]);
-                    if (_I.accepts)
-                        xhr.setRequestHeader("Accept", _I.accepts);
+                    for (var header in self.headers) xhr.setRequestHeader(header, self.headers[header]);
+                    if (self.accepts)
+                        xhr.setRequestHeader("Accept", self.accepts);
                 },
                 success: function(result, status) {
                     var errorException = null;
-                    if (_I.evalResult) {
+                    if (self.evalResult) {
                         try {
                             result = JSON.parseWithDate(result);
                             if (result && result.hasOwnProperty("d"))
@@ -64,11 +65,11 @@ http://en.wikipedia.org/wiki/MIT_License
                         if (result)
                             errorException = result;
                         if (errorHandler)
-                            errorHandler(errorException, _I);
+                            errorHandler(errorException, self);
                         return;
                     }
                     if (completed)
-                        completed(result, _I);
+                        completed(result, self);
                 },
                 error: function(xhr, status) {
                     var err = null;
@@ -88,14 +89,14 @@ http://en.wikipedia.org/wiki/MIT_License
                         err = new CallbackException("Callback Error: " + status);
 
                     if (errorHandler)
-                        errorHandler(err, _I, xhr);
+                        errorHandler(err, self, xhr);
                 }
             });            
         };
         this.returnError = function(message) {
             var error = new CallbackException(message);
-            if (_I.errorHandler)
-                _I.errorHandler(error, _I);
+            if (self.errorHandler)
+                self.errorHandler(error, self);
         };
     }
 
@@ -109,7 +110,7 @@ http://en.wikipedia.org/wiki/MIT_License
         /// var proxy = new ServiceProxy("JsonStockService.svc/");
         /// proxy.invoke("GetStockQuote",{symbol:"msft"},function(quote) { alert(result.LastPrice); },onPageError);
         ///</example>        
-        var _I = this;
+        var self = this;
         this.isWcf = true;
         this.timeout = 20000;
         this.method = "POST";
@@ -131,30 +132,30 @@ http://en.wikipedia.org/wiki/MIT_License
 
             // Convert input data into JSON using internal code
             var json = null;
-            if (_I.method != "GET")
-                json = _I.isWcf ? JSON.stringifyWcf(params) : JSON.stringify(params);
+            if (self.method != "GET")
+                json = self.isWcf ? JSON.stringifyWcf(params) : JSON.stringify(params);
 
             // The service endpoint URL MyService.svc/       
-            var url = _I.serviceUrl + method;
+            var url = self.serviceUrl + method;
 
             var http = new HttpClient(
                             { contentType: "application/json",
                                 accepts: "application/json,text/*",
-                                method: _I.method,
+                                method: self.method,
                                 evalResult: true,
-                                timeout: _I.timeout
+                                timeout: self.timeout
                             });
             http.send(url, json, callback, errorCallback);
         }
     }
 
-    AjaxMethodCallback = function (controlId, url, opt) {
-        var _I = this;
+    AjaxMethodCallback = function(controlId, url, opt) {
+        var self = this;
         this.controlId = controlId;
-        this.postbackMode = "PostMethodParametersOnly";  // Post,PostNoViewstate,Get
+        this.postbackMode = "PostMethodParametersOnly"; // Post,PostNoViewstate,Get
         this.serverUrl = url;
         this.formName = null;
-        this.resultMode = "json";  // json,msajax,string
+        this.resultMode = "json"; // json,msajax,string
         this.timeout = 20000;
 
         this.completed = null;
@@ -163,15 +164,15 @@ http://en.wikipedia.org/wiki/MIT_License
 
         this.Http = null;
 
-        this.callMethod = function (methodName, parameters, callback, errorCallback) {
-            _I.completed = callback;
-            _I.errorHandler = errorCallback;
+        this.callMethod = function(methodName, parameters, callback, errorCallback) {
+            self.completed = callback;
+            self.errorHandler = errorCallback;
 
-            var http = new HttpClient({ timeout: _I.timeout, evalResult: true, accepts: "application/json,text/*" });
-            _I.Http = http;
+            var http = new HttpClient({ timeout: self.timeout, evalResult: true, accepts: "application/json,text/*" });
+            self.Http = http;
 
             var data = {};
-            if (_I.resultMode == "msajax")
+            if (self.resultMode == "msajax")
                 data = JSON.stringifyWithDates(parameters);
             else {
                 var parmCount = 0;
@@ -184,17 +185,17 @@ http://en.wikipedia.org/wiki/MIT_License
                 $.extend(data, {
                     CallbackMethod: methodName,
                     CallbackParmCount: parmCount,
-                    __WWEVENTCALLBACK: _I.controlId
+                    __WWEVENTCALLBACK: self.controlId
                 });
 
                 data = $.param(data) + "&"
             }
 
-            var formName = _I.formName || (document.forms.length > 0 ? document.forms[0].id : "");
-                        
-            if (_I.postbackMode == "Post")
+            var formName = self.formName || (document.forms.length > 0 ? document.forms[0].id : "");
+
+            if (self.postbackMode == "Post")
                 data += $("#" + formName).serialize();
-            else if (_I.postbackMode == "PostNoViewstate")
+            else if (self.postbackMode == "PostNoViewstate")
                 data += $("#" + formName).serializeNoViewState();
             else if (this.postbackMode == "Get") {
                 Url = this.serverUrl;
@@ -203,24 +204,24 @@ http://en.wikipedia.org/wiki/MIT_License
                 else
                     Url += "?" + data;
 
-                return http.send(Url, null, _I.onHttpCallback, _I.onHttpCallback);
+                return http.send(Url, null, self.onHttpCallback, self.onHttpCallback);
             }
 
-            return http.send(this.serverUrl, data, _I.onHttpCallback, _I.onHttpCallback);
-        }
+            return http.send(this.serverUrl, data, self.onHttpCallback, self.onHttpCallback);
+        };
 
-        this.onHttpCallback = function (result) {
+        this.onHttpCallback = function(result) {
             if (result && (result.isCallbackError || result.iscallbackerror)) {
-                if (_I.errorHandler)
-                    _I.errorHandler(result, _I);
+                if (self.errorHandler)
+                    self.errorHandler(result, self);
                 return;
             }
-            if (_I.completed != null)
-                _I.completed(result, _I);
-        }
-    }
+            if (self.completed != null)
+                self.completed(result, self);
+        };
+    };
 
-    ajaxJson = function (url, parm, cb, ecb, options) {
+    ajaxJson = function(url, parm, cb, ecb, options) {
         var ser = parm;
         var opt = {
             method: "POST",
@@ -236,12 +237,12 @@ http://en.wikipedia.org/wiki/MIT_License
             ser = JSON.stringify(parm);
 
         http.send(url, ser, cb, ecb);
-    }
-    ajaxCallMethod = function (url, method, parms, cb, ecb, opt) {
+    };
+    ajaxCallMethod = function(url, method, parms, cb, ecb, opt) {
         var proxy = new AjaxMethodCallback(null, url, opt);
         proxy.callMethod(method, parms, cb, ecb);
-    }
-    $.postJSON = function (url, data, cb, ecb, opt) {
+    };
+    $.postJSON = function(url, data, cb, ecb, opt) {
         var options = { method: "POST", evalResult: true };
         $.extend(options, opt);
 
@@ -250,7 +251,7 @@ http://en.wikipedia.org/wiki/MIT_License
             data = $.param(data);
 
         http.send(url, data, cb, ecb);
-    }
+    };
     $.fn.serializeObject = function () {
         var o = {};
         var a = this.serializeArray();
@@ -264,9 +265,9 @@ http://en.wikipedia.org/wiki/MIT_License
         });
         return o;
     };
-    onPageError = function (err) {
+    onPageError = function(err) {
         showStatus(err.message || err.Message, 6000, true);
-    }
+    };
     CallbackException = function (message, detail) {
         this.isCallbackError = true;
         if (typeof (message) == "object") {
@@ -480,13 +481,13 @@ http://en.wikipedia.org/wiki/MIT_License
     }
 
     // sums up CSS property values
-    sumDimensions = function ($el, dims) {
+    sumDimensions = function($el, dims) {
         // Opera returns -1 for missing min/max width, turn into 0
         var sum = 0;
         for (var i = 1; i < arguments.length; i++)
             sum += Math.max(parseInt($el.css(arguments[i]), 10) || 0, 0);
         return sum;
-    }
+    };
 
     $.fn.makeAbsolute = function(rebase) {
         /// <summary>
@@ -518,59 +519,51 @@ http://en.wikipedia.org/wiki/MIT_License
                 el.remove().appendTo("body");
         });
     };
-    $.fn.slideUpTransition = function () {        
+    $.fn.slideUpTransition = function (opt) {
+        /// <summary>
+        /// Like .slideUp() but uses transitions.
+        /// Requires:
+        /// 1 .Your element must be wrapped into a container object
+        /// with no padding or margins (ie. add one!)
+        /// 2. The container has to apply one or two styles for
+        /// for each state.
+        /// Styles:
+        /// More info see:
+        /// http://weblog.west-wind.com/posts/2014/Feb/22/Using-CSS-Transitions-to-SlideUp-and-SlideDown
+        /// </summary>            
+        /// <returns type="jQuery" /> 
+        $.extend(opt, {
+            cssHiddenClass: "height-transition-hidden"
+        });
+
         return this.each(function () {
             var $el = $(this);
             $el.css("max-height", "0");
-            $el.addClass("height-transition-hidden");
+            $el.addClass(opt.cssHiddenClass);
             console.log('up', $el);
         });
     };
 
-    $.fn.slideDownTransition = function () {
-        /*
-    jquery.slide-transition plug-in
+    $.fn.slideDownTransition = function (opt) {        
+        /// <summary>
+        /// Like .slideDown() but uses transitions.
+        /// Requires:
+        /// 1 .Your element must be wrapped into a container object
+        /// with no padding or margins (ie. add one!)
+        /// 2. The container has to apply one or two styles for
+        /// for each state.
+        /// Styles:
+        /// More info see:
+        /// http://weblog.west-wind.com/posts/2014/Feb/22/Using-CSS-Transitions-to-SlideUp-and-SlideDown
+        /// </summary>            
+        /// <returns type="jQuery" />         
+        $.extend(opt, {
+            cssHiddenClass: "height-transition-hidden"
+        });
 
-    Requirements:
-    -------------
-    You'll need to define these two styles to make this work:
-
-    .height-transition {
-        -webkit-transition: max-height 0.5s ease-in-out;
-        -moz-transition: max-height 0.5s ease-in-out;
-        -o-transition: max-height 0.5s ease-in-out;
-        transition: max-height 0.5s ease-in-out;
-        overflow-y: hidden;            
-    }
-    .height-transition-hidden {            
-        max-height: 0;            
-    }
-
-    You need to wrap your actual content that you
-    plan to slide up and down into a container. This
-    container has to have a class of height-transition
-    and optionally height-transition-hidden to initially
-    hide the container (collapsed).
-
-    <div id="SlideContainer" 
-            class="height-transition height-transition-hidden">
-        <div id="Actual">
-            Your actual content to slide up or down goes here
-        </div>
-    </div>
-
-    To call it:
-    -----------
-    var $sw = $("#SlideWrapper");
-
-    if (!$sw.hasClass("height-transition-hidden"))
-        $sw.slideUpTransition();                      
-    else 
-        $sw.slideDownTransition();
-           */
         return this.each(function () {
             var $el = $(this);
-            $el.removeClass("height-transition-hidden");
+            $el.removeClass(opt.csshiddenClass);
 
             // temporarily make visible to get the size
             $el.css("max-height", "none");
@@ -2050,7 +2043,14 @@ http://en.wikipedia.org/wiki/MIT_License
             alert("Assert failed\r\n" + (msg ? msg : "") + "\r\n" +
               (arguments.callee.caller ? "in " + arguments.callee.caller.toString() : ""));
         }
-    }    
+    }
+
+    $.expr[":"].containsNoCase = function (el, i, m) {
+        var search = m[3];
+        if (!search) return false;
+        return eval("/" + search + "/i").test($(el).text());
+    };
+
     /*
     http://www.JSON.org/json2.js
     2009-04-16
@@ -2110,6 +2110,7 @@ mind + '}' : '{' + partial.join(',') + '}'; gap = mind; return v;
             };
         }
     }());
+
 
     if (this.JSON && !this.JSON.dateParser) {
         var reISO = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2}(?:\.{0,1}\d*))(?:Z|(\+|-)([\d|:]*))?$/;
@@ -2224,4 +2225,5 @@ mind + '}' : '{' + partial.join(',') + '}'; gap = mind; return v;
             return nullDateVal;
         };
     }
+
 })(jQuery);
