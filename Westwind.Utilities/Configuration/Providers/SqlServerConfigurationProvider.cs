@@ -167,7 +167,7 @@ namespace Westwind.Utilities.Configuration
                         {
                             data.ExecuteNonQuery(sql);
                         }
-                        catch (Exception)
+                        catch
                         {
                             return null;
                         }

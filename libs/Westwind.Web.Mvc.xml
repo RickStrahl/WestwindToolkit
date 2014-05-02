@@ -64,6 +64,22 @@
             <param name="redirectTo"></param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Web.Mvc.BaseController.ReturnAjaxError(System.String,System.Int32)">
+            <summary>
+            Returns a Json error response to the client
+            </summary>
+            <param name="errorMessage">Message of the error to return</param>
+            <param name="statusCode">Optional status code.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.BaseController.ReturnAjaxError(System.Exception,System.Int32)">
+            <summary>
+            Returns a JSON error response to the client
+            </summary>
+            <param name="ex">Exception that generates the error message and info to return</param>
+            <param name="statusCode">Optional status code</param>
+            <returns></returns>
+        </member>
         <member name="T:Westwind.Web.Mvc.ErrorController">
             <summary>
             A generic Error Display class that can be used to display standalone 

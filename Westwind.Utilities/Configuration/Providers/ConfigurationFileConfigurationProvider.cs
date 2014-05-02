@@ -139,9 +139,8 @@ namespace Westwind.Utilities.Configuration
             NameValueCollection configManager;
 
             configManager = string.IsNullOrEmpty(ConfigurationSection)
-                ? ConfigurationManager.GetSection("AppSettings") as NameValueCollection
-                : ConfigurationManager.GetSection(ConfigurationSection) as NameValueCollection;
-            
+                ? ConfigurationManager.AppSettings as NameValueCollection
+                : ConfigurationManager.GetSection(ConfigurationSection) as NameValueCollection;            
 
             if (configManager == null)
             {

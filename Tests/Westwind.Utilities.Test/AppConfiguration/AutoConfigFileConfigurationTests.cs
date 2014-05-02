@@ -72,6 +72,46 @@ namespace Westwind.Utilities.Configuration.Tests
             Console.WriteLine(text);
         }
 
+
+        [TestMethod]
+        public void DefaultConstructorWithAppSettingsProviderTest()
+        {
+            var config = new AutoConfigFileConfiguration();
+
+            // Create a customized provider to set provider options
+            var provider = new ConfigurationFileConfigurationProvider<AutoConfigFileConfiguration>()
+            {
+                ConfigurationSection = null, // forces to AppSettings
+                EncryptionKey = "seekrit123",
+                PropertiesToEncrypt = "MailServer,MailServerPassword"
+            };
+
+            config.Initialize(provider);
+
+            // Config File and custom section should have been created in config file
+            string text = File.ReadAllText(TestHelpers.GetTestConfigFilePath());
+
+            Assert.IsFalse(string.IsNullOrEmpty(text));
+            Assert.IsTrue(text.Contains("<appSettings>"));
+
+            // MailServer/MailServerPassword value should be encrypted
+            Console.WriteLine(text);
+
+            config.ApplicationName = "Updated Configuration";
+            config.Write();
+
+            config = null;
+            config = new AutoConfigFileConfiguration();
+            config.Initialize(provider);
+
+            config.Initialize(); // should reload, reread
+
+            Console.WriteLine("Application Name: " + config.ApplicationName);
+
+            Assert.IsTrue(config.ApplicationName == "Updated Configuration");
+
+        }
+
         [TestMethod]
         public void AutoConfigWriteConfigurationTest()
         {            

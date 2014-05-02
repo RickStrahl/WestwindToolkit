@@ -93,11 +93,8 @@ namespace Westwind.Utilities.Configuration
         
         /// <summary>
         /// Default constructor of this class SHOULD ALWAYS be implemented in
-        /// every subclass to allow serialization instantiation. Should be left empty.
-        /// 
-        /// Typically subclass implementations should leave this blank
-        /// and implement the version that passes in a provider instance
-        /// or null (default provider).
+        /// every subclass to allow serialization instantiation and setting
+		/// of initial property values.
         /// </summary>         
         public AppConfiguration()
         { }

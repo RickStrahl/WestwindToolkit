@@ -12,12 +12,7 @@ namespace Westwind.Data.Test.Models
     {
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
-        public DbSet<LineItem> LineItems { get; set; }
-
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-        }
+        public DbSet<LineItem> LineItems { get; set; }        
     }
 
     public class WebStoreContextInitializer : DropCreateDatabaseIfModelChanges<WebStoreContext>
