@@ -610,8 +610,8 @@ namespace Westwind.Web.JsonSerializers
             bool hasItems = false;
             sb.Append("[");
 
-            foreach (string key in dict.Keys)
-            {
+            foreach (object key in dict.Keys)
+            {                
                 object val = dict[key];
 
                 sb.Append("{\"key\":");

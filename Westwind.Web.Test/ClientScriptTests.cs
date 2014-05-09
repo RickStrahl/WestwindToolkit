@@ -68,6 +68,46 @@ namespace Westwind.Web.Test
             Assert.IsTrue(output.Contains("Help Builder"));
         }
 
+
+        [TestMethod]
+        public void ClientScriptVariablesDictionaryWithNumberedIndexesInitializationTest()
+        {
+            var scriptVars = new ScriptVariables("pageVars");
+            scriptVars.Add("values",new Dictionary<int, object>
+            {
+                { 2, "Rick & Company" },
+                { 4, DateTime.Now },
+                { 6, new Item() { Sku = "wwhelp", Description = "Help Builder  < test >", Price = 299M }}
+            });
+
+            // output as a string
+            string output = scriptVars.ToString();
+
+            Console.WriteLine(output);
+            Assert.IsNotNull(output);
+            Assert.IsTrue(output.Contains("Help Builder"));
+        }
+
+        [TestMethod]
+        public void ReturnNestedVariableTest()
+        {
+            var scriptVars = new ScriptVariables("app.Countries");
+            scriptVars.Add("values", new 
+            {
+                name =  "Rick",
+                company = "Westwind",
+                entered = DateTime.UtcNow
+            });            
+
+            // output as a string
+            string output = scriptVars.ToString();
+
+            Console.WriteLine(output);
+            Assert.IsNotNull(output);
+            Assert.IsTrue(output.Contains("Westwind"));
+            
+        }
+
     }
 
     public class Item

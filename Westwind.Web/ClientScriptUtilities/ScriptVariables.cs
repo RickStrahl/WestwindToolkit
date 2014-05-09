@@ -246,6 +246,7 @@ namespace Westwind.Web
             // we have to use the West Wind parser since dates use new Date() formatting as embedded JSON 'date string'
             JsonSerializer = new JSONSerializer(SupportedJsonParserTypes.WestWindJsonSerializer);
             JsonSerializer.DateSerializationMode = JsonDateEncodingModes.NewDateExpression;
+            JsonSerializer.FormatJsonOutput = true;
         }
 
 
@@ -518,7 +519,7 @@ namespace Westwind.Web
         /// into the the View page.
         /// <param name="addScriptTags">If provided wraps the script text with script tags</param>
         /// </summary>
-        public string ToString(bool addScriptTags)
+        public string ToString(bool addScriptTags = false)
         {
             if (!AutoRenderClientScript || ScriptVars.Count == 0)
                 return string.Empty;
@@ -554,10 +555,10 @@ namespace Westwind.Web
                     if (entry.Value != null)
                         propertyValue = ReflectionUtils.GetPropertyEx(entry.Value, property);
 
-                    sb.AppendLine("\t" + varName + ": " + JsonSerializer.Serialize(propertyValue) + ",");                
+                    sb.AppendLine("\t\"" + varName + "\": " +  JsonSerializer.Serialize(propertyValue) + ",");                
                 }
                 else
-                    sb.AppendLine("\t" + entry.Key + ": " + JsonSerializer.Serialize(entry.Value) + ",");
+                    sb.AppendLine("\t\"" + entry.Key + "\": " + JsonSerializer.Serialize(entry.Value) + ",");
             }
 
             if (UpdateMode != AllowUpdateTypes.None)
