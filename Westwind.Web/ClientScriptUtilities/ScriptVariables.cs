@@ -535,14 +535,18 @@ namespace Westwind.Web
 
             // If the name includes a . assignment is made to an existing
             // object or namespaced reference - don't create var instance.
-            if (!ClientObjectName.Contains("."))
+            if (!ClientObjectName.Contains(".") )
                 sb.Append("var ");
-            
+
             sb.AppendLine( ClientObjectName + " = {");
 
 
             foreach(KeyValuePair<string,object> entry in ScriptVars)
             {
+                if (string.IsNullOrEmpty(entry.Key))
+                {
+                    ClientObjectName += " = " + sb.AppendLine(JsonSerializer.Serialize(entry.Value) + ";");
+                }
                 if (entry.Key.StartsWith("."))
                 {
                     // It's a dynamic key

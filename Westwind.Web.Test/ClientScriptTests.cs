@@ -91,7 +91,7 @@ namespace Westwind.Web.Test
         [TestMethod]
         public void ReturnNestedVariableTest()
         {
-            var scriptVars = new ScriptVariables("app.Countries");
+            var scriptVars = new ScriptVariables("app.names");
             scriptVars.Add("values", new 
             {
                 name =  "Rick",
@@ -107,7 +107,6 @@ namespace Westwind.Web.Test
             Assert.IsTrue(output.Contains("Westwind"));
             
         }
-
     }
 
     public class Item
