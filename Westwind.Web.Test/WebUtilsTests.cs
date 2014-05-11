@@ -11,6 +11,8 @@ namespace Westwind.Web.Test
         [TestMethod]
         public void SetUserLocaleTest()
         {
+            
+
             var curculture = Thread.CurrentThread.CurrentCulture;
             var curuiculture = Thread.CurrentThread.CurrentUICulture;
 

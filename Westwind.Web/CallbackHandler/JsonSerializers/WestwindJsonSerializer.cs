@@ -105,7 +105,6 @@ namespace Westwind.Web.JsonSerializers
         /// </summary>
         private HashSet<object> _traversedTypes = new HashSet<object>();
 
-
         /// <summary>
         /// Encodes Dates as a JSON string value that is compatible
         /// with MS AJAX and is safe for JSON validators. If false
@@ -268,7 +267,7 @@ namespace Westwind.Web.JsonSerializers
         /// <param name="sb"></param>
         /// <param name="val"></param>
         public void WriteValue(StringBuilder sb, object val)
-        {
+        {    
             if (val == null || val == System.DBNull.Value)
             {
                 sb.Append("null");
@@ -648,6 +647,7 @@ namespace Westwind.Web.JsonSerializers
 
             Debug.WriteLine(obj.ToString());
 
+            // check for circular reference - don't serialize
             if (RecursedObjectStack.Contains(obj))
             {
                 sb.Append("null");
@@ -660,6 +660,8 @@ namespace Westwind.Web.JsonSerializers
             sb.Append("{");
             bool hasMembers = false;
             Type type = null;
+            if (FormatJsonOutput)
+                sb.AppendLine();
 
             // if we have a value type/struct
             // serialize fields
@@ -713,6 +715,8 @@ namespace Westwind.Web.JsonSerializers
                 if (FormatJsonOutput)
                     sb.Length = sb.Length - 2; // remove line feed also
             }
+            if (FormatJsonOutput)
+                sb.AppendLine();
             sb.Append("}");
         }
 
