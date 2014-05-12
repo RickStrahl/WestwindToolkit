@@ -15,6 +15,13 @@ Added these two filters that provide jQuery search filters. The former
 filter is especially useful to do dynamic page searches that show only
 content that matches typed text in search boxes.
 
+* **Add: .searchFilter() Plugin to ww.jQuery**
+<small>Westwind.Web/ww.jquery.js</small>
+Added .searchFilter() which can be bound to a textbox and then 
+tied to a list of items via selector that are filtered based on
+the search text. A nice and easy way to filter longer lists
+based on text input and show only matching entries.
+
 * **ConfigurationFile Configuration Provider support for Complex Types**
 <small>Westwind.Utilies</small>
 Added another option for serialization of flat complex objects, by 
@@ -34,6 +41,17 @@ formatting instead of the default JavaScriptSerializer. JSON.NET is faster
 and serializes more cleanly. (Note: this affects only JSON output - not 
 inbound JSON parsing. Since formatting differs slightly for some times - 
 namely dictionaries - you might not get two-way fidelity).
+
+* **JsonVariables Component**
+<small>Westwind.Web</small>
+Component that helps with embedding server side data into client side
+code. From simple serialization to creating a global object you can
+construct at runtime with many values, that are rendered into client
+script code. Attach to global vars or properties of existing objects.
+Useful for shuttling server data to client side JavaScript code.
+This is a stripped down version of the ScriptVariables component
+that is optimized for string output usage in MVC or Web Pages 
+removing all the WebForms related cruft.
 
 * **WebUtils.SetUserLocale allowedLocales Option**
 <small>Westwind.Web</small>

@@ -2050,6 +2050,42 @@ http://en.wikipedia.org/wiki/MIT_License
         if (!search) return false;
         return eval("/" + search + "/i").test($(el).text());
     };
+    
+    $.expr[":"].containsNoCase = function (el, i, m) {
+        var search = m[3];
+        if (!search) return false;
+        return eval("/" + search + "/i").test($(el).text());
+    };
+
+    $.fn.searchFilter = function (options) {
+        var opt = $.extend({
+            // target selector
+            targetSelector: "",
+            // number of characters before search is applied
+            charCount: 1
+        }, options);
+
+        if (!$.expr[":"]._searchFilter) {
+            $.expr[":"]._searchFilter = function (el, i, m) {
+                var search = m[3];
+                if (!search) return false;
+                return eval("/" + search + "/i").test($(el).text());
+            };
+        }
+
+        return this.each(function () {
+            var $el = $(this);
+            $el.keyup(function () {
+                var search = $(this).val();
+
+                var $target = $(opt.targetSelector);
+                $target.show();
+
+                if (search && search.length >= opt.charCount)
+                    $target.not(":_searchFilter(" + search + ")").hide();
+            });
+        });
+    };
 
     /*
     http://www.JSON.org/json2.js
