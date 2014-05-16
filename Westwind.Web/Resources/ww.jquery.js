@@ -1,7 +1,7 @@
 ﻿/// <reference path="jquery.js" />
 /*
 ww.jQuery.js  
-Version 1.13 - 4/27/2014
+Version 1.13 - 5/15/2014
 West Wind jQuery plug-ins and utilities
 
 (c) 2008-2014 Rick Strahl, West Wind Technologies 
@@ -2044,17 +2044,11 @@ http://en.wikipedia.org/wiki/MIT_License
               (arguments.callee.caller ? "in " + arguments.callee.caller.toString() : ""));
         }
     }
-
-    $.expr[":"].containsNoCase = function (el, i, m) {
-        var search = m[3];
-        if (!search) return false;
-        return eval("/" + search + "/i").test($(el).text());
-    };
     
     $.expr[":"].containsNoCase = function (el, i, m) {
         var search = m[3];
         if (!search) return false;
-        return eval("/" + search + "/i").test($(el).text());
+        return new RegExp(search,"i").test($(el).text());
     };
 
     $.fn.searchFilter = function (options) {
@@ -2065,14 +2059,6 @@ http://en.wikipedia.org/wiki/MIT_License
             charCount: 1
         }, options);
 
-        if (!$.expr[":"]._searchFilter) {
-            $.expr[":"]._searchFilter = function (el, i, m) {
-                var search = m[3];
-                if (!search) return false;
-                return eval("/" + search + "/i").test($(el).text());
-            };
-        }
-
         return this.each(function () {
             var $el = $(this);
             $el.keyup(function () {
@@ -2082,7 +2068,7 @@ http://en.wikipedia.org/wiki/MIT_License
                 $target.show();
 
                 if (search && search.length >= opt.charCount)
-                    $target.not(":_searchFilter(" + search + ")").hide();
+                    $target.not(":containsNoCase(" + search + ")").hide();
             });
         });
     };
