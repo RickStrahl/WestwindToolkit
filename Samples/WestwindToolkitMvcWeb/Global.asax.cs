@@ -4,7 +4,6 @@ using System.Linq;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
-using System.Web.Optimization;
 using System.Web.Routing;
 using Westwind.Web;
 using Westwind.Web.JsonSerializers;
@@ -18,7 +17,6 @@ namespace WestwindToolkitMvcWeb
     {
         protected void Application_Start()
         {
-
             // Register Routes for CallbackHandler test service            
             CallbackHandlerRouteHandler.RegisterRoutes<WestwindToolkitMvcWeb.CallbackHandler>(RouteTable.Routes);
             JSONSerializer.DefaultJsonParserType = SupportedJsonParserTypes.JsonNet;

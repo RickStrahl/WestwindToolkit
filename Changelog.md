@@ -49,7 +49,7 @@ code. From simple serialization to creating a global object you can
 construct at runtime with many values, that are rendered into client
 script code. Attach to global vars or properties of existing objects.
 Useful for shuttling server data to client side JavaScript code.
-This is a stripped down version of the ScriptVariables component
+This is a stripped down version of the older ScriptVariables component
 that is optimized for string output usage in MVC or Web Pages 
 removing all the WebForms related cruft.
 

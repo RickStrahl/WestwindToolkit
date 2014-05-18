@@ -2,7 +2,7 @@
     ViewBag.Title = "ScriptVariables";
 
 
-    var scriptVars = new Westwind.Web.ScriptVariables("pageVars");
+    var scriptVars = new Westwind.Web.JsonVariables("pageVars");
 
     scriptVars.Add("appBasePath", Request.ApplicationPath + "/");
     scriptVars.Add("serverTime", DateTime.Now);       
@@ -12,9 +12,23 @@
 
 @section scripts
 {
-<script>
-    @scriptVars.ToHtmlString() 
-
-    showStatus(pageVars.appBasePath + " " + pageVars.serverTime);
-</script>
+    @*Embed a new variable from values*@
+    <script>
+        @scriptVars.ToHtmlString()
+        showStatus(pageVars.appBasePath + " " + pageVars.serverTime);
+    </script>
+    
+    @*Assign to an existing object/module*@
+    <script>
+        var app = {};
+        @{
+            scriptVars.ClientObjectName = "app.pageVars";
+        }
+        @scriptVars.ToHtmlString()        
+    </script>
+    
+    @*Embed just the raw JSON without a var name*@
+    <script>        
+        var rawJson = @scriptVars.ToJsonHtmlString();
+    </script>
 }

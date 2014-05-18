@@ -271,7 +271,34 @@ namespace Westwind.Web
             if (!noVarStatement && !ClientObjectName.Contains("."))
                 sb.Append("var ");
 
-            sb.AppendLine(ClientObjectName + " = {");
+            sb.Append(ClientObjectName + " =  " + ToJson() + ";");
+            
+            return sb.ToString();
+        }
+
+
+        /// <summary>
+        /// Returns the script as an HTML string. Use this version
+        /// with AsP.NET MVC to force raw unencoded output in Razor:
+        /// 
+        /// @scriptVars.ToHtmlString()
+        /// </summary>
+        /// <param name="addScriptTags"></param>
+        /// <returns></returns>
+        public HtmlString ToHtmlString(bool noVarStatement = false)
+        {
+            return new HtmlString(ToString(noVarStatement));
+        }
+
+        /// <summary>
+        /// Outputs the variable data as a raw JSON object
+        /// </summary>
+        /// <returns></returns>
+        public string ToJson()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("{");
 
             foreach (KeyValuePair<string, object> entry in ScriptVars)
             {
@@ -282,7 +309,7 @@ namespace Westwind.Web
                 if (entry.Key.StartsWith("."))
                 {
                     // It's a dynamic key
-                    string[] tokens = entry.Key.Split(new char[1] {'.'}, StringSplitOptions.RemoveEmptyEntries);
+                    string[] tokens = entry.Key.Split(new char[1] { '.' }, StringSplitOptions.RemoveEmptyEntries);
                     string varName = tokens[0];
                     string property = tokens[1];
 
@@ -301,23 +328,18 @@ namespace Westwind.Web
             if (sb.Length > 0)
                 sb.Length -= 3;
 
-            sb.AppendLine("\r\n};");
+            sb.AppendLine("\r\n}");
 
             return sb.ToString();
         }
 
-
         /// <summary>
-        /// Returns the script as an HTML string. Use this version
-        /// with AsP.NET MVC to force raw unencoded output in Razor:
-        /// 
-        /// @scriptVars.ToHtmlString()
+        /// Outputs the the dictionary as a JSON string for MVC
         /// </summary>
-        /// <param name="addScriptTags"></param>
         /// <returns></returns>
-        public HtmlString ToHtmlString(bool noVarStatement = false)
+        public HtmlString ToJsonHtmlString()
         {
-            return new HtmlString(ToString(noVarStatement));
+            return new HtmlString(ToJson());
         }
 
     }
