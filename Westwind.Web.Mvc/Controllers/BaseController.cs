@@ -62,7 +62,7 @@ namespace Westwind.Web.Mvc
         /// </summary>
         /// <typeparam name="TViewModel"></typeparam>
         /// <returns></returns>        
-        public virtual TViewModel CreateViewModel<TViewModel>()
+        protected virtual TViewModel CreateViewModel<TViewModel>()
              where TViewModel : class, new()
         {
             var model = new TViewModel();
@@ -84,7 +84,7 @@ namespace Westwind.Web.Mvc
         /// This default implementation initializes the ErrorDisplay and UserState
         /// objects after creation.
         /// </summary>
-        public virtual void InitializeViewModel(BaseViewModel model)
+        protected virtual void InitializeViewModel(BaseViewModel model)
         {
             if (model == null)
                 return;
