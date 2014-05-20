@@ -80,6 +80,102 @@
             <param name="statusCode">Optional status code</param>
             <returns></returns>
         </member>
+        <member name="T:Westwind.Web.Mvc.Controllers.NegotiatedResult">
+            <summary>
+            Returns a content negotiated result based on the Accept header.
+            Minimal implementation that works with JSON and XML content,
+            can also optionally return a view with HTML.    
+            </summary>
+            <example>
+            // model data only
+            public ActionResult GetCustomers()
+            {
+                 return new NegotiatedResult(repo.Customers.OrderBy( c=> c.Company) )
+            }
+            // optional view for HTML
+            public ActionResult GetCustomers()
+            {
+                 return new NegotiatedResult("List", repo.Customers.OrderBy( c=> c.Company) )
+            }
+            </example>
+        </member>
+        <member name="M:Westwind.Web.Mvc.Controllers.NegotiatedResult.#ctor(System.Object)">
+            <summary>
+            Pass in data to serialize
+            </summary>
+            <param name="data">Data to serialize</param>        
+        </member>
+        <member name="M:Westwind.Web.Mvc.Controllers.NegotiatedResult.#ctor(System.String,System.Object)">
+            <summary>
+            Pass in data and an optional view for HTML views
+            </summary>
+            <param name="data"></param>
+            <param name="viewName"></param>
+        </member>
+        <member name="P:Westwind.Web.Mvc.Controllers.NegotiatedResult.Data">
+            <summary>
+            Data stored to be 'serialized'. Public
+            so it's potentially accessible in filters.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.Controllers.NegotiatedResult.ViewName">
+            <summary>
+            Optional name of the HTML view to be rendered
+            for HTML responses
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.Controllers.NegotiatedResult.FormatOutput">
+            <summary>
+            Global static flag that allows you to set whether 
+            output is formatted. By default Debug settings
+            of project are used - debug is formatted
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.Mvc.Controllers.NegotiatedResultExtensions">
+            <summary>
+            Extends Controller with Negotiated() ActionResult that does
+            basic content negotiation based on the Accept header.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.Controllers.NegotiatedResultExtensions.Negotiated(System.Web.Mvc.Controller,System.Object)">
+            <summary>
+            Return content-negotiated content of the data based on Accept header.
+            Supports:
+               application/json  - using JSON.NET
+               text/xml   - Xml as XmlSerializer XML
+               text/html  - as text, or an optional View
+               text/plain - as text
+            </summary>        
+            <param name="controller"></param>
+            <param name="data">Data to return</param>
+            <returns>serialized data</returns>
+            <example>
+            public ActionResult GetCustomers()
+            {
+                 return this.Negotiated( repo.Customers.OrderBy( c=> c.Company) )
+            }
+            </example>
+        </member>
+        <member name="M:Westwind.Web.Mvc.Controllers.NegotiatedResultExtensions.Negotiated(System.Web.Mvc.Controller,System.String,System.Object)">
+            <summary>
+            Return content-negotiated content of the data based on Accept header.
+            Supports:
+               application/json  - using JSON.NET
+               text/xml   - Xml as XmlSerializer XML
+               text/html  - as text, or an optional View
+               text/plain - as text
+            </summary>        
+            <param name="controller"></param>
+            <param name="viewName">Name of the View to when Accept is text/html</param>
+            /// <param name="data">Data to return</param>        
+            <returns>serialized data</returns>
+            <example>
+            public ActionResult GetCustomers()
+            {
+                 return this.Negotiated("List", repo.Customers.OrderBy( c=> c.Company) )
+            }
+            </example>
+        </member>
         <member name="T:Westwind.Web.Mvc.ErrorController">
             <summary>
             A generic Error Display class that can be used to display standalone 

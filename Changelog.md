@@ -34,6 +34,14 @@ enumerations in your key value configs. List elements are rendered
 as ListName1, ListName2, ListName3. Lists and list elements must
 have parameterless constructors in order to be readable.
 
+* **Add NegotiatedResult**
+<small>Westwind.Web.Mvc</small>
+Add a NegotiatedResult ActionResult that returns XML, JSON, HTML
+or plain text based on the Accept header. This allows the client
+to determine which output serialization or view is applied. Supports
+XML/JSON serialization as well as optional View to show HTML output.
+JSON Serialization uses JSON.NET (unlike standard JSON response)
+
 * **Add JsonNetResult**
 <small>Westwind.Web.Mvc</small>
 Add JsonNet ActionResult class that allows returning JSON using JSON.NET
