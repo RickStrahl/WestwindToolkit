@@ -274,6 +274,79 @@ namespace Westwind.Utilities
                                                           " " + sOffset;
         }
 
+        /// <summary>
+        /// Truncates a DateTime value to the nearest partial value.
+        /// </summary>
+        /// <remarks>
+        /// From: http://stackoverflow.com/questions/1004698/how-to-truncate-milliseconds-off-of-a-net-datetime        
+        /// </remarks>
+        /// <param name="date"></param>
+        /// <param name="resolution"></param>
+        /// <returns></returns>
+        public static DateTime Truncate(DateTime date, DateTimeResolution resolution = DateTimeResolution.Second)
+        {
+            switch (resolution)
+            {
+                case DateTimeResolution.Year:
+                    return new DateTime(date.Year, 1, 1, 0, 0, 0, 0, date.Kind);
+                case DateTimeResolution.Month:
+                    return new DateTime(date.Year, date.Month, 1, 0, 0, 0, date.Kind);
+                case DateTimeResolution.Day:
+                    return new DateTime(date.Year, date.Month, date.Day, 0, 0, 0, date.Kind);
+                case DateTimeResolution.Hour:
+                    return date.AddTicks(-(date.Ticks % TimeSpan.TicksPerHour));
+                case DateTimeResolution.Minute:
+                    return date.AddTicks(-(date.Ticks % TimeSpan.TicksPerMinute));
+                case DateTimeResolution.Second:
+                    return date.AddTicks(-(date.Ticks % TimeSpan.TicksPerSecond));
+                case DateTimeResolution.Millisecond:
+                    return date.AddTicks(-(date.Ticks % TimeSpan.TicksPerMillisecond));
+                case DateTimeResolution.Tick:
+                    return date.AddTicks(0);
+                default:
+                    throw new ArgumentException("unrecognized resolution", "resolution");
+            }
+        }
+
+        /// <summary>
+        /// Converts a UtcTime to a local time based on a specific timezone
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <param name="timeZoneId"></param>
+        /// <returns></returns>
+        public static DateTime UtcToTimezoneTime(DateTime utcDate, string timeZoneId = "Pacific Standard Time")
+        {            
+            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            return UtcToTimezoneTime(utcDate, tzi);
+        }
+
+        /// <summary>
+        /// Converts a UtcTime to a local time based on a specific timezone
+        /// </summary>
+        /// <param name="dateTime"></param>
+        /// <param name="timeZoneId"></param>
+        /// <returns></returns>
+        public static DateTime UtcToTimezoneTime(DateTime utcDate, TimeZoneInfo tzi)
+        {
+            utcDate = utcDate.ToUniversalTime();            
+            var offset = tzi.GetUtcOffset(utcDate);
+            return DateTime.SpecifyKind(utcDate.Add(offset), DateTimeKind.Local);
+        }
+
+        /// <summary>
+        /// Returns TimeZone adjusted time for a given from a Utc or local time.
+        /// Date is first converted to UTC then adjusted.
+        /// </summary>
+        /// <param name="time"></param>
+        /// <param name="timeZoneId"></param>
+        /// <returns></returns>
+        public static DateTime ToTimeZoneTime(this DateTime time, string timeZoneId = "Pacific Standard Time")
+        {
+            return UtcToTimezoneTime(time, timeZoneId);
+        }
+
+
+
     }
 
     /// <summary>
@@ -284,6 +357,11 @@ namespace Westwind.Utilities
         RoundUp,
         RoundDown,
         Round
+    }
+
+    public enum DateTimeResolution
+    {
+        Year, Month, Day, Hour, Minute, Second, Millisecond, Tick
     }
 
 

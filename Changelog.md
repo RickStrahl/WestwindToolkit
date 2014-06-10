@@ -71,6 +71,11 @@ in your localization providers when automatically mapping browser
 resources to localized resources as each locale referenced must be
 looked up in the resource loaders.
 
+* **TimeUtils.Truncate to Truncate DateTime values**
+<small>Westwind.Utilies</small>
+Strip off milliseconds, seconds, minutes, hours etc. from
+date time values to 'flatten' date values easily.
+
 * **Fixed up tests**
 <small>Westwind.Utilies</small>
 Fixed entity framework DbInitializer to properly autocreate testdata
