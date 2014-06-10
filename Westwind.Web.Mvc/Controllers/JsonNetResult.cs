@@ -7,7 +7,7 @@ using System.Web;
 using System.Web.Mvc;
 using Newtonsoft.Json;
 
-namespace Westwind.Web.Mvc.Controllers
+namespace Westwind.Web.Mvc
 {
     /// <summary>
     /// Works like JsonResult but uses Json.NET for serialization in MVC
@@ -37,9 +37,7 @@ namespace Westwind.Web.Mvc.Controllers
 
             HttpResponseBase response = context.HttpContext.Response;
 
-            response.ContentType = !string.IsNullOrEmpty(ContentType)
-              ? ContentType
-              : "application/json";
+            response.ContentType = ContentType ?? "application/json";
 
             if (ContentEncoding != null)
                 response.ContentEncoding = ContentEncoding;

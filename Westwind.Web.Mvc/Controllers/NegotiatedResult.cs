@@ -7,7 +7,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
 
-namespace Westwind.Web.Mvc.Controllers
+namespace Westwind.Web.Mvc
 {
     /// <summary>
     /// Returns a content negotiated result based on the Accept header.

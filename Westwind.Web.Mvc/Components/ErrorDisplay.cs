@@ -72,7 +72,7 @@ namespace Westwind.Web.Mvc
         StringBuilder writer = new StringBuilder();
         bool visible = false;
 
-        private ErrorDisplayTypes ErrorDisplayType = ErrorDisplayTypes.Error;
+        public ErrorDisplayTypes ErrorDisplayType = ErrorDisplayTypes.Error;
 
         protected void RenderTop(int width, bool center)
         {
@@ -97,10 +97,10 @@ namespace Westwind.Web.Mvc
 
         protected void RenderDisplayErrors()
         {
-            if (this.DisplayErrors.Count > 0)
+            if (DisplayErrors.Count > 0)
             {
                 writer.AppendLine("<hr/>");
-                writer.AppendLine(this.DisplayErrors.ToHtml());                
+                writer.AppendLine(DisplayErrors.ToHtml());                
             }
         }
 
@@ -124,7 +124,7 @@ namespace Westwind.Web.Mvc
 
             writer.AppendLine("<div class=\"errordisplay-text\">");
             
-            writer.AppendLine(  this.HtmlEncodeMessage ? HttpUtility.HtmlEncode(this.Message) : this.Message);
+            writer.AppendLine(  HtmlEncodeMessage ? HttpUtility.HtmlEncode(Message) : Message);
             RenderDisplayErrors();
             
             writer.AppendLine("</div>");
@@ -137,17 +137,17 @@ namespace Westwind.Web.Mvc
 
         public void ShowError(string errorMessage)
         {
-            this.ErrorDisplayType = ErrorDisplayTypes.Error;
-            this.Message = errorMessage;
-            this.visible = true;
+            ErrorDisplayType = ErrorDisplayTypes.Error;
+            Message = errorMessage;
+            visible = true;
         }
 
 
         public void ShowMessage(string message)
         {
-            this.ErrorDisplayType = ErrorDisplayTypes.Message;
-            this.Message = message;
-            this.visible = true;
+            ErrorDisplayType = ErrorDisplayTypes.Message;
+            Message = message;
+            visible = true;
         }
 
         /// <summary>
@@ -161,9 +161,9 @@ namespace Westwind.Web.Mvc
             foreach(var state in modelErrors)
             {
                 if ((state.Value.Errors.Count > 0))
-                    this.DisplayErrors.Add(state.Value.Errors[0].ErrorMessage,fieldPrefix + state.Key);
+                    DisplayErrors.Add(state.Value.Errors[0].ErrorMessage,fieldPrefix + state.Key);
             }
-            this.visible = true;
+            visible = true;
         }
 
         /// <summary>
@@ -176,9 +176,9 @@ namespace Westwind.Web.Mvc
 
             foreach (ValidationError error in validationErrors)
             {                
-                this.DisplayErrors.Add(error.Message,fieldPrefix + error.ControlID);
+                DisplayErrors.Add(error.Message,fieldPrefix + error.ControlID);
             }
-            this.visible = true;
+            visible = true;
         }
 
         /// <summary>

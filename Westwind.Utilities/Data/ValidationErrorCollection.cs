@@ -210,17 +210,29 @@ namespace Westwind.Utilities
 
             foreach (ValidationError Error in this)
             {
-                sb.Append("<li> ");
-
+                sb.Append("<li>");                
                 if (Error.ControlID != null && Error.ControlID != "")
-                    sb.Append("<a href=\"#\" onclick=\"var $t= $('#" + Error.ControlID + "').focus().addClass('errorhighlight'); setTimeout(function(){ $t.removeClass('errorhighlight')},5000);\" style='border:0px;text-decoration:none'>" + Error.Message + "</a>");
+                    sb.AppendFormat("<a href='#' onclick=\"_errorLinkClick('{0}');return false;\" " +
+                                  "style='text-decoration:none'>{1}</a>", 
+                                  Error.ControlID.Replace(".","_"),Error.Message);
                 else
                     sb.Append(Error.Message);
 
-                sb.Append("</li>\r\n");
+                sb.AppendLine("</li>");
             }
 
             sb.Append("</ul>\r\n");
+            string script = 
+            @"    <script>
+        function _errorLinkClick(id) {
+            var $t = $('#' + id).focus().addClass('errorhighlight');
+            setTimeout(function() {
+                $t.removeClass('errorhighlight');
+            }, 5000);
+        }
+    </script>";
+            sb.AppendLine(script);
+            
             return sb.ToString();
         }
     }
