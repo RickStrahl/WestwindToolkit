@@ -194,7 +194,7 @@ namespace Westwind.Web
         /// a Userdata object is always returned
         /// </summary>
         /// <returns></returns>
-        public static UserState CreateFromFormsAuthTicket<T>()
+        public static T CreateFromFormsAuthTicket<T>()
             where T : UserState, new()
         {
             var identity = HttpContext.Current.User.Identity as FormsIdentity;

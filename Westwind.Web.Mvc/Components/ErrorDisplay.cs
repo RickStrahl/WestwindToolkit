@@ -54,6 +54,11 @@ namespace Westwind.Web.Mvc
 
 
         /// <summary>
+        /// Timeout in milliseconds before the error display is hidden
+        /// </summary>
+        public int Timeout { get; set; }
+
+        /// <summary>
         /// Holds a modelstate errors collection
         /// </summary>
         public ValidationErrorCollection DisplayErrors

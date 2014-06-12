@@ -271,6 +271,8 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static string ProperCase(string Input)
         {
+            if (Input == null)
+                return null;
             return Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(Input);
         }
 
