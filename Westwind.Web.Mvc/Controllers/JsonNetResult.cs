@@ -44,15 +44,16 @@ namespace Westwind.Web.Mvc
 
             if (Data != null)
             {
-                JsonTextWriter writer = new JsonTextWriter(response.Output)
+                using (JsonTextWriter writer = new JsonTextWriter(response.Output)
                 {
                     Formatting = Formatting
-                };
+                })
+                {
+                    JsonSerializer serializer = JsonSerializer.Create(SerializerSettings);
+                    serializer.Serialize(writer, Data);
 
-                JsonSerializer serializer = JsonSerializer.Create(SerializerSettings);
-                serializer.Serialize(writer, Data);
-
-                writer.Flush();
+                    writer.Flush();
+                }
             }
         }
     }

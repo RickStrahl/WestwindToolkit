@@ -105,21 +105,16 @@ namespace Westwind.Web.Mvc
                 else
                     response.Write(Data);
             }
-            else if (request.AcceptTypes.Contains("text/plain"))
-            {
-                response.ContentType = "text/plain";
-                response.Write(Data);
-            }
             else if (request.AcceptTypes.Contains("application/json"))
             {
-                using (JsonTextWriter writer = new JsonTextWriter(response.Output))
+                response.ContentType = "application/json";
+
+                using (JsonTextWriter writer = new JsonTextWriter(response.Output)
                 {
-                    var settings = new JsonSerializerSettings();
-                    if (FormatOutput)
-                        settings.Formatting = Newtonsoft.Json.Formatting.Indented;
-
-                    JsonSerializer serializer = JsonSerializer.Create(settings);
-
+                    Formatting = Newtonsoft.Json.Formatting.Indented
+                })
+                {
+                    JsonSerializer serializer = JsonSerializer.Create();
                     serializer.Serialize(writer, Data);
                     writer.Flush();
                 }
@@ -140,6 +135,11 @@ namespace Westwind.Web.Mvc
                         writer.Flush();
                     }
                 }
+            }
+            else if (request.AcceptTypes.Contains("text/plain"))
+            {
+                response.ContentType = "text/plain";
+                response.Write(Data);
             }
             else
             {
