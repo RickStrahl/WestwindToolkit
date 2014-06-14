@@ -16,6 +16,6 @@ The main components of the West Wind Toolkit are:
 * [Westwind.Utilities](https://github.com/RickStrahl/WestwindToolkit/tree/master/Westwind.Utilities) - Core utilities and helper classes for all aspects of .NET
 * [Westwind.Data](https://github.com/RickStrahl/WestwindToolkit/tree/master/Westwind.Data) - Business Object wrapper for Entity Framework Code First
 * [Westwind.Web](https://github.com/RickStrahl/WestwindToolkit/tree/master/Westwind.Web) - Core ASP.NET helpers and components
-* [Westwind.Web.Mvc](https://github.com/RickStrahl/WestwindToolkit/tree/master/Westwind.Mvc) - ASP.NET MVC support components
+* [Westwind.Web.Mvc](https://github.com/RickStrahl/WestwindToolkit/tree/master/Westwind.Web.Mvc) - ASP.NET MVC support components
 * [Westwind.Web.WebForms](https://github.com/RickStrahl/WestwindToolkit/tree/master/Westwind.Web.WebForms) - ASP.NET WebForms controls, helpers and components
 * [Westwind.Web.WebApi](https://github.com/RickStrahl/WestwindToolkit/tree/master/Westwind.Web.WebApi) - ASP.NET WebAPI filters, behaviors and extensions

@@ -102,6 +102,9 @@ Created a MongoDb version of the Westwind.Data component that provides
 most of the same CRUD and Validation functionality of the Westwind.Data
 libraries. Wraps many of Mongo's data features. No documentation yet.
 
+* **Experimental: MongoDb Log Adapter**
+<small>Westwind.Data.MongoDb, Westwind.Utilities</small>
+Add a new 
 
 
 ###Version 2.50
