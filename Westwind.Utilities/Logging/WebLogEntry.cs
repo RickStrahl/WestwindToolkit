@@ -45,7 +45,7 @@ namespace Westwind.Utilities.Logging
     /// </summary>
     public class WebLogEntry : LogEntry 
     {
-        public WebLogEntry() : base() { } 
+        public WebLogEntry() { } 
         public WebLogEntry(Exception ex) : base(ex) {}
         public WebLogEntry(Exception ex, HttpContext context) : base(ex) 
         {

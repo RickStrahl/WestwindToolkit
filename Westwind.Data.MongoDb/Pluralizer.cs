@@ -28,6 +28,9 @@ namespace Westwind.Data.MongoDb
             if (Exceptions.Keys.Contains(noun))
                 return Exceptions[noun];
 
+            if (noun.EndsWith("y"))
+                return noun.Substring(0, noun.Length - 1) + "ies";
+            
             return noun + "s";
         }
     }

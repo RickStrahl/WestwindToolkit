@@ -20,8 +20,7 @@ namespace Westwind.Utilities.Logging
             ConnectionString = LogManagerConfiguration.Current.LogFilename;
             if (string.IsNullOrEmpty(ConnectionString))
                 ConnectionString = LogManagerConfiguration.Current.ConnectionString;
-        }
-        
+        }        
 
         /// <summary>
         /// The Xml Connection string is the filename

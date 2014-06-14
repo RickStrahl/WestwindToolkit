@@ -290,8 +290,7 @@ namespace Westwind.Utilities.Logging
                                       DateTime? dateTo = null,
                                       string fieldList = null)
         {
-            var reader = LogAdapter.GetEntries(errorLevel, count, dateFrom, dateTo, fieldList);
-            return DataUtils.DataReaderToIEnumerable<WebLogEntry>(reader);            
+            return LogAdapter.GetEntryList(errorLevel, count, dateFrom, dateTo, fieldList);
         }
 
         /// <summary>

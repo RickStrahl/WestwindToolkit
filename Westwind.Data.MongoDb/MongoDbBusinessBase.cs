@@ -149,7 +149,6 @@ namespace Westwind.Data.MongoDb
             InitializeInternal();
             
             Context = new TMongoContext();
-
             Database = GetDatabase(collection, database, connectionString);
 
             if (!Database.CollectionExists(CollectionName))
@@ -181,7 +180,7 @@ namespace Westwind.Data.MongoDb
             string serverString = null)
         {
 
-            var db = Context.GetDatabase(database, serverString);
+            var db = Context.GetDatabase(serverString,database);
 
             if (string.IsNullOrEmpty(collection))
                 collection = Pluralizer.Pluralize(typeof(TEntity).Name);
@@ -407,6 +406,16 @@ namespace Westwind.Data.MongoDb
         }
 
         /// <summary>
+        /// Loads in instance based on its string id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public TEntity Load(int id)
+        {
+            return LoadBase(id);
+        }
+
+        /// <summary>
         /// Loads an instance based on its key field id
         /// </summary>
         /// <param name="id"></param>
@@ -423,6 +432,25 @@ namespace Westwind.Data.MongoDb
 
             OnEntityLoaded(Entity);
 
+            return Entity as TEntity;
+        }
+
+
+        /// <summary>
+        /// Loads an instance based on its key field id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        protected virtual TEntity LoadBase(int id)
+        {
+            Entity = Collection.FindOneByIdAs(typeof(TEntity),  id) as TEntity;
+
+            if (Entity == null)
+            {
+                SetError("No match found.");
+                return null;
+            }
+            OnEntityLoaded(Entity);
             return Entity as TEntity;
         }
 
@@ -517,6 +545,18 @@ namespace Westwind.Data.MongoDb
         public virtual bool Delete(string id)
         {
             var query = Query.EQ("_id", new BsonString(id));
+            var result = Collection.Remove(query);
+            if (result.HasLastErrorMessage)
+            {
+                SetError(result.ErrorMessage);
+                return false;
+            }
+            return true;
+        }
+
+        public virtual bool Delete(int id)
+        {
+            var query = Query.EQ("_id", id);
             var result = Collection.Remove(query);
             if (result.HasLastErrorMessage)
             {
