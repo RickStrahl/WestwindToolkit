@@ -50,6 +50,12 @@ and serializes more cleanly. (Note: this affects only JSON output - not
 inbound JSON parsing. Since formatting differs slightly for some times - 
 namely dictionaries - you might not get two-way fidelity).
 
+* **Add RequireSslAttribute**
+<small>Westwind.Web.Mvc</small>
+Add RequireSslAttribute that allows to dynamically assign the flag
+that decides whether SSL is used. Use a configuration setting,
+a static 'delegate' method or an explicit constant bool value.
+
 * **JsonVariables Component**
 <small>Westwind.Web</small>
 Component that helps with embedding server side data into client side
