@@ -10,6 +10,99 @@
             each entity has an Id property    
             </summary>
         </member>
+        <member name="T:Westwind.Utilities.Logging.MongoDbLogAdapter">
+            <summary>
+            Log adapter that writes to a SQL Server Database
+            </summary>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.#ctor(System.String,System.String)">
+            <summary>
+            Must pass in a SQL Server connection string or 
+            config ConnectionString Id.
+            </summary>
+            <param name="connectionString">Connection string to a MongoDb database</param>        
+            <param name="tableName">Name of the table to create in MongoDb database</param>        
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.#ctor">
+            <summary>
+            this version configures itself from the LogManager 
+            configuration section
+            </summary>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.WriteEntry(Westwind.Utilities.Logging.WebLogEntry)">
+            <summary>
+            Writes a new Web specific entry into the log file
+            
+            Assumes that your log file is set up to be a Web Log file
+            </summary>
+            <param name="webEntry"></param>
+            <returns></returns>
+            <exception cref="T:System.InvalidOperationException">Thrown if the insert operation fails</exception>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.GetEntry(System.Int32)">
+            <summary>
+            Returns an individual Web log entry from the log table
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.GetEntries(Westwind.Utilities.Logging.ErrorLevels,System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String)">
+            <summary>
+            Returns entries for a given error level, and date range
+            </summary>
+            <param name="errorLevel"></param>
+            <param name="count"></param>
+            <param name="dateFrom"></param>
+            <param name="dateTo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.CreateLog">
+            <summary>
+            Creates a new log table in the current database. If the table exists already it
+            is dropped and recreated.
+            
+            Requires database admin access.
+            </summary>
+            <param name="logType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.DeleteLog">
+            <summary>
+            Deletes the Sql Log Table
+            </summary>
+            <param name="logType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.Clear">
+            <summary>
+            Clears all the records of the log table
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.Clear(System.Int32)">
+            <summary>
+            Clears the table and leaves the last number of records specified intact
+            Note: the count to Leave is ignored
+            </summary>
+            <param name="countToLeave"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.GetEntryCount(Westwind.Utilities.Logging.ErrorLevels)">
+            <summary>
+            Returns the number of total log entries
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Westwind.Utilities.Logging.MongoDbLogAdapter.LogFilename">
+            <summary>
+            The name of the table that data in SQL Server is written to
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.Logging.MongoDbLogAdapter.MongoBusiness">
+            <summary>
+            Instance of the MongoDb core database instance.
+            </summary>
+        </member>
         <member name="T:Westwind.Data.MongoDb.MongoDbContext">
             <summary>
             Describes a Mongo Applications overall connectivity and 
@@ -217,7 +310,21 @@
             <param name="id"></param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Load(System.Int32)">
+            <summary>
+            Loads in instance based on its string id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
         <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.LoadBase(System.String)">
+            <summary>
+            Loads an instance based on its key field id
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.LoadBase(System.Int32)">
             <summary>
             Loads an instance based on its key field id
             </summary>

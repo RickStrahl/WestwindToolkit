@@ -80,7 +80,7 @@
             <param name="statusCode">Optional status code</param>
             <returns></returns>
         </member>
-        <member name="T:Westwind.Web.Mvc.Controllers.NegotiatedResult">
+        <member name="T:Westwind.Web.Mvc.NegotiatedResult">
             <summary>
             Returns a content negotiated result based on the Accept header.
             Minimal implementation that works with JSON and XML content,
@@ -99,45 +99,45 @@
             }
             </example>
         </member>
-        <member name="M:Westwind.Web.Mvc.Controllers.NegotiatedResult.#ctor(System.Object)">
+        <member name="M:Westwind.Web.Mvc.NegotiatedResult.#ctor(System.Object)">
             <summary>
             Pass in data to serialize
             </summary>
             <param name="data">Data to serialize</param>        
         </member>
-        <member name="M:Westwind.Web.Mvc.Controllers.NegotiatedResult.#ctor(System.String,System.Object)">
+        <member name="M:Westwind.Web.Mvc.NegotiatedResult.#ctor(System.String,System.Object)">
             <summary>
             Pass in data and an optional view for HTML views
             </summary>
             <param name="data"></param>
             <param name="viewName"></param>
         </member>
-        <member name="P:Westwind.Web.Mvc.Controllers.NegotiatedResult.Data">
+        <member name="P:Westwind.Web.Mvc.NegotiatedResult.Data">
             <summary>
             Data stored to be 'serialized'. Public
             so it's potentially accessible in filters.
             </summary>
         </member>
-        <member name="P:Westwind.Web.Mvc.Controllers.NegotiatedResult.ViewName">
+        <member name="P:Westwind.Web.Mvc.NegotiatedResult.ViewName">
             <summary>
             Optional name of the HTML view to be rendered
             for HTML responses
             </summary>
         </member>
-        <member name="P:Westwind.Web.Mvc.Controllers.NegotiatedResult.FormatOutput">
+        <member name="P:Westwind.Web.Mvc.NegotiatedResult.FormatOutput">
             <summary>
             Global static flag that allows you to set whether 
             output is formatted. By default Debug settings
             of project are used - debug is formatted
             </summary>
         </member>
-        <member name="T:Westwind.Web.Mvc.Controllers.NegotiatedResultExtensions">
+        <member name="T:Westwind.Web.Mvc.NegotiatedResultExtensions">
             <summary>
             Extends Controller with Negotiated() ActionResult that does
             basic content negotiation based on the Accept header.
             </summary>
         </member>
-        <member name="M:Westwind.Web.Mvc.Controllers.NegotiatedResultExtensions.Negotiated(System.Web.Mvc.Controller,System.Object)">
+        <member name="M:Westwind.Web.Mvc.NegotiatedResultExtensions.Negotiated(System.Web.Mvc.Controller,System.Object)">
             <summary>
             Return content-negotiated content of the data based on Accept header.
             Supports:
@@ -156,7 +156,7 @@
             }
             </example>
         </member>
-        <member name="M:Westwind.Web.Mvc.Controllers.NegotiatedResultExtensions.Negotiated(System.Web.Mvc.Controller,System.String,System.Object)">
+        <member name="M:Westwind.Web.Mvc.NegotiatedResultExtensions.Negotiated(System.Web.Mvc.Controller,System.String,System.Object)">
             <summary>
             Return content-negotiated content of the data based on Accept header.
             Supports:
@@ -262,7 +262,7 @@
             <param name="viewPage">Path to a ViewPage</param>
             <param name="errorModel">Optional ErrorViewModel to pass to the view</param>
         </member>
-        <member name="T:Westwind.Web.Mvc.Controllers.JsonNetResult">
+        <member name="T:Westwind.Web.Mvc.JsonNetResult">
             <summary>
             Works like JsonResult but uses Json.NET for serialization in MVC
             </summary>
@@ -348,6 +348,11 @@
             <summary>
             Flag that determines whether the message is displayed
             as HTML or as text. By default message is encoded as text (true).
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Mvc.ErrorDisplay.Timeout">
+            <summary>
+            Timeout in milliseconds before the error display is hidden
             </summary>
         </member>
         <member name="P:Westwind.Web.Mvc.ErrorDisplay.DisplayErrors">
@@ -560,6 +565,41 @@
             <summary>
               Looks up a localized string similar to We are sorry, but an unspecified error occurred in the application. The error has been logged and forwarded to be checked out as soon as possible..
             </summary>
+        </member>
+        <member name="T:Westwind.Web.Mvc.RequireSslAttribute">
+            <summary>
+            Allows for dynamically assigning the RequireSsl property at runtime
+            either with an explicit boolean constant, a configuration setting,
+            or a Reflection based 'delegate' 
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.RequireSslAttribute.#ctor">
+            <summary>
+            Default constructor forces SSL required
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.RequireSslAttribute.#ctor(System.Boolean)">
+            <summary>
+            Allows assignment of the SSL status via parameter
+            </summary>
+            <param name="requireSsl"></param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.RequireSslAttribute.#ctor(System.Type,System.String)">
+            <summary>
+            Allows invoking a method at runtime to check for a 
+            value dynamically.
+            
+            Note: The method called must be a static method
+            </summary>
+            <param name="typeName">Fully qualified type name on which the method to call exists</param>
+            <param name="method">Static method on this type to invoke with no parameters</param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.RequireSslAttribute.#ctor(System.String)">
+            <summary>
+            Looks for an appSetting key you specify and if it exists
+            and is set to true or 1 which forces SSL.
+            </summary>
+            <param name="appSettingsKey"></param>
         </member>
         <member name="T:Westwind.Web.Mvc.MvcHtmlUtils">
             <summary>

@@ -382,11 +382,14 @@ namespace Westwind.Utilities.InternetTools
 		/// Adds POST form variables to the request buffer.
 		/// PostMode determines how parms are handled.
 		/// </summary>
-		/// <param name="Key">Key value or raw buffer depending on post type</param>
-		/// <param name="Value">Value to store. Used only in key/value pair modes</param>
-		public void AddPostKey(string Key, byte[] Value)
+		/// <param name="key">Key value or raw buffer depending on post type</param>
+		/// <param name="value">Value to store. Used only in key/value pair modes</param>
+		public void AddPostKey(string key, byte[] value)
 		{
-            if (Key == "RESET")
+            if (value == null)
+                return;
+
+            if (key == "RESET")
             {
                 ResetPostData();
                 return;
@@ -401,21 +404,21 @@ namespace Westwind.Utilities.InternetTools
 			switch(_PostMode)
 			{
 				case HttpPostMode.UrlEncoded:
-					_PostData.Write( Encoding.Default.GetBytes(Key + "=" +
-						StringUtils.UrlEncode(Encoding.Default.GetString(Value)) +
+					_PostData.Write( Encoding.Default.GetBytes(key + "=" +
+						StringUtils.UrlEncode(Encoding.Default.GetString(value)) +
 						"&") );
 					break;
 				case HttpPostMode.MultiPart:
 					_PostData.Write( Encoding.Default.GetBytes(
 						"--" + _MultiPartBoundary + "\r\n" + 
-						"Content-Disposition: form-data; name=\"" +Key+"\"\r\n\r\n") );
+						"Content-Disposition: form-data; name=\"" +key+"\"\r\n\r\n") );
 					
-					_PostData.Write( Value );
+					_PostData.Write( value );
 
 					_PostData.Write( Encoding.Default.GetBytes("\r\n") );
 					break;
 				default:  // Raw or Xml, JSON modes
-					_PostData.Write( Value );
+					_PostData.Write( value );
 					break;
 			}
 		}
@@ -434,41 +437,43 @@ namespace Westwind.Utilities.InternetTools
 		/// Adds POST form variables to the request buffer.
 		/// PostMode determines how parms are handled.
 		/// </summary>
-		/// <param name="Key">Key value or raw buffer depending on post type</param>
-		/// <param name="Value">Value to store. Used only in key/value pair modes</param>
-		public void AddPostKey(string Key, string Value)
+		/// <param name="key">Key value or raw buffer depending on post type</param>
+		/// <param name="value">Value to store. Used only in key/value pair modes</param>
+		public void AddPostKey(string key, string value)
 		{
-			AddPostKey(Key,Encoding.GetEncoding(1252).GetBytes(Value));
+            if (value == null)
+                return;
+			AddPostKey(key,Encoding.GetEncoding(1252).GetBytes(value));
 		}
 
 		/// <summary>
 		/// Adds a fully self contained POST buffer to the request.
 		/// Works for XML or previously encoded content.
 		/// </summary>
-		/// <param name="FullPostBuffer">String based full POST buffer</param>
-		public void AddPostKey(string FullPostBuffer) 
+		/// <param name="fullPostBuffer">String based full POST buffer</param>
+		public void AddPostKey(string fullPostBuffer) 
 		{
-			AddPostKey(null,FullPostBuffer );
+			AddPostKey(null,fullPostBuffer );
 		}
 
-		/// <summary>
-		/// Adds a fully self contained POST buffer to the request.
-		/// Works for XML or previously encoded content.
-		/// </summary>
-		/// <param name="PostBuffer">Byte array of a full POST buffer</param>
-		public void AddPostKey(byte[] FullPostBuffer) 
+	    /// <summary>
+	    /// Adds a fully self contained POST buffer to the request.
+	    /// Works for XML or previously encoded content.
+	    /// </summary>	    
+        /// <param name="fullPostBuffer">Byte array of a full POST buffer</param>
+	    public void AddPostKey(byte[] fullPostBuffer) 
 		{
-			AddPostKey(null,FullPostBuffer);
+			AddPostKey(null,fullPostBuffer);
 		}
 
 		/// <summary>
 		/// Allows posting a file to the Web Server. Make sure that you 
 		/// set PostMode
 		/// </summary>
-		/// <param name="Key"></param>
-		/// <param name="FileName"></param>
+		/// <param name="key"></param>
+		/// <param name="fileName"></param>
 		/// <returns></returns>
-		public bool AddPostFile(string Key,string FileName) 
+		public bool AddPostFile(string key,string fileName) 
 		{
 			byte[] lcFile;	
 
@@ -481,7 +486,7 @@ namespace Westwind.Utilities.InternetTools
 
 			try 
 			{			
-				FileStream loFile = new FileStream(FileName,System.IO.FileMode.Open,System.IO.FileAccess.Read);
+				FileStream loFile = new FileStream(fileName,System.IO.FileMode.Open,System.IO.FileAccess.Read);
 
 				lcFile = new byte[loFile.Length];
 				loFile.Read(lcFile,0,(int) loFile.Length);
@@ -502,8 +507,8 @@ namespace Westwind.Utilities.InternetTools
 
 			_PostData.Write( Encoding.Default.GetBytes(
 				"--" + _MultiPartBoundary + "\r\n"  + 
-				"Content-Disposition: form-data; name=\"" + Key + "\"; filename=\"" + 
-				new FileInfo(FileName).Name + "\"\r\n\r\n") );
+				"Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + 
+				new FileInfo(fileName).Name + "\"\r\n\r\n") );
 
 			_PostData.Write( lcFile );
 

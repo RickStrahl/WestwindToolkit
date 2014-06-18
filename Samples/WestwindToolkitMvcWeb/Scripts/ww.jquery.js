@@ -1,7 +1,7 @@
 ﻿/// <reference path="jquery.js" />
 /*
 ww.jQuery.js  
-Version 1.13 - 5/15/2014
+Version 1.13 - 6/15/2014
 West Wind jQuery plug-ins and utilities
 
 (c) 2008-2014 Rick Strahl, West Wind Technologies 
@@ -562,8 +562,8 @@ http://en.wikipedia.org/wiki/MIT_License
         });
 
         return this.each(function () {
-            var $el = $(this);
-            $el.removeClass(opt.csshiddenClass);
+            var $el = $(this);            
+            $el.removeClass(opt.cssHiddenClass);
 
             // temporarily make visible to get the size
             $el.css("max-height", "none");

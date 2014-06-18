@@ -222,10 +222,10 @@ namespace Westwind.Utilities
             }
 
             sb.Append("</ul>\r\n");
-            string script = 
+            string script =
             @"    <script>
         function _errorLinkClick(id) {
-            var $t = $('#' + id).focus().addClass('errorhighlight');
+            var $t = $('#' + id).focus().addClass('errorhighlight');            
             setTimeout(function() {
                 $t.removeClass('errorhighlight');
             }, 5000);
