@@ -31,19 +31,13 @@
 */
 #endregion
 
-using System;
-using System.Linq;
-using System.Data;
-using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 using MongoDB.Driver.Linq;
-using Westwind.Data.MongoDb;
-using Westwind.Utilities.Data;
-using System.Drawing;
-using System.Data.Common;
+using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Data.SqlClient;
+using System.Data;
+using System.Linq;
+using Westwind.Data.MongoDb;
 
 namespace Westwind.Utilities.Logging
 {

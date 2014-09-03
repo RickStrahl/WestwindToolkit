@@ -26,16 +26,6 @@ namespace Westwind.Web.Mvc
         }
 
         /// <summary>
-        /// Injectable constructor that takes an IRequireSsl interface
-        /// that can be injected.
-        /// </summary>
-        /// <param name="requireSsl">IRequireSsl implementation - injectable through your IOC container</param>
-        public RequireSslAttribute(IRequireSsl requireSsl)
-        {
-            RequireSsl = requireSsl.RequireSsl;
-        }
-
-        /// <summary>
         /// Allows assignment of the SSL status via parameter
         /// </summary>
         /// <param name="requireSsl"></param>
@@ -84,11 +74,6 @@ namespace Westwind.Web.Mvc
             {
                 HandleNonHttpsRequest(filterContext);
             }
-        }
-    }
-
-    public interface IRequireSsl
-    {
-        bool RequireSsl { get; }
-    }
+        } 
+    } 
 }

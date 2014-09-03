@@ -91,7 +91,7 @@ namespace Westwind.Data.MongoDb
 
             // if not specified use connection string with name of type
             if (string.IsNullOrEmpty(connectionString))
-                connectionString = this.GetType().Name;
+                connectionString = GetType().Name;
 
             // is it a connection string name?
             if (!connectionString.Contains("://"))

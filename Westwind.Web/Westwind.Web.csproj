@@ -113,7 +113,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Westwind.Utilities\Westwind.Utilities.csproj">
-      <Project>{1c9829a8-8979-4493-863c-635726f8a61c}</Project>
+      <Project>{1C9829A8-8979-4493-863C-635726F8A61C}</Project>
       <Name>Westwind.Utilities</Name>
     </ProjectReference>
   </ItemGroup>

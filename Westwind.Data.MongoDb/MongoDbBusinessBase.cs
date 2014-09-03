@@ -1,16 +1,12 @@
 using System;
 using System.Linq.Expressions;
-using System.Xml.Serialization;
 using System.Collections.Generic;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Conventions;
 using MongoDB.Driver;
-using System.Linq;
 using MongoDB.Driver.Builders;
 using Westwind.Data.MongoDb.Properties;
 using Westwind.Utilities;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Westwind.Data.MongoDb
 {
@@ -33,15 +29,13 @@ namespace Westwind.Data.MongoDb
     /// call Save() as often as possible to update pending data.
     /// </summary>
     /// <typeparam name="TEntity">
-    /// The type of the 'primary' entity that this business object is tied to. 
+    /// The type of the entity that this business object is tied to. 
     /// Note that you can access any of the context's entities - this entity
     /// is meant as a 'top level' entity that controls the operations of
-    /// the CRUD methods.
-    /// Maps to the Entity property.
+    /// the CRUD methods. Maps to the Entity property on this class
     /// </typeparam>
-    /// <typeparam name="TContext">
-    /// The type of the context that is attached to the this business object.
-    /// Maps to the Context property. 
+    /// <typeparam name="TMongoContext">
+    /// A MongoDbContext type that configures MongoDb driver behavior and startup operation.
     /// </typeparam>
     public class MongoDbBusinessBase<TEntity,TMongoContext> : IDisposable, IBusinessObject
         where TEntity : class, new()
@@ -50,6 +44,7 @@ namespace Westwind.Data.MongoDb
 
         /// <summary>
         /// Instance of the MongoDb core database instance.
+        /// Set internally when the driver is initialized.
         /// </summary>
         public MongoDatabase Database { get; set; }
 
@@ -58,7 +53,9 @@ namespace Westwind.Data.MongoDb
         protected TMongoContext Context = new TMongoContext();
 
         /// <summary>
-        /// Internally re-usable MongoDb Collection instance.
+        /// Re-usable MongoDb Collection instance.
+        /// Set internally when the driver is initialized
+        /// and accessible after that.
         /// </summary>
         public MongoCollection<TEntity> Collection
         {
@@ -73,11 +70,9 @@ namespace Westwind.Data.MongoDb
 
 
         /// <summary>
-        /// A collectionName that can be used to hold errors or
-        /// validation errors. This 
+        /// A collection that holds validation errors after Validate()
+        /// or Save with AutoValidate on is called
         /// </summary>
-        [XmlIgnore]
-        [NotMapped]
         public ValidationErrorCollection ValidationErrors
         {
             get
@@ -91,7 +86,7 @@ namespace Westwind.Data.MongoDb
 
         /// <summary>
         /// Determines whether or not the Save operation causes automatic
-        /// validation
+        /// validation. Default is false.
         /// </summary>                        
         public bool AutoValidate { get; set; }
 
@@ -102,7 +97,8 @@ namespace Westwind.Data.MongoDb
 
 
         /// <summary>
-        /// Error Message of the last exception
+        /// Error Message set by the last operation. Check if 
+        /// results of a method call return an error status.
         /// </summary>
         public string ErrorMessage
         {
@@ -125,8 +121,6 @@ namespace Westwind.Data.MongoDb
         /// <summary>
         /// Instance of an exception object that caused the last error
         /// </summary>
-        [NotMapped]
-        [XmlIgnore]
         public Exception ErrorException
         {
             get { return _errorException; }
@@ -841,7 +835,7 @@ namespace Westwind.Data.MongoDb
         /// <returns></returns>
         public object GetProperty(string key)
         {
-            if (this.Properties == null)
+            if (Properties == null)
                 return null;
 
             object value = null;
@@ -862,7 +856,7 @@ namespace Westwind.Data.MongoDb
             Properties = null;
 
             if (entity == null)
-                entity = this.Entity;
+                entity = Entity;
 
             // Always create a new property bag
             Properties = new PropertyBag();
@@ -883,9 +877,8 @@ namespace Westwind.Data.MongoDb
         protected void SetProperties(string stringFieldToSaveTo = "Properties", object entity = null)
         {
             if (entity == null)
-                entity = this.Entity;
-
-            //string xml = DataContractSerializationUtils.SerializeToXmlString(Properties,true);
+                entity = Entity;
+            
 
             string xml = null;
             if (Properties.Count > 0)
@@ -893,7 +886,7 @@ namespace Westwind.Data.MongoDb
                 // Serialize to Xm
                 xml = Properties.ToXml();
             }
-            ReflectionUtils.SetProperty(Entity, stringFieldToSaveTo, xml);
+            ReflectionUtils.SetProperty(entity, stringFieldToSaveTo, xml);
         }
 
         #endregion
@@ -989,7 +982,7 @@ namespace Westwind.Data.MongoDb
         /// <returns></returns>
         public override string ToString()
         {
-            if (!string.IsNullOrEmpty(this.ErrorMessage))
+            if (!string.IsNullOrEmpty(ErrorMessage))
                 return "Error: " + ErrorMessage;
 
             return base.ToString();
