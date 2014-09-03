@@ -128,9 +128,10 @@ namespace Westwind.Utilities.InternetTools
 		/// </summary>
 		public int Timeout 
 		{
-			get {return _ConnectTimeout; }
-			set {_ConnectTimeout = value; }
+			get {return _timeout; }
+			set {_timeout = value; }
 		}
+        int _timeout = 30;
 
 		/// <summary>
 		/// Returns whether the last request was cancelled through one of the
@@ -309,7 +310,7 @@ namespace Westwind.Utilities.InternetTools
 
 		HttpPostMode _PostMode = HttpPostMode.UrlEncoded;
 
-		int _ConnectTimeout = 30;
+		
 
 		string _Username = string.Empty;
 		string _Password = string.Empty;
@@ -610,7 +611,8 @@ namespace Westwind.Utilities.InternetTools
 
 				
 				WebRequest.UserAgent = _UserAgent;
-				WebRequest.Timeout = _ConnectTimeout * 1000;
+				WebRequest.Timeout = _timeout * 1000;
+		        WebRequest.ReadWriteTimeout = _timeout * 1000;
 
 				// Handle Security for the request
 				if (_Username.Length > 0) 
