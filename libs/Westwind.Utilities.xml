@@ -2744,13 +2744,6 @@
             re-written with the new query string.
             </param>
         </member>
-        <member name="M:Westwind.Utilities.UrlEncodingParser.GetValues(System.String)">
-            <summary>
-            Returns a 
-            </summary>
-            <param name="key"></param>
-            <returns></returns>
-        </member>
         <member name="M:Westwind.Utilities.UrlEncodingParser.SetValues(System.String,System.Collections.Generic.IEnumerable{System.String})">
             <summary>
             Assigns multiple values to the same key
@@ -2769,30 +2762,18 @@
             </param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.UrlEncodingParser.Write">
+        <member name="M:Westwind.Utilities.UrlEncodingParser.ToString">
             <summary>
             Writes out the urlencoded data/query string or full URL based 
             on the internally set values.
             </summary>
             <returns>urlencoded data or url</returns>
         </member>
-        <member name="P:Westwind.Utilities.UrlEncodingParser.Values">
-            <summary>
-            Internally holds parsed or added query string values
-            </summary>
-        </member>
         <member name="P:Westwind.Utilities.UrlEncodingParser.Url">
             <summary>
-             Holds the original Url that was assigned
+            Holds the original Url that was assigned if any
+            Url must contain // to be considered a url
             </summary>
-        </member>
-        <member name="P:Westwind.Utilities.UrlEncodingParser.Item(System.String)">
-            <summary>
-            Indexer that allows access to the query string
-            values.
-            </summary>
-            <param name="key"></param>
-            <returns></returns>
         </member>
         <member name="T:Westwind.Utilities.Scheduler">
             <summary>

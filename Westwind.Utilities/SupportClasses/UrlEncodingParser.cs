@@ -5,6 +5,7 @@ using System.Collections.Specialized;
 
 namespace Westwind.Utilities
 {
+
     /// <summary>
     /// A query string or UrlEncoded form parser and editor 
     /// class that allows reading and writing of urlencoded
@@ -18,15 +19,12 @@ namespace Westwind.Utilities
     /// <remarks>
     /// Supports multiple values per key
     /// </remarks>
-    public class UrlEncodingParser
+    public class UrlEncodingParser : NameValueCollection
     {
-        /// <summary>
-        /// Internally holds parsed or added query string values
-        /// </summary>
-        public NameValueCollection Values { get; set; }
 
         /// <summary>
-        ///  Holds the original Url that was assigned
+        /// Holds the original Url that was assigned if any
+        /// Url must contain // to be considered a url
         /// </summary>
         private string Url { get; set; }
 
@@ -42,7 +40,6 @@ namespace Westwind.Utilities
         /// </param>
         public UrlEncodingParser(string queryStringOrUrl = null)
         {
-            Values = new NameValueCollection();
             Url = string.Empty;
 
             if (!string.IsNullOrEmpty(queryStringOrUrl))
@@ -51,27 +48,6 @@ namespace Westwind.Utilities
             }
         }
 
-        /// <summary>
-        /// Indexer that allows access to the query string
-        /// values.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public string this[string key]
-        {
-            get { return Values[key]; }
-            set { Values[key] = value; }
-        }
-
-        /// <summary>
-        /// Returns a 
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public string[] GetValues(string key)
-        {
-            return Values.GetValues(key);
-        }
 
         /// <summary>
         /// Assigns multiple values to the same key
@@ -81,7 +57,7 @@ namespace Westwind.Utilities
         public void SetValues(string key, IEnumerable<string> values)
         {
             foreach (var val in values)
-                Values.Add(key, val);
+                Add(key, val);
         }
 
         /// <summary>
@@ -95,11 +71,11 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public NameValueCollection Parse(string query)
         {
-            if (query.Contains("//"))
+            if (Uri.IsWellFormedUriString(query, UriKind.Absolute))
                 Url = query;
 
-            if (query == null)
-                Values = new NameValueCollection();
+            if (string.IsNullOrEmpty(query))
+                Clear();
             else
             {
                 int index = query.IndexOf('?');
@@ -115,12 +91,12 @@ namespace Westwind.Utilities
                     int index2 = pair.IndexOf('=');
                     if (index2 > 0)
                     {
-                        Values.Add(pair.Substring(0, index2), pair.Substring(index2 + 1));
+                        Add(pair.Substring(0, index2), pair.Substring(index2 + 1));
                     }
                 }
             }
 
-            return Values;
+            return this;
         }
 
         /// <summary>
@@ -128,12 +104,12 @@ namespace Westwind.Utilities
         /// on the internally set values.
         /// </summary>
         /// <returns>urlencoded data or url</returns>
-        public string Write()
+        public override string ToString()
         {
             string query = string.Empty;
-            foreach (string key in Values.Keys)
+            foreach (string key in Keys)
             {
-                string[] values = Values.GetValues(key);
+                string[] values = GetValues(key);
                 foreach (var val in values)
                 {
                     query += key + "=" + Uri.EscapeUriString(val) + "&";

@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Specialized;
 using System.Text;
 using System.Collections.Generic;
 using System.Linq;
+using System.Web;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Westwind.Utilities;
 
@@ -19,6 +21,7 @@ namespace Westwind.Utilities.Tests
             string str = "http://mysite.com/page1?id=3123&format=json&action=edit&text=It's%20a%20brave%20new%20world!";
 
             var query = new UrlEncodingParser(str);
+            Console.WriteLine(query);
 
             Assert.IsTrue(query["id"] == "3123");
             Assert.IsTrue(query["format"] == "json", "wrong format " + query["format"]);
@@ -29,11 +32,12 @@ namespace Westwind.Utilities.Tests
 
             query["id"] = "4123";
             query["format"] = "xml";
-            query["name"] = "<< It's a brave new world!";
+            query["name"] = "<< It's a brave new world! say what?";
 
-            var url = query.Write();
+            var url = query.ToString();
 
             Console.WriteLine(url);
+            Console.Write(query.ToString());
             //http://mysite.com/page1?id=4123&format=xml&action=edit&
             //text=It's%20a%20brave%20new%20world!&name=%3C%3C%20It's%20a%20brave%20new%20world!
         }
@@ -46,25 +50,25 @@ namespace Westwind.Utilities.Tests
             var query = new UrlEncodingParser(str);
 
             Assert.IsTrue(query["id"] == "3123");
-            Assert.IsTrue(query["format"] == "json,xml", "wrong format " + query["format"]);            
+            Assert.IsTrue(query["format"] == "json,xml", "wrong format " + query["format"]);
 
             // multiple format strings
             string[] formats = query.GetValues("format");
             Assert.IsTrue(formats.Length == 2);
 
             query.SetValues("multiple", new[]
-    {
-        "1",
-        "2",
-        "3"
-    });
+            {
+                "1",
+                "2",
+                "3"
+            });
 
-            var url = query.Write();
+            var url = query.ToString();
 
             Console.WriteLine(url);
 
             Assert.IsTrue(url ==
-                            "http://mysite.com/page1?id=3123&format=json&format=xml&multiple=1&multiple=2&multiple=3");
+                          "http://mysite.com/page1?id=3123&format=json&format=xml&multiple=1&multiple=2&multiple=3");
 
         }
 
@@ -78,7 +82,7 @@ namespace Westwind.Utilities.Tests
             query["id"] = "321312";
             query["name"] = "rick";
 
-            url = query.Write();            
+            url = query.ToString();
             Console.WriteLine(url);
 
             Assert.IsTrue(url.Contains("name="));
@@ -91,7 +95,7 @@ namespace Westwind.Utilities.Tests
             query["id"] = "321312";
             query["name"] = "rick";
 
-            url = query.Write();
+            url = query.ToString();
             Console.WriteLine(url);
 
             Assert.IsTrue(url.Contains("name="));
@@ -104,7 +108,7 @@ namespace Westwind.Utilities.Tests
             query["id"] = "321312";
             query["name"] = "rick";
 
-            url = query.Write();
+            url = query.ToString();
             Console.WriteLine(url);
 
             Assert.IsTrue(url.Contains("name="));
@@ -118,7 +122,7 @@ namespace Westwind.Utilities.Tests
             query["id"] = "321312";
             query["name"] = "rick";
 
-            url = query.Write();
+            url = query.ToString();
             Console.WriteLine(url);
 
             Assert.IsTrue(url.Contains("name="));
@@ -132,11 +136,21 @@ namespace Westwind.Utilities.Tests
             query["id"] = "321312";
             query["name"] = "rick";
 
-            url = query.Write();
+            url = query.ToString();
             Console.WriteLine(url);
 
             Assert.IsTrue(url.Contains("name="));
             Assert.IsTrue(!url.Contains("http://"));
         }
+
+        [TestMethod]
+        public void HttpUtilityTest()
+        {
+            var nv = HttpUtility.ParseQueryString("");
+            nv["id"] = "Rick";
+            nv["format"] = "json";
+            Console.WriteLine(nv);
+        }
+
     }
 }
