@@ -633,7 +633,7 @@ namespace Westwind.Utilities.Data
         {
             IEnumerable<T> result;
 
-            var reader = this.ExecuteReader(sql, parameters);
+            var reader = ExecuteReader(sql, parameters);
             
             if (reader == null)
                 return null;
@@ -1242,7 +1242,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <returns></returns>
         public virtual bool UpdateEntity(object entity, string table, string keyField, string fieldsToSkip = null)
         {
-            this.SetError();
+            SetError();
 
             if (string.IsNullOrEmpty(fieldsToSkip))
                 fieldsToSkip = string.Empty;
@@ -1269,9 +1269,9 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
                 object Value = Property.GetValue(entity, null);
 
-                sb.Append(" [" + Name + "]=" + this.ParameterPrefix +  Name + ",");
+                sb.Append(" [" + Name + "]=" + ParameterPrefix +  Name + ",");
 
-                if (Value == null && Property.PropertyType == typeof(System.Byte[]))
+                if (Value == null && Property.PropertyType == typeof(Byte[]))
                 {
                     Command.Parameters.Add(
                         CreateParameter(ParameterPrefix + Name, DBNull.Value, DataUtils.DotNetTypeToDbType(Property.PropertyType))
@@ -1309,7 +1309,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <returns></returns>
         public virtual bool UpdateEntity(object Entity, string Table, string KeyField, string FieldsToSkip, string FieldsToUpdate)
         {
-            this.SetError();
+            SetError();
 
             if (FieldsToSkip == null)
                 FieldsToSkip = string.Empty;
@@ -1337,7 +1337,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
                 sb.Append(" [" + Name + "]=" + ParameterPrefix + Name + ",");
 
-                if (Value == null && Property.PropertyType == typeof(System.Byte[]))
+                if (Value == null && Property.PropertyType == typeof(Byte[]))
                 {
                     Command.Parameters.Add(
                         CreateParameter(ParameterPrefix + Name, DBNull.Value, DataUtils.DotNetTypeToDbType(Property.PropertyType))
@@ -1371,9 +1371,9 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <param name="KeyField"></param>
         /// <param name="fieldsToSkip"></param>
         /// <returns>Scope Identity or Null</returns>
-        public object InsertEntity(object entity, string table, string fieldsToSkip = null)
+        public object InsertEntity(object entity, string table, string fieldsToSkip = null, bool returnIdentityKey = true)
         {
-            this.SetError();
+            SetError();
 
             if (string.IsNullOrEmpty(fieldsToSkip))
                 fieldsToSkip = string.Empty;
@@ -1386,7 +1386,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
             StringBuilder FieldList = new StringBuilder();
             StringBuilder DataList = new StringBuilder();
-            FieldList.Append("insert " + table + " (");
+            FieldList.Append("insert into " + table + " (");
             DataList.Append(" values (");
 
             PropertyInfo[] Properties = ObjType.GetProperties(BindingFlags.Instance | BindingFlags.Public);
@@ -1405,7 +1405,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 FieldList.Append("[" + Name + "],");
                 DataList.Append(ParameterPrefix + Name + ",");
 
-                if (Value == null && Property.PropertyType == typeof(System.Byte[]))
+                if (Value == null && Property.PropertyType == typeof(Byte[]))
                 {
                     Command.Parameters.Add(
                         CreateParameter(ParameterPrefix + Name,  DBNull.Value, DataUtils.DotNetTypeToDbType(Property.PropertyType))
@@ -1416,14 +1416,24 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             }
 
             Command.CommandText = FieldList.ToString().TrimEnd(',') + ") " +
-                                 DataList.ToString().TrimEnd(',') + ");select SCOPE_IDENTITY()";
+                                 DataList.ToString().TrimEnd(',') + ")";
 
-            object Result = ExecuteScalar(Command);
-                     
+            int res = ExecuteNonQuery(Command);
+            if (res < 0)
+                return null;
+
+            object result = res;
+
+            if (returnIdentityKey)
+            {
+                result = ExecuteScalar("select SCOPE_IDENTITY()");
+                CloseConnection();
+                return result;
+            }         
 
             CloseConnection();
 
-            return Result;
+            return result;
         }
 
 
@@ -1441,18 +1451,18 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             object pkValue = ReflectionUtils.GetProperty(entity, keyField);
             object res = null;
             if (pkValue != null)
-                res = this.ExecuteScalar("select [" + keyField + "] from [" + table + "] where [" + keyField + "]=" + ParameterPrefix + "id",
-                                         this.CreateParameter(ParameterPrefix + "id", pkValue));
+                res = ExecuteScalar("select [" + keyField + "] from [" + table + "] where [" + keyField + "]=" + ParameterPrefix + "id",
+                                         CreateParameter(ParameterPrefix + "id", pkValue));
 
 
             if (res == null)
             {
-                this.InsertEntity(entity, table, fieldsToSkip);
+                InsertEntity(entity, table, fieldsToSkip);
                 if (!string.IsNullOrEmpty(ErrorMessage))
                     return false;
             }
             else
-                return this.UpdateEntity(entity, table, keyField, fieldsToSkip);
+                return UpdateEntity(entity, table, keyField, fieldsToSkip);
 
             return true;
         }
@@ -1470,7 +1480,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         {
             if (_Connection == null)
             {
-                if (!this.OpenConnection())
+                if (!OpenConnection())
                     return false;
             }            
 
