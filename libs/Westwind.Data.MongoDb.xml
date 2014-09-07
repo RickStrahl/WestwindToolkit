@@ -173,15 +173,13 @@
             call Save() as often as possible to update pending data.
             </summary>
             <typeparam name="TEntity">
-            The type of the 'primary' entity that this business object is tied to. 
+            The type of the entity that this business object is tied to. 
             Note that you can access any of the context's entities - this entity
             is meant as a 'top level' entity that controls the operations of
-            the CRUD methods.
-            Maps to the Entity property.
+            the CRUD methods. Maps to the Entity property on this class
             </typeparam>
-            <typeparam name="TContext">
-            The type of the context that is attached to the this business object.
-            Maps to the Context property. 
+            <typeparam name="TMongoContext">
+            A MongoDbContext type that configures MongoDb driver behavior and startup operation.
             </typeparam>
         </member>
         <member name="T:Westwind.Data.MongoDb.IBusinessObject">
@@ -519,23 +517,26 @@
         <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Database">
             <summary>
             Instance of the MongoDb core database instance.
+            Set internally when the driver is initialized.
             </summary>
         </member>
         <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Collection">
             <summary>
-            Internally re-usable MongoDb Collection instance.
+            Re-usable MongoDb Collection instance.
+            Set internally when the driver is initialized
+            and accessible after that.
             </summary>
         </member>
         <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ValidationErrors">
             <summary>
-            A collectionName that can be used to hold errors or
-            validation errors. This 
+            A collection that holds validation errors after Validate()
+            or Save with AutoValidate on is called
             </summary>
         </member>
         <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.AutoValidate">
             <summary>
             Determines whether or not the Save operation causes automatic
-            validation
+            validation. Default is false.
             </summary>                        
         </member>
         <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Entity">
@@ -545,7 +546,8 @@
         </member>
         <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ErrorMessage">
             <summary>
-            Error Message of the last exception
+            Error Message set by the last operation. Check if 
+            results of a method call return an error status.
             </summary>
         </member>
         <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ErrorException">

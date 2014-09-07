@@ -96,6 +96,7 @@
     <Compile Include="AppConfiguration\JsonFileConfigurationTests.cs" />
     <Compile Include="AppConfiguration\StringConfigurationTests.cs" />
     <Compile Include="JsonSerializationUtils2.cs" />
+    <Compile Include="UrlEncodingParserTests.cs" />
     <Compile Include="SupportClasses\DebugModes.cs" />
     <Compile Include="SupportClasses\JsonNetSerializationUtilsTests.cs" />
     <Compile Include="SupportClasses\TestHelpers.cs" />

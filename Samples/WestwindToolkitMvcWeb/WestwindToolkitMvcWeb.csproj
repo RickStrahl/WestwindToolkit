@@ -148,17 +148,15 @@
     <Content Include="Css\Westwind.css" />
     <Content Include="Global.asax" />
     <Content Include="CallbackHandler.ashx" />
-    <None Include="Scripts\jquery-1.11.0.intellisense.js">
-      <DependentUpon>jquery-1.11.0.js</DependentUpon>
-    </None>
-    <Content Include="Scripts\jquery-1.11.0.js" />
-    <Content Include="Scripts\jquery-1.11.0.min.js">
-      <DependentUpon>jquery-1.11.0.js</DependentUpon>
+    <Content Include="Scripts\jquery-1.11.1.js" />
+    <Content Include="Scripts\jquery-1.11.1.min.js">
+      <DependentUpon>jquery-1.11.1.js</DependentUpon>
     </Content>
     <Content Include="Scripts\modernizr-2.7.1.js" />
     <Content Include="Scripts\modernizr-2.7.1.min.js">
       <DependentUpon>modernizr-2.7.1.js</DependentUpon>
     </Content>
+    <Content Include="Scripts\plugins\jquery.makeTableScrollable.js" />
     <Content Include="Scripts\ww.jquery.js" />
     <Content Include="Scripts\ww.jquery.min.js">
       <DependentUpon>ww.jquery.js</DependentUpon>
@@ -183,9 +181,6 @@
     <Content Include="Views\Utilities\ScriptVariables.cshtml" />
     <Content Include="Scripts\ww.jquery.min.js.map">
       <DependentUpon>ww.jquery.js</DependentUpon>
-    </Content>
-    <Content Include="Scripts\jquery-1.11.0.min.map">
-      <DependentUpon>jquery-1.11.0.js</DependentUpon>
     </Content>
     <Content Include="Scripts\modernizr-2.7.1.min.js.map">
       <DependentUpon>modernizr-2.7.1.js</DependentUpon>

@@ -1115,7 +1115,7 @@
             <returns></returns>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Westwind.Utilities.Data.DataAccessBase.UpdateEntity(System.Object,System.String,System.String,System.String,System.String)" -->
-        <!-- Badly formed XML comment ignored for member "M:Westwind.Utilities.Data.DataAccessBase.InsertEntity(System.Object,System.String,System.String)" -->
+        <!-- Badly formed XML comment ignored for member "M:Westwind.Utilities.Data.DataAccessBase.InsertEntity(System.Object,System.String,System.String,System.Boolean)" -->
         <member name="M:Westwind.Utilities.Data.DataAccessBase.SaveEntity(System.Object,System.String,System.String,System.String)">
             <summary>
             Saves an enity into the database using insert or update as required.
@@ -2715,6 +2715,83 @@
             Creates an instance of a propertybag from an Xml string
             </summary>
             <param name="xml">Serialize</param>
+            <returns></returns>
+        </member>
+        <member name="T:Westwind.Utilities.UrlEncodingParser">
+            <summary>
+            A query string or UrlEncoded form parser and editor 
+            class that allows reading and writing of urlencoded
+            key value pairs used for query string and HTTP 
+            form data.
+            
+            Useful for parsing and editing querystrings inside
+            of non-Web code that doesn't have easy access to
+            the HttpUtility class.                
+            </summary>
+            <remarks>
+            Supports multiple values per key
+            </remarks>
+        </member>
+        <member name="M:Westwind.Utilities.UrlEncodingParser.#ctor(System.String)">
+            <summary>
+            Always pass in a UrlEncoded data or a URL to parse from
+            unless you are creating a new one from scratch.
+            </summary>
+            <param name="queryStringOrUrl">
+            Pass a query string or raw Form data, or a full URL.
+            If a URL is parsed the part prior to the ? is stripped
+            but saved. Then when you write the original URL is 
+            re-written with the new query string.
+            </param>
+        </member>
+        <member name="M:Westwind.Utilities.UrlEncodingParser.GetValues(System.String)">
+            <summary>
+            Returns a 
+            </summary>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.UrlEncodingParser.SetValues(System.String,System.Collections.Generic.IEnumerable{System.String})">
+            <summary>
+            Assigns multiple values to the same key
+            </summary>
+            <param name="key"></param>
+            <param name="values"></param>
+        </member>
+        <member name="M:Westwind.Utilities.UrlEncodingParser.Parse(System.String)">
+            <summary>
+            Parses the query string into the internal dictionary
+            and optionally also returns this dictionary
+            </summary>
+            <param name="query">
+            Query string key value pairs or a full URL. If URL is
+            passed the URL is re-written in Write operation
+            </param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.UrlEncodingParser.Write">
+            <summary>
+            Writes out the urlencoded data/query string or full URL based 
+            on the internally set values.
+            </summary>
+            <returns>urlencoded data or url</returns>
+        </member>
+        <member name="P:Westwind.Utilities.UrlEncodingParser.Values">
+            <summary>
+            Internally holds parsed or added query string values
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.UrlEncodingParser.Url">
+            <summary>
+             Holds the original Url that was assigned
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.UrlEncodingParser.Item(System.String)">
+            <summary>
+            Indexer that allows access to the query string
+            values.
+            </summary>
+            <param name="key"></param>
             <returns></returns>
         </member>
         <member name="T:Westwind.Utilities.Scheduler">

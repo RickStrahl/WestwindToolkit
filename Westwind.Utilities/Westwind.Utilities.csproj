@@ -98,6 +98,7 @@
     <Compile Include="SupportClasses\Expando.cs" />
     <Compile Include="SupportClasses\ObjectFactory.cs" />
     <Compile Include="SupportClasses\PropertyBag.cs" />
+    <Compile Include="SupportClasses\UrlEncodingParser.cs" />
     <Compile Include="SupportClasses\Scheduler.cs" />
     <Compile Include="SupportClasses\StringSerializer.cs" />
     <Compile Include="Utilities\DataUtils.cs" />

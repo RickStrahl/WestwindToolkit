@@ -24,12 +24,12 @@ namespace Westwind.Web
         /// <summary>
         /// jQuery CDN Url on Google
         /// </summary>
-        public static string jQueryCdnUrl = "//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js";
+        public static string jQueryCdnUrl = "//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js";
 
         /// <summary>
         /// Fallback Url if CDN can't be reached.
         /// </summary>
-        public static string jQueryCdnFallbackUrl = "~/scripts/jquery.11.0.min.js";
+        public static string jQueryCdnFallbackUrl = "~/scripts/jquery.1.11.1.min.js";
 
         /// <summary>
         /// jQuery CDN Url on Google

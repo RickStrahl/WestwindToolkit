@@ -1,7 +1,18 @@
 #West Wind Toolkit Change Log
 
-###Version 2.55
-* not released yet *
+### Version 2.56
+* not release yet *
+
+* **UrlEncodingParser for QueryString and Form Data Parsing**
+<small>Westwind.Utilities</small>
+Added this parser that allows reading and writing of query string
+and form data outside of System.Web. Class reads raw UrlEncoded data
+or a URL and then allows access to values as a collection for reading
+and writing. You can modify values and then write out the new result 
+data. When working with URLs the full URL is re-written.
+
+### Version 2.55
+* August 18th, 2014 *
 
 * **Added Slide Transition plug-in to ww.jquery**
 <small>Westwind.Web/ww.jquery.js</small>
