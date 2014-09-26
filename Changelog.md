@@ -11,6 +11,11 @@ or a URL and then allows access to values as a collection for reading
 and writing. You can modify values and then write out the new result 
 data. When working with URLs the full URL is re-written.
 
+* **ImageUtils.RotateImage in memory**<br />
+<small>Westwind.Utilities</small>
+Rotate image gains the ability to use a byte array input to rotate
+images in memory.
+
 ### Version 2.55
 * August 18th, 2014 *
 

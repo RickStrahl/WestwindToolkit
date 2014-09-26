@@ -41,6 +41,25 @@ namespace Westwind.Utilities.Test
         }
 
         [TestMethod]
+        public void RotateFileInMemory()
+        {
+            string orig = ImageFile;
+
+            // work on sailbig3 and write output to sailbig3
+            string work = ImageFileWork;
+            string rotated = ImageFileRotated;
+
+            var imgData = File.ReadAllBytes(orig); 
+            var rotatedData = ImageUtils.RoateImage(imgData, RotateFlipType.Rotate270FlipNone);
+
+            Assert.IsNotNull(rotatedData);
+
+            File.WriteAllBytes(rotated, rotatedData);
+        }
+
+
+
+        [TestMethod]
         public void ResizeBitMap()
         {
             string orig = ImageFile;

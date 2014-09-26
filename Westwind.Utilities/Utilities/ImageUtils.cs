@@ -267,6 +267,44 @@ namespace Westwind.Utilities
             }
 
             return true;
-        }	
+        }
+
+        public static byte[] RoateImage(byte[] data, RotateFlipType type = RotateFlipType.Rotate90FlipNone)
+        {
+            Bitmap bmpOut = null;
+
+            try
+            {
+                Bitmap bmp = new Bitmap( new MemoryStream(data) );
+
+                ImageFormat imageFormat;
+                imageFormat = bmp.RawFormat;
+                bmp.RotateFlip(type);
+
+                bmpOut = new Bitmap(bmp.Width, bmp.Height);
+                bmpOut.SetResolution(bmp.HorizontalResolution, bmp.VerticalResolution);
+
+                Graphics g = Graphics.FromImage(bmpOut);
+                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                g.DrawImage(bmp, 0, 0, bmpOut.Width, bmpOut.Height);
+
+                bmp.Dispose();
+
+                using (var ms = new MemoryStream())
+                {
+                    bmpOut.Save(ms, imageFormat);
+                    bmpOut.Dispose();
+
+                    ms.Flush();
+                    return ms.ToArray();
+                }
+            }
+            catch (Exception ex)
+            {
+                var msg = ex.GetBaseException();
+                return null;
+            }
+
+        }
 	}
 }
