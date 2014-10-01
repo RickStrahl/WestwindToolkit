@@ -1884,6 +1884,36 @@ http://en.wikipedia.org/wiki/MIT_License
         if (!str) return false;
         return this.substr(0, str.length) == str;
     }
+    String.prototype.extract = function (startDelim, endDelim, allowMissingEndDelim, returnDelims) {
+        var str = this;
+        if (!str)
+            return "";
+
+        var src = str.toLowerCase();
+        startDelim = startDelim.toLocaleLowerCase();
+        endDelim = endDelim.toLocaleLowerCase();
+
+        var i1 = src.indexOf(startDelim);
+        if (i1 == -1)
+            return "";
+
+        var i2 = src.indexOf(endDelim, i1 + 1);
+
+        if (!allowMissingEndDelim && i2 == -1)
+            return "";
+
+        if (allowMissingEndDelim && i2 == -1) {
+            if (returnDelims)
+                return str.substr(i1);
+
+            return str.substr(i1 + startDelim.length);
+        }
+
+        if (returnDelims)
+            return str.substr(i1, i2 - i1 + endDelim.length);
+
+        return str.substr(i1 + startDelim.length, i2 - i1 - 1);
+    };
     String.prototype.escapeRegExp = function () {
         return this.replace(/[.*+?^${}()|[\]\/\\]/g, "\\$0");
     };

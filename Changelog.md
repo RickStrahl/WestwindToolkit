@@ -1,7 +1,7 @@
 #West Wind Toolkit Change Log
 
 ### Version 2.56
-* not release yet *
+* not released yet *
 
 * **UrlEncodingParser for QueryString and Form Data Parsing**
 <small>Westwind.Utilities</small>
@@ -15,6 +15,11 @@ data. When working with URLs the full URL is re-written.
 <small>Westwind.Utilities</small>
 Rotate image gains the ability to use a byte array input to rotate
 images in memory.
+
+* **String.extract() function for JavaScript**
+<small>Westwind.Utilities</small>
+Added String.prototype.extract method to ww.jquery.js, which allows
+extracting a string based on delimiters with a number of options.
 
 ### Version 2.55
 * August 18th, 2014 *
