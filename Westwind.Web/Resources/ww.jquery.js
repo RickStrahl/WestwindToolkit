@@ -1886,7 +1886,7 @@ http://en.wikipedia.org/wiki/MIT_License
     }
     String.prototype.extract = function (startDelim, endDelim, allowMissingEndDelim, returnDelims) {
         var str = this;
-        if (!str)
+        if (str.length == 0)
             return "";
 
         var src = str.toLowerCase();
@@ -1897,7 +1897,7 @@ http://en.wikipedia.org/wiki/MIT_License
         if (i1 == -1)
             return "";
 
-        var i2 = src.indexOf(endDelim, i1 + 1);
+        var i2 = src.indexOf(endDelim, i1 + startDelim.length);
 
         if (!allowMissingEndDelim && i2 == -1)
             return "";
@@ -1912,7 +1912,7 @@ http://en.wikipedia.org/wiki/MIT_License
         if (returnDelims)
             return str.substr(i1, i2 - i1 + endDelim.length);
 
-        return str.substr(i1 + startDelim.length, i2 - i1 - 1);
+        return str.substr(i1 + startDelim.length, i2 - i1 - startDelim.length);
     };
     String.prototype.escapeRegExp = function () {
         return this.replace(/[.*+?^${}()|[\]\/\\]/g, "\\$0");
