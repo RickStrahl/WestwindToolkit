@@ -1,9 +1,9 @@
 #West Wind Toolkit Change Log
 
 ### Version 2.56
-* not released yet *
+*not released yet*
 
-* **UrlEncodingParser for QueryString and Form Data Parsing**
+* **UrlEncodingParser for QueryString and Form Data Parsing**<br />
 <small>Westwind.Utilities</small>
 Added this parser that allows reading and writing of query string
 and form data outside of System.Web. Class reads raw UrlEncoded data
@@ -16,46 +16,46 @@ data. When working with URLs the full URL is re-written.
 Rotate image gains the ability to use a byte array input to rotate
 images in memory.
 
-* **String.extract() function for JavaScript**
-<small>Westwind.Utilities</small>
+* **String.extract() function for JavaScript**<br/>
+<small>Westwind.Web/ww.jquery.js</small>
 Added String.prototype.extract method to ww.jquery.js, which allows
 extracting a string based on delimiters with a number of options.
 
 ### Version 2.55
 * August 18th, 2014 *
 
-* **Added Slide Transition plug-in to ww.jquery**
+* **Added Slide Transition plug-in to ww.jquery**<br />
 <small>Westwind.Web/ww.jquery.js</small>
 This tiny plug-in provides slideUp()/slideDown() like behavior for jquery
 using CSS transitions. These transitions tend to be very jerky on mobile
 so having a universal replacement is a common scenario.
 
-* **Add :containsNoCase and :startsWith jQuery Filters to ww.jquery**
+* **Add :containsNoCase and :startsWith jQuery Filters to ww.jquery**<br />
 <small>Westwind.Web/ww.jquery.js</small>
 Added these two filters that provide jQuery search filters. The former
 filter is especially useful to do dynamic page searches that show only
 content that matches typed text in search boxes.
 
-* **Add: .searchFilter() Plugin to ww.jQuery**
+* **Add: .searchFilter() Plugin to ww.jQuery**<br />
 <small>Westwind.Web/ww.jquery.js</small>
 Added .searchFilter() which can be bound to a textbox and then 
 tied to a list of items via selector that are filtered based on
 the search text. A nice and easy way to filter longer lists
 based on text input and show only matching entries.
 
-* **ConfigurationFile Configuration Provider support for Complex Types**
+* **ConfigurationFile Configuration Provider support for Complex Types**<br />
 <small>Westwind.Utilies</small>
 Added another option for serialization of flat complex objects, by 
 implementing additional checks for a static FromString() method that
 if found can be used to deserialize object. [more info](http://west-wind.com/westwindtoolkit/docs/?page=_1cx0ymket.htm)
 
-* **ConfigurationFile Configuration Provider support for IList**
+* **ConfigurationFile Configuration Provider support for IList**<br />
 You can now also add properties based on IList that can create simple
 enumerations in your key value configs. List elements are rendered
 as ListName1, ListName2, ListName3. Lists and list elements must
 have parameterless constructors in order to be readable.
 
-* **Add NegotiatedResult**
+* **Add NegotiatedResult**<br />
 <small>Westwind.Web.Mvc</small>
 Add a NegotiatedResult ActionResult that returns XML, JSON, HTML
 or plain text based on the Accept header. This allows the client
@@ -63,7 +63,7 @@ to determine which output serialization or view is applied. Supports
 XML/JSON serialization as well as optional View to show HTML output.
 JSON Serialization uses JSON.NET (unlike standard JSON response)
 
-* **Add JsonNetResult**
+* **Add JsonNetResult**<br />
 <small>Westwind.Web.Mvc</small>
 Add JsonNet ActionResult class that allows returning JSON using JSON.NET
 formatting instead of the default JavaScriptSerializer. JSON.NET is faster
@@ -71,13 +71,13 @@ and serializes more cleanly. (Note: this affects only JSON output - not
 inbound JSON parsing. Since formatting differs slightly for some times - 
 namely dictionaries - you might not get two-way fidelity).
 
-* **Add RequireSslAttribute**
+* **Add RequireSslAttribute**<br />
 <small>Westwind.Web.Mvc</small>
 Add RequireSslAttribute that allows to dynamically assign the flag
 that decides whether SSL is used. Use a configuration setting,
 a static 'delegate' method or an explicit constant bool value.
 
-* **JsonVariables Component**
+* **JsonVariables Component**<br />
 <small>Westwind.Web</small>
 Component that helps with embedding server side data into client side
 code. From simple serialization to creating a global object you can
@@ -88,7 +88,7 @@ This is a stripped down version of the older ScriptVariables component
 that is optimized for string output usage in MVC or Web Pages 
 removing all the WebForms related cruft.
 
-* **WebUtils.SetUserLocale allowedLocales Option**
+* **WebUtils.SetUserLocale allowedLocales Option**<br />
 <small>Westwind.Web</small>
 Method now adds a allowedLocales parameter where you can specify
 any language codes you want to support. Any non-supported languages
@@ -98,38 +98,38 @@ in your localization providers when automatically mapping browser
 resources to localized resources as each locale referenced must be
 looked up in the resource loaders.
 
-* **TimeUtils.Truncate to Truncate DateTime values**
+* **TimeUtils.Truncate to Truncate DateTime values**<br />
 <small>Westwind.Utilies</small>
 Strip off milliseconds, seconds, minutes, hours etc. from
 date time values to 'flatten' date values easily.
 
-* **Fixed up tests**
+* **Fixed up tests**<br />
 <small>Westwind.Utilies</small>
 Fixed entity framework DbInitializer to properly autocreate testdata
 and run. Db Tests still fail occasionally on first run, but succeed
 on subsequent runs. Also fixed several tests by moving hard coded
 resources into the output folder under SupportFiles.
 
-* **Fix auto Gzip/Deflate decompression for in Memory Results**
+* **Fix auto Gzip/Deflate decompression for in Memory Results**<br />
 <small>Westwind.Utilies</small>
 Fix automatic Gzip/Deflate decompression in HttpClient class. This was
 previously working for file and stream based responses but not for 
 string and byte[] results of the HttpClient class.
 
-* **Fix image resizing algorithm for square images**
+* **Fix image resizing algorithm for square images**<br />
 <small>Westwind.Utilies</small>
 Fix small bug with image resizing when the image is square. Now
 properly resizes to the largest width/height dimension specified.
 Previously always used width. Also added ImageInterpolationMode
 to the full signature. Thanks to Matt Slay for his help on these.
 
-* **Experimental: Westwind.Data.MongoDb**
+* **Experimental: Westwind.Data.MongoDb**<br />
 <small>Westwind.Data.MongoDb</small>
 Created a MongoDb version of the Westwind.Data component that provides
 most of the same CRUD and Validation functionality of the Westwind.Data
 libraries. Wraps many of Mongo's data features. No documentation yet.
 
-* **Experimental: MongoDb Log Adapter**
+* **Experimental: MongoDb Log Adapter**<br />
 <small>Westwind.Data.MongoDb, Westwind.Utilities</small>
 Add a new 
 
