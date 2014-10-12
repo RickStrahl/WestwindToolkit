@@ -19,6 +19,7 @@ namespace Westwind.Utilities.Configuration.Tests
         public bool SendAdminEmailConfirmations { get; set; }
         public string Password { get; set; }
         public string AppConnectionString { get; set; }
+        public LicenseInformation License { get; set; }
 
         // Must implement public default constructor
         public JsonFileConfiguration()
@@ -29,6 +30,12 @@ namespace Westwind.Utilities.Configuration.Tests
             SendAdminEmailConfirmations = false;
             Password = "seekrit";
             AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
+            License = new LicenseInformation
+            {
+                Name = "Rick",
+                Company = "West Wind",
+                LicenseKey = "RickWestWind-533112"
+            };
         }
 
 
@@ -48,7 +55,7 @@ namespace Westwind.Utilities.Configuration.Tests
             {
                 JsonConfigurationFile = jsonFile,
                 EncryptionKey = "ultra-seekrit",  // use a generated value here
-                PropertiesToEncrypt = "Password,AppConnectionString"
+                PropertiesToEncrypt = "Password,AppConnectionString,License.LicenseKey"
             };
 
             return provider;

@@ -222,41 +222,41 @@ namespace Westwind.Utilities.Configuration
         /// <returns></returns>
         public virtual void EncryptFields(AppConfiguration config)
         {
-
             if (string.IsNullOrEmpty(PropertiesToEncrypt))
                 return;
 
-            MemberInfo[] mi = config.GetType().FindMembers(MemberTypes.Property | MemberTypes.Field,
-               ReflectionUtils.MemberAccess, null, null);
-
             string encryptFieldList = "," + PropertiesToEncrypt.ToLower() + ",";
-            foreach (MemberInfo Member in mi)
-            {
-                string FieldName = Member.Name.ToLower();
+            string[] fieldTokens = encryptFieldList.Split(new char[1] {','}, StringSplitOptions.RemoveEmptyEntries);            
 
+            foreach(string fieldName in fieldTokens)
+            {
                 // Encrypt the field if in list
-                if (encryptFieldList.Contains("," + FieldName + ","))
+                if (encryptFieldList.Contains("," + fieldName.ToLower() + ","))
                 {
                     object val = string.Empty;
+                    try
+                    {
+                       val = ReflectionUtils.GetPropertyEx(config, fieldName);
+                    }
+                    catch
+                    {
+                        throw new ArgumentException(string.Format("{0}: {1}",Resources.InvalidEncryptionPropertyName,fieldName));
+                    }
 
-                    if (Member.MemberType == MemberTypes.Field)
-                        val = ((FieldInfo)Member).GetValue(config);
-                    else
-                        val = ((PropertyInfo)Member).GetValue(config, null);
-
-                    if (val == null || !(val is string))
-                        continue;
-
+                    // only encrypt string values
                     var strVal = val as string;
                     if (string.IsNullOrEmpty(strVal))
                         continue;
 
                     val = Encryption.EncryptString(strVal, EncryptionKey);
-
-                    if (Member.MemberType == MemberTypes.Field)
-                        ((FieldInfo)Member).SetValue(config, val);
-                    else
-                        ((PropertyInfo)Member).SetValue(config, val, null);
+                    try
+                    {
+                        ReflectionUtils.SetPropertyEx(config, fieldName, val);
+                    }
+                    catch
+                    {
+                        throw new ArgumentException(string.Format("{0}: {1}", Resources.InvalidEncryptionPropertyName, fieldName));
+                    }
                 }
             }
         }
@@ -270,32 +270,38 @@ namespace Westwind.Utilities.Configuration
             if (string.IsNullOrEmpty(PropertiesToEncrypt))
                 return;
 
-            MemberInfo[] mi = config.GetType().FindMembers(MemberTypes.Property | MemberTypes.Field,
-               ReflectionUtils.MemberAccess, null, null);
-
             string encryptFieldList = "," + PropertiesToEncrypt.ToLower() + ",";
+            string[] fieldTokens = encryptFieldList.Split(new char[1] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (MemberInfo Member in mi)
+            foreach (string fieldName in fieldTokens)
             {
-                string FieldName = Member.Name.ToLower();
-
                 // Encrypt the field if in list
-                if (encryptFieldList.IndexOf("," + FieldName + ",") > -1)
+                if (encryptFieldList.Contains("," + fieldName.ToLower() + ","))
                 {
-                    object Value = string.Empty;
+                    object val = string.Empty;
+                    try
+                    {
+                        val = ReflectionUtils.GetPropertyEx(config, fieldName);
+                    }
+                    catch
+                    {
+                        throw new ArgumentException(string.Format("{0}: {1}", Resources.InvalidEncryptionPropertyName, fieldName));
+                    }
 
-                    if (Member.MemberType == MemberTypes.Field)
-                        Value = ((FieldInfo)Member).GetValue(config);
-                    else
-                        Value = ((PropertyInfo)Member).GetValue(config, null);
+                    // only encrypt string values
+                    var strVal = val as string;
+                    if (string.IsNullOrEmpty(strVal))
+                        continue;
 
-                    Value = Encryption.DecryptString((string)Value, EncryptionKey);
-
-                    if (Member.MemberType == MemberTypes.Field)
-                        ((FieldInfo)Member).SetValue(config, Value);
-                    else
-                        ((PropertyInfo)Member).SetValue(config, Value, null);
-
+                    val = Encryption.DecryptString(strVal, EncryptionKey);
+                    try
+                    {
+                        ReflectionUtils.SetPropertyEx(config, fieldName, val);
+                    }
+                    catch
+                    {
+                        throw new ArgumentException(string.Format("{0}: {1}", Resources.InvalidEncryptionPropertyName, fieldName));
+                    }
                 }
             }
         }

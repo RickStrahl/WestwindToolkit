@@ -18,7 +18,7 @@ public class CustomConfigFileConfiguration : Westwind.Utilities.Configuration.Ap
     public bool SendAdminEmailConfirmations { get; set; }
     public string Password { get; set; }
     public string AppConnectionString { get; set; }
-    public LicenseInformation ComplexType { get; set; }
+    public LicenseInformation License { get; set; }
     public List<string> ServerList { get; set;  }
 
         public CustomConfigFileConfiguration()
@@ -29,11 +29,11 @@ public class CustomConfigFileConfiguration : Westwind.Utilities.Configuration.Ap
             SendAdminEmailConfirmations = false;
             Password = "seekrit";
             AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
-            ComplexType = new LicenseInformation()
+            License = new LicenseInformation()
             {
                 Company = "West Wind",
                 Name = "Rick", 
-                LicenseKey = 10
+                LicenseKey = "westwindrick-51123"
             };
             ServerList = new List<string>()
             {
@@ -57,7 +57,7 @@ public class CustomConfigFileConfiguration : Westwind.Utilities.Configuration.Ap
                 //ConfigurationFile = "CustomConfiguration.config",
                 ConfigurationSection = sectionName,
                 EncryptionKey = "ultra-seekrit",  // use a generated value here
-                PropertiesToEncrypt = "Password,AppConnectionString"
+                PropertiesToEncrypt = "Password,AppConnectionString,License.LicenseKey"
             };
 
             return provider;

@@ -1,7 +1,16 @@
 #West Wind Toolkit Change Log
 
-### Version 2.56
+### Version 2.57
 *not released yet*
+
+* **AppConfiguration support for Nested Property Encryption**
+You can now specify nested fields for encryption in the provider's
+PropertiesToEncrypt properties. For example, using <code>PropertiesToEncrypt=
+"MailserverPassword,License.LicenseKey"</code> allows encoding the nested
+license key. Supported for all providers.
+
+### Version 2.56
+* October 2nd, 2014*
 
 * **UrlEncodingParser for QueryString and Form Data Parsing**<br />
 <small>Westwind.Utilities</small>

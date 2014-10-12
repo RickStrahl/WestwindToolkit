@@ -119,51 +119,39 @@
   </resheader>
   <data name="UnableToReadConfigDataFromString" xml:space="preserve">
     <value>Unable to read config information from string.</value>
-    <comment>UnableToReadConfigDataFromString description</comment>
   </data>
   <data name="UnableToExtractKeys" xml:space="preserve">
     <value>Unable to read configuration string from Sql Server field.</value>
-    <comment>UnableToExtractKeys description</comment>
   </data>
   <data name="ConfigurationMethodNoLongerSupported" xml:space="preserve">
     <value>This Configuration method is no longer supported. Use a Provider configuration instead.</value>
-    <comment>SetConfigurationSectionValueIsNoLongerSupported description</comment>
   </data>
   <data name="StringToTypedValueValueTypeConversionFailed" xml:space="preserve">
     <value>Type Conversion not handled in StringToTypedValue for </value>
-    <comment>StringToTypedValueValueTypeConversionFailed description</comment>
   </data>
   <data name="InvalidTypeForXmlTypeToNETTypeConversion" xml:space="preserve">
     <value>Invalid type for XmlType to .NET Type conversion.</value>
-    <comment>InvalidTypeForXmlTypeToNETTypeConversion description</comment>
   </data>
   <data name="DataReaderPassedToDataReaderToObjectCannot" xml:space="preserve">
     <value>DataReader passed to DataReaderToObject cannot be closed</value>
-    <comment>DataReaderPassedToDataReaderToObjectCannot description</comment>
   </data>
   <data name="ByteValueGreaterThan20megsAreNotSupported" xml:space="preserve">
     <value>Byte[] value greater than 20megs are not supported</value>
-    <comment>ByteValueGreaterThan20megsAreNotSupported description</comment>
   </data>
   <data name="AConnectionStringMustBePassedToTheConstructor" xml:space="preserve">
     <value>A connection string must be passed to the constructor</value>
-    <comment>AConnectionStringMustBePassedToTheConstructor description</comment>
   </data>
   <data name="InvalidConnectionStringName" xml:space="preserve">
     <value>Invalid Connection string name.</value>
-    <comment>InvalidConnectionStringName description</comment>
   </data>
   <data name="InvalidHexStringLength" xml:space="preserve">
     <value>Invalid hex string length: {0}</value>
-    <comment>InvalidHexStringLength description</comment>
   </data>
   <data name="InvalidHexDigit" xml:space="preserve">
     <value>Invalid hex digit: </value>
-    <comment>InvalidHexDigit description</comment>
   </data>
   <data name="InvalidConnectionString" xml:space="preserve">
     <value>Invalid Connection String.</value>
-    <comment>InvalidConnectionString description</comment>
   </data>
   <data name="ObjectCouldNotBeDeserializedFromXml" xml:space="preserve">
     <value>Object could not be deserialized from Xml.</value>
@@ -176,5 +164,8 @@
   </data>
   <data name="CouldntLoadEntityInvalidKeyProvided" xml:space="preserve">
     <value>Couldn't load entity - invalid key provided.</value>
+  </data>
+  <data name="InvalidEncryptionPropertyName" xml:space="preserve">
+    <value>Invalid encryptipon property name</value>
   </data>
 </root>

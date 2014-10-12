@@ -7,7 +7,7 @@ public class LicenseInformation
 {
     public string Name { get; set; }
     public string Company { get; set; }
-    public int LicenseKey { get; set; }
+    public string LicenseKey { get; set; }
         
     public static LicenseInformation FromString(string data)
     {        

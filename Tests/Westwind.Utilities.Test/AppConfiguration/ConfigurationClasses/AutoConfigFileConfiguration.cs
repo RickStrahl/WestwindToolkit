@@ -43,9 +43,9 @@ namespace Westwind.Utilities.Configuration.Tests
             MailServerPassword = "seekrity";
             License = new LicenseInformation()
             {
-                Name = "User 1",
-                Company = "Company 1",
-                LicenseKey = 10
+                Name = "Rick",
+                Company = "West Wind",
+                LicenseKey = "WestWind-5333121"
             };
         }
 

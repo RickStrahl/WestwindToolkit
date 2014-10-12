@@ -138,7 +138,6 @@ namespace Westwind.Utilities.Configuration.Tests
         [TestMethod]
         public void WriteConfigurationTest()
         {
-
             var config = new AutoConfigFileConfiguration();
             config.Initialize();
 
@@ -150,7 +149,7 @@ namespace Westwind.Utilities.Configuration.Tests
             // update complex type
             config.License.Company = "Updated Company";
             config.License.Name = "New User";
-            config.License.LicenseKey = 22;
+            config.License.LicenseKey = "UpdatedCompanyNewUser-5331231";
 
             config.Write();
 
@@ -161,7 +160,7 @@ namespace Westwind.Utilities.Configuration.Tests
             Assert.IsTrue(text.Contains(@"<add key=""MaxDisplayListItems"" value=""12"" />"));
             Assert.IsTrue(text.Contains(@"<add key=""SendAdminEmailConfirmations"" value=""True"" />"));
 
-            Assert.IsTrue(text.Contains(@"<add key=""License"" value=""New User,Updated Company,22"" />"));
+            Assert.IsTrue(text.Contains(@"<add key=""License"" value=""New User,Updated Company,UpdatedCompanyNewUser-5331231"" />"));
 
             var config2 = new AutoConfigFileConfiguration();
             config2.Initialize();

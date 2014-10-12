@@ -65,6 +65,8 @@ namespace Westwind.Utilities.Configuration.Tests
             config.Password = "seekrit2";
             config.AppConnectionString = "server=.;database=unsecured";
 
+            config.License.LicenseKey = "asdss";
+
             config.Write();
 
             string xmlConfig = File.ReadAllText(STR_XMLCONFIGFILE);

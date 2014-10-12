@@ -126,9 +126,6 @@ namespace Westwind.Utilities.Configuration
             // If we have any we'll need to write them out into .config
             bool missingFields = false;
 
-            string fieldsToEncrypt = "," + PropertiesToEncrypt.ToLower() + ",";
-
-
             // Refresh the sections - req'd after write operations
             // sometimes sections don't want to re-read            
             if (string.IsNullOrEmpty(ConfigurationSection))
@@ -186,10 +183,6 @@ namespace Westwind.Utilities.Configuration
                         continue;
                     }
 
-                    // If we're encrypting decrypt any field that are encyrpted
-                    if (value != string.Empty && fieldsToEncrypt.IndexOf("," + fieldName + ",") > -1)
-                        value = Encryption.DecryptString(value, EncryptionKey);
-
                     try
                     {
                         // Assign the value to the property
@@ -232,6 +225,8 @@ namespace Westwind.Utilities.Configuration
                 }
             }
 
+            DecryptFields(config);
+
             // We have to write any missing keys
             if (missingFields)
                 Write(config);
@@ -267,8 +262,6 @@ namespace Westwind.Utilities.Configuration
         /// <returns></returns>
         public override bool Read(AppConfiguration config, string filename)
         {
-
-
             Type typeWebConfig = config.GetType();
             MemberInfo[] Fields = typeWebConfig.GetMembers(BindingFlags.Public |
                                                            BindingFlags.Instance);
@@ -301,8 +294,7 @@ namespace Westwind.Utilities.Configuration
             string ConfigSection = ConfigurationSection;
             if (ConfigSection == string.Empty)
                 ConfigSection = "appSettings";
-
-            string fieldsToEncrypt = "," + PropertiesToEncrypt.ToLower() + ",";
+            
 
             foreach (MemberInfo Member in Fields)
             {
@@ -344,16 +336,12 @@ namespace Westwind.Utilities.Configuration
                     continue;
                 }
 
-                Fieldname = Fieldname.ToLower();
-
-                // If we're encrypting decrypt any field that are encyrpted
-                if (Value != string.Empty && fieldsToEncrypt.IndexOf("," + Fieldname + ",") > -1)
-                    Value = Encryption.DecryptString(Value, EncryptionKey);
-
                 // Assign the Property
                 ReflectionUtils.SetPropertyEx(config, Fieldname,
                     StringToTypedValue(Value, FieldType, CultureInfo.InvariantCulture));
             }
+
+            DecryptFields(config);
 
             // We have to write any missing keys
             if (missingFields)
@@ -365,6 +353,8 @@ namespace Westwind.Utilities.Configuration
 
         public override bool Write(AppConfiguration config)
         {
+            EncryptFields(config);
+
             lock (syncWriteLock)
             {
                 // Load the config file into DOM parser
@@ -436,7 +426,6 @@ namespace Westwind.Utilities.Configuration
                     }
                 } // for each
 
-
                 try
                 {
                     // this will fail if permissions are not there
@@ -448,19 +437,16 @@ namespace Westwind.Utilities.Configuration
                 {
                     return false;
                 }
+                finally
+                {
+                    DecryptFields(config);
+                }
             }
             return true;
         }
 
         private void WriteConfigurationValue(string keyName, string Value, MemberInfo Field, XmlDocument Dom, string ConfigSection)
         {
-            string fieldsToEncrypt = "," + PropertiesToEncrypt.ToLower() + ",";
-
-            // Encrypt the field if in list
-            if (fieldsToEncrypt.IndexOf("," + Field.Name.ToLower() + ",") > -1)
-                Value = Encryption.EncryptString(Value, EncryptionKey);
-
-           
             XmlNode Node = Dom.DocumentElement.SelectSingleNode(
                 XmlNamespacePrefix + ConfigSection + "/" +
                 XmlNamespacePrefix + "add[@key='" + keyName + "']", XmlNamespaces);

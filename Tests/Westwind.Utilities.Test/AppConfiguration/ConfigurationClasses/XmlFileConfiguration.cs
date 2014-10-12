@@ -19,6 +19,8 @@ namespace Westwind.Utilities.Configuration.Tests
         public bool SendAdminEmailConfirmations { get; set; }
         public string Password { get; set; }
         public string AppConnectionString { get; set; }
+        public LicenseInformation License {get; set; }
+
 
         // Must implement public default constructor
         public XmlFileConfiguration()
@@ -28,6 +30,12 @@ namespace Westwind.Utilities.Configuration.Tests
             MaxDisplayListItems = 15;
             SendAdminEmailConfirmations = false;
             Password = "seekrit";
+            License = new LicenseInformation()
+            {
+                Company = "West Wind",
+                Name = "Rick",
+                LicenseKey = "westwindrick-4123122"
+            };
             AppConnectionString = "server=.;database=hosers;uid=bozo;pwd=seekrit;";
         }
 
@@ -48,7 +56,7 @@ namespace Westwind.Utilities.Configuration.Tests
             {
                 XmlConfigurationFile = xmlFile,
                 EncryptionKey = "ultra-seekrit",  // use a generated value here
-                PropertiesToEncrypt = "Password,AppConnectionString"
+                PropertiesToEncrypt = "Password,AppConnectionString,License.LicenseKey"
                 // UseBinarySerialization = true                     
             };
 
