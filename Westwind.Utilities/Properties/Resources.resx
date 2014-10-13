@@ -168,4 +168,7 @@
   <data name="InvalidEncryptionPropertyName" xml:space="preserve">
     <value>Invalid encryptipon property name</value>
   </data>
+  <data name="InvalidXMLConfigurationFileFormat" xml:space="preserve">
+    <value>Invalid XML configuration file format in {0}.</value>
+  </data>
 </root>

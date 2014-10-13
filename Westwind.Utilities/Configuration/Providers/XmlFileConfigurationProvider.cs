@@ -31,6 +31,10 @@
 */
 #endregion
 
+using System;
+using System.IO;
+using Westwind.Utilities.Properties;
+
 namespace Westwind.Utilities.Configuration
 {
 
@@ -68,12 +72,17 @@ namespace Westwind.Utilities.Configuration
         public override bool Read(AppConfiguration config)
         {
             var newConfig = SerializationUtils.DeSerializeObject(XmlConfigurationFile,typeof(TAppConfiguration),UseBinarySerialization) as TAppConfiguration;
+
+            if (File.Exists(XmlConfigurationFile) && newConfig == null)
+                throw new ArgumentException(string.Format(Resources.InvalidXMLConfigurationFileFormat,XmlConfigurationFile));
+
             if (newConfig == null)
             {
                 if(Write(config))
                     return true;
                 return false;
             }
+
             DecryptFields(newConfig);
             DataUtils.CopyObjectData(newConfig, config, "Provider,ErrorMessage");
             
