@@ -1,7 +1,7 @@
 ﻿/// <reference path="jquery.js" />
 /*
 ww.jQuery.js  
-Version 1.13 - 6/15/2014
+Version 1.14 - 10/17/2014
 West Wind jQuery plug-ins and utilities
 
 (c) 2008-2014 Rick Strahl, West Wind Technologies 
@@ -539,8 +539,7 @@ http://en.wikipedia.org/wiki/MIT_License
         return this.each(function () {
             var $el = $(this);
             $el.css("max-height", "0");
-            $el.addClass(opt.cssHiddenClass);
-            console.log('up', $el);
+            $el.addClass(opt.cssHiddenClass);            
         });
     };
 
@@ -603,8 +602,7 @@ http://en.wikipedia.org/wiki/MIT_License
 
         if (opt.autoResize == true) {
             $els = this;
-            $(opt.container).resize(function () {
-                console.log(opt.container);
+            $(opt.container).resize(function () {                
                 $els.stretchToBottom({ container: opt.container, autoResize: false });
             });
         }
@@ -890,90 +888,132 @@ http://en.wikipedia.org/wiki/MIT_License
         }
     };
 
-    $.fn.watch = function (props, func, interval, id) {
+    $.fn.watch = function (options) {
         /// <summary>
         /// Allows you to monitor changes in a specific
         /// CSS property of an element by polling the value.
         /// when the value changes a function is called.
         /// The function called is called in the context
         /// of the selected element (ie. this)
-        /// </summary>    
-        /// <param name="prop" type="String">CSS Properties to watch sep. by commas</param>    
-        /// <param name="func" type="Function">
-        /// Function called when the value has changed.
-        /// </param>    
-        /// <param name="interval" type="Number">
-        /// Optional interval for browsers that don't support DOMAttrModified or propertychange events.
-        /// Determines the interval used for setInterval calls.
-        /// </param>
-        /// <param name="id" type="String">A unique ID that identifies this watch instance on this element</param>  
+        ///
+        /// Uses the MutationObserver API of the DOM and
+        /// falls back to setInterval to poll for changes
+        /// for non-compliant browsers (pre IE 11)
+        /// </summary>            
+        /// <param name="options" type="Object">
+        /// Option to set - see comments in code below.
+        /// </param>        
         /// <returns type="jQuery" /> 
-        if (!interval)
-            interval = 100;
-        if (!id)
-            id = "_watcher";
+
+        var opt = $.extend({
+            // CSS styles or Attributes to monitor as comma delimited list
+            // For attributes use a attr_ prefix
+            // Example: "top,left,opacity,attr_class"
+            properties: null,
+
+            // interval for 'manual polling' (IE 10 and older)            
+            interval: 100,
+
+            // a unique id for this watcher instance
+            id: "_watcher",
+
+            // flag to determine whether child elements are watched            
+            watchChildren: false,
+
+            // Callback function if not passed in callback parameter   
+            callback: null
+        }, options);
 
         return this.each(function () {
-            var _t = this;
+            var el = this;
             var el$ = $(this);
-            var fnc = function () { __watcher.call(_t, id) };
+            var fnc = function (mRec, mObs) {
+                __watcher.call(el, opt.id, mRec, mObs);
+            };
 
             var data = {
-                id: id,
-                props: props.split(","),
-                vals: [props.split(",").length],
-                func: func,
-                fnc: fnc,
-                origProps: props,
-                interval: interval,
+                id: opt.id,
+                props: opt.properties.split(','),
+                vals: [opt.properties.split(',').length],
+                func: opt.callback, // user function
+                fnc: fnc, // __watcher internal
+                origProps: opt.properties,
+                interval: opt.interval,
                 intervalId: null
             };
             // store initial props and values
-            $.each(data.props, function (i) { data.vals[i] = el$.css(data.props[i]); });
+            $.each(data.props, function(i) {
+                if (data.props[i].startsWith('attr_'))
+                    data.vals[i] = el$.attr(data.props[i].replace('attr_',''));
+                else
+                    data.vals[i] = el$.css(data.props[i]);
+            });
 
-            el$.data(id, data);
+            el$.data(opt.id, data);
 
-            hookChange(el$, id, data);
+            hookChange(el$, opt.id, data);
         });
 
-        function hookChange(el$, id, data) {
-            el$.each(function () {
-                var el = $(this);
-                if (typeof (el.get(0).onpropertychange) == "object")
-                    el.bind("propertychange." + id, data.fnc);
-                else if ($.browser.mozilla)
-                    el.bind("DOMAttrModified." + id, data.fnc);
-                else
+        function hookChange(element$, id, data) {
+            element$.each(function () {
+                var el$ = $(this);
+
+                if (window.MutationObserver) {
+                    var observer = el$.data('__watcherObserver');
+                    if (observer == null) {
+                        observer = new MutationObserver(data.fnc);
+                        el$.data('__watcherObserver', observer);
+                    }
+                    observer.observe(this, {
+                        attributes: true,
+                        subtree: opt.watchChildren,
+                        childList: opt.watchChildren,
+                        characterData: true
+                    });
+                } else
                     data.intervalId = setInterval(data.fnc, interval);
             });
         }
+
         function __watcher(id) {
             var el$ = $(this);
             var w = el$.data(id);
             if (!w) return;
-            var _t = this;
+            var el = this;
 
             if (!w.func)
                 return;
 
-            // must unbind or else unwanted recursion may occur
-            el$.unwatch(id);
-
             var changed = false;
             var i = 0;
             for (i; i < w.props.length; i++) {
-                var newVal = el$.css(w.props[i]);
+                var key = w.props[i];
+
+                var newVal = "";
+                if (key.startsWith('attr_'))
+                    newVal = el$.attr(key.replace('attr_', ''));
+                else
+                    newVal = el$.css(key);
+
+                if (newVal == undefined)
+                    continue;
+
                 if (w.vals[i] != newVal) {
                     w.vals[i] = newVal;
                     changed = true;
                     break;
                 }
             }
-            if (changed)
-                w.func.call(_t, w, i);
+            if (changed) {
+                // unbind to avoid recursive events
+                el$.unwatch(id);
 
-            // rebind event
-            hookChange(el$, id, w);
+                // call the user handler
+                w.func.call(el, w, i);
+
+                // rebind the events
+                hookChange(el$, id, w);
+            }
         }
     }
     $.fn.unwatch = function (id) {
@@ -981,19 +1021,21 @@ http://en.wikipedia.org/wiki/MIT_License
             var el = $(this);
             var data = el.data(id);
             try {
-                if (typeof (this.onpropertychange) == "object")
-                    el.unbind("propertychange." + id, data.fnc);
-                else if ($.browser.mozilla)
-                    el.unbind("DOMAttrModified." + id, data.fnc);
-                else
+                if (window.MutationObserver) {
+                    var observer = el.data("__watcherObserver");
+                    if (observer) {
+                        observer.disconnect();
+                        el.removeData("__watcherObserver");
+                    }
+                } else
                     clearInterval(data.intervalId);
             }
             // ignore if element was already unbound
-            catch (e) { }
+            catch (e) {
+            }
         });
         return this;
     }
-
 
     $.fn.listSetData = function (items, options) {
         var opt = {
@@ -1302,10 +1344,6 @@ http://en.wikipedia.org/wiki/MIT_License
             if (_I.keepCentered)
                 $(window).bind("resize.modal", function () { jEl.centerInClient() })
                          .bind("scroll.modal", function () { jEl.centerInClient() });
-
-            // hide visible IE listboxes and store
-            if ($.browser.msie && $.browser.version < "7")
-                hideLists = $("select:visible").not($(jEl).find("select")).hide();
         }
         this.hide = function () {
             jEl.hide();
@@ -1855,7 +1893,7 @@ http://en.wikipedia.org/wiki/MIT_License
             return this.replace(new RegExp("^" + c.escapeRegExp() + "*"), '');
         return this.replace(/^\s+/, '');
     }
-    String.repeat = function (chr, count) {
+    String.prototype.repeat = function (chr, count) {
         var str = "";
         for (var x = 0; x < count; x++) { str += chr };
         return str;
@@ -1872,7 +1910,7 @@ http://en.wikipedia.org/wiki/MIT_License
     }
     String.prototype.padR = function (width, pad) {
         if (!width || width < 1)
-            return this;
+            return this; 
 
         if (!pad) pad = " ";
         var length = width - this.length
@@ -1880,16 +1918,16 @@ http://en.wikipedia.org/wiki/MIT_License
 
         return (this + String.repeat(pad, length)).substr(0, width);
     }
-    String.startsWith = function (str) {
-        if (!str) return false;
-        return this.substr(0, str.length) == str;
+    String.prototype.startsWith = function (sub) {
+        if (this.length == 0) return false;
+        return sub == this.substr(0, sub.length);
     }
-    String.prototype.extract = function (startDelim, endDelim, allowMissingEndDelim, returnDelims) {
+    String.prototype.extract = function(startDelim, endDelim, allowMissingEndDelim, returnDelims) {
         var str = this;
         if (str.length == 0)
             return "";
 
-        var src = str.toLowerCase();
+        var src = str.toLowerCase(); 
         startDelim = startDelim.toLocaleLowerCase();
         endDelim = endDelim.toLocaleLowerCase();
 
@@ -1897,12 +1935,13 @@ http://en.wikipedia.org/wiki/MIT_License
         if (i1 == -1)
             return "";
 
-        var i2 = src.indexOf(endDelim, i1 + startDelim.length);
+        var i2 = src.indexOf(endDelim,i1+1);
 
         if (!allowMissingEndDelim && i2 == -1)
             return "";
 
-        if (allowMissingEndDelim && i2 == -1) {
+        if (allowMissingEndDelim && i2 == -1)
+        {
             if (returnDelims)
                 return str.substr(i1);
 
@@ -1910,9 +1949,9 @@ http://en.wikipedia.org/wiki/MIT_License
         }
 
         if (returnDelims)
-            return str.substr(i1, i2 - i1 + endDelim.length);
+            return str.substr(i1,i2 - i1 + endDelim.length);
 
-        return str.substr(i1 + startDelim.length, i2 - i1 - startDelim.length);
+        return str.substr(i1 + startDelim.length,i2 - i1 -1);
     };
     String.prototype.escapeRegExp = function () {
         return this.replace(/[.*+?^${}()|[\]\/\\]/g, "\\$0");

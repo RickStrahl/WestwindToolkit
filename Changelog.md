@@ -3,11 +3,25 @@
 ### Version 2.57
 *not released yet*
 
-* **AppConfiguration support for Nested Property Encryption**
+* **AppConfiguration support for Nested Property Encryption**<br />
 You can now specify nested fields for encryption in the provider's
 PropertiesToEncrypt properties. For example, using `PropertiesToEncrypt=
 "MailserverPassword,License.LicenseKey"` allows encoding the nested
 license key. Supported on all configuration providers.
+
+* **Update to jQuery CSS/Attribute Watcher Plug-in**<br />
+Update this plug-in to work properly with newer browser versions. Switch
+to MutationObserver API for much better performance and better modern
+browser support. Fix jQuery version newer than 1.8.3 bug in the plug-in.
+Added support for monitoring attribute changes with the attr_ prefix
+(ie. to monitor class attribute changes: attr_class).
+
+* **Update jquery-watch Plug-in**
+Update jquery-watch plug-in that allows monitoring changes to CSS 
+styles and attributes. This update adds support for monitoring 
+attributes and uses the new MutationObserver DOM Api that works with
+all modern browsers. Slight interface change passing parameters
+as an `options` parameter
 
 ### Version 2.56
 *October 2nd, 2014*
