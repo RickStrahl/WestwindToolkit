@@ -943,9 +943,9 @@ http://en.wikipedia.org/wiki/MIT_License
                 intervalId: null
             };
             // store initial props and values
-            $.each(data.props, function (i) {
+            $.each(data.props, function(i) {
                 if (data.props[i].startsWith('attr_'))
-                    data.vals[i] = el$.attr(data.props[i].replace('attr_', ''));
+                    data.vals[i] = el$.attr(data.props[i].replace('attr_',''));
                 else
                     data.vals[i] = el$.css(data.props[i]);
             });
@@ -976,7 +976,7 @@ http://en.wikipedia.org/wiki/MIT_License
             });
         }
 
-        function __watcher(id) {
+        function __watcher(id,mRec,mObs) {
             var el$ = $(this);
             var w = el$.data(id);
             if (!w) return;
@@ -1010,7 +1010,7 @@ http://en.wikipedia.org/wiki/MIT_License
                 el$.unwatch(id);
 
                 // call the user handler
-                w.func.call(el, w, i);
+                w.func.call(el, w, i, mRec, mObs);
 
                 // rebind the events
                 hookChange(el$, id, w);

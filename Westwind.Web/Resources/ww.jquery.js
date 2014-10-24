@@ -10,7 +10,7 @@ www.west-wind.com
 Licensed under MIT License
 http://en.wikipedia.org/wiki/MIT_License
 */
-(function ($,undefined) {
+(function ($, undefined) {
     HttpClient = function (opt) {
         var self = this;
 
@@ -27,10 +27,10 @@ http://en.wikipedia.org/wiki/MIT_License
 
         $.extend(self, opt);
 
-        this.appendHeader = function(header, value) {
+        this.appendHeader = function (header, value) {
             self.headers[header] = value;
         };
-        this.send = function(url, postData, completed, errorHandler) {
+        this.send = function (url, postData, completed, errorHandler) {
             completed = completed || self.completed;
             errorHandler = errorHandler || self.errorHandler;
 
@@ -45,12 +45,12 @@ http://en.wikipedia.org/wiki/MIT_License
                 dataType: "text",
                 global: false,
                 async: self.async,
-                beforeSend: function(xhr) {
+                beforeSend: function (xhr) {
                     for (var header in self.headers) xhr.setRequestHeader(header, self.headers[header]);
                     if (self.accepts)
                         xhr.setRequestHeader("Accept", self.accepts);
                 },
-                success: function(result, status) {
+                success: function (result, status) {
                     var errorException = null;
                     if (self.evalResult) {
                         try {
@@ -71,7 +71,7 @@ http://en.wikipedia.org/wiki/MIT_License
                     if (completed)
                         completed(result, self);
                 },
-                error: function(xhr, status) {
+                error: function (xhr, status) {
                     var err = null;
                     if (xhr.readyState == 4) {
                         var res = xhr.responseText;
@@ -91,9 +91,9 @@ http://en.wikipedia.org/wiki/MIT_License
                     if (errorHandler)
                         errorHandler(err, self, xhr);
                 }
-            });            
+            });
         };
-        this.returnError = function(message) {
+        this.returnError = function (message) {
             var error = new CallbackException(message);
             if (self.errorHandler)
                 self.errorHandler(error, self);
@@ -139,7 +139,8 @@ http://en.wikipedia.org/wiki/MIT_License
             var url = self.serviceUrl + method;
 
             var http = new HttpClient(
-                            { contentType: "application/json",
+                            {
+                                contentType: "application/json",
                                 accepts: "application/json,text/*",
                                 method: self.method,
                                 evalResult: true,
@@ -149,7 +150,7 @@ http://en.wikipedia.org/wiki/MIT_License
         }
     }
 
-    AjaxMethodCallback = function(controlId, url, opt) {
+    AjaxMethodCallback = function (controlId, url, opt) {
         var self = this;
         this.controlId = controlId;
         this.postbackMode = "PostMethodParametersOnly"; // Post,PostNoViewstate,Get
@@ -164,7 +165,7 @@ http://en.wikipedia.org/wiki/MIT_License
 
         this.Http = null;
 
-        this.callMethod = function(methodName, parameters, callback, errorCallback) {
+        this.callMethod = function (methodName, parameters, callback, errorCallback) {
             self.completed = callback;
             self.errorHandler = errorCallback;
 
@@ -210,7 +211,7 @@ http://en.wikipedia.org/wiki/MIT_License
             return http.send(this.serverUrl, data, self.onHttpCallback, self.onHttpCallback);
         };
 
-        this.onHttpCallback = function(result) {
+        this.onHttpCallback = function (result) {
             if (result && (result.isCallbackError || result.iscallbackerror)) {
                 if (self.errorHandler)
                     self.errorHandler(result, self);
@@ -221,7 +222,7 @@ http://en.wikipedia.org/wiki/MIT_License
         };
     };
 
-    ajaxJson = function(url, parm, cb, ecb, options) {
+    ajaxJson = function (url, parm, cb, ecb, options) {
         var ser = parm;
         var opt = {
             method: "POST",
@@ -238,11 +239,11 @@ http://en.wikipedia.org/wiki/MIT_License
 
         http.send(url, ser, cb, ecb);
     };
-    ajaxCallMethod = function(url, method, parms, cb, ecb, opt) {
+    ajaxCallMethod = function (url, method, parms, cb, ecb, opt) {
         var proxy = new AjaxMethodCallback(null, url, opt);
         proxy.callMethod(method, parms, cb, ecb);
     };
-    $.postJSON = function(url, data, cb, ecb, opt) {
+    $.postJSON = function (url, data, cb, ecb, opt) {
         var options = { method: "POST", evalResult: true };
         $.extend(options, opt);
 
@@ -257,15 +258,15 @@ http://en.wikipedia.org/wiki/MIT_License
         var a = this.serializeArray();
         $.each(a, function () {
             if (o[this.name] !== undefined) {
-                if (!o[this.name].push) 
-                    o[this.name] = [o[this.name]];                
+                if (!o[this.name].push)
+                    o[this.name] = [o[this.name]];
                 o[this.name].push(this.value || '');
             } else
                 o[this.name] = this.value || '';
         });
         return o;
     };
-    onPageError = function(err) {
+    onPageError = function (err) {
         showStatus(err.message || err.Message, 6000, true);
     };
     CallbackException = function (message, detail) {
@@ -416,9 +417,9 @@ http://en.wikipedia.org/wiki/MIT_License
             forceAbsolute: false,
             container: window,    // selector of element to center in
             completed: null,
-            centerOnceOnly: false,            
+            centerOnceOnly: false,
             keepCentered: false  // keep window centered as it's resized
-    };
+        };
         $.extend(opt, options);
 
         return this.each(function (i) {
@@ -432,13 +433,13 @@ http://en.wikipedia.org/wiki/MIT_License
             }
             else
                 el.data("_centerOnce", null);
-            
+
             if (opt.keepCentered) {
                 if (!el.data("_keepCentered")) {
                     el.data("_keepCentered", true);
-                    $(window).resize(function() {
+                    $(window).resize(function () {
                         if (el.is(":visible"))
-                            setTimeout(function() { el.centerInClient(opt); });
+                            setTimeout(function () { el.centerInClient(opt); });
                     });
                 }
             }
@@ -481,7 +482,7 @@ http://en.wikipedia.org/wiki/MIT_License
     }
 
     // sums up CSS property values
-    sumDimensions = function($el, dims) {
+    sumDimensions = function ($el, dims) {
         // Opera returns -1 for missing min/max width, turn into 0
         var sum = 0;
         for (var i = 1; i < arguments.length; i++)
@@ -489,14 +490,14 @@ http://en.wikipedia.org/wiki/MIT_License
         return sum;
     };
 
-    $.fn.makeAbsolute = function(rebase) {
+    $.fn.makeAbsolute = function (rebase) {
         /// <summary>
         /// Makes an element absolute
         /// </summary>    
         /// <param name="rebase" type="boolean">forces element onto the body tag. Note: might effect rendering or references</param>    
         /// </param>    
         /// <returns type="jQuery" /> 
-        return this.each(function() {
+        return this.each(function () {
             var el = $(this);
 
             var isvis = true;
@@ -539,11 +540,11 @@ http://en.wikipedia.org/wiki/MIT_License
         return this.each(function () {
             var $el = $(this);
             $el.css("max-height", "0");
-            $el.addClass(opt.cssHiddenClass);            
+            $el.addClass(opt.cssHiddenClass);
         });
     };
 
-    $.fn.slideDownTransition = function (opt) {        
+    $.fn.slideDownTransition = function (opt) {
         /// <summary>
         /// Like .slideDown() but uses transitions.
         /// Requires:
@@ -561,7 +562,7 @@ http://en.wikipedia.org/wiki/MIT_License
         });
 
         return this.each(function () {
-            var $el = $(this);            
+            var $el = $(this);
             $el.removeClass(opt.cssHiddenClass);
 
             // temporarily make visible to get the size
@@ -602,7 +603,7 @@ http://en.wikipedia.org/wiki/MIT_License
 
         if (opt.autoResize == true) {
             $els = this;
-            $(opt.container).resize(function () {                
+            $(opt.container).resize(function () {
                 $els.stretchToBottom({ container: opt.container, autoResize: false });
             });
         }
@@ -702,7 +703,7 @@ http://en.wikipedia.org/wiki/MIT_License
                 }
                 return;
             }
-            
+
             // MUST turn into absolute position first        
             if (sh.length < 1)
                 el.makeAbsolute();
@@ -771,8 +772,8 @@ http://en.wikipedia.org/wiki/MIT_License
             }
 
             if (!exists) {
-                el.watch("left,top,width,height,display,opacity,zIndex",
-                 function (w, i) {
+                el.watch({ properties: "left,top,width,height,display,opacity,zIndex" },
+                    function (w, i) {
                      if (el.is(":visible")) {
                          var pos = el.position();
                          sh.css({
@@ -790,7 +791,7 @@ http://en.wikipedia.org/wiki/MIT_License
                      else
                          sh.hide();
                  },
-                 100, "_shadowMove");
+                 100, "_shadowMove")};
             }
 
             if (opt.callback)
@@ -881,9 +882,9 @@ http://en.wikipedia.org/wiki/MIT_License
                         _I.hide();
                     }, timeout);
             };
-            this.hide = function() {
+            this.hide = function () {
                 if (tt.length > 0)
-                    tt.fadeOut("slow", function() { tt.shadow("hide") });
+                    tt.fadeOut("slow", function () { tt.shadow("hide") });
             };
         }
     };
@@ -975,7 +976,7 @@ http://en.wikipedia.org/wiki/MIT_License
             });
         }
 
-        function __watcher(id) {
+        function __watcher(id,mRec,mObs) {
             var el$ = $(this);
             var w = el$.data(id);
             if (!w) return;
@@ -1009,7 +1010,7 @@ http://en.wikipedia.org/wiki/MIT_License
                 el$.unwatch(id);
 
                 // call the user handler
-                w.func.call(el, w, i);
+                w.func.call(el, w, i, mRec, mObs);
 
                 // rebind the events
                 hookChange(el$, id, w);
@@ -1602,7 +1603,7 @@ http://en.wikipedia.org/wiki/MIT_License
     $.fn.closable = function (options) {
         var opt = {
             handle: null,
-            closeHandler: null,            
+            closeHandler: null,
             cssClass: "closebox", // closebox-container
             imageUrl: null,
             fadeOut: null
@@ -1614,7 +1615,7 @@ http://en.wikipedia.org/wiki/MIT_License
             var pos = el.css("position");
             if (!pos || pos == "static")
                 el.css("position", "relative");
-            var h = opt.handle ? $(opt.handle,el).css({ position: "relative" }) : el;
+            var h = opt.handle ? $(opt.handle, el).css({ position: "relative" }) : el;
 
             var div = el.find("." + opt.cssClass);
             var exists = true;
@@ -1847,7 +1848,7 @@ http://en.wikipedia.org/wiki/MIT_License
         return "< # ERROR: " + err.htmlEncode() + " # >";
     };
 
-    isElementInViewport = function(el) {
+    isElementInViewport = function (el) {
         var rect = el.getBoundingClientRect();
 
         return (
@@ -1858,7 +1859,7 @@ http://en.wikipedia.org/wiki/MIT_License
         );
     };
 
-    $$ = function(id, context) {
+    $$ = function (id, context) {
         /// <summary>
         /// Searches for an ID based on ASP.NET naming container syntax.
         /// First search by ID as is, then uses attribute based lookup.
@@ -1910,7 +1911,7 @@ http://en.wikipedia.org/wiki/MIT_License
     }
     String.prototype.padR = function (width, pad) {
         if (!width || width < 1)
-            return this; 
+            return this;
 
         if (!pad) pad = " ";
         var length = width - this.length
@@ -1922,12 +1923,12 @@ http://en.wikipedia.org/wiki/MIT_License
         if (this.length == 0) return false;
         return sub == this.substr(0, sub.length);
     }
-    String.prototype.extract = function(startDelim, endDelim, allowMissingEndDelim, returnDelims) {
+    String.prototype.extract = function (startDelim, endDelim, allowMissingEndDelim, returnDelims) {
         var str = this;
         if (str.length == 0)
             return "";
 
-        var src = str.toLowerCase(); 
+        var src = str.toLowerCase();
         startDelim = startDelim.toLocaleLowerCase();
         endDelim = endDelim.toLocaleLowerCase();
 
@@ -1935,13 +1936,12 @@ http://en.wikipedia.org/wiki/MIT_License
         if (i1 == -1)
             return "";
 
-        var i2 = src.indexOf(endDelim,i1+1);
+        var i2 = src.indexOf(endDelim, i1 + 1);
 
         if (!allowMissingEndDelim && i2 == -1)
             return "";
 
-        if (allowMissingEndDelim && i2 == -1)
-        {
+        if (allowMissingEndDelim && i2 == -1) {
             if (returnDelims)
                 return str.substr(i1);
 
@@ -1949,9 +1949,9 @@ http://en.wikipedia.org/wiki/MIT_License
         }
 
         if (returnDelims)
-            return str.substr(i1,i2 - i1 + endDelim.length);
+            return str.substr(i1, i2 - i1 + endDelim.length);
 
-        return str.substr(i1 + startDelim.length,i2 - i1 -1);
+        return str.substr(i1 + startDelim.length, i2 - i1 - 1);
     };
     String.prototype.escapeRegExp = function () {
         return this.replace(/[.*+?^${}()|[\]\/\\]/g, "\\$0");
@@ -2113,11 +2113,11 @@ http://en.wikipedia.org/wiki/MIT_License
               (arguments.callee.caller ? "in " + arguments.callee.caller.toString() : ""));
         }
     }
-    
+
     $.expr[":"].containsNoCase = function (el, i, m) {
         var search = m[3];
         if (!search) return false;
-        return new RegExp(search,"i").test($(el).text());
+        return new RegExp(search, "i").test($(el).text());
     };
 
     $.fn.searchFilter = function (options) {
