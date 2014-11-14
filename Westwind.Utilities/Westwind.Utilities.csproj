@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Westwind.Utilities</RootNamespace>
     <AssemblyName>Westwind.Utilities</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -37,6 +37,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Deploy|AnyCPU'">
     <OutputPath>bin\Deploy\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SandBox|AnyCPU'">
     <OutputPath>bin\SandBox\</OutputPath>
@@ -47,6 +48,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -80,6 +82,7 @@
     <Compile Include="ExensionMethods\DateTimeExtensions.cs" />
     <Compile Include="ExensionMethods\DictionaryExtensions.cs" />
     <Compile Include="ExensionMethods\MemoryStreamExtensions.cs" />
+    <Compile Include="Utilities\HttpUtils.cs" />
     <Compile Include="Logging\ILogAdapter.cs" />
     <Compile Include="Logging\LogEntry.cs" />
     <Compile Include="Logging\LogManager.cs" />

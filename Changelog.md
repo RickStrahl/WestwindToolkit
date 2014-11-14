@@ -3,6 +3,11 @@
 ### Version 2.57
 *not released yet*
 
+* **New HttpUtils.JsonRequest**<br/>
+Added a new HttpUtils class with a JsonRequest() and JsonRequestAsync() 
+methods to handle calling JSON services and automatically sending
+and receiving of JSON data.
+
 * **AppConfiguration support for Nested Property Encryption**<br />
 You can now specify nested fields for encryption in the provider's
 PropertiesToEncrypt properties. For example, using `PropertiesToEncrypt=
