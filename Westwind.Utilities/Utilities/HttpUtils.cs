@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Westwind.Utilities
@@ -10,6 +12,54 @@ namespace Westwind.Utilities
     /// </summary>
     public static class HttpUtils
     {
+
+        public static string HttpRequestString(HttpHelperRequestSettings settings)
+        {
+            var client = new WebClient();
+
+            if (settings.Credentials != null)
+                client.Credentials = settings.Credentials;
+
+            if (settings.Proxy != null)
+                client.Proxy = settings.Proxy;
+
+            if (settings.Headers != null)
+            {
+                foreach (var header in settings.Headers)
+                {
+                    client.Headers[header.Key] = header.Value;
+                }
+            }            
+
+            if (settings.HttpVerb == "GET")
+                settings.ResponseData = client.DownloadString(settings.Url);
+            else
+            {
+                if (!string.IsNullOrEmpty(settings.ContentType))
+                    client.Headers["Content-type"] = settings.ContentType;
+
+                if (settings.Data is string)
+                {
+                    settings.RequestData = settings.Data as string;
+                    settings.ResponseData = client.UploadString(settings.Url, settings.HttpVerb, settings.RequestData);
+                }
+                else if(settings.Data is byte[])
+                {                    
+                    settings.ResponseByteData = client.UploadData(settings.Url, settings.Data as byte[]);
+                    settings.ResponseData = Encoding.UTF8.GetString(settings.ResponseByteData);
+                }
+                else
+                    throw new ArgumentException("Data must be either string or byte[].");
+            }
+
+            return settings.ResponseData;
+        }
+
+        public static async Task<string> WebRequestStringAsync(HttpHelperRequestSettings settings)
+        {
+
+        }
+
 
         /// <summary>
         /// Makes an HTTP with option JSON data serialized from an object
@@ -30,9 +80,7 @@ namespace Westwind.Utilities
 
             if (settings.Proxy != null)
                 client.Proxy = settings.Proxy;
-
-            string jsonResult;
-
+            
             client.Headers.Add("Accept", "application/json");
 
             if (settings.Headers != null)
@@ -42,6 +90,8 @@ namespace Westwind.Utilities
                     client.Headers[header.Key] = header.Value;
                 }
             }
+
+            string jsonResult;
 
             if (settings.HttpVerb == "GET")
                 jsonResult = client.DownloadString(settings.Url);
@@ -84,8 +134,6 @@ namespace Westwind.Utilities
             if (settings.Proxy != null)
                 client.Proxy = settings.Proxy;
 
-            string jsonResult;
-
             client.Headers.Add("Accept", "application/json");
 
             if (settings.Headers != null)
@@ -96,7 +144,7 @@ namespace Westwind.Utilities
                 }
             }
 
-
+            string jsonResult;
             if (settings.HttpVerb == "GET")
                 jsonResult = await client.DownloadStringTaskAsync(settings.Url);
             else
@@ -135,6 +183,7 @@ namespace Westwind.Utilities
         public WebProxy Proxy { get; set; }
         public string RequestData { get; set; }
         public string ResponseData { get; set; }
+        public byte[] ResponseByteData { get; set; }
 
         public HttpHelperRequestSettings()
         {
