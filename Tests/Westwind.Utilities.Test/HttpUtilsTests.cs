@@ -26,7 +26,7 @@ namespace Westwind.Utilities.Test
         [TestMethod]
         public void HttpRequestStringWithSettingsTest()
         {
-            var settings = new HttpHelperRequestSettings()
+            var settings = new HttpRequestSettings()
             {
                 Url = "http://microsoft.com",
                  
@@ -41,7 +41,7 @@ namespace Westwind.Utilities.Test
         [TestMethod]
         public void JsonRequestTest()
         {
-            var settings = new HttpHelperRequestSettings()
+            var settings = new HttpRequestSettings()
             {
                 Url = "http://codepaste.net/recent?format=json",
                  
@@ -58,7 +58,7 @@ namespace Westwind.Utilities.Test
         [TestMethod]
         public async Task JsonRequestAsyncTest()
         {
-            var settings = new HttpHelperRequestSettings()
+            var settings = new HttpRequestSettings()
             {
                 Url = "http://codepaste.net/recent?format=json",
 
@@ -85,7 +85,7 @@ namespace Westwind.Utilities.Test
             };
 
 
-            var settings = new HttpHelperRequestSettings()
+            var settings = new HttpRequestSettings()
             {
                 Url = "http://codepaste.net/recent?format=json",
                 Data = data,

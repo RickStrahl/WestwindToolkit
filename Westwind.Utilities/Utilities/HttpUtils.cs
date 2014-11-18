@@ -21,7 +21,7 @@ namespace Westwind.Utilities
         /// <returns>string of HTTP response</returns>
         public static string HttpRequestString(string url)
         {
-            return HttpRequestString(new HttpHelperRequestSettings() {Url = url});
+            return HttpRequestString(new HttpRequestSettings() {Url = url});
         }
 
         /// <summary>
@@ -29,7 +29,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="settings">Pass HTTP request configuration parameters object to set the URL, Verb, Headers, content and more</param>
         /// <returns>string of HTTP response</returns>
-        public static string HttpRequestString(HttpHelperRequestSettings settings)
+        public static string HttpRequestString(HttpRequestSettings settings)
         {
             var client = new HttpUtilsWebClient();
 
@@ -73,66 +73,6 @@ namespace Westwind.Utilities
             return settings.ResponseData;
         }
 
-        /// <summary>
-        /// Retrieves and Http request and returns data as a string.
-        /// </summary>
-        /// <param name="url">The Url to access</param>
-        /// <returns>string of HTTP response</returns>
-        public static async Task<string> HttpRequestStringAsync(string url)
-        {
-            return await HttpRequestStringAsync(new HttpHelperRequestSettings() {Url = url});
-        }
-
-
-        /// <summary>
-        /// Retrieves and Http request and returns data as a string.
-        /// </summary>
-        /// <param name="settings">Pass HTTP request configuration parameters object to set the URL, Verb, Headers, content and more</param>
-        /// <returns>string of HTTP response</returns>
-        public static async Task<string> HttpRequestStringAsync(HttpHelperRequestSettings settings)
-        {
-            var client = new HttpUtilsWebClient();
-
-            if (settings.Credentials != null)
-                client.Credentials = settings.Credentials;
-
-            if (settings.Proxy != null)
-                client.Proxy = settings.Proxy;
-
-            if (settings.Headers != null)
-            {
-                foreach (var header in settings.Headers)
-                {
-                    client.Headers[header.Key] = header.Value;
-                }
-            }
-
-            if (settings.HttpVerb == "GET")
-                settings.ResponseData = await client.DownloadStringTaskAsync(new Uri(settings.Url));
-            else
-            {
-                if (!string.IsNullOrEmpty(settings.ContentType))
-                    client.Headers["Content-type"] = settings.ContentType;
-
-                if (settings.Data is string)
-                {
-                    settings.RequestData = settings.Data as string;
-                    settings.ResponseData = await client.UploadStringTaskAsync(settings.Url, settings.HttpVerb, settings.RequestData);
-                }
-                else if (settings.Data is byte[])
-                {
-                    settings.ResponseByteData = await client.UploadDataTaskAsync(settings.Url, settings.Data as byte[]);
-                    settings.ResponseData = Encoding.UTF8.GetString(settings.ResponseByteData);
-                }
-                else
-                    throw new ArgumentException("Data must be either string or byte[].");
-            }
-
-            settings.Response = client.Response;
-
-            return settings.ResponseData;
-        }
-
 
         /// <summary>
         /// Makes an HTTP with option JSON data serialized from an object
@@ -140,11 +80,11 @@ namespace Westwind.Utilities
         /// Assumes that the service returns a JSON response
         /// </summary>
         /// <typeparam name="TResultType">The type of the object returned</typeparam>
-        /// <param name="settings"><see cref="Westwind.Utilities.HttpHelperRequestSettings"/>
+        /// <param name="settings"><see cref="HttpRequestSettings"/>
         /// Configuration object for the HTTP request made to the server.
         /// </param>
         /// <returns>deserialized value/object from returned JSON data</returns>
-        public static TResultType JsonRequest<TResultType>(HttpHelperRequestSettings settings)
+        public static TResultType JsonRequest<TResultType>(HttpRequestSettings settings)
         {
             var client = new HttpUtilsWebClient();
 
@@ -192,6 +132,67 @@ namespace Westwind.Utilities
             return (TResultType) JsonSerializationUtils.Deserialize(jsonResult, typeof (TResultType), true);
         }
 
+#if !NET40
+        /// <summary>
+        /// Retrieves and Http request and returns data as a string.
+        /// </summary>
+        /// <param name="url">The Url to access</param>
+        /// <returns>string of HTTP response</returns>
+        public static async Task<string> HttpRequestStringAsync(string url)
+        {
+            return await HttpRequestStringAsync(new HttpRequestSettings() {Url = url});
+        }
+
+
+        /// <summary>
+        /// Retrieves and Http request and returns data as a string.
+        /// </summary>
+        /// <param name="settings">Pass HTTP request configuration parameters object to set the URL, Verb, Headers, content and more</param>
+        /// <returns>string of HTTP response</returns>
+        public static async Task<string> HttpRequestStringAsync(HttpRequestSettings settings)
+        {
+            var client = new HttpUtilsWebClient();
+
+            if (settings.Credentials != null)
+                client.Credentials = settings.Credentials;
+
+            if (settings.Proxy != null)
+                client.Proxy = settings.Proxy;
+
+            if (settings.Headers != null)
+            {
+                foreach (var header in settings.Headers)
+                {
+                    client.Headers[header.Key] = header.Value;
+                }
+            }
+
+            if (settings.HttpVerb == "GET")
+                settings.ResponseData = await client.DownloadStringTaskAsync(new Uri(settings.Url));
+            else
+            {
+                if (!string.IsNullOrEmpty(settings.ContentType))
+                    client.Headers["Content-type"] = settings.ContentType;
+
+                if (settings.Data is string)
+                {
+                    settings.RequestData = settings.Data as string;
+                    settings.ResponseData = await client.UploadStringTaskAsync(settings.Url, settings.HttpVerb, settings.RequestData);
+                }
+                else if (settings.Data is byte[])
+                {
+                    settings.ResponseByteData = await client.UploadDataTaskAsync(settings.Url, settings.Data as byte[]);
+                    settings.ResponseData = Encoding.UTF8.GetString(settings.ResponseByteData);
+                }
+                else
+                    throw new ArgumentException("Data must be either string or byte[].");
+            }
+
+            settings.Response = client.Response;
+
+            return settings.ResponseData;
+        }
+
         /// <summary>
         /// Makes an HTTP with option JSON data serialized from an object
         /// and parses the result from JSON back into an object.
@@ -199,11 +200,11 @@ namespace Westwind.Utilities
         /// any data sent is json.
         /// </summary>
         /// <typeparam name="TResultType">The type of the object returned</typeparam>
-        /// <param name="settings"><see cref="Westwind.Utilities.HttpHelperRequestSettings"/>
+        /// <param name="settings"><see cref="HttpRequestSettings"/>
         /// Configuration object for the HTTP request made to the server.
         /// </param>
         /// <returns>deserialized value/object from returned JSON data</returns>
-        public static async Task<TResultType> JsonRequestAsync<TResultType>(HttpHelperRequestSettings settings)
+        public static async Task<TResultType> JsonRequestAsync<TResultType>(HttpRequestSettings settings)
         {
             var client = new HttpUtilsWebClient();
 
@@ -249,6 +250,8 @@ namespace Westwind.Utilities
 
             return (TResultType) JsonSerializationUtils.Deserialize(jsonResult, typeof (TResultType), true);
         }
+#endif
+
     }
 
 
@@ -257,7 +260,7 @@ namespace Westwind.Utilities
     /// methods. Allows you to set the URL, verb, headers proxy and
     /// credentials that are then passed to the HTTP client.
     /// </summary>
-    public class HttpHelperRequestSettings
+    public class HttpRequestSettings
     {
         /// <summary>
         /// The URL to send the request to
@@ -311,8 +314,8 @@ namespace Westwind.Utilities
         /// <summary>
         /// Captured string Response Data from the server
         /// </summary>
-        public string ResponseData { get; set; }        
-
+        public string ResponseData { get; set; }   
+     
 
         /// <summary>
         /// Capture binary Response data from the server when 
@@ -335,35 +338,17 @@ namespace Westwind.Utilities
         }
         
         /// <summary>
-        /// Instance of an HttpResponse object that gives access
+        /// Instance of the full HttpResponse object that gives access
         /// to the full HttpWebResponse object to provide things
         /// like Response headers, status etc.
         /// </summary>
         public HttpWebResponse Response { get; set; }
         
 
-        public HttpHelperRequestSettings()
+        public HttpRequestSettings()
         {
             HttpVerb = "GET";
             Headers = new Dictionary<string, string>();
         }
-    }
-
-    /// <summary>
-    /// Customized version of WebClient that provides access
-    /// to the Response object so we can read result data 
-    /// from the Response.
-    /// </summary>
-    internal class HttpUtilsWebClient : WebClient
-    {
-        internal HttpWebResponse Response { get; set; }
-        protected override WebResponse GetWebResponse(WebRequest request)
-        {
-            Response = base.GetWebResponse(request) as HttpWebResponse;
-            return Response;
-        }
-
-       
-
     }
 }

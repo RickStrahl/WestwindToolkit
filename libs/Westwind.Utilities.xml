@@ -1549,6 +1549,144 @@
             <param name="inputString"></param>
             <param name="encoding"></param>
         </member>
+        <member name="T:Westwind.Utilities.HttpUtils">
+            <summary>
+            Simple HTTP request helper to let you retrieve data from a Web
+            server and convert it to something useful.
+            </summary>
+        </member>
+        <member name="M:Westwind.Utilities.HttpUtils.HttpRequestString(System.String)">
+            <summary>
+            Retrieves and Http request and returns data as a string.
+            </summary>
+            <param name="url">A url to call for a GET request without custom headers</param>
+            <returns>string of HTTP response</returns>
+        </member>
+        <member name="M:Westwind.Utilities.HttpUtils.HttpRequestString(Westwind.Utilities.HttpRequestSettings)">
+            <summary>
+            Retrieves and Http request and returns data as a string.
+            </summary>
+            <param name="settings">Pass HTTP request configuration parameters object to set the URL, Verb, Headers, content and more</param>
+            <returns>string of HTTP response</returns>
+        </member>
+        <member name="M:Westwind.Utilities.HttpUtils.JsonRequest``1(Westwind.Utilities.HttpRequestSettings)">
+            <summary>
+            Makes an HTTP with option JSON data serialized from an object
+            and parses the result from JSON back into an object.
+            Assumes that the service returns a JSON response
+            </summary>
+            <typeparam name="TResultType">The type of the object returned</typeparam>
+            <param name="settings"><see cref="T:Westwind.Utilities.HttpRequestSettings"/>
+            Configuration object for the HTTP request made to the server.
+            </param>
+            <returns>deserialized value/object from returned JSON data</returns>
+        </member>
+        <member name="M:Westwind.Utilities.HttpUtils.HttpRequestStringAsync(System.String)">
+            <summary>
+            Retrieves and Http request and returns data as a string.
+            </summary>
+            <param name="url">The Url to access</param>
+            <returns>string of HTTP response</returns>
+        </member>
+        <member name="M:Westwind.Utilities.HttpUtils.HttpRequestStringAsync(Westwind.Utilities.HttpRequestSettings)">
+            <summary>
+            Retrieves and Http request and returns data as a string.
+            </summary>
+            <param name="settings">Pass HTTP request configuration parameters object to set the URL, Verb, Headers, content and more</param>
+            <returns>string of HTTP response</returns>
+        </member>
+        <member name="M:Westwind.Utilities.HttpUtils.JsonRequestAsync``1(Westwind.Utilities.HttpRequestSettings)">
+            <summary>
+            Makes an HTTP with option JSON data serialized from an object
+            and parses the result from JSON back into an object.
+            Assumes that the service returns a JSON response and that
+            any data sent is json.
+            </summary>
+            <typeparam name="TResultType">The type of the object returned</typeparam>
+            <param name="settings"><see cref="T:Westwind.Utilities.HttpRequestSettings"/>
+            Configuration object for the HTTP request made to the server.
+            </param>
+            <returns>deserialized value/object from returned JSON data</returns>
+        </member>
+        <member name="T:Westwind.Utilities.HttpRequestSettings">
+            <summary>
+            Configuration object for Http Requests used by the HttpUtils
+            methods. Allows you to set the URL, verb, headers proxy and
+            credentials that are then passed to the HTTP client.
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.Url">
+            <summary>
+            The URL to send the request to
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.HttpVerb">
+            <summary>
+            The HTTP verb to use when sending the request
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.Data">
+            <summary>
+            The Request content to send to the server.
+            Data can be either string or byte[] type
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.IsRawData">
+            <summary>
+            When true data is not translated. For example
+            when using JSON Request if you want to send 
+            raw POST data rather than a serialized object.
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.ContentType">
+            <summary>
+            The content type of any request data sent to the server
+            in the Data property.
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.Headers">
+            <summary>
+            Any Http request headers you want to set for this request
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.Credentials">
+            <summary>
+            Authentication information for this request
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.Proxy">
+            <summary>
+            An optional proxy to set for this request
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.RequestData">
+            <summary>
+            Capture request string data that was actually sent to the server.
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.ResponseData">
+            <summary>
+            Captured string Response Data from the server
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.ResponseByteData">
+            <summary>
+            Capture binary Response data from the server when 
+            using the Data methods rather than string methods.
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.ResponseStatusCode">
+            <summary>
+            The HTTP Status code of the HTTP response
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.Response">
+            <summary>
+            Instance of the full HttpResponse object that gives access
+            to the full HttpWebResponse object to provide things
+            like Response headers, status etc.
+            </summary>
+        </member>
         <member name="M:Westwind.Utilities.Logging.ILogAdapter.WriteEntry(Westwind.Utilities.Logging.WebLogEntry)">
             <summary>
             Writes an entry into the log
@@ -2247,6 +2385,11 @@
               Looks up a localized string similar to Invalid Connection string name..
             </summary>
         </member>
+        <member name="P:Westwind.Utilities.Properties.Resources.InvalidEncryptionPropertyName">
+            <summary>
+              Looks up a localized string similar to Invalid encryptipon property name.
+            </summary>
+        </member>
         <member name="P:Westwind.Utilities.Properties.Resources.InvalidHexDigit">
             <summary>
               Looks up a localized string similar to Invalid hex digit: .
@@ -2260,6 +2403,11 @@
         <member name="P:Westwind.Utilities.Properties.Resources.InvalidTypeForXmlTypeToNETTypeConversion">
             <summary>
               Looks up a localized string similar to Invalid type for XmlType to .NET Type conversion..
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.Properties.Resources.InvalidXMLConfigurationFileFormat">
+            <summary>
+              Looks up a localized string similar to Invalid XML configuration file format in {0}..
             </summary>
         </member>
         <member name="P:Westwind.Utilities.Properties.Resources.ObjectCouldNotBeDeserializedFromXml">
@@ -3402,6 +3550,13 @@
             </summary>
             <param name="html"></param>
             <returns></returns>
+        </member>
+        <member name="T:Westwind.Utilities.HttpUtilsWebClient">
+            <summary>
+            Customized version of WebClient that provides access
+            to the Response object so we can read result data 
+            from the Response.
+            </summary>
         </member>
         <member name="T:Westwind.Utilities.ImageUtils">
             <summary>

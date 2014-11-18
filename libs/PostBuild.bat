@@ -3,6 +3,9 @@ REM with the latest copies of the core ..\Assemblies
 copy ..\Westwind.Utilities\bin\release\Westwind.Utilities.dll 
 copy ..\Westwind.Utilities\bin\release\Westwind.Utilities.xml 
 
+copy ..\Westwind.Utilities\bin\net40\Westwind.Utilities.dll .\net40\
+copy ..\Westwind.Utilities\bin\net40\Westwind.Utilities.xml .\net40\
+
 copy ..\Westwind.Data\bin\release\Westwind.Data.dll 
 copy ..\Westwind.Data\bin\release\Westwind.Data.xml 
 
