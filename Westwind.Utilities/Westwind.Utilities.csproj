@@ -82,7 +82,9 @@
     <Compile Include="ExensionMethods\DateTimeExtensions.cs" />
     <Compile Include="ExensionMethods\DictionaryExtensions.cs" />
     <Compile Include="ExensionMethods\MemoryStreamExtensions.cs" />
-    <Compile Include="Utilities\HttpUtils.cs" />
+    <Compile Include="Utilities\HttpUtils.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Logging\ILogAdapter.cs" />
     <Compile Include="Logging\LogEntry.cs" />
     <Compile Include="Logging\LogManager.cs" />
