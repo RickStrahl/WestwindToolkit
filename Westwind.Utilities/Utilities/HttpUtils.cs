@@ -48,21 +48,21 @@ namespace Westwind.Utilities
             }            
 
             if (settings.HttpVerb == "GET")
-                settings.ResponseData = client.DownloadString(settings.Url);
+                settings.CapturedResponseContent = client.DownloadString(settings.Url);
             else
             {
                 if (!string.IsNullOrEmpty(settings.ContentType))
                     client.Headers["Content-type"] = settings.ContentType;
 
-                if (settings.Data is string)
+                if (settings.Content is string)
                 {
-                    settings.RequestData = settings.Data as string;
-                    settings.ResponseData = client.UploadString(settings.Url, settings.HttpVerb, settings.RequestData);
+                    settings.CapturedRequestContent = settings.Content as string;
+                    settings.CapturedResponseContent = client.UploadString(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);
                 }
-                else if(settings.Data is byte[])
+                else if(settings.Content is byte[])
                 {                    
-                    settings.ResponseByteData = client.UploadData(settings.Url, settings.Data as byte[]);
-                    settings.ResponseData = Encoding.UTF8.GetString(settings.ResponseByteData);                    
+                    settings.ResponseByteData = client.UploadData(settings.Url, settings.Content as byte[]);
+                    settings.CapturedResponseContent = Encoding.UTF8.GetString(settings.ResponseByteData);                    
                 }                
                 else
                     throw new ArgumentException("Data must be either string or byte[].");
@@ -70,7 +70,7 @@ namespace Westwind.Utilities
 
             settings.Response = client.Response;
 
-            return settings.ResponseData;
+            return settings.CapturedResponseContent;
         }
 
 
@@ -84,53 +84,53 @@ namespace Westwind.Utilities
         /// Configuration object for the HTTP request made to the server.
         /// </param>
         /// <returns>deserialized value/object from returned JSON data</returns>
-        public static TResultType JsonRequest<TResultType>(HttpRequestSettings settings)
+public static TResultType JsonRequest<TResultType>(HttpRequestSettings settings)
+{
+    var client = new HttpUtilsWebClient();
+
+    if (settings.Credentials != null)
+        client.Credentials = settings.Credentials;
+
+    if (settings.Proxy != null)
+        client.Proxy = settings.Proxy;
+            
+    client.Headers.Add("Accept", "application/json");
+
+    if (settings.Headers != null)
+    {
+        foreach (var header in settings.Headers)
         {
-            var client = new HttpUtilsWebClient();
-
-            if (settings.Credentials != null)
-                client.Credentials = settings.Credentials;
-
-            if (settings.Proxy != null)
-                client.Proxy = settings.Proxy;
-            
-            client.Headers.Add("Accept", "application/json");
-
-            if (settings.Headers != null)
-            {
-                foreach (var header in settings.Headers)
-                {
-                    client.Headers[header.Key] = header.Value;
-                }
-            }
-
-            string jsonResult;
-
-            if (settings.HttpVerb == "GET")
-                jsonResult = client.DownloadString(settings.Url);
-            else
-            {
-                if (!string.IsNullOrEmpty(settings.ContentType))
-                    client.Headers["Content-type"] = settings.ContentType;
-                else
-                    client.Headers["Content-type"] = "application/json";
-
-                if (!settings.IsRawData)
-                    settings.RequestData = JsonSerializationUtils.Serialize(settings.Data, throwExceptions: true);
-                else
-                    settings.RequestData = settings.Data as string;
-
-                jsonResult = client.UploadString(settings.Url, settings.HttpVerb, settings.RequestData);
-
-                if (jsonResult == null)
-                    return default(TResultType);
-            }
-
-            settings.ResponseData = jsonResult;
-            settings.Response = client.Response;
-            
-            return (TResultType) JsonSerializationUtils.Deserialize(jsonResult, typeof (TResultType), true);
+            client.Headers[header.Key] = header.Value;
         }
+    }
+
+    string jsonResult;
+
+    if (settings.HttpVerb == "GET")
+        jsonResult = client.DownloadString(settings.Url);
+    else
+    {
+        if (!string.IsNullOrEmpty(settings.ContentType))
+            client.Headers["Content-type"] = settings.ContentType;
+        else
+            client.Headers["Content-type"] = "application/json";
+
+        if (!settings.IsRawData)
+            settings.CapturedRequestContent = JsonSerializationUtils.Serialize(settings.Content, throwExceptions: true);
+        else
+            settings.CapturedRequestContent = settings.Content as string;
+
+        jsonResult = client.UploadString(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);
+
+        if (jsonResult == null)
+            return default(TResultType);
+    }
+
+    settings.CapturedResponseContent = jsonResult;
+    settings.Response = client.Response;
+            
+    return (TResultType) JsonSerializationUtils.Deserialize(jsonResult, typeof (TResultType), true);
+}
 
 #if !NET40
         /// <summary>
@@ -168,21 +168,21 @@ namespace Westwind.Utilities
             }
 
             if (settings.HttpVerb == "GET")
-                settings.ResponseData = await client.DownloadStringTaskAsync(new Uri(settings.Url));
+                settings.CapturedResponseContent = await client.DownloadStringTaskAsync(new Uri(settings.Url));
             else
             {
                 if (!string.IsNullOrEmpty(settings.ContentType))
                     client.Headers["Content-type"] = settings.ContentType;
 
-                if (settings.Data is string)
+                if (settings.Content is string)
                 {
-                    settings.RequestData = settings.Data as string;
-                    settings.ResponseData = await client.UploadStringTaskAsync(settings.Url, settings.HttpVerb, settings.RequestData);
+                    settings.CapturedRequestContent = settings.Content as string;
+                    settings.CapturedResponseContent = await client.UploadStringTaskAsync(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);
                 }
-                else if (settings.Data is byte[])
+                else if (settings.Content is byte[])
                 {
-                    settings.ResponseByteData = await client.UploadDataTaskAsync(settings.Url, settings.Data as byte[]);
-                    settings.ResponseData = Encoding.UTF8.GetString(settings.ResponseByteData);
+                    settings.ResponseByteData = await client.UploadDataTaskAsync(settings.Url, settings.Content as byte[]);
+                    settings.CapturedResponseContent = Encoding.UTF8.GetString(settings.ResponseByteData);
                 }
                 else
                     throw new ArgumentException("Data must be either string or byte[].");
@@ -190,66 +190,68 @@ namespace Westwind.Utilities
 
             settings.Response = client.Response;
 
-            return settings.ResponseData;
+            return settings.CapturedResponseContent;
         }
 
-        /// <summary>
-        /// Makes an HTTP with option JSON data serialized from an object
-        /// and parses the result from JSON back into an object.
-        /// Assumes that the service returns a JSON response and that
-        /// any data sent is json.
-        /// </summary>
-        /// <typeparam name="TResultType">The type of the object returned</typeparam>
-        /// <param name="settings"><see cref="HttpRequestSettings"/>
-        /// Configuration object for the HTTP request made to the server.
-        /// </param>
-        /// <returns>deserialized value/object from returned JSON data</returns>
-        public static async Task<TResultType> JsonRequestAsync<TResultType>(HttpRequestSettings settings)
+/// <summary>
+/// Makes an HTTP with option JSON data serialized from an object
+/// and parses the result from JSON back into an object.
+/// Assumes that the service returns a JSON response and that
+/// any data sent is json.
+/// </summary>
+/// <typeparam name="TResultType">The type of the object returned</typeparam>
+/// <param name="settings"><see cref="HttpRequestSettings"/>
+/// Configuration object for the HTTP request made to the server.
+/// </param>
+/// <returns>deserialized value/object from returned JSON data</returns>
+public static async Task<TResultType> JsonRequestAsync<TResultType>(HttpRequestSettings settings)
+{
+    var client = new HttpUtilsWebClient();
+    
+    if (settings.Credentials != null)
+        client.Credentials = settings.Credentials;
+
+    if (settings.Proxy != null)
+        client.Proxy = settings.Proxy;
+
+    client.Headers.Add("Accept", "application/json");
+
+    if (settings.Headers != null)
+    {
+        foreach (var header in settings.Headers)
         {
-            var client = new HttpUtilsWebClient();
-
-            if (settings.Credentials != null)
-                client.Credentials = settings.Credentials;
-
-            if (settings.Proxy != null)
-                client.Proxy = settings.Proxy;
-
-            client.Headers.Add("Accept", "application/json");
-
-            if (settings.Headers != null)
-            {
-                foreach (var header in settings.Headers)
-                {
-                    client.Headers[header.Key] = header.Value;
-                }
-            }
-
-            string jsonResult;
-            if (settings.HttpVerb == "GET")
-                jsonResult = await client.DownloadStringTaskAsync(settings.Url);                
-            else
-            {
-                if (!string.IsNullOrEmpty(settings.ContentType))
-                    client.Headers["Content-type"] = settings.ContentType;
-                else
-                    client.Headers["Content-type"] = "application/json";
-
-                if (!settings.IsRawData)
-                    settings.RequestData = JsonSerializationUtils.Serialize(settings.Data, throwExceptions: true);
-                else
-                    settings.RequestData = settings.Data as string;
-
-                jsonResult = await client.UploadStringTaskAsync(settings.Url, settings.HttpVerb, settings.RequestData);
-
-                if (jsonResult == null)
-                    return default(TResultType);
-            }
-
-            settings.ResponseData = jsonResult;
-            settings.Response = client.Response;
-
-            return (TResultType) JsonSerializationUtils.Deserialize(jsonResult, typeof (TResultType), true);
+            client.Headers[header.Key] = header.Value;
         }
+    }
+
+    string jsonResult;
+    if (settings.HttpVerb == "GET")
+        jsonResult = await client.DownloadStringTaskAsync(settings.Url);                
+    else
+    {
+        if (!string.IsNullOrEmpty(settings.ContentType))
+            client.Headers["Content-type"] = settings.ContentType;
+        else
+            client.Headers["Content-type"] = "application/json";
+
+        if (!settings.IsRawData)
+            settings.CapturedRequestContent = JsonSerializationUtils.Serialize(settings.Content, throwExceptions: true);
+        else
+            settings.CapturedRequestContent = settings.Content as string;
+
+        jsonResult = await client.UploadStringTaskAsync(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);
+
+        if (jsonResult == null)
+            return default(TResultType);
+    }
+
+    settings.CapturedResponseContent = jsonResult;
+    settings.Response = client.Response;
+
+    return (TResultType) JsonSerializationUtils.Deserialize(jsonResult, typeof (TResultType), true);
+}
+
+
 #endif
 
     }
@@ -276,7 +278,7 @@ namespace Westwind.Utilities
         /// The Request content to send to the server.
         /// Data can be either string or byte[] type
         /// </summary>
-        public object Data { get; set; }
+        public object Content { get; set; }
 
         /// <summary>
         /// When true data is not translated. For example
@@ -309,13 +311,12 @@ namespace Westwind.Utilities
         /// <summary>
         /// Capture request string data that was actually sent to the server.
         /// </summary>
-        public string RequestData { get; set; }                
+        public string CapturedRequestContent { get; set; }                
 
         /// <summary>
         /// Captured string Response Data from the server
         /// </summary>
-        public string ResponseData { get; set; }   
-     
+        public string CapturedResponseContent { get; set; }        
 
         /// <summary>
         /// Capture binary Response data from the server when 
