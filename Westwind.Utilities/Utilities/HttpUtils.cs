@@ -21,7 +21,7 @@ namespace Westwind.Utilities
         /// <returns>string of HTTP response</returns>
         public static string HttpRequestString(string url)
         {
-            return HttpRequestString(new HttpRequestSettings() {Url = url});
+            return HttpRequestString(new HttpRequestSettings() { Url = url });
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Westwind.Utilities
                 {
                     client.Headers[header.Key] = header.Value;
                 }
-            }            
+            }
 
             if (settings.HttpVerb == "GET")
                 settings.CapturedResponseContent = client.DownloadString(settings.Url);
@@ -59,11 +59,11 @@ namespace Westwind.Utilities
                     settings.CapturedRequestContent = settings.Content as string;
                     settings.CapturedResponseContent = client.UploadString(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);
                 }
-                else if(settings.Content is byte[])
-                {                    
+                else if (settings.Content is byte[])
+                {
                     settings.ResponseByteData = client.UploadData(settings.Url, settings.Content as byte[]);
-                    settings.CapturedResponseContent = Encoding.UTF8.GetString(settings.ResponseByteData);                    
-                }                
+                    settings.CapturedResponseContent = Encoding.UTF8.GetString(settings.ResponseByteData);
+                }
                 else
                     throw new ArgumentException("Data must be either string or byte[].");
             }
@@ -84,53 +84,53 @@ namespace Westwind.Utilities
         /// Configuration object for the HTTP request made to the server.
         /// </param>
         /// <returns>deserialized value/object from returned JSON data</returns>
-public static TResultType JsonRequest<TResultType>(HttpRequestSettings settings)
-{
-    var client = new HttpUtilsWebClient();
-
-    if (settings.Credentials != null)
-        client.Credentials = settings.Credentials;
-
-    if (settings.Proxy != null)
-        client.Proxy = settings.Proxy;
-            
-    client.Headers.Add("Accept", "application/json");
-
-    if (settings.Headers != null)
-    {
-        foreach (var header in settings.Headers)
+        public static TResultType JsonRequest<TResultType>(HttpRequestSettings settings)
         {
-            client.Headers[header.Key] = header.Value;
+            var client = new HttpUtilsWebClient();
+
+            if (settings.Credentials != null)
+                client.Credentials = settings.Credentials;
+
+            if (settings.Proxy != null)
+                client.Proxy = settings.Proxy;
+
+            client.Headers.Add("Accept", "application/json");
+
+            if (settings.Headers != null)
+            {
+                foreach (var header in settings.Headers)
+                {
+                    client.Headers[header.Key] = header.Value;
+                }
+            }
+
+            string jsonResult;
+
+            if (settings.HttpVerb == "GET")
+                jsonResult = client.DownloadString(settings.Url);
+            else
+            {
+                if (!string.IsNullOrEmpty(settings.ContentType))
+                    client.Headers["Content-type"] = settings.ContentType;
+                else
+                    client.Headers["Content-type"] = "application/json";
+
+                if (!settings.IsRawData)
+                    settings.CapturedRequestContent = JsonSerializationUtils.Serialize(settings.Content, throwExceptions: true);
+                else
+                    settings.CapturedRequestContent = settings.Content as string;
+
+                jsonResult = client.UploadString(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);
+
+                if (jsonResult == null)
+                    return default(TResultType);
+            }
+
+            settings.CapturedResponseContent = jsonResult;
+            settings.Response = client.Response;
+
+            return (TResultType)JsonSerializationUtils.Deserialize(jsonResult, typeof(TResultType), true);
         }
-    }
-
-    string jsonResult;
-
-    if (settings.HttpVerb == "GET")
-        jsonResult = client.DownloadString(settings.Url);
-    else
-    {
-        if (!string.IsNullOrEmpty(settings.ContentType))
-            client.Headers["Content-type"] = settings.ContentType;
-        else
-            client.Headers["Content-type"] = "application/json";
-
-        if (!settings.IsRawData)
-            settings.CapturedRequestContent = JsonSerializationUtils.Serialize(settings.Content, throwExceptions: true);
-        else
-            settings.CapturedRequestContent = settings.Content as string;
-
-        jsonResult = client.UploadString(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);
-
-        if (jsonResult == null)
-            return default(TResultType);
-    }
-
-    settings.CapturedResponseContent = jsonResult;
-    settings.Response = client.Response;
-            
-    return (TResultType) JsonSerializationUtils.Deserialize(jsonResult, typeof (TResultType), true);
-}
 
 #if !NET40
         /// <summary>
@@ -140,7 +140,7 @@ public static TResultType JsonRequest<TResultType>(HttpRequestSettings settings)
         /// <returns>string of HTTP response</returns>
         public static async Task<string> HttpRequestStringAsync(string url)
         {
-            return await HttpRequestStringAsync(new HttpRequestSettings() {Url = url});
+            return await HttpRequestStringAsync(new HttpRequestSettings() { Url = url });
         }
 
 
@@ -193,65 +193,63 @@ public static TResultType JsonRequest<TResultType>(HttpRequestSettings settings)
             return settings.CapturedResponseContent;
         }
 
-/// <summary>
-/// Makes an HTTP with option JSON data serialized from an object
-/// and parses the result from JSON back into an object.
-/// Assumes that the service returns a JSON response and that
-/// any data sent is json.
-/// </summary>
-/// <typeparam name="TResultType">The type of the object returned</typeparam>
-/// <param name="settings"><see cref="HttpRequestSettings"/>
-/// Configuration object for the HTTP request made to the server.
-/// </param>
-/// <returns>deserialized value/object from returned JSON data</returns>
-public static async Task<TResultType> JsonRequestAsync<TResultType>(HttpRequestSettings settings)
-{
-    var client = new HttpUtilsWebClient();
-    
-    if (settings.Credentials != null)
-        client.Credentials = settings.Credentials;
-
-    if (settings.Proxy != null)
-        client.Proxy = settings.Proxy;
-
-    client.Headers.Add("Accept", "application/json");
-
-    if (settings.Headers != null)
-    {
-        foreach (var header in settings.Headers)
+        /// <summary>
+        /// Makes an HTTP with option JSON data serialized from an object
+        /// and parses the result from JSON back into an object.
+        /// Assumes that the service returns a JSON response and that
+        /// any data sent is json.
+        /// </summary>
+        /// <typeparam name="TResultType">The type of the object returned</typeparam>
+        /// <param name="settings"><see cref="HttpRequestSettings"/>
+        /// Configuration object for the HTTP request made to the server.
+        /// </param>
+        /// <returns>deserialized value/object from returned JSON data</returns>
+        public static async Task<TResultType> JsonRequestAsync<TResultType>(HttpRequestSettings settings)
         {
-            client.Headers[header.Key] = header.Value;
+            var client = new HttpUtilsWebClient();
+
+            if (settings.Credentials != null)
+                client.Credentials = settings.Credentials;
+
+            if (settings.Proxy != null)
+                client.Proxy = settings.Proxy;
+
+            client.Headers.Add("Accept", "application/json");
+
+            if (settings.Headers != null)
+            {
+                foreach (var header in settings.Headers)
+                {
+                    client.Headers[header.Key] = header.Value;
+                }
+            }
+
+            string jsonResult;
+            if (settings.HttpVerb == "GET")
+                jsonResult = await client.DownloadStringTaskAsync(settings.Url);
+            else
+            {
+                if (!string.IsNullOrEmpty(settings.ContentType))
+                    client.Headers["Content-type"] = settings.ContentType;
+                else
+                    client.Headers["Content-type"] = "application/json";
+
+                if (!settings.IsRawData)
+                    settings.CapturedRequestContent = JsonSerializationUtils.Serialize(settings.Content, throwExceptions: true);
+                else
+                    settings.CapturedRequestContent = settings.Content as string;
+
+                jsonResult = await client.UploadStringTaskAsync(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);
+
+                if (jsonResult == null)
+                    return default(TResultType);
+            }
+
+            settings.CapturedResponseContent = jsonResult;
+            settings.Response = client.Response;
+
+            return (TResultType)JsonSerializationUtils.Deserialize(jsonResult, typeof(TResultType), true);
         }
-    }
-
-    string jsonResult;
-    if (settings.HttpVerb == "GET")
-        jsonResult = await client.DownloadStringTaskAsync(settings.Url);                
-    else
-    {
-        if (!string.IsNullOrEmpty(settings.ContentType))
-            client.Headers["Content-type"] = settings.ContentType;
-        else
-            client.Headers["Content-type"] = "application/json";
-
-        if (!settings.IsRawData)
-            settings.CapturedRequestContent = JsonSerializationUtils.Serialize(settings.Content, throwExceptions: true);
-        else
-            settings.CapturedRequestContent = settings.Content as string;
-
-        jsonResult = await client.UploadStringTaskAsync(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);
-
-        if (jsonResult == null)
-            return default(TResultType);
-    }
-
-    settings.CapturedResponseContent = jsonResult;
-    settings.Response = client.Response;
-
-    return (TResultType) JsonSerializationUtils.Deserialize(jsonResult, typeof (TResultType), true);
-}
-
-
 #endif
 
     }
@@ -268,7 +266,7 @@ public static async Task<TResultType> JsonRequestAsync<TResultType>(HttpRequestS
         /// The URL to send the request to
         /// </summary>
         public string Url { get; set; }
-        
+
         /// <summary>
         /// The HTTP verb to use when sending the request
         /// </summary>
@@ -286,7 +284,7 @@ public static async Task<TResultType> JsonRequestAsync<TResultType>(HttpRequestS
         /// raw POST data rather than a serialized object.
         /// </summary>
         public bool IsRawData { get; set; }
-        
+
         /// <summary>
         /// The content type of any request data sent to the server
         /// in the Data property.
@@ -311,12 +309,12 @@ public static async Task<TResultType> JsonRequestAsync<TResultType>(HttpRequestS
         /// <summary>
         /// Capture request string data that was actually sent to the server.
         /// </summary>
-        public string CapturedRequestContent { get; set; }                
+        public string CapturedRequestContent { get; set; }
 
         /// <summary>
         /// Captured string Response Data from the server
         /// </summary>
-        public string CapturedResponseContent { get; set; }        
+        public string CapturedResponseContent { get; set; }
 
         /// <summary>
         /// Capture binary Response data from the server when 
@@ -337,14 +335,14 @@ public static async Task<TResultType> JsonRequestAsync<TResultType>(HttpRequestS
                 return HttpStatusCode.OK;
             }
         }
-        
+
         /// <summary>
         /// Instance of the full HttpResponse object that gives access
         /// to the full HttpWebResponse object to provide things
         /// like Response headers, status etc.
         /// </summary>
         public HttpWebResponse Response { get; set; }
-        
+
 
         public HttpRequestSettings()
         {
