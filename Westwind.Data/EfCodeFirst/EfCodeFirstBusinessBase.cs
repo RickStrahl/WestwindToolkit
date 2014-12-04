@@ -13,6 +13,7 @@ using Westwind.Utilities;
 using System.Linq.Expressions;
 using System.Transactions;
 using System.ComponentModel.DataAnnotations.Schema;
+using IsolationLevel = System.Transactions.IsolationLevel;
 
 namespace Westwind.Data.EfCodeFirst
 {
@@ -134,19 +135,13 @@ namespace Westwind.Data.EfCodeFirst
             }
         }
 
+
         /// <summary>
         /// Instance of an exception object that caused the last error
         /// </summary>
         [NotMapped]
         [XmlIgnore]
-        public Exception ErrorException
-        {
-            get { return _errorException; }
-            set { _errorException = value; }
-        }
-        [NonSerialized]
-        private Exception _errorException;
-
+        public Exception ErrorException { get; set; }        
 
         #region ObjectInitializers
 
@@ -358,7 +353,7 @@ namespace Westwind.Data.EfCodeFirst
             object match = DbSet.Find(new object[] { id });
             if (match == null)
             {
-                SetError(Westwind.Data.Properties.Resources.UnableToFindMatchingEntityForKey);
+                SetError(Resources.UnableToFindMatchingEntityForKey);
                 return null;
             }                       
 
@@ -465,7 +460,18 @@ namespace Westwind.Data.EfCodeFirst
             return entity;
         }
 
- 
+        /// <summary>
+        /// Deletes an entity from the main entity set
+        /// based on a key value.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="saveChanges">if true changes are saved to disk. Otherwise entity is removed from context only</param>
+        /// <returns></returns>
+        public virtual bool Delete(object id, bool saveChanges = false)
+        {
+            TEntity entity = DbSet.Find(id);
+            return Delete(entity, saveChanges: saveChanges);
+        }
         
         /// <summary>
         /// removes an individual entity instance.
@@ -483,7 +489,7 @@ namespace Westwind.Data.EfCodeFirst
         /// when other changes in the Context are pending and you don't want them to commit
         /// immediately
         /// </param>
-        /// <param name="noTransaction">Optional - 
+        /// <param name="useTransaction">Optional - 
         /// If true the Delete operation is wrapped into a TransactionScope transaction that
         /// ensures that OnBeforeDelete and OnAfterDelete all fire within the same Transaction scope.
         /// Defaults to false as to improve performance.
@@ -496,9 +502,9 @@ namespace Westwind.Data.EfCodeFirst
             if (entity == null)
                 return true;
 
-            if (useTransaction)
+            if (useTransaction && saveChanges)
             {
-                using (var trans = new TransactionScope())
+                using (var trans = CreateTransactionScope())
                 {
                     if (!DeleteInternal(entity, dbSet,saveChanges)) 
                         return false;
@@ -514,32 +520,7 @@ namespace Westwind.Data.EfCodeFirst
 
             return true;
         }
-
-
-        /// <summary>
-        /// Deletes an entity from the main entity set
-        /// based on a key value.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public virtual bool Delete(object id)
-        {
-            TEntity entity = DbSet.Find(id);
-            return Delete(entity);
-        }
-
-
-        /// <summary>
-        /// Deletes an entity from the main entity set
-        /// based on a key value.
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        public virtual bool Delete(object id, bool saveChanges)
-        {
-            TEntity entity = DbSet.Find(id);
-            return Delete(entity, saveChanges: saveChanges);
-        }
+    
 
         /// <summary>
         /// Actual delete operation that removes an entity
@@ -635,60 +616,111 @@ namespace Westwind.Data.EfCodeFirst
         /// atomically as possible or else use separate Business
         /// object instances with separate contexts.
         /// </remarks>
+        /// <param name="entity"></param>
+        /// <param name="useTransactionScope">Optional -
+        /// if true uses a transaction scope to wrap the save operation
+        /// including the OnBeforeSave() and OnAfterSave() operations so
+        /// they all run within the context of a single transaction that
+        /// can be rolled back.      
+        /// Use this if you have code in OnBeforeSave()/OnAfterChange() that
+        /// might depend on a transaction or if you require that the Save()
+        /// operation occurs under a specific Isolation Level (specified by
+        /// overriding the GetTransactionScope() method).
+        /// </param>
         /// <returns></returns>
-        public bool Save(TEntity entity = null)
+        public virtual bool Save(TEntity entity = null, bool useTransactionScope = false )
         {
             if (entity == null)
                 entity = Entity;
 
-            using (var transaction = new TransactionScope() )
+            if (useTransactionScope)
             {
-                // hook point - allow logic to abort saving
-                if (!OnBeforeSave(entity))
-                    return false;
-            
-                // now do validations
-                if (AutoValidate)
+                using (var scope = CreateTransactionScope())
                 {
-                    if (!Validate(entity))
+                    if (!SaveInternal(entity))
                         return false;
-                }
 
-                int affected = 0;
-                try
+                    scope.Complete();
+                    return true;
+                }                
+            }
+            
+            return SaveInternal(entity);
+        }
+
+        protected virtual bool SaveInternal(TEntity entity)
+        {
+            if (!OnBeforeSave(entity))
+                return false;
+
+            // now do validations
+            if (AutoValidate)
+            {
+                if (!Validate(entity))
+                    return false;
+            }
+            
+            try
+            {
+                Context.SaveChanges();
+            }
+            catch (DbEntityValidationException ex)
+            {
+                foreach (var entry in ex.EntityValidationErrors)
                 {
-                    affected = Context.SaveChanges();                
-                }
-                catch (DbEntityValidationException ex)
-                {
-                    foreach (var entry in ex.EntityValidationErrors)
+                    foreach (var error in entry.ValidationErrors)
                     {
-                        foreach (var error in entry.ValidationErrors)
-                        {
-                            ValidationErrors.Add(error.ErrorMessage, error.PropertyName);
-                        }
+                        ValidationErrors.Add(error.ErrorMessage, error.PropertyName);
                     }
-                    SetError(ValidationErrors.ToString());                    
-                    return false;
                 }
-                catch (DbUpdateException ex)
-                {
-                    SetError(ex,true);
-                    return false;
-                }            
-                catch (Exception ex)
-                {
-                    SetError(ex,true);
-                    return false;
-                }
+                SetError(ValidationErrors.ToString());
+                OnAfterSaveError(entity);
+                return false;
+            }
+            catch (DbUpdateException ex)
+            {
+                SetError(ex, true);
+                OnAfterSaveError(entity);
 
-                if (!OnAfterSave(Entity))
-                    return false;
+                return false;
+            }
+            catch (Exception ex)
+            {
+                SetError(ex, true);
+                OnAfterSaveError(entity);
+                return false;
+            }
 
-                transaction.Complete();
-            }            
+            if (!OnAfterSave(Entity))
+                return false;
 
             return true;
+        }
+
+
+        /// <summary>
+        /// Default TransactionScope options for CreateTransactionScope
+        /// </summary>
+        protected virtual TransactionOptions TransactionScopeOptions
+        {
+            get { return new TransactionOptions {IsolationLevel = IsolationLevel.RepeatableRead}; }
+        }
+
+        /// <summary>
+        /// Allows you to configure how the transaction scope is created internally.
+        /// Sets the default isolation level to repetable read
+        /// </summary>
+        /// <returns>A transaction scope</returns>
+        public virtual TransactionScope CreateTransactionScope(IsolationLevel isolationLevel = IsolationLevel.Unspecified)
+        {
+            TransactionOptions options;
+            if (isolationLevel == IsolationLevel.Unspecified)
+                options = TransactionScopeOptions;
+            else
+                options = new TransactionOptions { IsolationLevel = isolationLevel };
+      
+            return  new TransactionScope(TransactionScopeOption.Required,
+                                         options);
         }
 
         /// <summary>
@@ -716,6 +748,14 @@ namespace Westwind.Data.EfCodeFirst
         protected virtual bool OnAfterSave(TEntity entity)
         {
             return true;
+        }
+
+        /// <summary>
+        /// Allows you to capture Save() operation errors
+        /// </summary>
+        /// <param name="entity"></param>
+        protected virtual void OnAfterSaveError(TEntity entity)
+        {            
         }
                 
 
@@ -1108,17 +1148,14 @@ namespace Westwind.Data.EfCodeFirst
             ErrorException = ex;
 
             if (checkInnerException)
-            {
-                while (ErrorException.InnerException != null)
-                {
-                    ErrorException = ErrorException.InnerException;
-                }
-            }
+                ErrorException = ex.GetBaseException();
 
             ErrorMessage = ErrorException.Message;
-            //if (ex != null && Options.ThrowExceptions)
+            
+            //if (ex != null && this.Option Options.ThrowExceptions)
             //    throw ex;
         }
+
         /// <summary>
         /// Clear out errors
         /// </summary>

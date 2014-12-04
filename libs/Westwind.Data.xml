@@ -100,7 +100,7 @@
         </member>
         <member name="T:Westwind.Data.EfCodeFirst.IBusinessObject`1">
             <summary>
-            Marker interface for business object and so we have access to
+            Marker interface for business objects and so we have access to
             DbContext instance.
             </summary>
         </member>
@@ -263,6 +263,15 @@
             <param name="addNew"></param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Delete(System.Object,System.Boolean)">
+            <summary>
+            Deletes an entity from the main entity set
+            based on a key value.
+            </summary>
+            <param name="id"></param>
+            <param name="saveChanges">if true changes are saved to disk. Otherwise entity is removed from context only</param>
+            <returns></returns>
+        </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Delete(`0,System.Data.Entity.DbSet,System.Boolean,System.Boolean)">
             <summary>
             removes an individual entity instance.
@@ -280,27 +289,11 @@
             when other changes in the Context are pending and you don't want them to commit
             immediately
             </param>
-            <param name="noTransaction">Optional - 
+            <param name="useTransaction">Optional - 
             If true the Delete operation is wrapped into a TransactionScope transaction that
             ensures that OnBeforeDelete and OnAfterDelete all fire within the same Transaction scope.
             Defaults to false as to improve performance.
             </param>
-        </member>
-        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Delete(System.Object)">
-            <summary>
-            Deletes an entity from the main entity set
-            based on a key value.
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Delete(System.Object,System.Boolean)">
-            <summary>
-            Deletes an entity from the main entity set
-            based on a key value.
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
         </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.DeleteInternal(`0,System.Data.Entity.DbSet,System.Boolean)">
             <summary>
@@ -327,7 +320,7 @@
             Cancel Changes on the current connected context
             </summary>
         </member>
-        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Save(`0)">
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Save(`0,System.Boolean)">
             <summary>
             Saves all changes. 
             </summary>
@@ -338,7 +331,25 @@
             atomically as possible or else use separate Business
             object instances with separate contexts.
             </remarks>
+            <param name="entity"></param>
+            <param name="useTransactionScope">Optional -
+            if true uses a transaction scope to wrap the save operation
+            including the OnBeforeSave() and OnAfterSave() operations so
+            they all run within the context of a single transaction that
+            can be rolled back.      
+            Use this if you have code in OnBeforeSave()/OnAfterChange() that
+            might depend on a transaction or if you require that the Save()
+            operation occurs under a specific Isolation Level (specified by
+            overriding the GetTransactionScope() method).
+            </param>
             <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.CreateTransactionScope(System.Transactions.IsolationLevel)">
+            <summary>
+            Allows you to configure how the transaction scope is created internally.
+            Sets the default isolation level to repetable read
+            </summary>
+            <returns>A transaction scope</returns>
         </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.OnBeforeSave(`0)">
             <summary>
@@ -358,6 +369,12 @@
             
             Override this method to fix up or fire actions after
             the Save operation completes.
+            </summary>
+            <param name="entity"></param>
+        </member>
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.OnAfterSaveError(`0)">
+            <summary>
+            Allows you to capture Save() operation errors
             </summary>
             <param name="entity"></param>
         </member>
@@ -582,6 +599,11 @@
         <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ErrorException">
             <summary>
             Instance of an exception object that caused the last error
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.TransactionScopeOptions">
+            <summary>
+            Default TransactionScope options for CreateTransactionScope
             </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Properties" -->

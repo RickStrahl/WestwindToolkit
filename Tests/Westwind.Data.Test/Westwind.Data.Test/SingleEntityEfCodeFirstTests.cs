@@ -167,6 +167,46 @@ namespace Westwind.Data.Test
         }
 
         [TestMethod]
+        public void NewEntityWithTransactionTest()
+        {
+            int custId = 0;
+            using (var custBus = new busCustomer())
+            {
+                var cust = new Customer()
+                {
+                    Id=10,
+                    FirstName = "John",
+                    LastName = "Farrow 2",
+                    Company = "Faraway2 Travel",
+                    LastOrder = DateTime.Now,
+                    Address = "111 adsasdasdasd"
+                };
+
+                // Attach cust to Context and fire
+                // NewEntity hooks
+                custBus.NewEntity(cust);
+
+                Assert.IsTrue(custBus.Save(useTransactionScope: true), custBus.ErrorMessage);
+
+                // cust.Id is updated after save operation
+                custId = cust.Id;
+
+                // Use a new bus object/context to force
+                // reload from disk - existing context loads from memory
+                // which doesn't test properly
+                using (var custBus2 = new busCustomer())
+                {
+                    // load and compare
+                    var cust2 = custBus2.Load(custId);
+                    Assert.AreEqual(cust2.Company, cust.Company);
+                    // Remove the new record    
+                    Assert.IsTrue(custBus2.Delete(custId), custBus2.ErrorMessage);
+                }
+
+            }
+        }
+
+        [TestMethod]
         public void AttachNewTest()
         {
             var cust = new Customer()
