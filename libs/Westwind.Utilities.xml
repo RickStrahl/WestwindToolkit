@@ -1625,7 +1625,7 @@
             The HTTP verb to use when sending the request
             </summary>
         </member>
-        <member name="P:Westwind.Utilities.HttpRequestSettings.Data">
+        <member name="P:Westwind.Utilities.HttpRequestSettings.Content">
             <summary>
             The Request content to send to the server.
             Data can be either string or byte[] type
@@ -1659,12 +1659,12 @@
             An optional proxy to set for this request
             </summary>
         </member>
-        <member name="P:Westwind.Utilities.HttpRequestSettings.RequestData">
+        <member name="P:Westwind.Utilities.HttpRequestSettings.CapturedRequestContent">
             <summary>
             Capture request string data that was actually sent to the server.
             </summary>
         </member>
-        <member name="P:Westwind.Utilities.HttpRequestSettings.ResponseData">
+        <member name="P:Westwind.Utilities.HttpRequestSettings.CapturedResponseContent">
             <summary>
             Captured string Response Data from the server
             </summary>

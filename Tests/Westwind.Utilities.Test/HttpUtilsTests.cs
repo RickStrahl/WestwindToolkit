@@ -158,7 +158,7 @@ namespace Westwind.Utilities.Test
         }
 
         [TestMethod]
-        public async void JsonRequestPostAsyncTest()
+        public async Task JsonRequestPostAsyncTest()
         {
             var postSnippet = new CodeSnippet()
             {
@@ -194,12 +194,12 @@ namespace Westwind.Utilities.Test
             }
 
             // This doesn't work for the async version - Response is never set by the base class
-            //Console.WriteLine("Status Code: " + settings.Response.StatusCode);
+            Console.WriteLine("Status Code: " + settings.Response.StatusCode);
 
-            //foreach (var header in settings.Response.Headers)
-            //{
-            //    Console.WriteLine(header + ": " + settings.Response.Headers[header.ToString()]);
-            //}
+            foreach (var header in settings.Response.Headers)
+            {
+                Console.WriteLine(header + ": " + settings.Response.Headers[header.ToString()]);
+            }
         }
     }
 
