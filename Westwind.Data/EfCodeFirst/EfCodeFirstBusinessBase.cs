@@ -638,7 +638,7 @@ namespace Westwind.Data.EfCodeFirst
                 using (var scope = CreateTransactionScope())
                 {
                     if (!SaveInternal(entity))
-                        return false;
+                        return false; // rolls back
 
                     scope.Complete();
                     return true;

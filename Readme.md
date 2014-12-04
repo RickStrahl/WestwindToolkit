@@ -1,5 +1,5 @@
 # West Wind Toolkit
-### A rich library of utilities for Web and everyday development ###
+### A rich library of utilities for Web and everyday development###
 
 <img src="http://west-wind.com/WestwindToolkit/images/WestwindWebToolkit_128x128.png" align="left"/> The West Wind Toolkit is a set of general purpose and Web Utility classes provided as easy to consume packages. The toolset is also available as source code so you can pick and choose functionality from the toolset if you only need individual features.
 
@@ -21,15 +21,15 @@ The main components of the West Wind Toolkit are:
 * [Westwind.Web.WebApi](https://github.com/RickStrahl/WestwindToolkit/tree/master/Westwind.Web.WebApi) - ASP.NET WebAPI filters, behaviors and extensions
 
 ### License ###
-The Westwind Toolkit library is an open source product licensed under **MIT license**, and there's no charge to use, integrate or modify the code for this project. You are free to use it in personal, commercial, government and any other type of application. Commercial licenses are also available.
+The Westwind Toolkit library is an open source product licensed under **[MIT license](http://opensource.org/licenses/MIT)**, and there's no charge to use, integrate or modify the code for this project. You are free to use it in personal, commercial, government and any other type of application. Commercial licenses are also available.
 
 All source code is copyright West Wind Technologies, regardless of changes made to them. Any source code modifications must leave the original copyright code headers intact.
 
 ### Commercial Licenses
 The libray is free, but if you prefer, you can also purchase a fully supported commercial license that allows for paid support options. There are two versions available:
 
-* [Single User License](http://store.west-wind.com/product/westwind_toolkit/ "Single User License")
-* [http://store.west-wind.com/product/westwind_toolkit_org/](http://store.west-wind.com/product/westwind_toolkit_org/ "Organization License")
+* [Single Developer License](http://store.west-wind.com/product/westwind_toolkit/)
+* [Organization License](http://store.west-wind.com/product/westwind_toolkit_org/)
 
 ### Why buy a license?
 Some organizations require a commercial license and support in order to integrate third party software tools into their products. The commercial license provides this level of licensing.
