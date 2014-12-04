@@ -4,41 +4,50 @@
 *not released yet*
 
 * **New HttpUtils.JsonRequest**<br/>
+<small>Westwind.Utilities</small>
 Added a new HttpUtils class with a JsonRequest() and JsonRequestAsync() 
 methods to handle calling JSON services and automatically sending
 and receiving of JSON data.
 
 * **New HttpUtils class**<br />
+<small>Westwind.Utilities</small>
 Added static HttpUtils class to make it easy to make Http Requests
 and specifically to make JSON service calls that can automatically
 serialize and deserialize data. Class also includes a simple HTTP
 retrieval routine.
 
 * **AppConfiguration support for Nested Property Encryption**<br />
+<small>Westwind.Utilities</small>
 You can now specify nested fields for encryption in the provider's
 PropertiesToEncrypt properties. For example, using `PropertiesToEncrypt=
 "MailserverPassword,License.LicenseKey"` allows encoding the nested
 license key. Supported on all configuration providers.
 
-* **Update to jQuery CSS/Attribute Watcher Plug-in**<br />
-Update this plug-in to work properly with newer browser versions. Switch
-to MutationObserver API for much better performance and better modern
-browser support. Fix jQuery version newer than 1.8.3 bug in the plug-in.
-Added support for monitoring attribute changes with the attr_ prefix
-(ie. to monitor class attribute changes: attr_class).
-
-* **Update jquery-watch Plug-in**
-Update jquery-watch plug-in that allows monitoring changes to CSS 
-styles and attributes. This update adds support for monitoring 
-attributes and uses the new MutationObserver DOM Api that works with
-all modern browsers. Slight interface change passing parameters
-as an `options` parameter
-
 * **Split .NET 4.0 and 4.5 targets for Westwind.Utilities**<br />
+<small>Westwind.Utilities</small>
 Create seperate net40 target for .NET 4.0 compatible output of
 Westwind.Utilities while moving forward to 4.5 with most of the
 code. Start integrating a number of async features into new and
 existing utility classes.
+
+* **Improved Transaction Support for EntityBusinessBase.Save()**<br />
+<small>Westwind.Data</small>
+Added new overridable `CreateTransactionScope()` method that is used
+to create a TransactionScope to wrap Save() operations optionally.
+Save() needs to be wrapped in case `OnBeforeSave()` or `OnAfterSave()`
+methods also write data that must be part of a transaction.
+Scope is created only optionally now using a new `useTransaction`
+parameter. `CreateTransactionScope()` and `TransactionScopeOptions`
+provide the ability to customize how the scope is created.
+
+* **Update to jQuery CSS/Attribute Watcher Plug-in**<br />
+<small>Westwind.Web/ww.jquery.js</small>
+Update this plug-in to work properly with newer browser versions. Switch
+to MutationObserver API for much better performance and better modern
+browser support. Fix jQuery version newer than 1.8.3 bug in the plug-in.
+Added support for monitoring attribute changes with the attr_ prefix
+(ie. to monitor class attribute changes: attr_class). Slight interface change passing parameters as an `options` parameter
+
 
 ### Version 2.56
 *October 2nd, 2014*
