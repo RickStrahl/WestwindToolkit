@@ -120,7 +120,7 @@ namespace Westwind.Data.Test
 
             DateTime newDateTime = new DateTime(1900, 1, 1);
             
-            var t = context.Customers.Where(cust=> cust.Id == 1).FirstOrDefault();
+            var t = context.Customers.FirstOrDefault();
             
             context.Dispose();
 

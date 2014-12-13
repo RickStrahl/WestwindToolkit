@@ -4,14 +4,22 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDB.Driver.Builders;
 using MongoDB.Driver.Linq;
+using Newtonsoft.Json;
 using Westwind.Data.MongoDb;
 using Westwind.Data.Test.Models;
+using Westwind.Utilities;
 
 namespace Westwind.BusinessFramework.Test.MongoDb
 {
     [TestClass]
     public class MongoDbBusinessTests
     {
+        public MongoDbBusinessBase<Customer, MongoDbContext> CreateBusiness()
+        {
+            return new MongoDbBusinessBase<Customer, MongoDbContext>(connectionString: "MongoTestContext");
+        }
+
+
         [TestMethod]
         public void Seed()
         {
@@ -25,22 +33,19 @@ namespace Westwind.BusinessFramework.Test.MongoDb
                 LastName = "Strahl",
                 Company = "West Wind",
                 Address = "32 Kaiea Place\r\nPaia, HI",
-            };
-            cust.Id = cust.GetHashCode();
+            };            
             mongoBus.Save(cust);
-
             
-            // add 100 random customers
+            // add random customers
             for (int i = 0; i < 250; i++)
             {
                 cust = new Customer()
                 {
-                    FirstName = RandomString(20),
-                    LastName = RandomString(20),
-                    Company = RandomString(25),
+                    FirstName = StringUtils.RandomString(20),
+                    LastName = StringUtils.RandomString(20),
+                    Company = StringUtils.RandomString(25),
                     Updated = DateTime.Now.AddDays(i * -1)
-                };
-                cust.Id = cust.GetHashCode();
+                };                
                 Assert.IsTrue(mongoBus.Save(cust), mongoBus.ErrorMessage);
             }
         }
@@ -64,25 +69,50 @@ namespace Westwind.BusinessFramework.Test.MongoDb
         }
 
 
-
-        public MongoDbBusinessBase<Customer, MongoDbContext> CreateBusiness()
+        [TestMethod]
+        public void FindFromString()
         {
-            return new MongoDbBusinessBase<Customer, MongoDbContext>(connectionString: "MongoTestContext");
+            var bus = CreateBusiness();
+            var result = bus.FindFromString("{ FirstName: /^R.*/i }");
+
+            Assert.IsNotNull(result);
+            foreach (var cust in result)
+            {
+                Console.WriteLine(cust.FirstName);
+            }
         }
 
-        private static Random random = new Random((int)DateTime.Now.Ticks);//thanks to McAden
 
-        private string RandomString(int size)
+        [TestMethod]
+        public void FindFromStringJson()
         {
-            StringBuilder builder = new StringBuilder();
-            char ch;
-            for (int i = 0; i < size; i++)
-            {
-                ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * random.NextDouble() + 65)));
-                builder.Append(ch);
-            }
+            var bus = CreateBusiness();
+            var json = bus.FindFromStringJson("{ FirstName: /^R.*/i }");
 
-            return builder.ToString();
+            Assert.IsNotNull(json);
+            Console.WriteLine(json);        
+        }
+
+        [TestMethod]
+        public void SaveFromString()
+        {
+            var cust = new Customer()
+            {
+                FirstName = "Rick (JSON)",
+                LastName = "Strahl",
+                Company = "West Wind",
+                Address = "32 Kaiea Place\r\nPaia, HI",
+            };
+            var json = JsonConvert.SerializeObject(cust);
+            json = json.Replace("\"Id\":", "\"_id\":");
+
+            var bus = CreateBusiness();
+            var result = bus.SaveFromJson(json);
+
+            Assert.IsNotNull(result);
+            Console.WriteLine(result);
+
+
         }
 
     }

@@ -1,6 +1,6 @@
 using System;
-using System.Linq.Expressions;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
@@ -207,13 +207,35 @@ namespace Westwind.Data.MongoDb
 
         #endregion
 
-
-        public IEnumerable<TEntity> Find(IMongoQuery query, string collectionName = null)
+        /// <summary>
+        /// Finds an individual entity based on the entity tyep
+        /// of this application.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="collectionName"></param>
+        /// <returns></returns>
+        public TEntity FindOne(IMongoQuery query, string collectionName = null)
         {
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = CollectionName;
 
-            return Database.GetCollection<TEntity>(collectionName).Find(query);
+            return Database.GetCollection<TEntity>(collectionName).FindOne(query);
+        }
+
+
+        /// <summary>
+        /// Finds an individual entity based on the entity type passed in
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <param name="collectionName"></param>
+        /// <returns></returns>
+        public T FindOne<T>(IMongoQuery query, string collectionName = null)
+        {
+            if (string.IsNullOrEmpty(collectionName))
+                collectionName = CollectionName;
+
+            return Database.GetCollection<T>(collectionName).FindOne(query);
         }
 
         public IEnumerable<T> Find<T>(IMongoQuery query, string collectionName = null)
@@ -224,6 +246,59 @@ namespace Westwind.Data.MongoDb
             return Database.GetCollection<T>(collectionName).Find(query);
         }
 
+        /// <summary>
+        /// Allows you to query for a single entity  using a Mongo Shell query 
+        /// string. Uses the default entity defined.
+        /// </summary>
+        /// <param name="jsonQuery">Json object query string</param>
+        /// <param name="collectionName">Optional - name of the collection to search</param>
+        /// <returns>Collection of items or null if none</returns>
+        public TEntity FindOneFromString(string jsonQuery, string collectionName = null)
+        {
+            if (string.IsNullOrEmpty(collectionName))
+                collectionName = CollectionName;
+
+            var query = GetQueryFromString(jsonQuery);
+            return Database.GetCollection<TEntity>(collectionName).FindOne(query);
+        }
+
+        /// <summary>
+        /// Allows you to query for a single entity  using a Mongo Shell query 
+        /// string. Uses the entity type passed.
+        /// </summary>
+        /// <param name="jsonQuery">Json object query string</param>
+        /// <param name="collectionName">Optional - name of the collection to search</param>
+        /// <returns>Collection of items or null if none</returns>
+        public T FindOneFromString<T>(string jsonQuery, string collectionName = null)
+        {
+            if (string.IsNullOrEmpty(collectionName))
+                collectionName = CollectionName;
+
+            var query = GetQueryFromString(jsonQuery);
+            return Database.GetCollection<T>(collectionName).FindOne(query);
+        }
+
+        /// <summary>
+        /// Allows you to query for a single entity  using a Mongo Shell query 
+        /// string. Uses the entity type passed.
+        /// </summary>
+        /// <param name="jsonQuery">Json object query string</param>
+        /// <param name="collectionName">Optional - name of the collection to search</param>
+        /// <returns>Collection of items or null if none</returns>
+        public string FindOneFromStringJson(string jsonQuery, string collectionName = null)
+        {
+            if (string.IsNullOrEmpty(collectionName))
+                collectionName = CollectionName;
+
+            var query = GetQueryFromString(jsonQuery);
+            var cursor = Database.GetCollection(collectionName).FindOne(query);
+            if (cursor == null)
+                return null;
+
+            return cursor.ToJson();
+        }
+   
+   
         public IEnumerable<TEntity> FindAll(string collectionName = null)
         {
             if (string.IsNullOrEmpty(collectionName))
@@ -240,24 +315,18 @@ namespace Westwind.Data.MongoDb
             return Database.GetCollection<T>(collectionName).FindAll();
         }
 
-        /// <summary>
-        /// Allows you to query Mongo using a Mongo Shell query 
-        /// string.
-        /// </summary>
-        /// <param name="jsonQuery">Json object query string</param>
-        /// <param name="collectionName">Optional - name of the collection to search</param>
-        /// <returns>Collection of items or null if none</returns>
-        public IEnumerable<TEntity> FindFromString(string jsonQuery, string collectionName = null)
+        
+
+        public IEnumerable<TEntity>FindFromString(string jsonQuery, string collectionName = null)
         {
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = CollectionName;
 
             var query = GetQueryFromString(jsonQuery);
             var items = Database.GetCollection<TEntity>(collectionName).Find(query);
-
-            return items as IEnumerable<TEntity>;
+            
+            return items;
         }
-
        
 
         /// <summary>
@@ -275,9 +344,26 @@ namespace Westwind.Data.MongoDb
             var query = GetQueryFromString(jsonQuery);            
             var items = Database.GetCollection<T>(collectionName).Find(query);
 
-            return items as IEnumerable<T>;
+            return items;
         }
 
+        /// <summary>
+        /// Allows you to query Mongo using a Mongo Shell query 
+        /// string.
+        /// </summary>
+        /// <param name="jsonQuery">Json object query string</param>
+        /// <param name="collectionName">Optional - name of the collection to search</param>
+        /// <returns>Collection of items or null if none</returns>
+        public string FindFromStringJson(string jsonQuery, string collectionName = null)
+        {
+            if (string.IsNullOrEmpty(collectionName))
+                collectionName = CollectionName;
+
+            var query = GetQueryFromString(jsonQuery);
+            var cursor = Database.GetCollection(collectionName).Find(query);
+
+            return cursor.ToJson();
+        }
 
         /// <summary>
         /// Allows you to query Mongo using a Mongo Shell query 
@@ -298,7 +384,7 @@ namespace Westwind.Data.MongoDb
             var query = new QueryDocument(queryObject.ToBsonDocument());
             var items = Database.GetCollection<TEntity>(collectionName).Find(query);
 
-            return items as IEnumerable<TEntity>;
+            return items;
         }
 
         /// <summary>
@@ -321,7 +407,7 @@ namespace Westwind.Data.MongoDb
             var query = new QueryDocument(queryObject.ToBsonDocument());
             var items = Database.GetCollection<T>(collectionName).Find(query);
 
-            return items as IEnumerable<T>;
+            return items;
         }
 
         /// <summary>
@@ -426,7 +512,7 @@ namespace Westwind.Data.MongoDb
 
             OnEntityLoaded(Entity);
 
-            return Entity as TEntity;
+            return Entity;
         }
 
 
@@ -445,7 +531,7 @@ namespace Westwind.Data.MongoDb
                 return null;
             }
             OnEntityLoaded(Entity);
-            return Entity as TEntity;
+            return Entity;
         }
 
         /// <summary>
@@ -708,7 +794,7 @@ namespace Westwind.Data.MongoDb
 
             try
             {
-                var result = Database.GetCollection(collectionName).Save<T>(entity);
+                var result = Database.GetCollection(collectionName).Save(entity);
                 if (result.HasLastErrorMessage)
                 {
                     SetError(result.LastErrorMessage);
@@ -722,6 +808,48 @@ namespace Westwind.Data.MongoDb
             }
             
             return true;
+        }
+
+        /// <summary>
+        /// Saves 
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <param name="collectionName"></param>
+        /// <returns>Id of object saved</returns>
+        public string SaveFromJson(string entityJson, string collectionName = null)
+        {
+            if (string.IsNullOrEmpty(collectionName))
+                collectionName = CollectionName;
+
+            if (string.IsNullOrEmpty(entityJson))
+            {
+                SetError("No entity to save passed.");
+                return null;
+            }
+
+            try
+            {
+                var doc = BsonDocument.Parse(entityJson);
+                if (doc == null)
+                {
+                    SetError("No entity to save passed.");
+                    return null;
+                }
+
+                var result = Database.GetCollection(collectionName).Save(doc);
+                if (result.HasLastErrorMessage)
+                {
+                    SetError(result.LastErrorMessage);
+                    return null;
+                }
+                return result.Response.ToJson();
+            }
+            catch (Exception ex)
+            {
+                SetError(ex, true);
+                return null;
+            }
+            
         }
 
         /// <summary>
@@ -825,7 +953,7 @@ namespace Westwind.Data.MongoDb
             private set { _Properties = value; }
         }
 
-        private PropertyBag _Properties = null;
+        private PropertyBag _Properties;
 
         /// <summary>
         /// Retrieves a value from the Properties collectionName safely.
@@ -988,7 +1116,7 @@ namespace Westwind.Data.MongoDb
             return base.ToString();
         }
 
-        private bool disposed = false;
+        private bool disposed;
 
         public void Dispose()
         {

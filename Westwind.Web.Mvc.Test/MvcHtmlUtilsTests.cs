@@ -24,7 +24,7 @@ namespace Westwind.Web.Mvc.Test
 
             foreach (var li in listItems)
             {
-                Console.WriteLine(String.Format("{0}: {1}", li.Value, li.Text));
+                Console.WriteLine("{0}: {1}", li.Value, li.Text);
             }        
         }
     }

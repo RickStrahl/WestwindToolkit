@@ -52,7 +52,7 @@ namespace Westwind.Web.Mvc
                 string text = entry.Value.ToString();
                 string val = entry.Key.ToString();
 
-                yield return new SelectListItem()
+                yield return new SelectListItem
                 {
                      Text = text,
                      Value = val

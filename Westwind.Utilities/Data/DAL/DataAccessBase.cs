@@ -50,7 +50,7 @@ namespace Westwind.Utilities.Data
     /// <summary>
     /// Basic low level Data Access Layer
     /// </summary>
-    [DebuggerDisplay("{ErrorMessage}")]
+    [DebuggerDisplay("{ ErrorMessage } {ConnectionString}")]
     public abstract class DataAccessBase : IDisposable
     {        
         private const string STR_DefaultProviderName = "System.Data.SqlClient";

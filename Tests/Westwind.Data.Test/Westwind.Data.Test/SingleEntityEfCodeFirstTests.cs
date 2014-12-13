@@ -98,7 +98,7 @@ namespace Westwind.Data.Test
         [TestMethod]
         public void NewEntity1Test()
         {
-            int custId = 0;
+            int custId;
             Customer cust = null;
             using (var custBus = new busCustomer())
             {
@@ -131,7 +131,7 @@ namespace Westwind.Data.Test
         [TestMethod]
         public void NewEntityAlternateTest()
         {
-            int custId = 0;
+            int custId;
             using (var custBus = new busCustomer())
             {
                 var cust = new Customer()
@@ -169,12 +169,11 @@ namespace Westwind.Data.Test
         [TestMethod]
         public void NewEntityWithTransactionTest()
         {
-            int custId = 0;
+            int custId;
             using (var custBus = new busCustomer())
             {
                 var cust = new Customer()
                 {
-                    Id=10,
                     FirstName = "John",
                     LastName = "Farrow 2",
                     Company = "Faraway2 Travel",
@@ -244,7 +243,7 @@ namespace Westwind.Data.Test
         public void AttachExistingTest()
         {
             string newCompany = "West Wind " + DateTime.Now;
-            int custId = 1;
+            int custId = (int) DataUtils.GenerateUniqueNumericId();
 
             var cust = new Customer()
             {

@@ -713,12 +713,10 @@ http://en.wikipedia.org/wiki/MIT_License
             if (typeof box.style.boxShadow == "string") {
                 el.css("box-shadow", String.format("{0}px {0}px {0}px {1}", opt.offset, opt.color));
                 return;
-            }
-            else if (typeof box.style.MozBoxShadow == "string") {
+            } else if (typeof box.style.MozBoxShadow == "string") {
                 el.css("-moz-box-shadow", String.format("{0}px {0}px {0}px {1}", opt.offset, opt.color));
                 return;
-            }
-            else if (typeof box.style.WebkitBoxShadow == "string") {
+            } else if (typeof box.style.WebkitBoxShadow == "string") {
                 el.css("-webkit-box-shadow", String.format("{0}px {0}px {0}px {1}", opt.offset, opt.color));
                 return;
             }
@@ -768,31 +766,31 @@ http://en.wikipedia.org/wiki/MIT_License
             if (zIndex && zIndex != "auto")
                 sh.css("zIndex", zIndex - 1);
             else {
-                el.css("zIndex", opt.zIndex); sh.css("zIndex", opt.zIndex - 1);
+                el.css("zIndex", opt.zIndex);
+                sh.css("zIndex", opt.zIndex - 1);
             }
 
             if (!exists) {
                 el.watch({ properties: "left,top,width,height,display,opacity,zIndex" },
-                    function (w, i) {
-                     if (el.is(":visible")) {
-                         var pos = el.position();
-                         sh.css({
-                             position: "absolute",
-                             opacity: el.css("opacity") * opt.opacity,
-                             width: el.outerWidth(),
-                             height: el.outerHeight(),
-                             opacity: opt.opacity,
-                             background: opt.color,
-                             left: pos.left + opt.offset - 4,
-                             top: pos.top + opt.offset - 2
-                         });
-                         //el.shadow(opt);
-                     }
-                     else
-                         sh.hide();
-                 },
-                 100, "_shadowMove")};
-            }
+                    function(w, i) {
+                        if (el.is(":visible")) {
+                            var pos = el.position();
+                            sh.css({
+                                position: "absolute",
+                                opacity: el.css("opacity") * opt.opacity,
+                                width: el.outerWidth(),
+                                height: el.outerHeight(),
+                                opacity: opt.opacity,
+                                background: opt.color,
+                                left: pos.left + opt.offset - 4,
+                                top: pos.top + opt.offset - 2
+                            });
+                            //el.shadow(opt);
+                        } else
+                            sh.hide();
+                    },
+                    100, "_shadowMove");
+            };
 
             if (opt.callback)
                 opt.callback(sh);
@@ -1925,8 +1923,8 @@ http://en.wikipedia.org/wiki/MIT_License
     }
     String.prototype.extract = function (startDelim, endDelim, allowMissingEndDelim, returnDelims) {
         var str = this;
-        if (str.length == 0)
-            return "";
+        if (str.length === 0)
+            return "";        
 
         var src = str.toLowerCase();
         startDelim = startDelim.toLocaleLowerCase();
@@ -1935,8 +1933,8 @@ http://en.wikipedia.org/wiki/MIT_License
         var i1 = src.indexOf(startDelim);
         if (i1 == -1)
             return "";
-
-        var i2 = src.indexOf(endDelim, i1 + 1);
+        
+        var i2 = src.indexOf(endDelim, i1 + startDelim.length);
 
         if (!allowMissingEndDelim && i2 == -1)
             return "";
@@ -1947,11 +1945,12 @@ http://en.wikipedia.org/wiki/MIT_License
 
             return str.substr(i1 + startDelim.length);
         }
+        
 
         if (returnDelims)
-            return str.substr(i1, i2 - i1 + endDelim.length);
-
-        return str.substr(i1 + startDelim.length, i2 - i1 - 1);
+            return str.substr(i1, i2 - i1 + startDelim.length);
+        
+        return str.substr(i1 + startDelim.length, i2 - i1 - startDelim.length);
     };
     String.prototype.escapeRegExp = function () {
         return this.replace(/[.*+?^${}()|[\]\/\\]/g, "\\$0");

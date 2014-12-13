@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using Westwind.Utilities;
 
 namespace Westwind.Data.Test.Models
 {
@@ -34,6 +35,7 @@ namespace Westwind.Data.Test.Models
 
         public Customer()
         {
+            Id = (int) Math.Abs(DataUtils.GenerateUniqueNumericId());
             Entered = DateTime.Now;
             Updated = DateTime.Now;
             Orders = new List<Order>();

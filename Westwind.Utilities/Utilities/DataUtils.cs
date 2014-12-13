@@ -95,8 +95,8 @@ namespace Westwind.Utilities
         /// <returns></returns>
         public static long GenerateUniqueNumericId()
         {
-            byte[] bytes = Guid.NewGuid().ToByteArray();            
-            return BitConverter.ToInt64(bytes, 0);
+            byte[] bytes = Guid.NewGuid().ToByteArray();
+            return (long) BitConverter.ToUInt64(bytes, 0);
         }
 
         static Random rnd = new Random();
