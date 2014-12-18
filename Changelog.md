@@ -40,6 +40,13 @@ Scope is created only optionally now using a new `useTransaction`
 parameter. `CreateTransactionScope()` and `TransactionScopeOptions`
 provide the ability to customize how the scope is created.
 
+* **Add String Access functions to Westwind.Data.MongoDb**<br/>
+<small>Westwind.Data</small>
+Add support for JSON string for queries, and save operations so that it's
+possible to provide the common MongoDb query syntax to execute queries. 
+The various FindXXXJson() functions handle queries and SaveFromJson() 
+which allows saving with a JSON entity.
+
 * **Update to jQuery CSS/Attribute Watcher Plug-in**<br />
 <small>Westwind.Web/ww.jquery.js</small>
 Update this plug-in to work properly with newer browser versions. Switch

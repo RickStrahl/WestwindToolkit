@@ -18,7 +18,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\..\..\wwapps\wwMongoDb\bin\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -70,6 +70,7 @@
   <ItemGroup>
     <Compile Include="IEntity.cs" />
     <Compile Include="Logging\MongoDbLogAdapter.cs" />
+    <Compile Include="MongoDbDataAccess.cs" />
     <Compile Include="MongoDbContext.cs" />
     <Compile Include="MongoDbBusinessBase.cs" />
     <Compile Include="IBusinessObject.cs" />

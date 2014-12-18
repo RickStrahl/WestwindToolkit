@@ -2,69 +2,50 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using MongoDB.Bson;
+using MongoDB.Bson.IO;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
 using Westwind.Data.MongoDb.Properties;
-using Westwind.Utilities;
+
 
 namespace Westwind.Data.MongoDb
 {
 
-    public class MongoDbBusinessBase : MongoDbBusinessBase<object, MongoDbContext>
+    /// <summary>
+    /// A non-generic version of the Mongo data access component that requires explicitly
+    /// specifying result entity types.
+    /// </summary>
+    public class MongoDbDataAccess : MongoDbDataAccess<object, MongoDbContext>
     {
-
-        /// <summary>
-        /// Base constructor using default behavior loading context by 
-        /// connectionstring name.
-        /// </summary>
-        /// <param name="connectionString">Connection string name</param>
-        public MongoDbBusinessBase(string collection = null, string database = null, string connectionString = null)
-            : base(collection, database, connectionString)
-        {
-        }
+        public MongoDbDataAccess(string connectionString) : base(connectionString: connectionString)
+        { }        
     }
 
     /// <summary>
-    /// Light weight Entity Framework Code First Business object base class
-    /// that acts as a logic container for an entity DbContext instance. 
-    /// 
-    /// Subclasses of this business object should be used to implement most data
-    /// related logic that deals with creating, updating, removing and querying 
-    /// of data use EF Code First.
-    /// 
-    /// The business object provides base CRUD methods like Load, NewEntity,
-    /// Remove that act on the specified entity type. The Save() method uses
-    /// the EF specific context based SaveChanges
-    /// which saves all pending changes (not just those for the current entity 
-    /// and its relations). 
-    /// 
-    /// These business objects should be used as atomically as possible and 
-    /// call Save() as often as possible to update pending data.
+    /// A light wrapper around the MongoDb API to provide for easy queries
+    /// and Save operations.    
     /// </summary>
     /// <typeparam name="TEntity">
-    /// The type of the entity that this business object is tied to. 
-    /// Note that you can access any of the context's entities - this entity
-    /// is meant as a 'top level' entity that controls the operations of
-    /// the CRUD methods. Maps to the Entity property on this class
+    /// The type of an optional entity that various queries can project
+    /// results into. this is mainly a convenience parameter that removes
+    /// the need to specify a generic type for each operation.
     /// </typeparam>
     /// <typeparam name="TMongoContext">
     /// A MongoDbContext type that configures MongoDb driver behavior and startup operation.
     /// </typeparam>
-    public class MongoDbBusinessBase<TEntity,TMongoContext> : IDisposable, IBusinessObject
+    public class MongoDbDataAccess<TEntity,TMongoContext>
         where TEntity : class, new()
         where TMongoContext : MongoDbContext, new()
     {
-
         /// <summary>
         /// Instance of the MongoDb core database instance.
         /// Set internally when the driver is initialized.
         /// </summary>
         public MongoDatabase Database { get; set; }
 
-        protected string CollectionName { get; set; }
-        protected Type EntityType = typeof (TEntity);
-        protected TMongoContext Context = new TMongoContext();
+        protected string CollectionName { get; set; }        
+        protected MongoDbContext Context = new MongoDbContext();
 
         /// <summary>
         /// Re-usable MongoDb Collection instance.
@@ -81,33 +62,6 @@ namespace Westwind.Data.MongoDb
             }
         }
         private MongoCollection<TEntity> _collection;
-
-
-        /// <summary>
-        /// A collection that holds validation errors after Validate()
-        /// or Save with AutoValidate on is called
-        /// </summary>
-        public ValidationErrorCollection ValidationErrors
-        {
-            get
-            {
-                if (_validationErrors == null)
-                    _validationErrors = new ValidationErrorCollection();
-                return _validationErrors;
-            }
-        }
-        private ValidationErrorCollection _validationErrors;
-
-        /// <summary>
-        /// Determines whether or not the Save operation causes automatic
-        /// validation. Default is false.
-        /// </summary>                        
-        public bool AutoValidate { get; set; }
-
-        /// <summary>
-        /// Internally loaded instance from load and newentity calls
-        /// </summary>
-        public TEntity Entity { get; set; }
 
 
         /// <summary>
@@ -145,25 +99,25 @@ namespace Westwind.Data.MongoDb
 
 
         #region ObjectInitializers
-  
         
 
+       
         /// <summary>
         /// Base constructor using default behavior loading context by 
         /// connectionstring name.
         /// </summary>
         /// <param name="connectionString">Connection string name</param>
-        public MongoDbBusinessBase(string collection = null, string database = null, string connectionString = null)
+        public MongoDbDataAccess(string collection = null, string database = null, string connectionString = null)
         {
             InitializeInternal();
             
-            Context = new TMongoContext();
+            Context = new MongoDbContext();
             Database = GetDatabase(collection, database, connectionString);
 
             if (!Database.CollectionExists(CollectionName))
             {
                 if (string.IsNullOrEmpty(CollectionName))
-                    CollectionName = Pluralizer.Pluralize(EntityType.Name); 
+                    CollectionName = Pluralizer.Pluralize(typeof(TEntity).Name); 
                 
                 Database.CreateCollection(CollectionName);                
             }
@@ -198,6 +152,7 @@ namespace Westwind.Data.MongoDb
             
             return db;
         }
+
 
 
         /// <summary>
@@ -307,10 +262,11 @@ namespace Westwind.Data.MongoDb
 
             var query = GetQueryFromString(jsonQuery);
             var cursor = Database.GetCollection(collectionName).FindOne(query);
+            
             if (cursor == null)
                 return null;
 
-            return cursor.ToJson();
+            return cursor.ToJson( new JsonWriterSettings { OutputMode = JsonOutputMode.Strict });
         }
    
    
@@ -351,12 +307,13 @@ namespace Westwind.Data.MongoDb
         /// <param name="jsonQuery">Json object query string</param>
         /// <param name="collectionName">Optional - name of the collection to search</param>
         /// <returns>Collection of items or null if none</returns>    
-        public IEnumerable<T> FindFromString<T>(string jsonQuery, string collectionName = null)
+        public IEnumerable<T> FindFromString<T>(string jsonQuery, string collectionName = null,
+                                                int skip = -1, int limit = -1)
         {
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = CollectionName;
 
-            var query = GetQueryFromString(jsonQuery);            
+            var query = GetQueryFromString(jsonQuery);                        
             var items = Database.GetCollection<T>(collectionName).Find(query);
 
             return items;
@@ -369,7 +326,8 @@ namespace Westwind.Data.MongoDb
         /// <param name="jsonQuery">Json object query string</param>
         /// <param name="collectionName">Optional - name of the collection to search</param>
         /// <returns>Collection of items or null if none</returns>
-        public string FindFromStringJson(string jsonQuery, string collectionName = null)
+        public string FindFromStringJson(string jsonQuery, string collectionName = null,
+            int skip = -1, int limit = -1)
         {
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = CollectionName;
@@ -377,7 +335,13 @@ namespace Westwind.Data.MongoDb
             var query = GetQueryFromString(jsonQuery);
             var cursor = Database.GetCollection(collectionName).Find(query);
 
-            return cursor.ToJson();
+            if (limit > -1)
+                cursor.Limit = limit;
+
+            if (skip > -1)
+                cursor.Skip = skip;            
+
+            return cursor.ToJson( new JsonWriterSettings { OutputMode = JsonOutputMode.Strict } );
         }
 
         /// <summary>
@@ -434,60 +398,10 @@ namespace Westwind.Data.MongoDb
         /// <param name="jsonQuery"></param>
         /// <returns></returns>
         public QueryDocument GetQueryFromString(string jsonQuery)
-        {
+        {            
             return new QueryDocument(BsonSerializer.Deserialize<BsonDocument>(jsonQuery));
         }
-        
-        /// <summary>
-        /// Creates a new instance of an Entity tracked
-        /// by the DbContext.
-        /// </summary>
-        /// <returns></returns>
-        public virtual TEntity NewEntity()
-        {
-            Entity = new TEntity();
 
-            OnNewEntity(Entity);
-
-            if (Entity == null)
-                return null;
-
-            return Entity;
-        }
-
-        /// <summary>
-        /// Adds a new entity as if it was created and fires
-        /// the OnNewEntity internally. If NULL is passed in
-        /// a brand new entity is created and passed back.
-        /// 
-        /// This allows for external creation of the entity
-        /// and then adding the entity to the context after
-        /// the fact.
-        /// </summary>
-        /// <param name="entity">An entity instance</param>
-        /// <returns></returns>
-        public virtual TEntity NewEntity(TEntity entity)
-        {
-            if (entity == null)
-                return NewEntity();
-
-            Entity = entity;
-            OnNewEntity(Entity);
-
-            if (Entity == null)
-                return null;
-
-            return Entity;
-        }
-
-
-        /// <summary>
-        /// Overridable method that allows adding post NewEntity functionaly
-        /// </summary>
-        /// <param name="entity"></param>
-        protected virtual void OnNewEntity(TEntity entity)
-        {
-        }
 
 
         /// <summary>
@@ -517,17 +431,15 @@ namespace Westwind.Data.MongoDb
         /// <returns></returns>
         protected virtual TEntity LoadBase(string id)
         {
-            Entity = Collection.FindOneByIdAs(typeof(TEntity), new BsonString(id)) as TEntity;            
+            var entity = Collection.FindOneByIdAs(typeof(TEntity), new BsonString(id)) as TEntity;            
 
-            if (Entity == null)
+            if (entity == null)
             {
                 SetError("No match found.");
                 return null;
             }
-
-            OnEntityLoaded(Entity);
-
-            return Entity;
+        
+            return entity;
         }
 
 
@@ -538,15 +450,14 @@ namespace Westwind.Data.MongoDb
         /// <returns></returns>
         protected virtual TEntity LoadBase(int id)
         {
-            Entity = Collection.FindOneByIdAs(typeof(TEntity),  id) as TEntity;
+            var entity = Collection.FindOneByIdAs(typeof(TEntity),  id) as TEntity;
 
-            if (Entity == null)
+            if (entity == null)
             {
                 SetError("No match found.");
                 return null;
             }
-            OnEntityLoaded(Entity);
-            return Entity;
+            return entity;
         }
 
         /// <summary>
@@ -557,17 +468,14 @@ namespace Westwind.Data.MongoDb
         protected virtual TEntity LoadBase(Expression<Func<TEntity, bool>> whereClauseLambda)
         {
             SetError();
-            Entity = null;
+            TEntity entity;
 
             try
             {
                 var query = Query<TEntity>.Where(whereClauseLambda);
-                Entity = Database.GetCollection<TEntity>(CollectionName).FindOne(query);
+                entity = Database.GetCollection<TEntity>(CollectionName).FindOne(query);
 
-                if (Entity != null)
-                    OnEntityLoaded(Entity);
-
-                return Entity;
+                return entity;
             }
             catch (InvalidOperationException)
             {
@@ -586,12 +494,25 @@ namespace Westwind.Data.MongoDb
 
 
         /// <summary>
-        /// Fired after an entity has been loaded with the .Load() method
+        /// Loads an entity and returns a JSON string
         /// </summary>
-        /// <param name="entity"></param>
-        protected virtual void OnEntityLoaded(TEntity entity)
+        /// <param name="id"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public string LoadJson(string id, string collection)
         {
+            return FindOneFromStringJson(string.Format("{{ _id: '{0}' }}", id), collection);
+        }
 
+        /// <summary>
+        /// Loads an entity and returns a JSON string
+        /// </summary>
+        /// <param name="id">A string ID or Object Id value to look up</param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
+        public string LoadJson(int id, string collection)
+        {
+            return FindOneFromStringJson(string.Format("{ _id: {0} }", id), collection);
         }
 
 
@@ -618,9 +539,6 @@ namespace Westwind.Data.MongoDb
         /// </param>
         public virtual bool Delete(TEntity entity)
         {
-            if (entity == null)
-                entity = Entity;
-
             if (entity == null)
                 return true;
 
@@ -666,9 +584,6 @@ namespace Westwind.Data.MongoDb
         /// </summary>
         private bool DeleteInternal(TEntity entity)
         {
-            if (!OnBeforeDelete(entity))
-                return false;
-
             try
             {
                 var query = Query.EQ("_id", new BsonString(((dynamic) entity).Id.ToString()));
@@ -678,10 +593,7 @@ namespace Westwind.Data.MongoDb
                 {
                     SetError(result.ErrorMessage);
                     return false;
-                }
-                
-                if (!OnAfterDelete(entity))
-                    return false;
+                }                
             }
             catch (Exception ex)
             {
@@ -691,46 +603,6 @@ namespace Westwind.Data.MongoDb
 
             return true;
         }
-
-
-        /// <summary>
-        /// Called before a delete operation occurs
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        protected virtual bool OnBeforeDelete(TEntity entity)
-        {
-            return true;
-        }
-
-        /// <summary>
-        /// Called after a resource is deleted. Runs within the same
-        /// transaction scope
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        protected virtual bool OnAfterDelete(TEntity entity)
-        {
-            return true;
-        }
-
-
-        //protected DbTransaction BeginTransaction(IsolationLevel level = IsolationLevel.Unspecified)
-        //{
-        //    if (Context.DatabaseName.Connection.State != ConnectionState.Open)
-        //        Context.DatabaseName.Connection.Open();
-
-        //    return Context.DatabaseName.Connection.BeginTransaction(level);
-        //}
-
-        //public void CommitTransaction()
-        //{
-        //    Context.DatabaseName.Connection.
-        //}
-
-        //public void RollbackTransaction()
-        //{
-        //}
 
 
         /// <summary>
@@ -744,24 +616,13 @@ namespace Westwind.Data.MongoDb
         /// object instances with separate contexts.
         /// </remarks>
         /// <returns></returns>
-        public bool Save(TEntity entity = null, string collectionName = null)
+        public bool Save(TEntity entity, string collectionName = null)
         {
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = CollectionName;
 
             if (entity == null)
-                entity = Entity;
-
-            // hook point - allow logic to abort saving
-            if (!OnBeforeSave(entity))
-                return false;
-
-             // now do validations
-             if (AutoValidate)
-             {
-                 if (!Validate(entity))
-                    return false;
-             }
+                throw new ArgumentException("Entity has to be passed in.");
 
             try
             {
@@ -777,10 +638,6 @@ namespace Westwind.Data.MongoDb
                 SetError(ex, true);
                 return false;
             }
-
-            if (!OnAfterSave(Entity))
-                    return false;
-
 
             return true;
         }
@@ -831,7 +688,7 @@ namespace Westwind.Data.MongoDb
         /// <param name="entity"></param>
         /// <param name="collectionName"></param>
         /// <returns>Id of object saved</returns>
-        public string SaveFromJson(string entityJson, string collectionName = null)
+        public MongoSaveResponse SaveFromJson(string entityJson, string collectionName = null)
         {
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = CollectionName;
@@ -851,16 +708,19 @@ namespace Westwind.Data.MongoDb
                     return null;
                 }
 
-                var result = Database.GetCollection(collectionName).Save(doc);
-                
+                var result = Database.GetCollection(collectionName).Save(doc); //, new SafeMode(true));
                 if (result.HasLastErrorMessage)
                 {
                     SetError(result.LastErrorMessage);
                     return null;
                 }
 
-                var id = doc["_id"].AsString;
-                return id;                
+                return new MongoSaveResponse
+                {
+                    Id = doc["_id"].ToString(),
+                    Ok = !result.HasLastErrorMessage,
+                    Message = result.LastErrorMessage
+                };
             }
             catch (Exception ex)
             {
@@ -871,206 +731,15 @@ namespace Westwind.Data.MongoDb
         }
 
         /// <summary>
-        /// Hook point fired just before the save method is called.
-        /// 
-        /// Override this method to fix up entity values before a save
-        /// operation occurs.                
+        /// Generates a new Bson Id and returns it as a string.
+        /// This function can be used by non-.NET clients/APIs
+        /// that only work with string values.
         /// </summary>
-        /// <returns>return true to save or false to avoid saving</returns>
-        /// <param name="entity"></param>
-        protected virtual bool OnBeforeSave(TEntity entity)
+        /// <returns>string</returns>
+        public string GenerateNewId()
         {
-            return true;
+            return ObjectId.GenerateNewId().ToString();
         }
-
-        /// <summary>
-        /// Hook point fired after the Save operation has completed
-        /// successfully. Note doesn't fire if the Save() operation
-        /// fails.
-        /// 
-        /// Override this method to fix up or fire actions after
-        /// the Save operation completes.
-        /// </summary>
-        /// <param name="entity"></param>
-        protected virtual bool OnAfterSave(TEntity entity)
-        {
-            return true;
-        }
-
-
-        /// <summary>
-        /// Validate() is used to validate business rules on the business object. 
-        /// Validates both EF entity validation rules on pending changes as well
-        /// as any custom validation rules you implement in the OnValidate() method.
-        /// 
-        /// Do not override this method for custom Validation(). Instead override
-        /// OnValidate() or add error entries to the ValidationErrors collectionName.        
-        /// <remarks>
-        /// If the AutoValidate flag is set to true causes Save()
-        /// to automatically call this method. Must be overridden to perform any 
-        /// validation.
-        /// </remarks>
-        /// <seealso>Class wwBusiness Class ValidationErrorCollection</seealso>
-        /// </summary>
-        /// <param name="entity">Optional entity to validate. Defaults to this.Entity</param>
-        /// <param name="clearValidationErrors">If true clears all validation errors before processing rules</param>
-        /// <returns>True or False.</returns>
-        public bool Validate(TEntity entity = null, bool clearValidationErrors = false)
-        {
-            if (clearValidationErrors)
-                ValidationErrors.Clear();
-
-            if (entity == null)
-                entity = Entity;
-
-            // No entity - no validation errors
-            if (entity == null)
-                return true;
-
-            // call business object level validation errors                        
-            OnValidate(entity);
-
-            if (ValidationErrors.Count > 0)
-            {
-                SetError(ValidationErrors.ToString());
-                return false;
-            }
-
-            return true;
-        }
-
-
-
-        /// <summary>
-        /// Method that should be overridden in a business object to handle actual validation. 
-        /// This method is called from the Validate method.
-        /// 
-        /// This method should add any errors to the <see cref="ValidationErrors"/> collectionName.
-        /// </summary>
-        /// <param name="entity">The entity to be validated</param>
-        protected virtual void OnValidate(TEntity entity)
-        {
-        }
-
-
-        #region GenericPropertyStorage
-
-        /// <summary>
-        // Dictionary of arbitrary property values that can be attached
-        // to the current object. You can use GetProperties, SetProperties
-        // to load the properties to and from a text field.
-        /// </summary>
-        public PropertyBag Properties
-        {
-            get
-            {
-                if (_Properties == null)
-                    _Properties = new PropertyBag();
-                return _Properties;
-            }
-            private set { _Properties = value; }
-        }
-
-        private PropertyBag _Properties;
-
-        /// <summary>
-        /// Retrieves a value from the Properties collectionName safely.
-        /// If the value doesn't exist null is returned.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        public object GetProperty(string key)
-        {
-            if (Properties == null)
-                return null;
-
-            object value = null;
-            Properties.TryGetValue(key, out value);
-
-            return value;
-        }
-
-        /// <summary>
-        /// Loads the Properties dictionary with values from a Properties property of 
-        /// an entity object. Once loaded you can access the dictionary to read and write
-        /// values from it arbitrarily and use SetProperties to write the values back
-        /// in serialized form to the underlying property for database storage.
-        /// </summary>
-        /// <param name="stringFieldNameToLoadFrom">The name of the field to load the XML properties from.</param>
-        protected void GetProperties(string stringFieldNameToLoadFrom = "Properties", object entity = null)
-        {
-            Properties = null;
-
-            if (entity == null)
-                entity = Entity;
-
-            // Always create a new property bag
-            Properties = new PropertyBag();
-
-            string fieldValue = ReflectionUtils.GetProperty(entity, stringFieldNameToLoadFrom) as string;
-            if (string.IsNullOrEmpty(fieldValue))
-                return;
-
-            // load up Properties from XML                       
-            Properties.FromXml(fieldValue);
-        }
-
-        /// <summary>
-        /// Saves the Properties Dictionary - in serialized string form - to a specified entity field which 
-        /// in turn allows writing the data back to the database.
-        /// </summary>
-        /// <param name="stringFieldToSaveTo"></param>
-        protected void SetProperties(string stringFieldToSaveTo = "Properties", object entity = null)
-        {
-            if (entity == null)
-                entity = Entity;
-            
-
-            string xml = null;
-            if (Properties.Count > 0)
-            {
-                // Serialize to Xm
-                xml = Properties.ToXml();
-            }
-            ReflectionUtils.SetProperty(entity, stringFieldToSaveTo, xml);
-        }
-
-        #endregion
-
-
-
-        ///// <summary>
-        ///// Checks to see if the current entity has been added
-        ///// to the data context as a new entity
-        ///// 
-        ///// This entity specific version is more efficient
-        ///// than the generic object parameter version.
-        ///// </summary>
-        ///// <param name="entity"></param>
-        ///// <returns></returns>
-        //protected bool IsNewEntity(TEntity entity)
-        //{
-        //    DbEntityEntry entry = GetEntityEntry(entity);
-        //    if (entry == null)
-        //        throw new ArgumentException(Resources.EntityIsNotPartOfTheContext);
-
-        //    return entry.State == EntityState.Added;
-        //}
-
-        ///// <summary>
-        ///// Checks to see if the current entity has been added
-        ///// to the data context as a new entity
-        ///// </summary>
-        ///// <param name="entity"></param>
-        ///// <returns></returns>
-        //protected bool IsNewEntity(object entity)
-        //{
-        //    DbEntityEntry entry = GetEntityEntry(entity);
-        //    if (entry == null)
-        //        throw new ArgumentException(Resources.EntityIsNotPartOfTheContext);
-
-        //    return entry.State == EntityState.Added;
-        //}
 
 
         /// <summary>
@@ -1148,5 +817,12 @@ namespace Westwind.Data.MongoDb
                 Database = null;
             }
         }
+    }
+
+    public class MongoSaveResponse
+    {
+        public string Id { get; set; }
+        public bool Ok { get; set; }
+        public string Message { get; set; }
     }
 }

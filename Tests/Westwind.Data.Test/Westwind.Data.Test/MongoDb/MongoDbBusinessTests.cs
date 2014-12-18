@@ -111,8 +111,6 @@ namespace Westwind.BusinessFramework.Test.MongoDb
 
             Assert.IsNotNull(result);
             Console.WriteLine(result);
-
-
         }
 
     }
