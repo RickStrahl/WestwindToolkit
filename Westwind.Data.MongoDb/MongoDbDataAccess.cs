@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq.Expressions;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
@@ -16,7 +17,7 @@ namespace Westwind.Data.MongoDb
     /// A non-generic version of the Mongo data access component that requires explicitly
     /// specifying result entity types.
     /// </summary>
-    public class MongoDbDataAccess : MongoDbDataAccess<object, MongoDbContext>
+    public class MongoDbDataAccess : MongoDbDataAccess<object>
     {
         public MongoDbDataAccess(string connectionString) : base(connectionString: connectionString)
         { }        
@@ -31,12 +32,8 @@ namespace Westwind.Data.MongoDb
     /// results into. this is mainly a convenience parameter that removes
     /// the need to specify a generic type for each operation.
     /// </typeparam>
-    /// <typeparam name="TMongoContext">
-    /// A MongoDbContext type that configures MongoDb driver behavior and startup operation.
-    /// </typeparam>
-    public class MongoDbDataAccess<TEntity,TMongoContext>
-        where TEntity : class, new()
-        where TMongoContext : MongoDbContext, new()
+    public class MongoDbDataAccess<TEntity>
+        where TEntity : class, new()     
     {
         /// <summary>
         /// Instance of the MongoDb core database instance.
@@ -44,8 +41,18 @@ namespace Westwind.Data.MongoDb
         /// </summary>
         public MongoDatabase Database { get; set; }
 
+        /// <summary>
+        /// ConnectionString to the database
+        /// </summary>
+        protected string ConnectionString { get; set; }
+
+        /// <summary>
+        /// Name of the database that this instance is connected to
+        /// </summary>
+        protected string DatabaseName { get; set; }
+        
         protected string CollectionName { get; set; }        
-        protected MongoDbContext Context = new MongoDbContext();
+        
 
         /// <summary>
         /// Re-usable MongoDb Collection instance.
@@ -110,8 +117,7 @@ namespace Westwind.Data.MongoDb
         public MongoDbDataAccess(string collection = null, string database = null, string connectionString = null)
         {
             InitializeInternal();
-            
-            Context = new MongoDbContext();
+                        
             Database = GetDatabase(collection, database, connectionString);
 
             if (!Database.CollectionExists(CollectionName))
@@ -125,7 +131,69 @@ namespace Westwind.Data.MongoDb
             Initialize();
         }
 
+        /// <summary>
+        /// Creates a connection to a databaseName based on the Databasename and 
+        /// optional server connection string.
+        /// 
+        /// Returned Mongo DatabaseName 'connection' can be cached and reused.
+        /// </summary>
+        /// <param name="connectionString">Mongo server connection string.
+        /// Can either be a connection string entry name from the ConnectionStrings
+        /// section in the config file or a full server string.        
+        /// If not specified looks for connectionstring entry in  same name as
+        /// the context. Failing that mongodb://localhost is used.
+        ///  
+        /// Examples:
+        /// MyDatabaseConnectionString   (ConnectionStrings Config Name)       
+        /// mongodb://localhost
+        /// mongodb://localhost:22011/MyDatabase
+        /// mongodb://username:password@localhost:22011/MyDatabase        
+        /// </param>        
+        /// <param name="databaseName">Name of the databaseName to work with if not specified on the connection string</param>
+        /// <returns>Database instance</returns>
+        public virtual MongoDatabase GetDatabase(string connectionString = null, string databaseName = null)
+        {
+            // apply global values from this context if not passed
+            if (string.IsNullOrEmpty(databaseName))
+                databaseName = DatabaseName;
 
+            if (string.IsNullOrEmpty(connectionString))
+                connectionString = ConnectionString;
+
+            // if not specified use connection string with name of type
+            if (string.IsNullOrEmpty(connectionString))
+                connectionString = GetType().Name;
+
+            // is it a connection string name?
+            if (!connectionString.Contains("://"))
+            {
+                var conn = ConfigurationManager.ConnectionStrings[connectionString];
+                if (conn != null)
+                    connectionString = conn.ConnectionString;
+                else
+                    connectionString = "mongodb://localhost";
+            }
+
+            ConnectionString = connectionString;
+
+            var client = new MongoClient(connectionString);
+            var server = client.GetServer();
+
+            // is it provided on the connection string?
+            if (string.IsNullOrEmpty(databaseName))
+            {
+                var uri = new Uri(connectionString);
+                var path = uri.LocalPath;
+                databaseName = uri.LocalPath.Replace("/", "");
+            }
+
+            var db = server.GetDatabase(databaseName);
+
+            if (db != null)
+                DatabaseName = databaseName;
+
+            return db;
+        }
 
         /// <summary>
         /// Specialized CreateContext that accepts a connection string and provider.
@@ -143,8 +211,8 @@ namespace Westwind.Data.MongoDb
             string serverString = null)
         {
 
-            var db = Context.GetDatabase(serverString,database);
-
+            var db = GetDatabase(serverString,database);
+            
             if (string.IsNullOrEmpty(collection))
                 collection = Pluralizer.Pluralize(typeof(TEntity).Name);
 
@@ -555,10 +623,16 @@ namespace Westwind.Data.MongoDb
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public virtual bool Delete(string id)
-        {
+        public virtual bool Delete(string id, string collectionName = null)
+        {         
             var query = Query.EQ("_id", new BsonString(id));
-            var result = Collection.Remove(query);
+
+            WriteConcernResult result;
+            if (!string.IsNullOrEmpty(collectionName))
+                result = Database.GetCollection(collectionName).Remove(query);
+            else
+                result = Collection.Remove(query);
+            
             if (result.HasLastErrorMessage)
             {
                 SetError(result.ErrorMessage);
@@ -567,16 +641,46 @@ namespace Westwind.Data.MongoDb
             return true;
         }
 
-        public virtual bool Delete(int id)
+        public virtual bool Delete(int id, string collectionName = null)
         {
             var query = Query.EQ("_id", id);
-            var result = Collection.Remove(query);
+
+            WriteConcernResult result;
+            
+            if (string.IsNullOrEmpty(collectionName))
+                result = Database.GetCollection(collectionName).Remove(query);
+            else
+                result = Collection.Remove(query);
+
             if (result.HasLastErrorMessage)
             {
                 SetError(result.ErrorMessage);
                 return false;
             }
             return true;
+        }
+
+        /// <summary>
+        /// Deletes Entities based on a filter expression
+        /// </summary>
+        /// <param name="filterJson"></param>
+        /// <returns></returns>
+        public virtual bool DeleteFromString(string filterJson, string collectionName = null)
+        {
+            var query = GetQueryFromString(filterJson);
+
+            WriteConcernResult result;
+
+            if (string.IsNullOrEmpty(collectionName))
+                result = Database.GetCollection(collectionName).Remove(query);
+            else
+                result = Collection.Remove(query);
+
+            if (result.Ok)
+                return true;
+
+            SetError(result.LastErrorMessage);
+            return false;
         }
 
         /// <summary>
