@@ -13,7 +13,7 @@ namespace Westwind.Web.Mvc
     /// Base Controller implementation that holds UserState,
     /// ErrorDisplay objects that are preinitialized.
     /// </summary>
-    public class BaseController : Controller
+    public class BaseController : System.Web.Mvc.Controller
     {
         /// <summary>
         /// Contains User state information retrieved from the authentication system
@@ -30,7 +30,7 @@ namespace Westwind.Web.Mvc
         {
             base.Initialize(requestContext);
 
-            this.CreateUserState();
+            CreateUserState();            
                         
             // have to explicitly add this so Master can see untyped value
             ViewBag.UserState = this.UserState;
@@ -50,7 +50,8 @@ namespace Westwind.Web.Mvc
             if (this.User.Identity != null && this.User.Identity is FormsIdentity)
                 this.UserState = UserState.CreateFromFormsAuthTicket();
             else
-                this.UserState = new UserState();            
+                this.UserState = new UserState();
+
         }
    
         /// <summary>
@@ -132,7 +133,8 @@ namespace Westwind.Web.Mvc
         {
             Response.Clear();
             Response.StatusCode = statusCode;
-            return Json(new CallbackException() {message = errorMessage});
+            
+            return Json(new CallbackException() {message = errorMessage}, JsonRequestBehavior.AllowGet);           
         }
 
         /// <summary>
@@ -148,8 +150,8 @@ namespace Westwind.Web.Mvc
 
             var cb = new CallbackException() {message = ex.Message};
             cb.stackTrace = ex.StackTrace;
-            
-            return Json(cb);
+                        
+            return Json(cb, JsonRequestBehavior.AllowGet);
         }
 
     }
