@@ -3,6 +3,14 @@
 ### Version 2.58
 *not released yet*
 
+* **Update to jQuery CSS/Attribute Watcher Plug-in**<br />
+<small>Westwind.Web/ww.jquery.js</small>
+Update this plug-in to work properly with newer browser versions. Switch
+to MutationObserver API for much better performance and better modern
+browser support. Fix jQuery version newer than 1.8.3 bug in the plug-in.
+Added support for monitoring attribute changes with the attr_ prefix
+(ie. to monitor class attribute changes: attr_class). Slight interface change passing parameters as an `options` parameter
+
 * **New HttpUtils.JsonRequest**<br/>
 <small>Westwind.Utilities</small>
 Added a new HttpUtils class with a JsonRequest() and JsonRequestAsync() 
@@ -42,19 +50,16 @@ provide the ability to customize how the scope is created.
 
 * **Add String Access functions to Westwind.Data.MongoDb**<br/>
 <small>Westwind.Data</small>
-Add support for JSON string for queries, and save operations so that it's
+Add support for JSON string for queries that allow using MongoDb
+query syntax in strings and save operations so that it's
 possible to provide the common MongoDb query syntax to execute queries. 
 The various FindXXXJson() functions handle queries and SaveFromJson() 
 which allows saving with a JSON entity.
 
-* **Update to jQuery CSS/Attribute Watcher Plug-in**<br />
-<small>Westwind.Web/ww.jquery.js</small>
-Update this plug-in to work properly with newer browser versions. Switch
-to MutationObserver API for much better performance and better modern
-browser support. Fix jQuery version newer than 1.8.3 bug in the plug-in.
-Added support for monitoring attribute changes with the attr_ prefix
-(ie. to monitor class attribute changes: attr_class). Slight interface change passing parameters as an `options` parameter
-
+* **New MongoDbDataAccess Component**<br/>
+<small>Westwind.Data.MongoDb</small>
+Small wrapper around the MongoDb C# driver that provides simple methods
+for common query and update operations. 
 
 ### Version 2.56
 *October 2nd, 2014*
