@@ -73,6 +73,7 @@ namespace Westwind.Utilities.Logging
         public SqlLogAdapter(string connectionString)
         {
             ConnectionString = connectionString;
+            LogFilename = LogManagerConfiguration.Current.LogFilename;
         }
         public SqlLogAdapter(string connectionString, string tableName)
         {
