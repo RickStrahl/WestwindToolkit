@@ -56,7 +56,7 @@ namespace Westwind.Utilities
                 return string.Empty;
 
             string FormattedDate = string.Empty;
-            if (Date.Date == DateTime.Today)
+            if (Date.Date.Equals(DateTime.Today))
                 FormattedDate = "Today"; //Resources.Resources.Today; 
             else if (Date.Date == DateTime.Today.AddDays(-1))
                 FormattedDate = "Yesterday"; //Resources.Resources.Yesterday;
