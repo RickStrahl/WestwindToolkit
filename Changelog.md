@@ -31,6 +31,10 @@ PropertiesToEncrypt properties. For example, using `PropertiesToEncrypt=
 "MailserverPassword,License.LicenseKey"` allows encoding the nested
 license key. Supported on all configuration providers.
 
+* **HttpClient.HttpTimings property added**<br/>
+The HttpClient now supports the HttpTimings class which logs StartTime,
+FirstByteTime, LastByteTime and TimeToFirstByteMs, TimeToLastByteMs
+
 * **Split .NET 4.0 and 4.5 targets for Westwind.Utilities**<br />
 <small>Westwind.Utilities</small>
 Create seperate net40 target for .NET 4.0 compatible output of

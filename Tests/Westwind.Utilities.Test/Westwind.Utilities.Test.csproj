@@ -104,6 +104,7 @@
     <Compile Include="AppConfiguration\DatabaseConfigurationTests.cs" />
     <Compile Include="AppConfiguration\JsonFileConfigurationTests.cs" />
     <Compile Include="AppConfiguration\StringConfigurationTests.cs" />
+    <Compile Include="HttpClientTests.cs" />
     <Compile Include="JsonSerializationUtils2.cs" />
     <Compile Include="HttpUtilsTests.cs" />
     <Compile Include="UrlEncodingParserTests.cs" />

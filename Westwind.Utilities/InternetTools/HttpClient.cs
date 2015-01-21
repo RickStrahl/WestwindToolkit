@@ -187,6 +187,13 @@ namespace Westwind.Utilities.InternetTools
         }
         private bool _UseGZip = false;
 
+        /// <summary>
+        /// Keeps track of request timings for the last executed request. Tracks started, 
+        /// firstbyte and lastbyte times as well as ms to first byte 
+        /// (actually first 'buffer' loaded) and last byte.
+        /// </summary>
+        /// <remarks>Does not work with DownloadStream() since you control the stream's operations.</remarks>
+	    public HttpTimings HttpTimings { get; set; }
 
 		/// <summary>
 		/// Error Message if the Error Flag is set or an error value is returned from a method.
@@ -337,6 +344,7 @@ namespace Westwind.Utilities.InternetTools
 		/// </summary>
 		public HttpClient()
 		{
+		    HttpTimings = new HttpTimings();
 		}
 
 		/// <summary>
@@ -593,7 +601,7 @@ namespace Westwind.Utilities.InternetTools
 		/// <remarks>Important: The Response object's Close() method must be called when you are done with the object.</remarks>
 		/// <param name="url">Url to retrieve.</param>
 		/// <returns>An HttpWebResponse Object</returns>
-		public HttpWebResponse DownloadResponse(string url)
+		public HttpWebResponse  DownloadResponse(string url)
 		{
 			Cancelled = false;
 		
@@ -659,6 +667,8 @@ namespace Westwind.Utilities.InternetTools
 					}
 				}
 
+                HttpTimings.StartRequest();
+
 				// Deal with the POST buffer if any
 				if (_PostData != null)
 				{
@@ -689,8 +699,8 @@ namespace Westwind.Utilities.InternetTools
 
 				    if (!string.IsNullOrEmpty(ContentType))
                         WebRequest.ContentType = ContentType;
-
-					Stream requestStream = WebRequest.GetRequestStream();
+                    
+                    Stream requestStream = WebRequest.GetRequestStream();
 					
                     
 					if (SendData == null)
@@ -972,6 +982,7 @@ namespace Westwind.Utilities.InternetTools
         /// <returns></returns>
         public byte[] DownloadBytes(string url, long bufferSize = 8192)
         {         
+
 			HttpWebResponse Response = DownloadResponse(url);
             if (Response == null)
                 return null;
@@ -1018,14 +1029,20 @@ namespace Westwind.Utilities.InternetTools
 			int count = 0;
 			long totalBytes = 0;
 
+
 			while (bytesRead > 0) 
 			{
                 if (responseSize != -1 && totalBytes + bufferSize >  responseSize)
 					bufferSize = responseSize - totalBytes;
                     
 				bytesRead = responseReader.Read(buffer,0,(int) bufferSize);
+
+
                 if (bytesRead > 0)
-                {                   
+                {
+                    if (totalBytes == 0)
+                        HttpTimings.FirstByteTime = DateTime.UtcNow;
+
                     // write to stream
                     ms.Write(buffer, 0, (int) bytesRead);
                     
@@ -1050,7 +1067,8 @@ namespace Westwind.Utilities.InternetTools
                     }
                 }
 			} // while
-
+            
+            HttpTimings.LastByteTime = DateTime.UtcNow;
 
 			CloseDown:
 				responseReader.Close();
@@ -1090,15 +1108,13 @@ namespace Westwind.Utilities.InternetTools
         /// <returns>true or false</returns>
         public bool DownloadFile(string url,long bufferSize,string outputFile) 
 		{
-			byte[] Result = DownloadBytes(url,bufferSize);
-			if (Result == null)
+			byte[] result = DownloadBytes(url,bufferSize);
+			if (result == null)
 				return false;
 
-			FileStream File = new FileStream(outputFile,FileMode.OpenOrCreate,FileAccess.Write);
-			File.Write(	Result,0,(int)WebResponse.ContentLength);
-			File.Close();
-
-			return true;
+            File.Delete(outputFile);
+            File.WriteAllBytes(outputFile, result);            
+            return File.Exists(outputFile);
 		}
 
         /// <summary>
@@ -1216,6 +1232,35 @@ namespace Westwind.Utilities.InternetTools
         {
             // Always accept
             return true;
+        }
+    }
+
+    public class HttpTimings
+    {
+        public DateTime StartedTime { get; set; }
+        public DateTime FirstByteTime { get; set;  }
+        public DateTime LastByteTime { get; set;  }
+
+        public void StartRequest()
+        {
+            StartedTime = DateTime.UtcNow;
+            FirstByteTime = DateTime.UtcNow;
+            LastByteTime = DateTime.UtcNow;
+        }
+
+        public int TimeToFirstByteMs
+        {
+            get { return (int) FirstByteTime.Subtract(StartedTime).TotalMilliseconds; }
+        }
+
+        public int TimeToLastByteMs
+        {
+            get { return (int)LastByteTime.Subtract(StartedTime).TotalMilliseconds; }
+        }
+
+        public bool IsEmpty()
+        {
+            return StartedTime < new DateTime(2010, 1, 1);
         }
     }
 
