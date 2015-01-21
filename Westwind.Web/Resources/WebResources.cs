@@ -38,12 +38,7 @@ using System.IO;
 using System.Reflection;
 using Westwind.Utilities;
 
-
-[assembly: WebResource("Westwind.Web.WebForms.Resources.warning.gif", "image/gif")]
-[assembly: WebResource("Westwind.Web.WebForms.Resources.info.gif", "image/gif")]
-[assembly: WebResource("Westwind.Web.WebForms.Resources.close.gif", "image/gif")]
-[assembly: WebResource("Westwind.Web.WebForms.Resources.help.gif", "image/gif")]
-[assembly: WebResource("Westwind.Web.WebForms.Resources.calendar.gif", "image/gif")]
+[assembly: WebResource("Westwind.Web.Resources.ww.jquery.js", "application/x-javascript")]
 
 namespace Westwind.Web
 {
@@ -56,14 +51,14 @@ namespace Westwind.Web
         public const string JQUERY_SCRIPT_RESOURCE = "Westwind.Web.Resources.jquery.js";
         public const string WWJQUERY_SCRIPT_RESOURCE = "Westwind.Web.Resources.ww.jquery.js";
 
-        /*  Icon Resource Strings */
-        public const string INFO_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.info.gif";
-        public const string WARNING_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.warning.gif";
-        public const string CLOSE_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.close.gif";
-        public const string HELP_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.help.gif";
-        public const string LOADING_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.loading.gif";
-        public const string LOADING_SMALL_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.loading_small.gif";
-        public const string CALENDAR_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.calendar.gif";
+        ///*  Icon Resource Strings */
+        //public const string INFO_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.info.gif";
+        //public const string WARNING_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.warning.gif";
+        //public const string CLOSE_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.close.gif";
+        //public const string HELP_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.help.gif";
+        //public const string LOADING_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.loading.gif";
+        //public const string LOADING_SMALL_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.loading_small.gif";
+        //public const string CALENDAR_ICON_RESOURCE = "Westwind.Web.WebForms.Resources.calendar.gif";
 
         /* Content Types */
         public const string STR_JsonContentType = "application/json";

@@ -617,7 +617,7 @@ namespace Westwind.Utilities.InternetTools
 				// Handle Security for the request
 				if (_Username.Length > 0) 
 				{
-					if (_Username  == "AUTOLOGIN")
+					if (_Username  == "AUTOLOGIN" || _Username == "AutoLogin")
 						WebRequest.Credentials = CredentialCache.DefaultCredentials;
 					else
 						WebRequest.Credentials = new NetworkCredential(_Username,_Password);

@@ -116,7 +116,7 @@
     <Compile Include="Utilities\WebUtils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\ww.jquery.js" />
+    <EmbeddedResource Include="Resources\ww.jquery.js" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resources.resx">
