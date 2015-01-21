@@ -1,7 +1,7 @@
 ﻿/// <reference path="jquery.js" />
 /*
 ww.jQuery.js  
-Version 1.14 - 10/17/2014
+Version 1.15 - 12/10/2014
 West Wind jQuery plug-ins and utilities
 
 (c) 2008-2014 Rick Strahl, West Wind Technologies 
@@ -726,8 +726,8 @@ http://en.wikipedia.org/wiki/MIT_License
             if (sh.length < 1) {
                 sh = $("<div>");
                 sh.css({ height: 1, width: 1 })
-              .attr("id", elId + "Shadow")
-              .insertAfter(el);
+                    .attr("id", elId + "Shadow")
+                    .insertAfter(el);
 
                 var zi = el.css("zIndex");
                 if (!zi || zi == "auto") {
@@ -740,19 +740,19 @@ http://en.wikipedia.org/wiki/MIT_License
 
             var vis = el.is(":visible");
             if (!vis)
-                el.show();  // must be visible to get .position
+                el.show(); // must be visible to get .position
 
             var pos = el.position();
             sh.show()
-          .css({
-              position: "absolute",
-              width: el.outerWidth(),
-              height: el.outerHeight(),
-              opacity: opt.opacity,
-              background: opt.color,
-              left: pos.left + opt.offset - 4,
-              top: pos.top + opt.offset - 2
-          });
+                .css({
+                    position: "absolute",
+                    width: el.outerWidth(),
+                    height: el.outerHeight(),
+                    opacity: opt.opacity,
+                    background: opt.color,
+                    left: pos.left + opt.offset - 4,
+                    top: pos.top + opt.offset - 2
+                });
 
             // IE shadow
             sh.css("filter", 'progid:DXImageTransform.Microsoft.Blur(makeShadow=true, pixelradius=3, shadowOpacity=' + opt.opacity.toString() + ')');
