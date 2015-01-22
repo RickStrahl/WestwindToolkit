@@ -12,18 +12,16 @@ using System.Threading;
 
 namespace Westwind.Utilities.Data.Tests
 {
+
     /// <summary>
     /// Summary description for DynamicDataRowTests
     /// </summary>
     [TestClass]
     public class DynamicDataReaderTests
     {
-        public DynamicDataReaderTests()
-        {
-            //
-            // TODO: Add constructor logic here
-            //
-        }
+        private const string STR_ConnectionString =
+            "server=.;database=WestwindWebStore_Client;integrated security=true;";
+    
 
         private TestContext testContextInstance;
 
@@ -72,7 +70,7 @@ namespace Westwind.Utilities.Data.Tests
             [TestMethod]
             public void BasicDataReaderTimerTests()
             {
-                var data = new SqlDataAccess("server=.;database=WestwindWebStore_Client;integrated security=true;");
+                var data = new SqlDataAccess(STR_ConnectionString);
                 var reader = data.ExecuteReader("select * from wws_items");
                 Assert.IsNotNull(reader, "Query Failure: " + data.ErrorMessage);
                 
@@ -120,7 +118,7 @@ namespace Westwind.Utilities.Data.Tests
             [TestMethod]
             public void BasicDynamicDataReaderTimerTest()
             {
-                var data = new SqlDataAccess("server=.;database=WestwindWebStore_Client;integrated security=true;");
+                var data = new SqlDataAccess(STR_ConnectionString);
                 dynamic reader = data.ExecuteDynamicDataReader("select * from wws_items");
 
                 Assert.IsNotNull(reader, "Query Failure: " + data.ErrorMessage);

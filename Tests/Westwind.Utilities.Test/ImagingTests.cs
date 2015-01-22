@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
 using System.IO;
 
-namespace Westwind.Utilities.Test
+namespace Westwind.Utilities.Tests
 {
     [TestClass]
     public class ImagingTests

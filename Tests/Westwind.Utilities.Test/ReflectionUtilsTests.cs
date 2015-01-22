@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Westwind.Utilities.Test
+namespace Westwind.Utilities.Tests
 {
     [TestClass]
     public class ReflectionUtilsTests

@@ -42,7 +42,6 @@ namespace Westwind.Utilities.Test
         [TestMethod]
         public async Task HttpClientJsonRequestTest()
         {
-
             var handler = new WebRequestHandler();
             //handler.Proxy = new WebProxy("http://localhost:8888/");
             //handler.Credentials = new NetworkCredential(uid, pwd);            

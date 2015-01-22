@@ -4,7 +4,7 @@ using Westwind.Utilities.InternetTools;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Westwind.Utilities.Test
+namespace Westwind.Utilities.InternetTools
 {
     [TestClass]
     public class HttpClientTests
