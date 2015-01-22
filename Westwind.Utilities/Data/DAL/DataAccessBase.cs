@@ -1177,12 +1177,12 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         }
 
         /// <summary>
-        /// Returns a single
+        /// Returns a single entity based on a keyfield and key value
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="keyValue"></param>
-        /// <param name="tableName"></param>
-        /// <param name="keyField"></param>
+        /// <typeparam name="T">Type of entity to populate</typeparam>
+        /// <param name="keyValue">Value to look up in keyfield</param>
+        /// <param name="tableName">Name of the table to work on</param>
+        /// <param name="keyField">Field that is used for the key lookup</param>
         /// <returns></returns>
         public virtual T Find<T>(object keyValue, string tableName,string keyField)
             where T: class,new()
@@ -1198,11 +1198,12 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         }
 
         /// <summary>
-        /// Returns a single object retrieved from data
+        /// Returns the first matching record retrieved from data based on a SQL statement
+        /// as an entity or null if no match was found.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql"></param>
-        /// <param name="parameters"></param>
+        /// <typeparam name="T">Entity type to fill</typeparam>
+        /// <param name="sql">SQL string to execute. Use @0,@1,@2 for parameters</param>
+        /// <param name="parameters">SQL parameter values to pass.</param>
         /// <returns></returns>
         public virtual T Find<T>(string sql, params object[] parameters)
             where T : class,new()
@@ -1215,13 +1216,14 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         }
 
         /// <summary>
-        /// Returns a single object retrieved from data
+        /// Returns an entity that is the first match from a sql statement string.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql"></param>
-        /// <param name="parameters"></param>
+        /// <typeparam name="T">Entity type to return</typeparam>
+        /// <param name="sql">Sql string to execute. Use @0,@1,@2 for positional parameters</param>
+        /// <param name="fieldsToSkip">fields to not update from the resultset</param>
+        /// <param name="parameters">Parameters to pass to SQL statement</param>
         /// <returns></returns>
-        public virtual T Find<T>(string sql, string fieldsToSkip, params object[] parameters)
+        public virtual T FindEx<T>(string sql, string fieldsToSkip, params object[] parameters)
             where T : class,new()
         {
             T obj = new T();
@@ -1234,10 +1236,12 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <summary>
         /// Updates an entity object that has matching fields in the database for each
         /// public property. Kind of a poor man's quick entity update mechanism.
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="table"></param>
-        /// <param name="keyField"></param>
+        /// 
+        /// Note this method will not save if the record doesn't already exist in the db.
+        /// </summary>        
+        /// <param name="entity">entity to update</param>
+        /// <param name="table">the table name to update</param>
+        /// <param name="keyField">keyfield used to find entity</param>
         /// <param name="fieldsToSkip"></param>
         /// <returns></returns>
         public virtual bool UpdateEntity(object entity, string table, string keyField, string fieldsToSkip = null)
@@ -1301,39 +1305,39 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// </summary>
         /// <seealso cref="SaveEntity">
         /// <seealso cref="InsertEntity"/>
-        /// <param name="Entity"></param>
-        /// <param name="Table"></param>
-        /// <param name="KeyField"></param>
-        /// <param name="FieldsToSkip"></param>
-        /// <param name="FieldsToUpdate"></param>
+        /// <param name="entity">Entity to update</param>
+        /// <param name="table">DB Table to udpate</param>
+        /// <param name="keyField">The keyfield to query on</param>
+        /// <param name="fieldsToSkip">fields to skip in update</param>
+        /// <param name="fieldsToUpdate">fields that should be updated</param>
         /// <returns></returns>
-        public virtual bool UpdateEntity(object Entity, string Table, string KeyField, string FieldsToSkip, string FieldsToUpdate)
+        public virtual bool UpdateEntity(object entity, string table, string keyField, string fieldsToSkip, string fieldsToUpdate)
         {
             SetError();
 
-            if (FieldsToSkip == null)
-                FieldsToSkip = string.Empty;
+            if (fieldsToSkip == null)
+                fieldsToSkip = string.Empty;
             else
-                FieldsToSkip = "," + FieldsToSkip.ToLower() + ",";
+                fieldsToSkip = "," + fieldsToSkip.ToLower() + ",";
 
             DbCommand Command = CreateCommand(string.Empty);
 
-            Type ObjType = Entity.GetType();
+            Type ObjType = entity.GetType();
 
             StringBuilder sb = new StringBuilder();
-            sb.Append("update " + Table + " set ");
+            sb.Append("update " + table + " set ");
 
-            string[] Fields = FieldsToUpdate.Split(',');
+            string[] Fields = fieldsToUpdate.Split(',');
             foreach (string Name in Fields)
             {
-                if (FieldsToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
+                if (fieldsToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
                     continue;
 
                 PropertyInfo Property = ObjType.GetProperty(Name);
                 if (Property == null)
                     continue;
 
-                object Value = Property.GetValue(Entity, null);
+                object Value = Property.GetValue(entity, null);
 
                 sb.Append(" [" + Name + "]=" + ParameterPrefix + Name + ",");
 
@@ -1346,9 +1350,9 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 else
                     Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value == null ? DBNull.Value : Value));              
             }
-            object pkValue = ReflectionUtils.GetProperty(Entity, KeyField);
+            object pkValue = ReflectionUtils.GetProperty(entity, keyField);
 
-            String CommandText = sb.ToString().TrimEnd(',') + " where " + KeyField + "=" + ParameterPrefix + "__PK";
+            String CommandText = sb.ToString().TrimEnd(',') + " where " + keyField + "=" + ParameterPrefix + "__PK";
 
             Command.Parameters.Add(CreateParameter(ParameterPrefix + "__PK", pkValue));
             Command.CommandText = CommandText;
@@ -1358,6 +1362,8 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
             return Result;
         }
+
+
 
         /// <summary>
         /// Inserts an object into the database based on its type information.
@@ -1441,10 +1447,10 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// Saves an enity into the database using insert or update as required.
         /// Requires a keyfield that exists on both the entity and the database.
         /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="table"></param>
-        /// <param name="keyField"></param>
-        /// <param name="fieldsToSkip"></param>
+        /// <param name="entity">entity to save</param>
+        /// <param name="table">table to save to</param>
+        /// <param name="keyField">keyfield to update</param>
+        /// <param name="fieldsToSkip">optional fields to skip when updating (keys related items etc)</param>
         /// <returns></returns>
         public virtual bool SaveEntity(object entity, string table, string keyField, string fieldsToSkip = null)
         {
@@ -1466,6 +1472,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
             return true;
         }
+
 
 
         #endregion

@@ -21,6 +21,7 @@ namespace Westwind.Utilities.Data.Tests
     public class SqlDataAccessTests
     {
         private const string STR_ConnectionString = "WestwindToolkitSamples";
+
         public SqlDataAccessTests()
         {
         }
