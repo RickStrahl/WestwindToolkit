@@ -1597,6 +1597,9 @@
             Class is used as to consolidate access to resources
             </summary>
         </member>
+        <member name="F:Westwind.Web.WebResources.STR_JsonContentType">
+            *  Icon Resource Strings */
+        </member>
         <member name="M:Westwind.Web.WebResources.GetStringResource(System.Reflection.Assembly,System.String)">
             <summary>
             Returns a string resource from a given assembly.

@@ -336,9 +336,9 @@ public class busCustomer : EfCodeFirstBusinessBase<Customer, WebStoreContext>
 
     public IEnumerable<Customer> GetActiveCustomers()
     {
-        DateTime dt = DateTime.UtcNow.AddYears(2);
+        DateTime dt = DateTime.UtcNow.AddYears(1);
         return Context.Customers
-                      .Where(cust => cust.Entered > DateTime.UtcNow.AddYears(-2));
+                      .Where(cust => cust.Updated > DateTime.UtcNow.AddYears(-2));
     }
     public IEnumerable<Customer> GetCustomerWithoutOrders()
     {
