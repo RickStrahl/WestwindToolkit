@@ -1,7 +1,7 @@
 #West Wind Toolkit Change Log
 
-### Version 2.58
-*not released yet*
+### Version 2.59
+*January 21st, 2015*
 
 * **Update to jQuery CSS/Attribute Watcher Plug-in**<br />
 <small>Westwind.Web/ww.jquery.js</small>
