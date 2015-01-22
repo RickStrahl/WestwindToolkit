@@ -10,6 +10,7 @@ More Information:
 * [West Wind Toolkit Product Page](http://west-wind.com/westwindtoolkit/)
 * [NuGet Packages](http://nuget.org/packages?q=Westwind.)
 * [West Wind Toolkit Documentation](http://west-wind.com/westwindtoolkit/docs)
+* [Change Log](Changelog.md)
 
 The main components of the West Wind Toolkit are:
 
