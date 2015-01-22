@@ -47,7 +47,7 @@ namespace Westwind.Data.EfCodeFirst
         /// <param name="dbNative"></param>
         public EfCodeFirstContext(DataAccessBase dbNative)   
         {
-            Db = dbNative;            
+            Db = dbNative;                                 
         }
 
         /// <summary>

@@ -62,7 +62,16 @@ namespace Westwind.Data.Test
         {
             using (var custBus = new busCustomer())
             {
-                var cust = custBus.Load(1);
+                Customer cust = null;
+                try
+                {
+                    cust = custBus.Load(1);
+                }
+                catch (Exception ex)
+                {
+
+                    Console.WriteLine(ex.Message);
+                }
                 Assert.IsNotNull(cust,custBus.ErrorMessage);
                 Console.WriteLine(cust.Company);
                 Assert.IsTrue(cust.Company.StartsWith("West Wind"));
@@ -241,33 +250,43 @@ namespace Westwind.Data.Test
 
         [TestMethod]
         public void AttachExistingTest()
-        {
-            string newCompany = "West Wind " + DateTime.Now;
-            int custId = (int) DataUtils.GenerateUniqueNumericId();
+        {            
+            int custId = 0;
+            Customer cust; 
+            DateTime time = DateTime.Now;
 
-            var cust = new Customer()
-            {
-                Id = custId,
-                Company = newCompany,
-                FirstName = "Ricky",
-                LastName = "Strahl",
-                Address = "33 Kaiea Place"
-            };
 
             using (var custBo = new busCustomer())
             {
+                // grab existing customer id we can update
+                custId = custBo.Context.Customers
+                        .Where(c => c.LastName == "Strahl")
+                        .Select( c=> c.Id)
+                        .First();
+
+                cust = new Customer()
+                {
+                    Id = custId,
+                    FirstName = "Ricky",
+                    LastName = "Strahl",
+                    Company = "West Wind",
+                    Entered = time,
+                    Address = "31 Kaiea Place"                    
+                };
+
                 custBo.Attach(cust);
-                Assert.IsTrue(custBo.Save(), custBo.ErrorMessage);
+                Assert.IsTrue(custBo.Save(), custBo.ErrorMessage);              
             }
 
-            // load new bus/context to force load from disk
-            // otherwise load loads from cached context
-            using (var custBus = new busCustomer())
+            using (var custBo2 = new busCustomer())
             {
-                Customer cust2 = custBus.Load(custId);
-                Assert.IsNotNull(cust2, custBus.ErrorMessage);
+            
+                // load new bus/context to force load from disk
+                // otherwise load loads from cached context                        
+                Customer cust2 = custBo2.Load(custId);
+                Assert.IsNotNull(cust2, custBo2.ErrorMessage);
 
-                Assert.AreEqual(cust2.Company,newCompany);                
+                Assert.IsTrue(cust2.Entered.ToString() == cust.Entered.ToString());                
             }
         }
 
@@ -355,7 +374,55 @@ namespace Westwind.Data.Test
 
             Assert.IsTrue(orderBo.Save(), orderBo.ErrorMessage);
         }
-      
+
+        [TestMethod]
+        public void FailedValidationTest()
+        {
+            var customerBus = new busCustomer();
+
+            var custExisting = customerBus.Load(1);
+
+            var cust = new Customer()
+            {
+                // create dupe values which should fail validation
+                FirstName = custExisting.FirstName,
+                LastName = custExisting.LastName,
+                Company = custExisting.Company
+            };
+            cust = customerBus.NewEntity(cust);
+
+            Assert.IsFalse(customerBus.Validate());
+            Assert.IsFalse(string.IsNullOrEmpty(customerBus.ErrorMessage));
+            Console.WriteLine("Validation Failed (test passed): " + customerBus.ErrorMessage);
+        }
+
+        [TestMethod]
+        public void FailedValidationAutoValidateTest()
+        {
+            var customerBus = new busCustomer()
+            {
+                // Validates on Save automatically
+                AutoValidate = true
+            };
+           
+
+            var custExisting = customerBus.Load(1);
+
+            var cust = new Customer()
+            {
+                // create dupe values which should fail validation
+                FirstName = custExisting.FirstName,
+                LastName = custExisting.LastName,
+                Company = custExisting.Company
+            };
+            cust = customerBus.NewEntity(cust);
+
+            Assert.IsFalse(customerBus.Save());
+            Assert.IsFalse(string.IsNullOrEmpty(customerBus.ErrorMessage));
+            Console.WriteLine("Validation Failed (test passed): " + customerBus.ErrorMessage);
+        }
+
+
     }
 
 }

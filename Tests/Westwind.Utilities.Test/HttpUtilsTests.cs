@@ -25,7 +25,7 @@ namespace Westwind.Utilities.Test
             string html = await HttpUtils.HttpRequestStringAsync("http://microsoft.com");
             Assert.IsNotNull(html);
         }
-
+        
         [TestMethod]
         public void HttpRequestStringWithSettingsTest()
         {

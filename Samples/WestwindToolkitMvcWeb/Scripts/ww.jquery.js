@@ -4,7 +4,7 @@ ww.jQuery.js
 Version 1.15 - 12/10/2014
 West Wind jQuery plug-ins and utilities
 
-(c) 2008-2014 Rick Strahl, West Wind Technologies 
+(c) 2008-2015 Rick Strahl, West Wind Technologies 
 www.west-wind.com
 
 Licensed under MIT License

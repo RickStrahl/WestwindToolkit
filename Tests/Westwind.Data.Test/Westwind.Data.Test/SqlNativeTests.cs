@@ -55,26 +55,14 @@ namespace Westwind.Data.Test
                             .Db.ExecuteScalar("select id from customer where id=@0", 1);
 
         }
-        //
-        // Use ClassCleanup to run code after all tests in a class have run
-        // [ClassCleanup()]
-        // public static void MyClassCleanup() { }
-        //
-        // Use TestInitialize to run code before running each test 
-        // [TestInitialize()]
-        // public void MyTestInitialize() { }
-        //
-        // Use TestCleanup to run code after each test has run
-        // [TestCleanup()]
-        // public void6 MyTestCleanup() { }
-        //
+   
         #endregion
 
         [TestMethod]
         public void Find()
         {
             using (var context = new WebStoreContext())
-            {
+            {                
                 var cust = context.Db.Find<Customer>(1, "Customers", "Id");
                 Assert.IsNotNull(cust,context.Db.ErrorMessage);
                 Assert.AreEqual(cust.LastName, "Strahl");
