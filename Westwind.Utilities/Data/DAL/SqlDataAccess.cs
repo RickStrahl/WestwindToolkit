@@ -39,9 +39,11 @@ using System.Data.Common;
 namespace Westwind.Utilities.Data
 {
     /// <summary>
-    /// Basic low level Data Access Layer
+    /// Sql Server specific implementation of the DataAccessBase class to
+    /// provide an easy to use Data Access Layer (DAL) with single line
+    /// operations for most data retrieval and non-query operations.
     /// </summary>
-    public class SqlDataAccess : DataAccessBase, IDisposable
+    public class SqlDataAccess : DataAccessBase
     {
         public SqlDataAccess() 
         {

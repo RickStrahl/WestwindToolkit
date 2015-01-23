@@ -48,7 +48,15 @@ using System.Text.RegularExpressions;
 namespace Westwind.Utilities.Data
 {
     /// <summary>
-    /// Basic low level Data Access Layer
+    /// Base Data Access Layer (DAL) for ADO.NET SQL operations.
+    /// Provides easy, single method operations to retrieve DataReader,
+    /// DataTable, DataSet and Entities, perform non-query operations,
+    /// call stored procedures.
+    /// 
+    /// This abstract class implements most data operations using a
+    /// configured DbProvider. Subclasses implement specific database
+    /// providers and override a few methods that might have provider
+    /// specific SQL Syntax.
     /// </summary>
     [DebuggerDisplay("{ ErrorMessage } {ConnectionString}")]
     public abstract class DataAccessBase : IDisposable

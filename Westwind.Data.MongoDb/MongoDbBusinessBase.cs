@@ -11,27 +11,16 @@ using Westwind.Utilities;
 namespace Westwind.Data.MongoDb
 {
 
-    public class MongoDbBusinessBase : MongoDbBusinessBase<object, MongoDbContext>
-    {
 
-        /// <summary>
-        /// Base constructor using default behavior loading context by 
-        /// connectionstring name.
-        /// </summary>
-        /// <param name="connectionString">Connection string name</param>
-        public MongoDbBusinessBase(string collection = null, string database = null, string connectionString = null)
-            : base(collection, database, connectionString)
-        {
-        }
-    }
 
     /// <summary>
-    /// Light weight Entity Framework Code First Business object base class
-    /// that acts as a logic container for an entity DbContext instance. 
+    /// Light weight MongoDb Business object base class
+    /// that acts as a logical business container for MongoDb
+    /// databases. 
     /// 
     /// Subclasses of this business object should be used to implement most data
     /// related logic that deals with creating, updating, removing and querying 
-    /// of data use EF Code First.
+    /// of data use the MongoDb query or LINQ operators.
     /// 
     /// The business object provides base CRUD methods like Load, NewEntity,
     /// Remove that act on the specified entity type. The Save() method uses
@@ -51,7 +40,7 @@ namespace Westwind.Data.MongoDb
     /// <typeparam name="TMongoContext">
     /// A MongoDbContext type that configures MongoDb driver behavior and startup operation.
     /// </typeparam>
-    public class MongoDbBusinessBase<TEntity,TMongoContext> : IDisposable, IBusinessObject
+    public class MongoDbBusinessBase<TEntity, TMongoContext> : IDisposable, IBusinessObject
         where TEntity : class, new()
         where TMongoContext : MongoDbContext, new()
     {
@@ -63,7 +52,7 @@ namespace Westwind.Data.MongoDb
         public MongoDatabase Database { get; set; }
 
         protected string CollectionName { get; set; }
-        protected Type EntityType = typeof (TEntity);
+        protected Type EntityType = typeof(TEntity);
         protected TMongoContext Context = new TMongoContext();
 
         /// <summary>
@@ -141,12 +130,13 @@ namespace Westwind.Data.MongoDb
             set { _errorException = value; }
         }
 
-        [NonSerialized] private Exception _errorException;
+        [NonSerialized]
+        private Exception _errorException;
 
 
         #region ObjectInitializers
-  
-        
+
+
 
         /// <summary>
         /// Base constructor using default behavior loading context by 
@@ -156,16 +146,16 @@ namespace Westwind.Data.MongoDb
         public MongoDbBusinessBase(string collection = null, string database = null, string connectionString = null)
         {
             InitializeInternal();
-            
+
             Context = new TMongoContext();
             Database = GetDatabase(collection, database, connectionString);
 
             if (!Database.CollectionExists(CollectionName))
             {
                 if (string.IsNullOrEmpty(CollectionName))
-                    CollectionName = Pluralizer.Pluralize(EntityType.Name); 
-                
-                Database.CreateCollection(CollectionName);                
+                    CollectionName = Pluralizer.Pluralize(EntityType.Name);
+
+                Database.CreateCollection(CollectionName);
             }
 
             Initialize();
@@ -189,13 +179,13 @@ namespace Westwind.Data.MongoDb
             string serverString = null)
         {
 
-            var db = Context.GetDatabase(serverString,database);
+            var db = Context.GetDatabase(serverString, database);
 
             if (string.IsNullOrEmpty(collection))
                 collection = Pluralizer.Pluralize(typeof(TEntity).Name);
 
             CollectionName = collection;
-            
+
             return db;
         }
 
@@ -218,7 +208,7 @@ namespace Westwind.Data.MongoDb
             // and potential meta data pre-parsing           
         }
 
-   
+
 
         #endregion
 
@@ -312,8 +302,8 @@ namespace Westwind.Data.MongoDb
 
             return cursor.ToJson();
         }
-   
-   
+
+
         public IEnumerable<TEntity> FindAll(string collectionName = null)
         {
             if (string.IsNullOrEmpty(collectionName))
@@ -330,19 +320,19 @@ namespace Westwind.Data.MongoDb
             return Database.GetCollection<T>(collectionName).FindAll();
         }
 
-        
 
-        public IEnumerable<TEntity>FindFromString(string jsonQuery, string collectionName = null)
+
+        public IEnumerable<TEntity> FindFromString(string jsonQuery, string collectionName = null)
         {
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = CollectionName;
 
             var query = GetQueryFromString(jsonQuery);
             var items = Database.GetCollection<TEntity>(collectionName).Find(query);
-            
+
             return items;
         }
-       
+
 
         /// <summary>
         /// Allows you to query Mongo using a Mongo Shell query 
@@ -356,7 +346,7 @@ namespace Westwind.Data.MongoDb
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = CollectionName;
 
-            var query = GetQueryFromString(jsonQuery);            
+            var query = GetQueryFromString(jsonQuery);
             var items = Database.GetCollection<T>(collectionName).Find(query);
 
             return items;
@@ -437,7 +427,7 @@ namespace Westwind.Data.MongoDb
         {
             return new QueryDocument(BsonSerializer.Deserialize<BsonDocument>(jsonQuery));
         }
-        
+
         /// <summary>
         /// Creates a new instance of an Entity tracked
         /// by the DbContext.
@@ -517,7 +507,7 @@ namespace Westwind.Data.MongoDb
         /// <returns></returns>
         protected virtual TEntity LoadBase(string id)
         {
-            Entity = Collection.FindOneByIdAs(typeof(TEntity), new BsonString(id)) as TEntity;            
+            Entity = Collection.FindOneByIdAs(typeof(TEntity), new BsonString(id)) as TEntity;
 
             if (Entity == null)
             {
@@ -538,7 +528,7 @@ namespace Westwind.Data.MongoDb
         /// <returns></returns>
         protected virtual TEntity LoadBase(int id)
         {
-            Entity = Collection.FindOneByIdAs(typeof(TEntity),  id) as TEntity;
+            Entity = Collection.FindOneByIdAs(typeof(TEntity), id) as TEntity;
 
             if (Entity == null)
             {
@@ -671,7 +661,7 @@ namespace Westwind.Data.MongoDb
 
             try
             {
-                var query = Query.EQ("_id", new BsonString(((dynamic) entity).Id.ToString()));
+                var query = Query.EQ("_id", new BsonString(((dynamic)entity).Id.ToString()));
                 var result = Collection.Remove(query);
 
                 if (result.HasLastErrorMessage)
@@ -679,7 +669,7 @@ namespace Westwind.Data.MongoDb
                     SetError(result.ErrorMessage);
                     return false;
                 }
-                
+
                 if (!OnAfterDelete(entity))
                     return false;
             }
@@ -756,12 +746,12 @@ namespace Westwind.Data.MongoDb
             if (!OnBeforeSave(entity))
                 return false;
 
-             // now do validations
-             if (AutoValidate)
-             {
-                 if (!Validate(entity))
+            // now do validations
+            if (AutoValidate)
+            {
+                if (!Validate(entity))
                     return false;
-             }
+            }
 
             try
             {
@@ -779,7 +769,7 @@ namespace Westwind.Data.MongoDb
             }
 
             if (!OnAfterSave(Entity))
-                    return false;
+                return false;
 
 
             return true;
@@ -795,8 +785,8 @@ namespace Westwind.Data.MongoDb
         /// save use the non-generic Save() operation.
         /// </remarks>
         /// <returns></returns>
-        public bool Save<T>(T entity, string collectionName = null) 
-            where T: class, new()
+        public bool Save<T>(T entity, string collectionName = null)
+            where T : class, new()
         {
             if (string.IsNullOrEmpty(collectionName))
                 collectionName = Pluralizer.Pluralize(typeof(T).Name);
@@ -821,7 +811,7 @@ namespace Westwind.Data.MongoDb
                 SetError(ex, true);
                 return false;
             }
-            
+
             return true;
         }
 
@@ -852,7 +842,7 @@ namespace Westwind.Data.MongoDb
                 }
 
                 var result = Database.GetCollection(collectionName).Save(doc);
-                
+
                 if (result.HasLastErrorMessage)
                 {
                     SetError(result.LastErrorMessage);
@@ -860,14 +850,14 @@ namespace Westwind.Data.MongoDb
                 }
 
                 var id = doc["_id"].AsString;
-                return id;                
+                return id;
             }
             catch (Exception ex)
             {
                 SetError(ex, true);
                 return null;
             }
-            
+
         }
 
         /// <summary>
@@ -1024,7 +1014,7 @@ namespace Westwind.Data.MongoDb
         {
             if (entity == null)
                 entity = Entity;
-            
+
 
             string xml = null;
             if (Properties.Count > 0)
@@ -1147,6 +1137,28 @@ namespace Westwind.Data.MongoDb
             {
                 Database = null;
             }
+        }
+    }
+
+    /// <summary>
+    /// A MongoDb Business object and data acces library that provides a thin 
+    /// business wrapper around the MongoDb C# driver to simplify common CRUD
+    /// operations and common data queries.
+    /// 
+    /// Use this non-generic version, if you don't have matching entities to
+    /// load data into or your want to run string queries. 
+    /// </summary>
+    public class MongoDbBusinessBase : MongoDbBusinessBase<object, MongoDbContext>
+    {
+
+        /// <summary>
+        /// Base constructor using default behavior loading context by 
+        /// connectionstring name.
+        /// </summary>
+        /// <param name="connectionString">Connection string name</param>
+        public MongoDbBusinessBase(string collection = null, string database = null, string connectionString = null)
+            : base(collection, database, connectionString)
+        {
         }
     }
 }
