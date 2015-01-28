@@ -668,7 +668,15 @@
         </member>
         <member name="T:Westwind.Utilities.Data.DataAccessBase">
             <summary>
-            Basic low level Data Access Layer
+            Base Data Access Layer (DAL) for ADO.NET SQL operations.
+            Provides easy, single method operations to retrieve DataReader,
+            DataTable, DataSet and Entities, perform non-query operations,
+            call stored procedures.
+            
+            This abstract class implements most data operations using a
+            configured DbProvider. Subclasses implement specific database
+            providers and override a few methods that might have provider
+            specific SQL Syntax.
             </summary>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.#ctor">
@@ -1077,40 +1085,44 @@
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.Find``1(System.Object,System.String,System.String)">
             <summary>
-            Returns a single
+            Returns a single entity based on a keyfield and key value
             </summary>
-            <typeparam name="T"></typeparam>
-            <param name="keyValue"></param>
-            <param name="tableName"></param>
-            <param name="keyField"></param>
+            <typeparam name="T">Type of entity to populate</typeparam>
+            <param name="keyValue">Value to look up in keyfield</param>
+            <param name="tableName">Name of the table to work on</param>
+            <param name="keyField">Field that is used for the key lookup</param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.Find``1(System.String,System.Object[])">
             <summary>
-            Returns a single object retrieved from data
+            Returns the first matching record retrieved from data based on a SQL statement
+            as an entity or null if no match was found.
             </summary>
-            <typeparam name="T"></typeparam>
-            <param name="sql"></param>
-            <param name="parameters"></param>
+            <typeparam name="T">Entity type to fill</typeparam>
+            <param name="sql">SQL string to execute. Use @0,@1,@2 for parameters</param>
+            <param name="parameters">SQL parameter values to pass.</param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.Data.DataAccessBase.Find``1(System.String,System.String,System.Object[])">
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.FindEx``1(System.String,System.String,System.Object[])">
             <summary>
-            Returns a single object retrieved from data
+            Returns an entity that is the first match from a sql statement string.
             </summary>
-            <typeparam name="T"></typeparam>
-            <param name="sql"></param>
-            <param name="parameters"></param>
+            <typeparam name="T">Entity type to return</typeparam>
+            <param name="sql">Sql string to execute. Use @0,@1,@2 for positional parameters</param>
+            <param name="fieldsToSkip">fields to not update from the resultset</param>
+            <param name="parameters">Parameters to pass to SQL statement</param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.UpdateEntity(System.Object,System.String,System.String,System.String)">
             <summary>
             Updates an entity object that has matching fields in the database for each
             public property. Kind of a poor man's quick entity update mechanism.
-            </summary>
-            <param name="entity"></param>
-            <param name="table"></param>
-            <param name="keyField"></param>
+            
+            Note this method will not save if the record doesn't already exist in the db.
+            </summary>        
+            <param name="entity">entity to update</param>
+            <param name="table">the table name to update</param>
+            <param name="keyField">keyfield used to find entity</param>
             <param name="fieldsToSkip"></param>
             <returns></returns>
         </member>
@@ -1121,10 +1133,10 @@
             Saves an enity into the database using insert or update as required.
             Requires a keyfield that exists on both the entity and the database.
             </summary>
-            <param name="entity"></param>
-            <param name="table"></param>
-            <param name="keyField"></param>
-            <param name="fieldsToSkip"></param>
+            <param name="entity">entity to save</param>
+            <param name="table">table to save to</param>
+            <param name="keyField">keyfield to update</param>
+            <param name="fieldsToSkip">optional fields to skip when updating (keys related items etc)</param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.BeginTransaction">
@@ -1309,7 +1321,9 @@
         </member>
         <member name="T:Westwind.Utilities.Data.SqlDataAccess">
             <summary>
-            Basic low level Data Access Layer
+            Sql Server specific implementation of the DataAccessBase class to
+            provide an easy to use Data Access Layer (DAL) with single line
+            operations for most data retrieval and non-query operations.
             </summary>
         </member>
         <member name="M:Westwind.Utilities.Data.SqlDataAccess.CreatePagingCommand(System.String,System.Int32,System.Int32,System.String,System.Object[])">
@@ -1598,7 +1612,7 @@
             The HTTP verb to use when sending the request
             </summary>
         </member>
-        <member name="P:Westwind.Utilities.HttpRequestSettings.Data">
+        <member name="P:Westwind.Utilities.HttpRequestSettings.Content">
             <summary>
             The Request content to send to the server.
             Data can be either string or byte[] type
@@ -1632,12 +1646,12 @@
             An optional proxy to set for this request
             </summary>
         </member>
-        <member name="P:Westwind.Utilities.HttpRequestSettings.RequestData">
+        <member name="P:Westwind.Utilities.HttpRequestSettings.CapturedRequestContent">
             <summary>
             Capture request string data that was actually sent to the server.
             </summary>
         </member>
-        <member name="P:Westwind.Utilities.HttpRequestSettings.ResponseData">
+        <member name="P:Westwind.Utilities.HttpRequestSettings.CapturedResponseContent">
             <summary>
             Captured string Response Data from the server
             </summary>
@@ -4969,6 +4983,14 @@
             Determines whether requests attempt to use GZip when retrieving content
             from the server.
             </summary>
+        </member>
+        <member name="P:Westwind.Utilities.InternetTools.HttpClient.HttpTimings">
+            <summary>
+            Keeps track of request timings for the last executed request. Tracks started, 
+            firstbyte and lastbyte times as well as ms to first byte 
+            (actually first 'buffer' loaded) and last byte.
+            </summary>
+            <remarks>Does not work with DownloadStream() since you control the stream's operations.</remarks>
         </member>
         <member name="P:Westwind.Utilities.InternetTools.HttpClient.ErrorMessage">
             <summary>

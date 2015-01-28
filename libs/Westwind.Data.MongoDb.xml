@@ -519,12 +519,13 @@
         </member>
         <member name="T:Westwind.Data.MongoDb.MongoDbBusinessBase`2">
             <summary>
-            Light weight Entity Framework Code First Business object base class
-            that acts as a logic container for an entity DbContext instance. 
+            Light weight MongoDb Business object base class
+            that acts as a logical business container for MongoDb
+            databases. 
             
             Subclasses of this business object should be used to implement most data
             related logic that deals with creating, updating, removing and querying 
-            of data use EF Code First.
+            of data use the MongoDb query or LINQ operators.
             
             The business object provides base CRUD methods like Load, NewEntity,
             Remove that act on the specified entity type. The Save() method uses
@@ -972,6 +973,16 @@
             </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Properties" -->
+        <member name="T:Westwind.Data.MongoDb.MongoDbBusinessBase">
+            <summary>
+            A MongoDb Business object and data acces library that provides a thin 
+            business wrapper around the MongoDb C# driver to simplify common CRUD
+            operations and common data queries.
+            
+            Use this non-generic version, if you don't have matching entities to
+            load data into or your want to run string queries. 
+            </summary>
+        </member>
         <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase.#ctor(System.String,System.String,System.String)">
             <summary>
             Base constructor using default behavior loading context by 
