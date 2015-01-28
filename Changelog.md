@@ -65,6 +65,11 @@ which allows saving with a JSON entity.
 Small wrapper around the MongoDb C# driver that provides simple methods
 for common query and update operations. 
 
+* **Fix Expando Object Serialization**<br/>
+* <small>Westwind.Utilities</small>
+Fixed bug that caused Expando objects to only serialize dynamic properties. Fixed code to ensure both static and dynamic properties are serialized in JSON.NET and XMLSerializer. 
+
+
 ### Version 2.56
 *October 2nd, 2014*
 
