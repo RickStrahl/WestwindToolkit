@@ -416,14 +416,19 @@ namespace Westwind.Utilities
                     var prop = piList[name];
 
                     // skip fields in skip list
-                    if (fieldsToSkip.Contains("," + name + ","))
+                    if (!string.IsNullOrEmpty(fieldsToSkip) && fieldsToSkip.Contains("," + name + ","))
                         continue;
 
                     // find writable properties and assign
                     if ((prop != null) && prop.CanWrite)
-                    {
-                        var val = reader.GetValue(index);                        
-                        prop.SetValue(instance, (val == DBNull.Value) ? null : val, null);
+                    {                        
+                        var val = reader.GetValue(index);
+                        if (val == DBNull.Value)
+                            val = null;           
+                        // deal with data drivers return bit values as int64
+                        else if (prop.PropertyType == typeof (bool) && val is long)
+                            val = (long) val == 1 ? true : false;
+                        prop.SetValue(instance, val, null);
                     }
                 }
             }
