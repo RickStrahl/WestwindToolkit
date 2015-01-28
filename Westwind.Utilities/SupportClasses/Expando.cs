@@ -36,7 +36,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Dynamic;
 using System.Reflection;
-using System.Collections;
 
 namespace Westwind.Utilities
 {
@@ -75,9 +74,9 @@ namespace Westwind.Utilities
         {
             get
             {
-                if (_InstancePropertyInfo == null && Instance != null)
+                if (_InstancePropertyInfo == null && Instance != null)                
                     _InstancePropertyInfo = Instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
-                return _InstancePropertyInfo;
+                return _InstancePropertyInfo;                
             }
         }
         PropertyInfo[] _InstancePropertyInfo;
@@ -98,9 +97,9 @@ namespace Westwind.Utilities
         /// 
         /// Note you can subclass Expando.
         /// </summary>
-        public Expando()
+        public Expando() 
         {
-            Initialize(this);
+            Initialize(this);            
         }
 
         /// <summary>
@@ -121,24 +120,31 @@ namespace Westwind.Utilities
         {
             Instance = instance;
             if (instance != null)
-                InstanceType = instance.GetType();
-        }
-
-
-        public override IEnumerable<string> GetDynamicMemberNames()
-        {
-            foreach (var prop in this.GetProperties(false))
-                yield return prop.Key;
+                InstanceType = instance.GetType();           
         }
 
 
         /// <summary>
-        /// Try to retrieve a member by name first from instance properties
-        /// followed by the collection entries.
+        /// Return both instance and dynamic names.
+        /// 
+        /// Important to return both so JSON serialization with 
+        /// Json.NET works.
         /// </summary>
-        /// <param name="binder"></param>
-        /// <param name="result"></param>
         /// <returns></returns>
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
+            foreach (var prop in GetProperties(true))            
+                yield return prop.Key;            
+        }
+
+
+       /// <summary>
+       /// Try to retrieve a member by name first from instance properties
+       /// followed by the collection entries.
+       /// </summary>
+       /// <param name="binder"></param>
+       /// <param name="result"></param>
+       /// <returns></returns>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             result = null;
@@ -156,7 +162,7 @@ namespace Westwind.Utilities
             {
                 try
                 {
-                    return GetProperty(Instance, binder.Name, out result);
+                    return GetProperty(Instance, binder.Name, out result);                    
                 }
                 catch { }
             }
@@ -188,7 +194,7 @@ namespace Westwind.Utilities
                 }
                 catch { }
             }
-
+            
             // no match - set or add to dictionary
             Properties[binder.Name] = value;
             return true;
@@ -210,7 +216,7 @@ namespace Westwind.Utilities
                 {
                     // check instance passed in for methods to invoke
                     if (InvokeMethod(Instance, binder.Name, args, out result))
-                        return true;
+                        return true;                    
                 }
                 catch { }
             }
@@ -218,7 +224,7 @@ namespace Westwind.Utilities
             result = null;
             return false;
         }
-
+        
 
         /// <summary>
         /// Reflection Helper method to retrieve a property
@@ -238,13 +244,13 @@ namespace Westwind.Utilities
                 var mi = miArray[0];
                 if (mi.MemberType == MemberTypes.Property)
                 {
-                    result = ((PropertyInfo)mi).GetValue(instance, null);
+                    result = ((PropertyInfo)mi).GetValue(instance,null);
                     return true;
                 }
             }
 
             result = null;
-            return false;
+            return false;                
         }
 
         /// <summary>
@@ -269,7 +275,7 @@ namespace Westwind.Utilities
                     return true;
                 }
             }
-            return false;
+            return false;                
         }
 
         /// <summary>
@@ -367,7 +373,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="includeProperties"></param>
         /// <returns></returns>
-        public IEnumerable<KeyValuePair<string, object>> GetProperties(bool includeInstanceProperties = false)
+        public IEnumerable<KeyValuePair<string,object>> GetProperties(bool includeInstanceProperties = false)
         {
             if (includeInstanceProperties && Instance != null)
             {
@@ -376,10 +382,10 @@ namespace Westwind.Utilities
             }
 
             foreach (var key in this.Properties.Keys)
-                yield return new KeyValuePair<string, object>(key, this.Properties[key]);
+               yield return new KeyValuePair<string, object>(key, this.Properties[key]);
 
         }
-
+  
 
         /// <summary>
         /// Checks whether a property exists in the Property collection
@@ -403,7 +409,7 @@ namespace Westwind.Utilities
             }
 
             return false;
-        }
+        }        
 
     }
 }

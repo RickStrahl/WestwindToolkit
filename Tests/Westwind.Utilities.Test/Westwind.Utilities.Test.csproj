@@ -129,7 +129,9 @@
     <Compile Include="ImagingTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
     <None Include="Westwind.Utilities.Test.dll.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
