@@ -142,10 +142,11 @@ namespace Westwind.Web
                 if (Request.ContentLength > 0L)
                 {
                     // Pick up single unencoded JSON parameter
-                    StreamReader sr = new StreamReader(Request.InputStream);
-                    string singleParm = sr.ReadToEnd();
-                    sr.Close();
-                    sr.Dispose();
+                    string singleParm;
+                    using (StreamReader sr = new StreamReader(Request.InputStream))
+                    {
+                        singleParm = sr.ReadToEnd();
+                    }
 
                     if (!string.IsNullOrEmpty(singleParm))
                         parameterList.Add(singleParm);
@@ -213,7 +214,10 @@ namespace Westwind.Web
                 if (HttpContext.Current.IsDebuggingEnabled)
                     Serializer.FormatJsonOutput = true;
 
-                stringResult = Serializer.Serialize(result);
+                if (result == null)
+                    stringResult = "null";
+                else
+                    stringResult = Serializer.Serialize(result);
             }
             catch (Exception ex)
             {
