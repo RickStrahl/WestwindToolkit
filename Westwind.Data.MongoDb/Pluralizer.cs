@@ -15,11 +15,20 @@ namespace Westwind.Data.MongoDb
     /// </summary>
     public class Pluralizer
     {
+        /// <summary>
+        /// An exception dictionary that lets you map how
+        /// certain nouns pluralize.
+        /// 
+        /// You can override these value globally using this
+        /// static dictionary at application startup.
+        /// </summary>
         public static Dictionary<string, string> Exceptions =
         new Dictionary<string,string> {
             {"Quiz", "Quizzes"},            
             {"Mouse", "Mice"},
-            {"Man", "Men"}            
+            {"Man", "Men"},
+            {"Data", "Data"},
+            {"Info", "Info"}
         };
 
 
