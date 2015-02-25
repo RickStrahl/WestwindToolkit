@@ -240,6 +240,7 @@ namespace Westwind.Utilities
             return result;
         }
 
+
         /// <summary>
         /// Dynamically creates an instance of JSON.NET
         /// </summary>
@@ -261,8 +262,7 @@ namespace Westwind.Utilities
                 if (json == null)
                 {
                     try
-                    {
-                        var ass = AppDomain.CurrentDomain.Load("Newtonsoft.Json");
+                    {                        
                         json = ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonSerializer");
                     }
                     catch

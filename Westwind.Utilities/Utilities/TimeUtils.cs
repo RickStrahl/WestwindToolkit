@@ -309,28 +309,16 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Converts a UtcTime to a local time based on a specific timezone
+        /// Returns TimeZone adjusted time for a given from a Utc or local time.
+        /// Date is first converted to UTC then adjusted.
         /// </summary>
-        /// <param name="dateTime"></param>
+        /// <param name="time"></param>
         /// <param name="timeZoneId"></param>
         /// <returns></returns>
-        public static DateTime UtcToTimezoneTime(DateTime utcDate, string timeZoneId = "Pacific Standard Time")
-        {            
-            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
-            return UtcToTimezoneTime(utcDate, tzi);
-        }
-
-        /// <summary>
-        /// Converts a UtcTime to a local time based on a specific timezone
-        /// </summary>
-        /// <param name="dateTime"></param>
-        /// <param name="timeZoneId"></param>
-        /// <returns></returns>
-        public static DateTime UtcToTimezoneTime(DateTime utcDate, TimeZoneInfo tzi)
+        public static DateTime ToTimeZoneTime(this DateTime time, string timeZoneId = "Pacific Standard Time")
         {
-            utcDate = utcDate.ToUniversalTime();            
-            var offset = tzi.GetUtcOffset(utcDate);
-            return DateTime.SpecifyKind(utcDate.Add(offset), DateTimeKind.Local);
+            TimeZoneInfo tzi = TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+            return time.ToTimeZoneTime(tzi);
         }
 
         /// <summary>
@@ -340,11 +328,10 @@ namespace Westwind.Utilities
         /// <param name="time"></param>
         /// <param name="timeZoneId"></param>
         /// <returns></returns>
-        public static DateTime ToTimeZoneTime(this DateTime time, string timeZoneId = "Pacific Standard Time")
+        public static DateTime ToTimeZoneTime(this DateTime time, TimeZoneInfo tzi)
         {
-            return UtcToTimezoneTime(time, timeZoneId);
+            return TimeZoneInfo.ConvertTimeFromUtc(time, tzi);
         }
-
 
 
     }
