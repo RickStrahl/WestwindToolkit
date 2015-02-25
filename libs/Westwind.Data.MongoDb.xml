@@ -998,6 +998,15 @@
             overrides
             </summary>
         </member>
+        <member name="F:Westwind.Data.MongoDb.Pluralizer.Exceptions">
+            <summary>
+            An exception dictionary that lets you map how
+            certain nouns pluralize.
+            
+            You can override these value globally using this
+            static dictionary at application startup.
+            </summary>
+        </member>
         <member name="T:Westwind.Data.MongoDb.Properties.Resources">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.
