@@ -36,7 +36,7 @@ namespace Westwind.Utilities.Tests
 
             var url = query.ToString();
 
-            Console.WriteLine(url);
+            Console.WriteLine(url);            
             Console.Write(query.ToString());
             //http://mysite.com/page1?id=4123&format=xml&action=edit&
             //text=It's%20a%20brave%20new%20world!&name=%3C%3C%20It's%20a%20brave%20new%20world!
@@ -70,6 +70,20 @@ namespace Westwind.Utilities.Tests
             Assert.IsTrue(url ==
                           "http://mysite.com/page1?id=3123&format=json&format=xml&multiple=1&multiple=2&multiple=3");
 
+        }
+
+        [TestMethod]
+        public void QueryStringPlusSigns()
+        {
+            string str = "http://mysite.com/page1?text=It's+a+depressing+world+out+there";
+
+            var query = new UrlEncodingParser(str, true);
+           
+            string text = query["text"];
+            Console.WriteLine(text);
+
+            Assert.IsFalse(text.Contains("+") );
+            Assert.IsTrue(text.Contains(" "));;
         }
 
         [TestMethod]

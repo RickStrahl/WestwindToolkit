@@ -1,5 +1,12 @@
 #West Wind Toolkit Change Log
 
+### Version 2.60
+*not released yet*
+
+* **UrlEncodingParser.DecodePlusSignsAsSpaces**<br/>
+Add option to support parsing + signs as spaces in UrlEncoded content. By default spaces are expected to be encoded with %20, but some older applications still use + as the space encoding character. Off by default and should be set using the constructor.
+
+
 ### Version 2.59
 *January 21st, 2015*
 

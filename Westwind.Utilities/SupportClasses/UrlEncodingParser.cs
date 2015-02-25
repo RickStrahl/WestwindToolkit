@@ -29,6 +29,12 @@ namespace Westwind.Utilities
         private string Url { get; set; }
 
         /// <summary>
+        /// Determines whether plus signs in the UrlEncoded content
+        /// are treated as spaces.
+        /// </summary>
+        public bool DecodePlusSignsAsSpaces { get; set; }
+
+        /// <summary>
         /// Always pass in a UrlEncoded data or a URL to parse from
         /// unless you are creating a new one from scratch.
         /// </summary>
@@ -38,10 +44,10 @@ namespace Westwind.Utilities
         /// but saved. Then when you write the original URL is 
         /// re-written with the new query string.
         /// </param>
-        public UrlEncodingParser(string queryStringOrUrl = null)
+        public UrlEncodingParser(string queryStringOrUrl = null, bool decodeSpacesAsPlusSigns = false)
         {
             Url = string.Empty;
-
+            DecodePlusSignsAsSpaces = decodeSpacesAsPlusSigns;
             if (!string.IsNullOrEmpty(queryStringOrUrl))
             {
                 Parse(queryStringOrUrl);
@@ -91,7 +97,15 @@ namespace Westwind.Utilities
                     int index2 = pair.IndexOf('=');
                     if (index2 > 0)
                     {
-                        Add(pair.Substring(0, index2), pair.Substring(index2 + 1));
+                        var val = pair.Substring(index2 + 1);
+                        if (!string.IsNullOrEmpty(val))                           
+                        {
+                            if (DecodePlusSignsAsSpaces)
+                                val = val.Replace("+", " ");
+                            val = Uri.UnescapeDataString(val);
+                        }
+
+                        Add(pair.Substring(0, index2),val);
                     }
                 }
             }
