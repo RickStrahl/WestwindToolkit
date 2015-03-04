@@ -138,7 +138,7 @@ namespace Westwind.Web.Mvc
             else
                 viewEngineResult = ViewEngines.Engines.FindView(Context, viewPath, null);
 
-            if (viewEngineResult == null)
+            if (viewEngineResult == null || viewEngineResult.View == null)
                 throw new FileNotFoundException(Resources.ViewCouldNotBeFound);
 
             // get the view and attach the model to view data
