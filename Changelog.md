@@ -6,6 +6,9 @@
 * **UrlEncodingParser.DecodePlusSignsAsSpaces**<br/>
 Add option to support parsing + signs as spaces in UrlEncoded content. By default spaces are expected to be encoded with %20, but some older applications still use + as the space encoding character. Off by default and should be set using the constructor.
 
+* **Add JpegCompression Option to ImageUtils.ResizeImage and RotateImage**</br>
+You can now specify the jpeg quality by providing a jpeg compression level between 0 and 100. This allows control over the compression level unlike previously which used the relatively low default compression level used when no custom encoder is used. This allows for creating higher quality jpeg images.
+
 
 ### Version 2.59
 *January 21st, 2015*

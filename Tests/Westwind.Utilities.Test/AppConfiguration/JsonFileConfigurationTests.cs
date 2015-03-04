@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace Westwind.Utilities.Configuration.Tests
 {
@@ -16,6 +17,12 @@ namespace Westwind.Utilities.Configuration.Tests
         /// Here the filename references the current directory
         /// </summary>
         public const string STR_JSONCONFIGFILE = "JsonConfiguration.txt";
+
+        public JsonFileConfigurationTests()
+        {
+            // force Json ref to load since we dynamically load
+            var json = new JsonSerializerSettings();
+        }
 
 
         [TestMethod]

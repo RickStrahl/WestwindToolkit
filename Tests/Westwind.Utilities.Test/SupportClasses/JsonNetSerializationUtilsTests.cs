@@ -13,6 +13,12 @@ namespace Westwind.Utilities.Configuration.Tests
     [TestClass]
     public class JsonNetSerializationUtilsTests
     {
+        public JsonNetSerializationUtilsTests()
+        {
+            // force Json.net ref to load since we dynamically load
+            var json = new JsonSerializerSettings();
+        }
+
         [TestMethod]
         public void JsonStringSerializeTest()
         {

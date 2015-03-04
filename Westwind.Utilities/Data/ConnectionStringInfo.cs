@@ -59,7 +59,7 @@ namespace Westwind.Utilities.Data
                     connectionString = connInfo.ConnectionString;
                 }
                 else
-                    throw new InvalidOperationException(Resources.InvalidConnectionStringName);
+                    throw new InvalidOperationException(Resources.InvalidConnectionStringName + ": " + connectionString);
             }
             else
             {
