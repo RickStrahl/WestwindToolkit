@@ -102,16 +102,15 @@ namespace Westwind.Web.JsonSerializers
             //    new Newtonsoft.Json.JsonSerializer();
             dynamic json =
                 ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonSerializer");
-            
 
             json.ObjectCreationHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.ObjectCreationHandling", "Replace");
             json.MissingMemberHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.MissingMemberHandling", "Ignore");
             json.ReferenceLoopHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.ReferenceLoopHandling","Ignore");
 
-            json.Converters.Add((dynamic) ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.Converters.IsoDateTimeConverter") );
-
+            //json.Converters.Add((dynamic) ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.Converters.IsoDateTimeConverter") );
+            json.Converters.Add((dynamic) ReflectionUtils.CreateInstanceFromString("NewtonSoft.Json.Converters.StringEnumConverter"));
             StringWriter sw = new StringWriter();
-
+            
             //JsonTextWriter writer = new JsonTextWriter(sw);
             dynamic writer = ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonTextWriter",sw); 
                                                     
