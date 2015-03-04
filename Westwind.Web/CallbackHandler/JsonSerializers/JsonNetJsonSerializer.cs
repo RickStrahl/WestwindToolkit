@@ -38,11 +38,7 @@ namespace Westwind.Web.JsonSerializers
 
 
         /// <summary>
-        /// Encodes Dates as a JSON string value that is compatible
-        /// with MS AJAX and is safe for JSON validators. If false
-        /// serializes dates as new Date() expression instead.
-        /// 
-        /// The default is true.
+        /// ISO or MSAJAX serialization modes. Not supported with JSON.NET
         /// </summary>
         public JsonDateEncodingModes DateSerializationMode
         {
@@ -70,7 +66,46 @@ namespace Westwind.Web.JsonSerializers
             masterSerializer = serializer;
         }
 
-               /// <summary>
+        private static dynamic JsonNetJson;
+        private static object JsonNetLock = new object();
+
+        public dynamic CreateJsonNetInstance(bool forceReload = false)
+        {
+            if (!forceReload && JsonNetJson != null)
+                return JsonNetJson;
+
+            if (JsonNetJson == null)
+            {
+                lock (JsonNetLock)
+                {
+                    if (JsonNetJson == null)
+                        JsonNetJson = ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonSerializer");
+                }
+            }
+
+            JsonNetJson.ObjectCreationHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.ObjectCreationHandling", "Replace");
+            JsonNetJson.MissingMemberHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.MissingMemberHandling", "Ignore");
+            JsonNetJson.ReferenceLoopHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.ReferenceLoopHandling","Ignore");
+
+            //JsonNetJson.Converters.Add((dynamic) ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.Converters.IsoDateTimeConverter") );
+            JsonNetJson.Converters.Add((dynamic)ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.Converters.StringEnumConverter"));
+            
+            return JsonNetJson;
+        }
+
+        public dynamic CreateJsonNetWriter(StringWriter sw)
+        {                       
+            dynamic writer = ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonTextWriter", sw);
+
+            if (FormatJsonOutput)
+                writer.Formatting = (dynamic)ReflectionUtils.GetStaticProperty("Newtonsoft.Json.Formatting", "Indented");
+            else
+                writer.Formatting = (dynamic)ReflectionUtils.GetStaticProperty("Newtonsoft.Json.Formatting", "None");
+
+            return writer;
+        }
+
+        /// <summary>
         /// Serializes a .NET object reference into a JSON string.
         /// 
         /// The serializer supports:
@@ -99,28 +134,13 @@ namespace Westwind.Web.JsonSerializers
         {
             Type type = value.GetType();
 
-            //    new Newtonsoft.Json.JsonSerializer();
-            dynamic json =
-                ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonSerializer");
+            CreateJsonNetInstance();
 
-            json.ObjectCreationHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.ObjectCreationHandling", "Replace");
-            json.MissingMemberHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.MissingMemberHandling", "Ignore");
-            json.ReferenceLoopHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.ReferenceLoopHandling","Ignore");
-
-            //json.Converters.Add((dynamic) ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.Converters.IsoDateTimeConverter") );
-            json.Converters.Add((dynamic) ReflectionUtils.CreateInstanceFromString("NewtonSoft.Json.Converters.StringEnumConverter"));
             StringWriter sw = new StringWriter();
+            var writer = CreateJsonNetWriter(sw);
             
-            //JsonTextWriter writer = new JsonTextWriter(sw);
-            dynamic writer = ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonTextWriter",sw); 
-                                                    
-            if (FormatJsonOutput)
-                writer.Formatting = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.Formatting","Indented");
-            else
-                writer.Formatting = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.Formatting","None");
-
             writer.QuoteChar = '"';
-            json.Serialize(writer, value);
+            JsonNetJson.Serialize(writer, value);
             
             string output = sw.ToString();
             writer.Close();             
