@@ -1,6 +1,6 @@
 #West Wind Toolkit Change Log
 
-### Version 2.60
+### Version 2.61
 *not released yet*
 
 * **UrlEncodingParser.DecodePlusSignsAsSpaces**<br/>
@@ -9,6 +9,8 @@ Add option to support parsing + signs as spaces in UrlEncoded content. By defaul
 * **Add JpegCompression Option to ImageUtils.ResizeImage and RotateImage**</br>
 You can now specify the jpeg quality by providing a jpeg compression level between 0 and 100. This allows control over the compression level unlike previously which used the relatively low default compression level used when no custom encoder is used. This allows for creating higher quality jpeg images.
 
+* **CallbackHandler JSON.NET Improvements**
+Added default support for enum as string handling to CallbackHandler so that enums serialize/deserialize from string values rather than ordinals. Implemented JSON.NET instance caching rather than dynamic loading to improve performance of JSON.NET serialization.
 
 ### Version 2.59
 *January 21st, 2015*
