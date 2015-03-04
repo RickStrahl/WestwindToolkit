@@ -13,6 +13,8 @@ namespace Westwind.Utilities.Tests
         private string ImageFileWork = @"supportfiles\sailbigWork.jpg";
         private string ImageFileRotated = @"supportfiles\sailbigRotated.jpg";
         private string SquareImageFile = @"supportfiles\SquareImage.jpg";
+        private string HighQualityImageFile = @"supportfiles\HighQuality.jpg";
+        private string HighQualityImageFileWork = @"supportfiles\HighQualityWork.jpg";
 
         [TestMethod]
         public void RotateFileToFileTest()
@@ -106,6 +108,17 @@ namespace Westwind.Utilities.Tests
             }
         }
 
+        [TestMethod]
+        public void ResizeHighQualityBitMap()
+        {
+            string orig = HighQualityImageFile;
+            string copied = HighQualityImageFileWork;
+
+            Assert.IsTrue(ImageUtils.ResizeImage(orig, copied, 2000, 2000));
+
+            Console.WriteLine("Orig file: " + (new FileInfo(orig).Length/1000).ToString("n2") + "kb");
+            Console.WriteLine("Updated file: " + (new FileInfo(copied).Length / 1000).ToString("n2") + "kb");
+        }
 
     }
 }
