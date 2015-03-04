@@ -507,6 +507,9 @@ namespace Westwind.Data.MongoDb
         /// <returns></returns>
         protected virtual TEntity LoadBase(string id)
         {
+            if (string.IsNullOrEmpty(id))
+                return null;
+
             Entity = Collection.FindOneByIdAs(typeof(TEntity), new BsonString(id)) as TEntity;
 
             if (Entity == null)
