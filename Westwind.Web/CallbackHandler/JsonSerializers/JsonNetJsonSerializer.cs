@@ -173,22 +173,11 @@ namespace Westwind.Web.JsonSerializers
         /// </param>
         public object Deserialize(string jsonText, Type valueType)
         {
+            CreateJsonNetInstance();
 
-            dynamic json= ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonSerializer"); 
-            //Newtonsoft.Json.JsonSerializer json = new Newtonsoft.Json.JsonSerializer();                       
-
-            json.NullValueHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.NullValueHandling","Ignore");
-            json.ObjectCreationHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.ObjectCreationHandling", "Replace");
-            json.MissingMemberHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.MissingMemberHandling", "Ignore");
-            json.ReferenceLoopHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.ReferenceLoopHandling", "Ignore");
-
-            dynamic iso = ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.Converters.IsoDateTimeConverter");
-            json.Converters.Add(iso);
-
-           
             StringReader sr = new StringReader(jsonText);
             dynamic reader = ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonTextReader",sr);            
-            object result = json.Deserialize(reader, valueType);
+            object result = JsonNetJson.Deserialize(reader, valueType);
             reader.Close();
 
             return result;
