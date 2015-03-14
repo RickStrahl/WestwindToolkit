@@ -20,14 +20,20 @@ that are commonly required in Web applications.
   Json Encoding for strings and dates, Enabling GZip encoding, forcing
   pages to refresh and much more.
 
-* **ClientScriptProxy**
-  Class that helps with embedding and loading of JavaScript in 
-  Web pages both Web Forms and standalone.
-
 * **ScriptLoader**
   Facilitates loading jquery, jquery UI and ww.jquery.js and any other
   libraries by predefining where script content loads from. CDN support
   and for jquery there's resource fallback.
+
+* **CallbackHandler**
+A small HTTP Service framework that can act as a JSON/XML backend for 
+an application without requiring a full framework like WebAPI or MVC.
+Includes many of same features like attribute routes, content negotiation
+and more.
+
+* **ClientScriptProxy**
+  Class that helps with embedding and loading of JavaScript in 
+  Web pages both Web Forms and standalone.
 
 * **[ResponseFilterStream](http://www.west-wind.com/weblog/posts/2009/Nov/13/Capturing-and-Transforming-ASPNET-Output-with-ResponseFilter)**
   A response filter that can be used to examine the full response and
@@ -40,19 +46,7 @@ that are commonly required in Web applications.
   most ASP.NET request information pieces into a class. ToString() or ToHtml()
   can be used to dump out the information into a log or for display.
 
-* Many static helper classes with tons of utility features:
-	* WebUtils
-    * HtmlUtils
-	* ReflectionUtils
-	* SerializationUtils
-	* DataUtils
-	* EncryptionUtils
-	* FileUtils
-    * TimeUtils
-    * XmlUtils    
 
-
-and much, much more.
 
 It's worthwhile to browse through the source code or the documentation
 to find out the myriad of useful functionality that is available, all
