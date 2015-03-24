@@ -53,6 +53,10 @@
     <Compile Include="Migrations\201503240131437_InitialMigration.Designer.cs">
       <DependentUpon>201503240131437_InitialMigration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201503240833212_AlbumSpotifyUrlAdded.cs" />
+    <Compile Include="Migrations\201503240833212_AlbumSpotifyUrlAdded.Designer.cs">
+      <DependentUpon>201503240833212_AlbumSpotifyUrlAdded.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AlbumViewerContext.cs" />
     <Compile Include="Models\Album.cs" />
@@ -77,6 +81,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201503240131437_InitialMigration.resx">
       <DependentUpon>201503240131437_InitialMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201503240833212_AlbumSpotifyUrlAdded.resx">
+      <DependentUpon>201503240833212_AlbumSpotifyUrlAdded.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

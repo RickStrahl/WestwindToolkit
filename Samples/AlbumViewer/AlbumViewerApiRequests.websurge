@@ -4,7 +4,7 @@ Accept: application/json
 
 ------------------------------------------------------------------
 
-GET http://localhost:25212/artists/1 HTTP/1.1
+GET http://localhost:25212/artists/2 HTTP/1.1
 Accept-Encoding: gzip,deflate
 Accept: application/json
 
@@ -17,6 +17,12 @@ Accept: application/json
 ------------------------------------------------------------------
 
 GET http://localhost:25212/albums/1 HTTP/1.1
+Accept-Encoding: gzip,deflate
+Accept: application/json
+
+------------------------------------------------------------------
+
+GET http://localhost:25212/artistlookup/?search=Me HTTP/1.1
 Accept-Encoding: gzip,deflate
 Accept: application/json
 

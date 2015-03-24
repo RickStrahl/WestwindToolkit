@@ -13,7 +13,7 @@ namespace AlbumViewerBusiness
         public int Year { get; set; }
         public string ImageUrl { get; set; }
         public string AmazonUrl { get; set; }
-
+        public string SpotifyUrl { get; set; }
 
         [ForeignKey("Artist")]
         public int ArtistId { get; set; }
