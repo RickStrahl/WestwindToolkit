@@ -13,11 +13,24 @@ namespace Westwind.Web
         public CallbackException()
         {
             message = string.Empty;
-            stackTrace = string.Empty;            
+            stackTrace = string.Empty;
+            statusCode = 500;
+        }
+
+        public CallbackException(string message, int statusCode = 500)
+        {
+            if (message == null)
+                message = string.Empty;
+
+            this.message = message;
+            this.statusCode = statusCode; 
+            stackTrace = string.Empty;
+            
         }
         public bool isCallbackError {get; set; }
         public string message { get; set; }
         public string stackTrace  { get; set; }
+        public int statusCode { get; set; }
     }
 
     /// <summary>
@@ -30,6 +43,11 @@ namespace Westwind.Web
         {
             message = string.Empty;
         }
+        public CallbackMessage(string msg)
+        {
+           message = msg;
+        }
+
 
         public bool isError {get; set; }
         public string message {get; set;}
