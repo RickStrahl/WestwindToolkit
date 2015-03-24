@@ -1,4 +1,4 @@
-﻿(function () {
+(function () {
     'use strict';
 
     var app = angular
@@ -8,14 +8,14 @@
     if (app.configuration.useLocalData)
         artistController.$inject = ["$http", "$window", "$routeParams", "$animate", "artistServiceLocal"];
     else
-        artistController.$inject = ["$http","$window","$routeParams","$animate","artistService"];
+        artistController.$inject = ["$http", "$window", "$routeParams", "$animate", "artistService"];
 
-    function artistController($http,$window,$routeParams,$animate,artistService) {        
+    function artistController($http,$window,$routeParams,$animate,artistService) {
         var vm = this;
 
         vm.artist = null;
-        vm.baseUrl = "./";
-        vm.albums = [];
+        vm.artists = [];
+
         vm.error = {
             message: null,
             icon: "warning",
@@ -26,9 +26,9 @@
             }
         };
 
-        vm.getArtist = function (pk) {
-            artistService.getArtist(pk)
-                .success(function (response) {                    
+        vm.getArtist = function (id) {
+            artistService.getArtist(id)
+                .success(function(response) {
                     vm.artist = response.Artist;
                     vm.albums = response.Albums;
                 })
@@ -37,16 +37,15 @@
                 });
         };
 
-        vm.saveArtist = function (artist) {
+        vm.saveArtist = function (artist) {            
             artistService.saveArtist(artist)
-                .success(function (response) {
+                .success(function (response) {                    
                     vm.artist = response.Artist;
                     vm.albums = response.Albums;
+
                     $("#EditModal").modal("hide");
                 })
-                .error(function (error) {
-                    vm.error.show("Artist couldn't be saved.", "warning");
-                });
+                .error(parseError);
         }
 
         vm.albumClick = function(album) {
@@ -63,9 +62,22 @@
             $window.location.hash = "/album/edit/0";
         };
 
+        vm.deleteArtist = function (artist) {
+            artistService.deleteArtist(artist)
+                .success(function(result) {
+                    $window.location.hash = "/artists";
+                })
+                .error(parseError);
+        }
+
+        function parseError() {
+            var err = ww.angular.parseHttpError(arguments);
+            vm.error.show(err.message, "warning");
+        }
+
         vm.getArtist($routeParams.artistId);
 
         // force explicit animation of the view and edit forms always
-        $animate.addClass("#MainView", "slide-animation");
+        //$animate.addClass("#MainView", "slide-animation");
     }
 })();

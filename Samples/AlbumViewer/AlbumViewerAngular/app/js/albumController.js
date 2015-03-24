@@ -13,7 +13,7 @@
 
     function albumController($routeParams,$window,$animate,albumService) {        
         var vm = this;
-
+        
         vm.album = null;
         vm.selectedArtist = { ArtistName: null, Description: null };
         vm.error = {
@@ -94,7 +94,8 @@
             $input.keyup(function () {                
                 var s = $(this).val();
                 $.getJSON("./artistlookup?search=" + s,
-                    function (data) {                        
+                    function (data) {
+                        console.log(data);
                         $input.data('typeahead').source = data;
                     });
             });
@@ -106,6 +107,6 @@
         vm.bandTypeAhead();
 
         // force explicit animation of the view and edit forms always
-        $animate.addClass("#MainView","slide-animation");
+        //$animate.addClass("#MainView","slide-animation");
     }
 })();

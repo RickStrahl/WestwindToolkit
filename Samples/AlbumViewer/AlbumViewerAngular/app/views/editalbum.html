@@ -1,7 +1,7 @@
 <div ng-controller="albumController as view" class="container">
 
     <div class="btn-group" style="margin-bottom: 10px;">
-        <a href="#/albums" class="btn btn-sm btn-default"><i class="fa fa-list"></i> List</a>
+        <a href="#/albums" class="btn btn-sm btn-default"><i class="fa fa-list"></i> Albums</a>
         <a ng-hide="view.album.pk == 0" href="#/album/{{view.album.Id}}" class="btn btn-sm btn-default"><i class="fa fa-eye"></i> View</a>
         <a ng-hide="view.album.pk == 0" href="{{view.album.AmazonUrl}}" class="btn btn-sm btn-default"><i class="fa fa-dollar"></i> Buy</a>
         <a ng-hide="view.album.pk == 0" href="#" ng-click="" class="btn btn-sm btn-default"><i class="fa fa-remove"></i> Delete</a>
@@ -38,8 +38,6 @@
                            data-provide="typeahead"
                            placeholder="Band Name" 
                            ng-model="view.album.Artist.ArtistName" />
-
-
                 </div>
                 <div class="form-group">
                     <label for="Description">Album Description:</label>
@@ -138,7 +136,7 @@
 
         <div class="col-sm-7">
             <h3>Preview</h3>
-            <img ng-src="{{view.album.ImageUrl}}" class="album-image-big"/>
+            <img ng-src="{{view.album.ImageUrl}}" class="album-image-big" title="{{view.album.Title}}" />
             <div style="margin-top: 10px;">
                 <h2 class="album-title-big">{{view.album.Title}}</h2>
                 <div class="album-artist">by {{view.album.Artist.ArtistName}} {{(view.album.Year ? 'in ' + view.album.Year : '')}}
@@ -160,7 +158,3 @@
     </div>
 
 </div>
-
-<script>
-        
-</script>

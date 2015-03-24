@@ -12,6 +12,7 @@
     function albumServiceLocal($http,$q) {
         var service = {
             baseUrl: "data/",
+            lsAlbums: "av_albums",
             albums: [],
             artists: [],
             album: newAlbum(),
@@ -63,15 +64,17 @@
 
             // check localStorage first
             if (noCache != 2) {
-                service.albums = localStorage.getItem("av_albums");
-                if (service.albums && service.albums.length > 0)
-                    return ww.angular.$httpPromiseFromValue($q, JSON.parse(service.albums));
+                var data = localStorage.getItem(service.lsAlbums);
+                if (data && data.length > 2) {
+                    service.albums = JSON.parse(data);
+                    return ww.angular.$httpPromiseFromValue($q,service.albums);
+                }
             }
 
             return $http.get(service.baseUrl + "albums.js")
                 .success(function (data) {
                     service.albums = data;
-                    //localStorage.setItem("av_albums",JSON.serialize(service.albums));
+                    saveAlbumList(); // to local storage                   
                 })
                 .error(onPageError);
         }
@@ -154,11 +157,13 @@
         }
 
         function saveAlbum(album) {
-            return $http.post(service.baseUrl + "album", album)
-                .success(function (alb) {
-                    service.updateAlbum(alb);
-                    service.album = alb;
-                });
+            service.updateAlbum(album);
+            service.album = album;
+            saveAlbumList();
+            return ww.angular.$httpPromiseFromValue($q, service.album);
+        }
+        function saveAlbumList() {
+            localStorage.setItem(service.lsAlbums, JSON.stringify(service.albums));
         }
 
         function deleteAlbum(album){

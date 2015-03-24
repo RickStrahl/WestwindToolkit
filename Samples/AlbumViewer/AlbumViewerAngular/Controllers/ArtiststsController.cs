@@ -23,6 +23,22 @@ namespace AlbumViewerAngular.Controllers
             return new JsonNetResult(artists.ToList());
         }
 
+
+        [Route("artistlookup")]
+        [AcceptVerbs(HttpVerbs.Get)]
+        public ActionResult LookupArtist(string search)
+        {
+            var artistBus = new ArtistBusiness();
+            var artists = artistBus.GetArtistLookup(search)
+                .Select(art => new
+                {
+                    name = art.ArtistName,
+                    id = art.ArtistName
+                });
+
+            return new JsonNetResult(artists.ToList());
+        }
+
         [Route("artists/{id}")]
         [AcceptVerbs(HttpVerbs.Get)]
         public ActionResult Get(int id = -1)
@@ -45,20 +61,17 @@ namespace AlbumViewerAngular.Controllers
             });
         }
 
-        [Route("artists/{id}")]
-        [AcceptVerbs(HttpVerbs.Put)]
-        public ActionResult SaveArtist(int id, Artist postedArtist)
-        {
-            bool llNew = id == -2 ? true : false;
 
+        [Route("artists")]
+        [AcceptVerbs(HttpVerbs.Post | HttpVerbs.Put)]
+        public ActionResult SaveArtist(Artist postedArtist)
+        {            
             if (!ModelState.IsValid)
                 throw new CallbackException("Model binding failed.", 500);
 
             var artistBus = new ArtistBusiness();
-            //var artist = artistBus.Load(id);
-            //if (artist == null)
-            //    artist = artistBus.NewEntity();
 
+            // attach to context
             var artist = artistBus.Attach(postedArtist);
 
             if (!artistBus.Validate())
@@ -69,23 +82,32 @@ namespace AlbumViewerAngular.Controllers
             if (!artistBus.Save())
                 throw new CallbackException("Unable to save artist: " + artistBus.ErrorMessage);
 
-            return new JsonNetResult(artist);
+            var albumBus = new AlbumBusiness();
+            var albums = albumBus.GetAlbumsForArtist(artist.Id);
+
+            return new JsonNetResult(new ArtistResponse
+            {
+                Artist = artist,
+                Albums = albums
+            });
         }
 
-        [Route("artistlookup")]
-        [AcceptVerbs(HttpVerbs.Get)]
-        public ActionResult SaveArtist(string search)
+
+        [Route("artists/delete/{id}")]
+        [AcceptVerbs(HttpVerbs.Get)] // DELETE would not work here???
+        public ActionResult DeleteArtist(int id)
         {
-            var artistBus = new ArtistBusiness();
-            var artists = artistBus.GetArtistLookup(search)
-                .Select(art => new
-                {
-                    name = art.ArtistName,
-                    id = art.ArtistName
-                });
+            if (id < 1)
+                throw new CallbackException("Invalid Id passed.");
 
-            return new JsonNetResult(artists.ToList());        
+            var artistBus = new ArtistBusiness();
+            if (!artistBus.Delete(id,true))
+                throw new CallbackException("Couldn't delete artist: " + artistBus.ErrorMessage);
+
+            return new JsonNetResult(true);
         }
+       
+
     }
 
     public class ArtistResponse

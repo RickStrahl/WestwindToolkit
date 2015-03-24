@@ -1,8 +1,8 @@
 <div ng-controller="albumController as view" class="container">
 
     <div class="btn-group" style="margin-bottom: 10px;">
-        <a href="#/albums" class="btn btn-sm btn-default"><i class="fa fa-list"></i> List</a>
-        <a href="#/album/edit/{{view.album.Id}}" class="btn btn-sm btn-default"><i class="fa fa-edit"></i> Edit</a>
+        <a href="#/albums" class="btn btn-sm btn-default"><i class="fa fa-list"></i> Albums</a>
+        <a ng-href="#/album/edit/{{view.album.Id}}" class="btn btn-sm btn-default"><i class="fa fa-edit"></i> Edit</a>
         <a href="{{view.album.AmazonUrl}}" class="btn btn-sm btn-default"><i class="fa fa-dollar"></i> Buy</a>
         <button ng-click="view.deleteAlbum(view.album)" class="btn btn-sm btn-default"><i class="fa fa-remove"></i> Delete</button>
     </div>

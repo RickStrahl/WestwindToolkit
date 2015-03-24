@@ -7,8 +7,6 @@
 
     artistService.$inject = ['$http','$q'];
 
-
-
     function artistService($http,$q) {
         var service = {
             baseUrl: "./",
@@ -94,19 +92,18 @@
             service.artist = artist;
         }
 
-        function saveArtist(artist) {            
-            $http.post(service.baseUrl + "artist/", artist)
-               .success(function (art) {                    
-                   service.artist = art.Artist;
-                   service.albums = art.Albums;
-                    
-                   updateArtist(art.Artist);
-               })
-               .error(function (error) {
-                service.error = "Artist couldn't be saved.";
-            });
+        function saveArtist(artist) {
+            $http.post(service.baseUrl + "artists", artist)
+                .success(function (art) {
+                    service.artist = art.Artist;
+                    service.albums = art.Albums;
+                    updateArtist(art.Artist);
+                })
+                .error(function(error) {
+                    service.error = "Artist couldn't be saved.";
+                });
 
-            return $http.post(service.baseUrl + "artist", artist)
+            return $http.post(service.baseUrl + "artists", artist)
                 .success(function (art) {
                     service.updateArtist(art);
                     service.artist = art;
@@ -114,20 +111,20 @@
         }
 
         function deleteArtist(artist) {
-            return $http.get(service.baseUrl + "deletealbum/" + artist.Id)
+            return $http.get(service.baseUrl + "artists/delete/" + artist.Id)
                 .success(function () {
-                    service.albums = _.remove(service.albums, function (alb) {
-                        return artist.Id != alb.Id;
+                    service.albums = _.remove(service.artists, function (art) {
+                        return artist.Id === art.Id;
                     });
                 });
         }
 
         function findArtistIndex(artist) {
             return _.findIndex(service.artists, function (a) {
-                if (typeof artist == "Object")
-                    return artist.Id == a.Id;
+                if (typeof artist == "object")
+                    return artist.Id === a.Id;
                 else
-                   return artist == a.Id;
+                   return artist === a.Id;
             });
         }
 

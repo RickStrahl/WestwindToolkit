@@ -1,4 +1,4 @@
-(function() {
+﻿(function() {
     'use strict';
 
     var app = angular
@@ -6,13 +6,13 @@
         .controller('artistsController', artistsController);
 
     if(app.configuration.useLocalData)
-        artistsController.$inject = ["$scope", "$http", "artistServiceLocal"];
+        artistsController.$inject = ["$scope", "$animate", "artistServiceLocal"];
     else
-        artistsController.$inject = ["$scope", "$http", "artistService"];
+        artistsController.$inject = ["$scope", "$animate", "artistService"];
 
 
 
-    function artistsController($scope, $http, artistService) {
+    function artistsController($scope, $animate,artistService) {
         console.log('artists controller');
 
         var vm = this; // controller as
@@ -20,7 +20,7 @@
         vm.searchText = "";
         vm.baseUrl = "data/";
 
-        vm.getArtists = function () {
+        vm.getArtists = function() {
             return artistService.getArtists()
                 .success(function(artists) {
                     vm.artists = artists;
@@ -32,6 +32,9 @@
         });
 
         vm.getArtists();
+
+        // force explicit animation of the view and edit forms always
+        //$animate.addClass("#MainView", "slide-animation");
 
         return;
     }

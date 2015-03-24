@@ -6,23 +6,20 @@
         'ngAnimate',
         'ngRoute',
         'ngSanitize',
-        'ngAria'
-
-
-        // Custom modules 
-
-        // 3rd Party Modules
-        
+        'ngTouch'
     ]);
 
+    console.log('app starting', navigator.userAgent);
+
     // config settings
-    app.configuration = { 
+    app.configuration = {
         useLocalData: false
     };
 
     app.config([
             '$routeProvider',
-            function($routeProvider) {
+            '$compileProvider',
+            function($routeProvider, $compileProvider) {
                 $routeProvider
                     .when("/albums", {
                         templateUrl: "app/views/albums.html"
@@ -42,17 +39,23 @@
                     .when("/about", {
                         templateUrl: "app/views/about.html"
                     })
+                    .when("/options", {
+                        templateUrl: "app/views/options.html"
+                    })
                     .otherwise({
                         redirectTo: '/albums'
                     });
+
+                // Fix bug for Windows Phone wanting to download files on urls with routed parameters
+                $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|ghttps?|ms-appx|x-wmapp0):/);
             }
         ])
-        .filter('linebreakFilter', function () {        
+        .filter('linebreakFilter', function() {
             return function(text) {
                 if (text !== undefined)
                     return text.replace(/\n/g, '<br />');
                 return text;
             };
         });
-    
+
 })();
