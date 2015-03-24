@@ -47,9 +47,12 @@ namespace Westwind.Web.Mvc
         /// </summary>
         public static bool FormatOutput { get; set; }
 
+        public static string DefaultContentType { get; set; }
+
         static NegotiatedResult()
         {
             FormatOutput = HttpContext.Current.IsDebuggingEnabled;
+            DefaultContentType = "application/json";
         }
 
         /// <summary>
@@ -78,48 +81,56 @@ namespace Westwind.Web.Mvc
             if (context == null)
                 throw new ArgumentNullException("context");
 
-            HttpResponseBase response = context.HttpContext.Response;
-            HttpRequestBase request = context.HttpContext.Request;
+            var request = context.HttpContext.Request;
 
+            if (request.AcceptTypes != null)
+            {
+
+                for (int i = 0; i < request.AcceptTypes.Length; i++)
+                {
+                    string acceptType = request.AcceptTypes[i];
+
+                    if (string.IsNullOrEmpty(acceptType))
+                        continue;
+
+                    if (TryApplyContentType(acceptType, context))
+                        return;
+                }
+            }
+
+            // no content type or nothing matched - try the default
+            TryApplyContentType(DefaultContentType,context);
+        }
+
+
+        private bool TryApplyContentType(string acceptType, ControllerContext context)
+        {
+            var response = context.HttpContext.Response;
+
+            int semi = acceptType.IndexOf(';');
+            if (semi > 0)
+                acceptType = acceptType.Substring(0, semi);
+
+            acceptType = acceptType.ToLower();
 
             // Look for specific content types            
-            if (request.AcceptTypes.Contains("text/html"))
-            {
-                response.ContentType = "text/html";
-
-                if (!string.IsNullOrEmpty(ViewName))
-                {
-                    var viewData = context.Controller.ViewData;
-                    viewData.Model = Data;
-
-                    var viewResult = new ViewResult
-                    {
-                        ViewName = ViewName,
-                        MasterName = null,
-                        ViewData = viewData,
-                        TempData = context.Controller.TempData,
-                        ViewEngineCollection = ((Controller)context.Controller).ViewEngineCollection
-                    };
-                    viewResult.ExecuteResult(context.Controller.ControllerContext);
-                }
-                else
-                    response.Write(Data);
-            }
-            else if (request.AcceptTypes.Contains("application/json"))
+            if (acceptType == "application/json")
             {
                 response.ContentType = "application/json";
 
                 using (JsonTextWriter writer = new JsonTextWriter(response.Output)
                 {
-                    Formatting = Newtonsoft.Json.Formatting.Indented
+                    Formatting =
+                        FormatOutput ? Newtonsoft.Json.Formatting.Indented : Newtonsoft.Json.Formatting.None
                 })
                 {
                     JsonSerializer serializer = JsonSerializer.Create();
                     serializer.Serialize(writer, Data);
                     writer.Flush();
                 }
+                return true;
             }
-            else if (request.AcceptTypes.Contains("text/xml"))
+            if (acceptType == "text/xml" || acceptType == "application/xml")
             {
                 response.ContentType = "text/xml";
                 if (Data != null)
@@ -135,18 +146,34 @@ namespace Westwind.Web.Mvc
                         writer.Flush();
                     }
                 }
+                return true;
             }
-            else if (request.AcceptTypes.Contains("text/plain"))
+            if (!string.IsNullOrEmpty(ViewName) && acceptType == "text/html")
+            {
+                response.ContentType = "text/html";
+
+                var viewData = context.Controller.ViewData;
+                viewData.Model = Data;
+
+                var viewResult = new ViewResult
+                {
+                    ViewName = ViewName,
+                    MasterName = null,
+                    ViewData = viewData,
+                    TempData = context.Controller.TempData,
+                    ViewEngineCollection = ((Controller) context.Controller).ViewEngineCollection
+                };
+                viewResult.ExecuteResult(context.Controller.ControllerContext);
+
+                return true;
+            }
+            if (acceptType == "text/plain")
             {
                 response.ContentType = "text/plain";
                 response.Write(Data);
+                return true;
             }
-            else
-            {
-                // just write data as a plain string
-                response.Write(Data);
-            }
-
+            return false;
         }
     }
 
