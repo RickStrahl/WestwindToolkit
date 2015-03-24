@@ -31,16 +31,14 @@ namespace Westwind.Data.MongoDb
         /// </summary>
         public string DatabaseName { get; set; }
 
-        private static bool OneTime;
-
         static MongoDbContext()
         {
             var ctx = new MongoDbContext();
             ctx.SetConventions();
         }
+
         public MongoDbContext()
-        {
-            OneTime = true;
+        {            
         }
 
         /// <summary>
