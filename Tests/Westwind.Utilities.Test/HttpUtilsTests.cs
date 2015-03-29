@@ -12,6 +12,12 @@ namespace Westwind.Utilities.Test
     [TestClass]
     public class HttpUtilsTests
     {
+        public HttpUtilsTests()
+        {
+            // force Json.NET to load
+            var f = Newtonsoft.Json.Formatting.Indented;
+        }
+
         [TestMethod]
         public void HttpRequestStringWithUrlTest()
         {

@@ -20,7 +20,7 @@ namespace Westwind.Utilities
         /// <param name="url">A url to call for a GET request without custom headers</param>
         /// <returns>string of HTTP response</returns>
         public static string HttpRequestString(string url)
-        {
+        {            
             return HttpRequestString(new HttpRequestSettings() { Url = url });
         }
 

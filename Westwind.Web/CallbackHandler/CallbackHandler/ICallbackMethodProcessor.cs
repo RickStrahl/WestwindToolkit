@@ -27,6 +27,6 @@ namespace Westwind.Web
         /// should exit after this call.
         /// </summary>
         /// <param name="ErrorMessage"></param>
-        void WriteErrorResponse(string ErrorMessage, string stackTrace);
+        void WriteErrorResponse(string ErrorMessage, string stackTrace, int statusCode = 500);
     }
 }

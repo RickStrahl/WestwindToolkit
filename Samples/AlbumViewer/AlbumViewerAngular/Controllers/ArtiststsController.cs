@@ -105,9 +105,7 @@ namespace AlbumViewerAngular.Controllers
                 throw new CallbackException("Couldn't delete artist: " + artistBus.ErrorMessage);
 
             return new JsonNetResult(true);
-        }
-       
-
+        }       
     }
 
     public class ArtistResponse

@@ -183,18 +183,23 @@ namespace Westwind.Web
             {
                 if (parameterList != null)
                     // use the supplied parameter list
-                    result = helper.ExecuteMethod(methodToCall,target, parameterList.ToArray(),
-                                        CallbackMethodParameterType.Json,ref attr);
+                    result = helper.ExecuteMethod(methodToCall, target, parameterList.ToArray(),
+                        CallbackMethodParameterType.Json, ref attr);
                 else
-                    // grab the info out of QueryString Values or POST buffer during parameter parsing 
-                    // for optimization
-                    result = helper.ExecuteMethod(methodToCall, target, null, 
-                                                  CallbackMethodParameterType.Json, ref attr);
+                // grab the info out of QueryString Values or POST buffer during parameter parsing 
+                // for optimization
+                    result = helper.ExecuteMethod(methodToCall, target, null,
+                        CallbackMethodParameterType.Json, ref attr);
+            }
+            catch (CallbackException ex)
+            {
+                WriteErrorResponse(ex.Message,
+                                  (HttpContext.Current.IsDebuggingEnabled ? ex.StackTrace : null),
+                                  ex.statusCode);
             }
             catch (Exception ex)
-            {
-                Exception activeException = DebugUtils.GetInnerMostException(ex);
-                WriteErrorResponse(activeException.Message,
+            {                
+                WriteErrorResponse(ex.GetBaseException().Message,
                                   ( HttpContext.Current.IsDebuggingEnabled ? ex.StackTrace : null ) );
                 return;
             }
@@ -218,7 +223,7 @@ namespace Westwind.Web
                     stringResult = "null";
                 else
                     stringResult = Serializer.Serialize(result);
-            }
+            }            
             catch (Exception ex)
             {
                 WriteErrorResponse(ex.Message, HttpContext.Current.IsDebuggingEnabled ? ex.StackTrace : null);
@@ -328,7 +333,7 @@ namespace Westwind.Web
         /// should exit after this call.
         /// </summary>
         /// <param name="ErrorMessage"></param>
-        public void WriteErrorResponse(string errorMessage, string stackTrace)
+        public void WriteErrorResponse(string errorMessage, string stackTrace, int statusCode = 500)
         {
             CallbackException Error = new CallbackException();
             Error.message = errorMessage;
@@ -348,7 +353,7 @@ namespace Westwind.Web
             
             // override status code but only if it wasn't set already
             if (Response.StatusCode == 200)
-                Response.StatusCode = 500;
+                Response.StatusCode = statusCode;
             
             Response.Write(result);
             

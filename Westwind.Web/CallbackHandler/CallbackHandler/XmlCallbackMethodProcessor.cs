@@ -295,7 +295,7 @@ namespace Westwind.Web
         /// should exit after this call.
         /// </summary>
         /// <param name="ErrorMessage"></param>
-        public void WriteErrorResponse(string errorMessage, string stackTrace)
+        public void WriteErrorResponse(string errorMessage, string stackTrace, int statusCode = 500)
         {
             CallbackException Error = new CallbackException();
             Error.message = errorMessage;
@@ -312,7 +312,7 @@ namespace Westwind.Web
             Response.TrySkipIisCustomErrors = true;
             
             if (Response.StatusCode == 200)
-                Response.StatusCode = 500;
+                Response.StatusCode = statusCode;
 
             Response.Write(result);
             //HttpContext.Current.ApplicationInstance.CompleteRequest();
