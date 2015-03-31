@@ -18,9 +18,9 @@ namespace AlbumViewerAngular.Controllers
         public ActionResult Index()
         {
             var artistBus = new ArtistBusiness();
-            var artists = artistBus.GetArtists();
-
-            return new JsonNetResult(artists.ToList());
+            var artists = artistBus.GetArtistsWithAlbumCount();
+            
+            return new JsonNetResult(artists);
         }
 
 
@@ -33,7 +33,8 @@ namespace AlbumViewerAngular.Controllers
                 .Select(art => new
                 {
                     name = art.ArtistName,
-                    id = art.ArtistName
+                    id = art.ArtistName,
+                    artistId = art.Id
                 });
 
             return new JsonNetResult(artists.ToList());

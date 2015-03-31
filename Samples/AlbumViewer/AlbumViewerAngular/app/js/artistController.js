@@ -6,11 +6,11 @@
         .controller('artistController', artistController);
 
     if (app.configuration.useLocalData)
-        artistController.$inject = ["$http", "$window", "$routeParams", "$animate", "artistServiceLocal"];
+        artistController.$inject = ["$http", "$window", "$routeParams", "$animate", "artistServiceLocal","albumServiceLocal"];
     else
-        artistController.$inject = ["$http", "$window", "$routeParams", "$animate", "artistService"];
+        artistController.$inject = ["$http", "$window", "$routeParams", "$animate", "artistService","albumService"];
 
-    function artistController($http,$window,$routeParams,$animate,artistService) {
+    function artistController($http,$window,$routeParams,$animate,artistService,albumService) {
         var vm = this;
 
         vm.artist = null;
@@ -55,8 +55,7 @@
         vm.addAlbum = function () {            
             albumService.album = albumService.newAlbum();
             albumService.album.ArtistId = vm.artist.Id;
-            albumService.album.Artist.Id = vm.artist.Id;
-            albumService.album.Artist.ArtistName = vm.artist.ArtistName;
+            albumService.album.Artist = vm.artist;
 
             albumService.updateAlbum(albumService.album);
             $window.location.hash = "/album/edit/0";

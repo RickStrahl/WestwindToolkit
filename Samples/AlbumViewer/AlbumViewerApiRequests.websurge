@@ -33,6 +33,15 @@ Accept-Encoding: gzip,deflate
 
 ------------------------------------------------------------------
 
+POST http://localhost/AlbumViewerAngular/albums HTTP/1.1
+Accept-Encoding: gzip,deflate
+Content-Type: application/json;charset=utf-8;
+Accept: application/json
+
+{"Artist":{"Id":331,"ArtistName":"Motörhead","Description":"Motörhead's overwhelmingly loud and fast style of heavy metal was one of the most groundbreaking styles the genre had to offer in the late '70s. Though the group's leader, Lemmy Kilminster, had his roots in the hard-rocking space rock band Hawkwind, Motörhead didn't bother with his old group's progressive tendencies, choosing to amplify the heavy biker rock elements of Hawkwind with the speed of punk rock. Motörhead wasn't punk rock -- they formed before the Sex Pistols and they loved the hell-for-leather imagery of bikers too much to conform with the safety-pinned, ripped T-shirts of punk -- but they were the first metal band to harness that energy and, in the process, they created speed metal and thrash metal. Unlike many of their contemporaries, Motörhead continued performing into the next century. Although the band changed its lineup many, many times -- Lemmy was its only consistent member -- they never changed their raging sound.","ImageUrl":"http://alealerocknroll.com/wp-content/uploads/2014/07/motorhead.jpg","AmazonUrl":""},"Tracks":[{"Id":5224,"AlbumId":516,"ArtistId":0,"SongName":"Ace of Spades","Length":"2:49","Bytes":0,"UnitPrice":0},{"Id":5225,"AlbumId":516,"ArtistId":0,"SongName":"Love me like a Reptile","Length":"2:23","Bytes":0,"UnitPrice":0},{"Id":5226,"AlbumId":516,"ArtistId":0,"SongName":"Shoot you in back","Length":"2:39","Bytes":0,"UnitPrice":0},{"Id":5227,"AlbumId":516,"ArtistId":0,"SongName":"We are the Road Crew","Length":"3:12","Bytes":0,"UnitPrice":0},{"Id":5228,"AlbumId":516,"ArtistId":0,"SongName":"The Chase is better than the Catch","Length":"4:18","Bytes":0,"UnitPrice":0},{"Id":0,"AlbumId":516,"Name":null,"Length":"3:12","SongName":"Jailbait"}],"Id":516,"Title":"Ace of Spades","Description":"Motörhead have never JUST been the best rock'n'roll band in the world. They've never JUST been the loudest. Or the hardest. Or the toughest. Or the bad-ass-est. No...Motörhead are also a lifestyle.","Year":1978,"ImageUrl":"https://images-na.ssl-images-amazon.com/images/I/618Zuqc4J5L._SL250_.jpg","AmazonUrl":"http://www.amazon.com/gp/product/B00005NHO2/ref=as_li_ss_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=B00005NHO2&linkCode=as2&tag=westwindtechn-20","SpotifyUrl":null,"ArtistId":331}
+
+------------------------------------------------------------------
+
 
 ----- Start WebSurge Options -----
 

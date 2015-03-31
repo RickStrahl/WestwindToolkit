@@ -1,4 +1,5 @@
-﻿(function () {
+﻿
+(function () {
     'use strict';
 
     angular
@@ -71,11 +72,31 @@
 
             // if the album is already loaded just return it
             // and return the promise
-            if (service.album && useExisting && service.album.pk == id) {
-                var deferred = ww.angular.deferredExtender($q.defer());
-                deferred.resolve(service.album);
-                return deferred.promise;
+            if (service.album && useExisting && service.album.pk == id)
+                return ww.angular.$httpPromiseFromValue($q, service.album);
+
+            // ensure that albums exist - if not load those first and defer
+            if (service.albums && service.albums.length > 0) {
+                // just look up from cached list
+                var album = findAlbum(id);
+                if (!album)
+                    return ww.angular.$httpPromiseFromValue($q, new Error("Couldn't find album"), true);
             }
+
+            // otherwise load albums first
+            var d = ww.angular.$httpDeferredExtender($q.defer());
+            service.getAlbums()
+                .success(function (albums) {
+                    service.album = findAlbum(id);
+                    if (!service.album)
+                        d.reject(new Error("Couldn't find album"));
+                    else
+                        d.resolve(service.album);
+                })
+                .error(function (err) {
+                    d.reject(new Error("Couldn't find album"));
+                });
+            return d.promise;
 
             return $http.get(service.baseUrl + "albums/" + id)
                 .success(function(album) {
@@ -85,6 +106,7 @@
                     console.log(http, httpObj);
                 });
         }
+
         function addSongToAlbum(album, song) {            
             album.Tracks.push(song);
             service.album = album;
@@ -95,16 +117,12 @@
             if (i == -1)
                 return;
 
-            var alb = service.albums[i];
-            
-            alb.Tracks = _.remove(alb.Tracks, function (t) {
-                return t.Id != song.Id;
-            });
-            
+            var alb = service.albums[i];            
+            _.remove(alb.Tracks, { 'Id': song.Id });
             service.album = alb;            
         };
 
-
+        // updates album info in the controller vm
         function updateAlbum(album) {            
             var i = findAlbumIndex(album);
             if (i > -1)
@@ -122,7 +140,7 @@
         }
 
         function saveAlbum(album) {            
-            return $http.post(service.baseUrl + "album", album)
+            return $http.post(service.baseUrl + "albums", album)
                 .success(function (alb) {                    
                     service.updateAlbum(alb);
                     service.album = alb;                    
@@ -140,7 +158,13 @@
 
         function findAlbumIndex(album){
             return  _.findIndex(service.albums, function (a) {
-                return album.Id == a.Id;
+                return album.Id === a.Id;
+            });
+        }
+        
+        function findAlbum(id) {
+            return _.find(service.albums, function (a) {
+                return id === a.Id;
             });
         }
         

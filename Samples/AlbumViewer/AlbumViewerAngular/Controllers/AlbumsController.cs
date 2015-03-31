@@ -4,12 +4,14 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using AlbumViewerBusiness;
+using Westwind.Utilities;
 using Westwind.Web;
 using Westwind.Web.Mvc;
 using HttpVerbs = System.Web.Mvc.HttpVerbs;
 
 namespace AlbumViewerAngular.Controllers
 {
+    [CallbackExceptionHandler(false)]
     public class AlbumsController : Controller
     {
         [Route("albums")]
@@ -45,10 +47,11 @@ namespace AlbumViewerAngular.Controllers
             var album = albumBus.Load(id);
 
             if (!ModelState.IsValid)
-                throw new CallbackException("Model binding failed.",500);
+                throw new CallbackException("Model binding failed.", 500);
 
             // TODO: Hook up save code
-
+            
+            DataUtils.CopyObjectData(newAlbum, album, "");
 
             return new JsonNetResult(album);
         }
@@ -57,24 +60,45 @@ namespace AlbumViewerAngular.Controllers
 
         [Route("albums")]
         [AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult SaveAlbum(Album album)
+        public ActionResult SaveAlbum(Album dtoAlbum)
         {
-            return SaveAlbum(-2,album);
+            if (dtoAlbum == null)
+                throw new CallbackException("No album provided for saving.", 500);
+
+            if (!ModelState.IsValid)
+                throw new CallbackException("Model binding failed.", 500);
+
+            var id = dtoAlbum.Id;
+
+            var albumBus = new AlbumBusiness();
+            if (!albumBus.SaveAlbum(dtoAlbum))
+                throw new CallbackException("Album save failed: " + albumBus.ErrorMessage);
+
+            return new JsonNetResult(albumBus.Entity);
         }
+
+        [Route("throw")]
+        public ActionResult Throw()
+        {
+            string value = null;
+            throw new  ArgumentException("Explicitly thrown error");
+            return Content(value.ToString());
+        }
+
 
     }
 
-   public class ApiException : Exception
-    {
-        public int StatusCode { get; set; }
-        public ApiException(string message, int statusCode = 500) :
-            base(message)
-        {
-            StatusCode = StatusCode;
-        }
-        public ApiException(Exception ex, int statusCode = 500) : base(ex.Message)
-        {
-            StatusCode = statusCode;
-        }
-    }
+   //public class ApiException : Exception
+   // {
+   //     public int StatusCode { get; set; }
+   //     public ApiException(string message, int statusCode = 500) :
+   //         base(message)
+   //     {
+   //         StatusCode = StatusCode;
+   //     }
+   //     public ApiException(Exception ex, int statusCode = 500) : base(ex.Message)
+   //     {
+   //         StatusCode = statusCode;
+   //     }
+   // }
 }

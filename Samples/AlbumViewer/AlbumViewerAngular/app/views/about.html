@@ -12,27 +12,42 @@
 
 
     <div class="well well-sm">
-        <h4>Cordova</h4>
-        This sample application demonstrates using Cordova to port a small
-        Web application to run as a native mobile application. The sample
-        is set up to run on iOS, Android and Windows Phone 8.x.
+        <h4>ASP.NET MVC Service Backend</h4>
+        <p>
+            This sample application uses an ASP.NET MVC 5 backend
+            to serve JSON data to the Angular front end application.
+        </p>
+        <p>
+            The choice was made to stick to the simpler MVC interface
+            instead of using WebAPI, also for possibly easier migration
+            to future versions of ASP.NET vNext which don't support
+            WebAPI natively.
+        </p>
     </div>
 
     <div class="well well-sm">
-        <h4>Local Data</h4>
-        This application runs all local data on device, with initially loaded
-        data from static files that are then maintained in localstorage. This
-        was done to have a self-contained app without external dependencies,
-        but the app actually contains code that can connect to an external
-        service.
+        <h4>Angular JS Front End</h4>
+        <p>
+            The client interface uses Angular JS to provide the front en logic and
+            UI management features. There are album and artist services that
+            talk to the backend interface and page level controllers for each
+            of the individual view pages of the application.
+        </p>
     </div>
 
     <div class="well well-sm">
-        <h4>Angular and BootStrap</h4>
-
-        This example uses <a href="http://angularjs.org">AngularJs</a> as
-        the application framework, and modified <a href="http://getbootstrap.com">Bootstrap</a>
-        styling to provide this Cordova mobile app interface.
+        <h4>Mobile enabled based on modified Bootstrap Interface</h4>
+        <p>
+            The base Bootstrap framework is used for the core UI features
+            of the interface. The base template has been customized for
+            this application.
+        </p>
+        <p>
+            The application is mobile focused and uses custom resizing
+            and toolbar relocation based on the screen/device size used.
+            The application should be comfortably usable from phone up to full screen
+            desktop applications.
+        </p>
     </div>
 
     <hr />

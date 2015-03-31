@@ -8,9 +8,8 @@ namespace AlbumViewerBusiness
     {
         public int Id { get; set; }
         
-        public int AlbumId { get; set; }
+        public int? AlbumId { get; set; }
 
-        public int ArtistId { get; set; }
         [StringLength(128)]
         public string SongName { get; set; }
         [StringLength(10)]

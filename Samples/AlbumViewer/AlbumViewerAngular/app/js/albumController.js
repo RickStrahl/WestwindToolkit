@@ -32,6 +32,7 @@
  
         vm.saveAlbum = function (album) {
             console.log(album);
+            
             albumService.saveAlbum(album)
                 .success(function(album) {
                     vm.error.message = "Album saved";
@@ -41,7 +42,7 @@
                     },1000);
                 })
                 .error(function() {
-                    vm.error.message = "Album saved";
+                    vm.error.message = "Album not saved";
                     vm.error.icon = "warning";
                 });
         };
@@ -60,8 +61,7 @@
         vm.cancelSong = function() {
             vm.isSongVisible = false;
         };
-        vm.removeSong = function (song) {
-            console.log(song);
+        vm.removeSong = function (song) {            
             albumService.removeSong(vm.album, song);            
             vm.album = albumService.album;            
         };
@@ -102,8 +102,13 @@
         }
                 
         // Initialization code
-        vm.getAlbum($routeParams.albumId * 1, true);
+        var albumId = $routeParams.albumId * 1;
+        if (albumId > 0)
+            vm.getAlbum(albumId, true);
+        else
+            vm.album = albumService.album;
 
+        // set up the type ahead control
         vm.bandTypeAhead();
 
         // force explicit animation of the view and edit forms always
