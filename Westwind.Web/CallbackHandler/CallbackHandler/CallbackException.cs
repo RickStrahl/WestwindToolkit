@@ -17,12 +17,12 @@ namespace Westwind.Web
             statusCode = 500;
         }
 
-        public CallbackException(string message, int statusCode = 500)
+        public CallbackException(string message, int statusCode = 500) : base(message)
         {
             if (message == null)
                 message = string.Empty;
 
-            this.message = message;
+            this.message = message;            
             this.statusCode = statusCode; 
             stackTrace = string.Empty;
             
