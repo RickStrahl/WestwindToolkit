@@ -269,8 +269,13 @@ http://en.wikipedia.org/wiki/MIT_License
     onPageError = function (err) {
         showStatus(err.message || err.Message, 6000, true);
     };
-    CallbackException = function (message, detail) {
+    CallbackException = function (message, detail, status) {
         this.isCallbackError = true;
+        if (status)
+            this.status = status;
+        else
+            this.status = 500;
+
         if (typeof (message) == "object") {
             if (message.message)
                 this.message = message.message;
