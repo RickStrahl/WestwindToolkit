@@ -37,6 +37,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Diagnostics;
+using System.Reflection;
+using Westwind.Utilities.Properties;
 
 namespace Westwind.Utilities
 {
@@ -48,17 +50,36 @@ namespace Westwind.Utilities
     /// </summary>
     /// <remarks>
     /// JSON.NET is loaded dynamically at runtime to avoid hard 
-    /// linking the Newtonsoft.Json dll. Make sure that your
-    /// project includes a reference to JSON.NET when using this
-    /// class.
+    /// linking the Newtonsoft.Json.dll to Westwind.Utilities.
+    /// Just make sure that your project includes a reference 
+    /// to JSON.NET when using this class.
     /// </remarks>
     public static class JsonSerializationUtils
     {
-        static dynamic JsonNet = null;
-        static object SyncLock = new Object();
-        static Type FormattingType = null;
-        static Type JsonTextReaderType = null;
-        static Type JsonTextWriterType = null;
+        //capture reused type instances
+        private static dynamic JsonNet = null;
+
+        private static object SyncLock = new Object();
+        private static Type FormattingType = null;
+        private static Type JsonTextReaderType = null;
+        private static Type JsonTextWriterType = null;
+
+        static JsonSerializationUtils()
+        {
+            // Ensure JSON.NET is loaded            
+            FormattingType = ReflectionUtils.GetTypeFromName("Newtonsoft.Json.Formatting");
+
+            // if not loaded yet try to load assembly
+            if (FormattingType == null)
+            {
+                AppDomain.CurrentDomain.Load("Newtonsoft.Json");
+                FormattingType = ReflectionUtils.GetTypeFromName("Newtonsoft.Json.Formatting");
+                if (FormattingType == null)
+                    throw new InvalidOperationException(
+                        Resources.JSON_NET_library_not_avaiable);
+            }
+            
+        }
 
 
         /// <summary>
@@ -240,6 +261,22 @@ namespace Westwind.Utilities
             return result;
         }
 
+        /// <summary>
+        /// Takes a single line JSON string and pretty formats
+        /// it using indented formatting.
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
+        public static string FormatJsonString(string json)
+        {
+            Type type = ReflectionUtils.GetTypeFromName("Newtonsoft.Json.Linq.JToken");
+            var formatting = (dynamic)Enum.Parse(FormattingType, "Indented");
+            dynamic jvalue = type.InvokeMember("Parse",
+                BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod,
+                null, type, new object[] { json });
+
+            return jvalue.ToString(formatting) as string;
+        }
 
         /// <summary>
         /// Dynamically creates an instance of JSON.NET
@@ -262,7 +299,7 @@ namespace Westwind.Utilities
                 if (json == null)
                 {
                     try
-                    {                        
+                    {
                         json = ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonSerializer");
                     }
                     catch
@@ -276,7 +313,8 @@ namespace Westwind.Utilities
                 if (json == null)
                     return null;
 
-                FormattingType = ReflectionUtils.GetTypeFromName("Newtonsoft.Json.Formatting");
+                if (FormattingType == null)
+                    FormattingType = ReflectionUtils.GetTypeFromName("Newtonsoft.Json.Formatting");
                 JsonTextReaderType = ReflectionUtils.GetTypeFromName("Newtonsoft.Json.JsonTextReader");
                 JsonTextWriterType = ReflectionUtils.GetTypeFromName("Newtonsoft.Json.JsonTextWriter");
                 json.ReferenceLoopHandling =

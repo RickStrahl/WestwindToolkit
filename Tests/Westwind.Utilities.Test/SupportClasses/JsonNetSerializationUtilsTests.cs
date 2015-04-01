@@ -6,6 +6,7 @@ using System.Web.Script.Serialization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using Westwind.Utilities.Test;
 
 namespace Westwind.Utilities.Configuration.Tests
@@ -13,12 +14,6 @@ namespace Westwind.Utilities.Configuration.Tests
     [TestClass]
     public class JsonNetSerializationUtilsTests
     {
-        public JsonNetSerializationUtilsTests()
-        {
-            // force Json.net ref to load since we dynamically load
-            var json = new JsonSerializerSettings();
-        }
-
         [TestMethod]
         public void JsonStringSerializeTest()
         {
@@ -162,14 +157,14 @@ namespace Westwind.Utilities.Configuration.Tests
             config.ApplicationName = "New App";
             config.DebugMode = DebugModes.DeveloperErrorMessage;
 
-            string result = JsonSerializationUtils2.Serialize(config, true, true);
+            string result = JsonSerializationUtils.Serialize(config, true, true);
 
             var sw = new Stopwatch();
             sw.Start();
 
             for (int i = 0; i < 10000; i++)
             {
-                result = JsonSerializationUtils2.Serialize(config, true, true);
+                result = JsonSerializationUtils.Serialize(config, true, true);
             }
 
             sw.Stop();
@@ -200,5 +195,25 @@ namespace Westwind.Utilities.Configuration.Tests
             Console.WriteLine(result);
         }
 
+        [TestMethod]
+        public void PrettifyJsonStringTest()
+        {
+            var test = new
+            {
+                name = "rick",
+                company = "Westwind",
+                entered = DateTime.UtcNow
+            };
+
+            string json = JsonConvert.SerializeObject(test);
+            Console.WriteLine(json);
+
+            
+            string jsonFormatted = JsonSerializationUtils.FormatJsonString(json);
+            //string jsonFormatted = JValue.Parse(json).ToString(Formatting.Indented);
+
+            //JValue.Parse()
+            Console.WriteLine(jsonFormatted);
+        }
     }
 }
