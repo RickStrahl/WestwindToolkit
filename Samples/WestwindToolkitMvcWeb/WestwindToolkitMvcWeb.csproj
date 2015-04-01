@@ -153,6 +153,7 @@
       <DependentUpon>modernizr-2.7.1.js</DependentUpon>
     </Content>
     <Content Include="Scripts\plugins\jquery.makeTableScrollable.js" />
+    <Content Include="Scripts\ww.angular.js" />
     <Content Include="Scripts\ww.jquery.js" />
     <Content Include="Scripts\ww.jquery.min.js">
       <DependentUpon>ww.jquery.js</DependentUpon>

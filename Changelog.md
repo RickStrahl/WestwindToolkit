@@ -1,7 +1,7 @@
 #West Wind Toolkit Change Log
 
 ### Version 2.62
-*not released yet*
+*March 31st, 2015*
 
 * **UrlEncodingParser.DecodePlusSignsAsSpaces**<br/>
 Add option to support parsing + signs as spaces in UrlEncoded content. By default spaces are expected to be encoded with %20, but some older applications still use + as the space encoding character. Off by default and should be set using the constructor.
@@ -14,6 +14,13 @@ Added default support for enum as string handling to CallbackHandler so that enu
 
 * **CallbackException StatusCode**</br>
 Added a status code property to the CallbackException instance in order to allow anything that uses CallbackException like CallbackHander to decide what status code to return on exceptions. 
+
+* **JsonSerializationUtils.FormatJsonString() to prettify Json**
+Added method to format an input JSON string to a nicely formatted JSON string.
+
+* **ww.angular.js Helper for a few AngularJs Tasks**
+Capture and parse $http service errors consistently. Turn regular $q promises into 
+$http service compatible promises. Resolve/Reject $q promise helpers.
 
 ### Version 2.59
 *January 21st, 2015*
