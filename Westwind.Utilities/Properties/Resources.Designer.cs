@@ -187,6 +187,15 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to JSON.NET library not avaiable. Please add the Newtonsoft.Json package to your project..
+        /// </summary>
+        public static string JSON_NET_library_not_avaiable {
+            get {
+                return ResourceManager.GetString("JSON_NET_library_not_avaiable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Object could not be deserialized from Xml..
         /// </summary>
         public static string ObjectCouldNotBeDeserializedFromXml {

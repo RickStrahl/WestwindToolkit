@@ -171,4 +171,7 @@
   <data name="InvalidXMLConfigurationFileFormat" xml:space="preserve">
     <value>Invalid XML configuration file format in {0}.</value>
   </data>
+  <data name="JSON_NET_library_not_avaiable" xml:space="preserve">
+    <value>JSON.NET library not avaiable. Please add the Newtonsoft.Json package to your project.</value>
+  </data>
 </root>

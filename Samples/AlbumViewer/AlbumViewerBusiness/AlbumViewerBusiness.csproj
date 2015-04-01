@@ -49,21 +49,9 @@
     <Compile Include="BusinessObjects\AlbumBusiness.cs" />
     <Compile Include="Configuration\App.cs" />
     <Compile Include="Configuration\AlbumViewerConfiguration.cs" />
-    <Compile Include="Migrations\201503240131437_InitialMigration.cs" />
-    <Compile Include="Migrations\201503240131437_InitialMigration.Designer.cs">
-      <DependentUpon>201503240131437_InitialMigration.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201503240833212_AlbumSpotifyUrlAdded.cs" />
-    <Compile Include="Migrations\201503240833212_AlbumSpotifyUrlAdded.Designer.cs">
-      <DependentUpon>201503240833212_AlbumSpotifyUrlAdded.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201503310909243_RemoveTrackArtistId.cs" />
-    <Compile Include="Migrations\201503310909243_RemoveTrackArtistId.Designer.cs">
-      <DependentUpon>201503310909243_RemoveTrackArtistId.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Migrations\201503312133339_AddNullableFks.cs" />
-    <Compile Include="Migrations\201503312133339_AddNullableFks.Designer.cs">
-      <DependentUpon>201503312133339_AddNullableFks.cs</DependentUpon>
+    <Compile Include="Migrations\201504010043520_initial.cs" />
+    <Compile Include="Migrations\201504010043520_initial.Designer.cs">
+      <DependentUpon>201504010043520_initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AlbumViewerContext.cs" />
@@ -87,17 +75,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201503240131437_InitialMigration.resx">
-      <DependentUpon>201503240131437_InitialMigration.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201503240833212_AlbumSpotifyUrlAdded.resx">
-      <DependentUpon>201503240833212_AlbumSpotifyUrlAdded.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201503310909243_RemoveTrackArtistId.resx">
-      <DependentUpon>201503310909243_RemoveTrackArtistId.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\201503312133339_AddNullableFks.resx">
-      <DependentUpon>201503312133339_AddNullableFks.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201504010043520_initial.resx">
+      <DependentUpon>201504010043520_initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

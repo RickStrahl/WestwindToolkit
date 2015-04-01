@@ -3,7 +3,7 @@ namespace AlbumViewerBusiness.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class InitialMigration : DbMigration
+    public partial class initial : DbMigration
     {
         public override void Up()
         {
@@ -17,10 +17,11 @@ namespace AlbumViewerBusiness.Migrations
                         Year = c.Int(nullable: false),
                         ImageUrl = c.String(),
                         AmazonUrl = c.String(),
-                        ArtistId = c.Int(nullable: false),
+                        SpotifyUrl = c.String(),
+                        ArtistId = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Artists", t => t.ArtistId, cascadeDelete: true)
+                .ForeignKey("dbo.Artists", t => t.ArtistId)
                 .Index(t => t.ArtistId);
 
             CreateTable(
@@ -40,16 +41,16 @@ namespace AlbumViewerBusiness.Migrations
                 c => new
                     {
                         Id = c.Int(nullable: false, identity: true),
-                        AlbumId = c.Int(nullable: false),
-                        ArtistId = c.Int(nullable: false),
+                        AlbumId = c.Int(),
                         SongName = c.String(maxLength: 128),
                         Length = c.String(maxLength: 10),
                         Bytes = c.Int(nullable: false),
                         UnitPrice = c.Decimal(nullable: false, precision: 18, scale: 2),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Albums", t => t.AlbumId, cascadeDelete: true)
-                .Index(t => t.AlbumId);            
+                .ForeignKey("dbo.Albums", t => t.AlbumId)
+                .Index(t => t.AlbumId);
+            
         }
         
         public override void Down()

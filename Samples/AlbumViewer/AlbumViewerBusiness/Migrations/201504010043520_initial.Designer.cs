@@ -7,13 +7,13 @@ namespace AlbumViewerBusiness.Migrations
     using System.Resources;
     
     [GeneratedCode("EntityFramework.Migrations", "6.1.3-40302")]
-    public sealed partial class RemoveTrackArtistId : IMigrationMetadata
+    public sealed partial class initial : IMigrationMetadata
     {
-        private readonly ResourceManager Resources = new ResourceManager(typeof(RemoveTrackArtistId));
+        private readonly ResourceManager Resources = new ResourceManager(typeof(initial));
         
         string IMigrationMetadata.Id
         {
-            get { return "201503310909243_RemoveTrackArtistId"; }
+            get { return "201504010043520_initial"; }
         }
         
         string IMigrationMetadata.Source
