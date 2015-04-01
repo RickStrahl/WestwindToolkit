@@ -2424,6 +2424,11 @@
               Looks up a localized string similar to Invalid XML configuration file format in {0}..
             </summary>
         </member>
+        <member name="P:Westwind.Utilities.Properties.Resources.JSON_NET_library_not_avaiable">
+            <summary>
+              Looks up a localized string similar to JSON.NET library not avaiable. Please add the Newtonsoft.Json package to your project..
+            </summary>
+        </member>
         <member name="P:Westwind.Utilities.Properties.Resources.ObjectCouldNotBeDeserializedFromXml">
             <summary>
               Looks up a localized string similar to Object could not be deserialized from Xml..
@@ -3681,9 +3686,9 @@
             </summary>
             <remarks>
             JSON.NET is loaded dynamically at runtime to avoid hard 
-            linking the Newtonsoft.Json dll. Make sure that your
-            project includes a reference to JSON.NET when using this
-            class.
+            linking the Newtonsoft.Json.dll to Westwind.Utilities.
+            Just make sure that your project includes a reference 
+            to JSON.NET when using this class.
             </remarks>
         </member>
         <member name="M:Westwind.Utilities.JsonSerializationUtils.Serialize(System.Object,System.Boolean,System.Boolean)">
@@ -3720,6 +3725,14 @@
             <param name="binarySerialization">determines whether we use Xml or Binary serialization</param>
             <param name="throwExceptions">determines whether failure will throw rather than return null on failure</param>
             <returns>Instance of the deserialized object or null. Must be cast to your object type</returns>
+        </member>
+        <member name="M:Westwind.Utilities.JsonSerializationUtils.FormatJsonString(System.String)">
+            <summary>
+            Takes a single line JSON string and pretty formats
+            it using indented formatting.
+            </summary>
+            <param name="json"></param>
+            <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.JsonSerializationUtils.CreateJsonNet(System.Boolean)">
             <summary>

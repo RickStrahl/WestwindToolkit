@@ -2634,6 +2634,15 @@
             </remarks>
             <param name="instance"></param>
         </member>
+        <member name="M:Westwind.Utilities.Expando.GetDynamicMemberNames">
+            <summary>
+            Return both instance and dynamic names.
+            
+            Important to return both so JSON serialization with 
+            Json.NET works.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:Westwind.Utilities.Expando.TryGetMember(System.Dynamic.GetMemberBinder,System.Object@)">
             <summary>
             Try to retrieve a member by name first from instance properties
@@ -2867,7 +2876,7 @@
             Supports multiple values per key
             </remarks>
         </member>
-        <member name="M:Westwind.Utilities.UrlEncodingParser.#ctor(System.String)">
+        <member name="M:Westwind.Utilities.UrlEncodingParser.#ctor(System.String,System.Boolean)">
             <summary>
             Always pass in a UrlEncoded data or a URL to parse from
             unless you are creating a new one from scratch.
@@ -2908,6 +2917,12 @@
             <summary>
             Holds the original Url that was assigned if any
             Url must contain // to be considered a url
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.UrlEncodingParser.DecodePlusSignsAsSpaces">
+            <summary>
+            Determines whether plus signs in the UrlEncoded content
+            are treated as spaces.
             </summary>
         </member>
         <member name="T:Westwind.Utilities.Scheduler">
@@ -3574,7 +3589,7 @@
             <param name="height"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.String,System.String,System.Int32,System.Int32,System.Drawing.Drawing2D.InterpolationMode)">
+        <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.String,System.String,System.Int32,System.Int32,System.Drawing.Drawing2D.InterpolationMode,System.Int32)">
             <summary>
             Resizes an image and saves the image to a file
             </summary>
@@ -3582,14 +3597,11 @@
             <param name="outputFilename"></param>
             <param name="width"></param>
             <param name="height"></param>
+            <param name="mode"></param>
+            <param name="jpegCompressionMode">
+            If using a jpeg image 
+            </param>
             <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.ImageUtils.GetImageFormatFromFilename(System.String)">
-            <summary>
-            Tries to return an image format 
-            </summary>
-            <param name="filename"></param>
-            <returns>Image format or ImageFormat.Emf if no match was found</returns>
         </member>
         <member name="M:Westwind.Utilities.ImageUtils.ResizeImage(System.Drawing.Bitmap,System.Int32,System.Int32,System.Drawing.Drawing2D.InterpolationMode)">
             <summary>
@@ -3603,7 +3615,17 @@
             <param name="height"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.ImageUtils.RoateImage(System.String,System.String,System.Drawing.RotateFlipType)">
+        <member name="M:Westwind.Utilities.ImageUtils.SaveJpeg(System.Drawing.Bitmap,System.String,System.Int64)">
+            <summary>
+            Saves a jpeg BitMap  to disk with a jpeg quality setting.
+            Does not dispose the bitmap.
+            </summary>
+            <param name="bmp">Bitmap to save</param>
+            <param name="outputFileName">file to write it to</param>
+            <param name="jpegQuality"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.ImageUtils.RoateImage(System.String,System.String,System.Drawing.RotateFlipType,System.Int32)">
             <summary>
             Rotates an image and writes out the rotated image to a file.
             </summary>
@@ -3611,6 +3633,18 @@
             <param name="outputFilename">The output file of the rotated image file. If not passed the original file is overwritten</param>
             <param name="type">Type of rotation to perform</param>
             <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.ImageUtils.GetImageFormatFromFilename(System.String)">
+            <summary>
+            Tries to return an image format 
+            </summary>
+            <param name="filename"></param>
+            <returns>Image format or ImageFormat.Emf if no match was found</returns>
+        </member>
+        <member name="P:Westwind.Utilities.ImageUtils.Encoders">
+            <summary>
+            A quick lookup for getting image encoders
+            </summary>
         </member>
         <member name="T:Westwind.Utilities.JsonSerializationUtils">
             <summary>
@@ -4620,23 +4654,16 @@
             <param name="resolution"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.TimeUtils.UtcToTimezoneTime(System.DateTime,System.String)">
-            <summary>
-            Converts a UtcTime to a local time based on a specific timezone
-            </summary>
-            <param name="dateTime"></param>
-            <param name="timeZoneId"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.TimeUtils.UtcToTimezoneTime(System.DateTime,System.TimeZoneInfo)">
-            <summary>
-            Converts a UtcTime to a local time based on a specific timezone
-            </summary>
-            <param name="dateTime"></param>
-            <param name="timeZoneId"></param>
-            <returns></returns>
-        </member>
         <member name="M:Westwind.Utilities.TimeUtils.ToTimeZoneTime(System.DateTime,System.String)">
+            <summary>
+            Returns TimeZone adjusted time for a given from a Utc or local time.
+            Date is first converted to UTC then adjusted.
+            </summary>
+            <param name="time"></param>
+            <param name="timeZoneId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.TimeUtils.ToTimeZoneTime(System.DateTime,System.TimeZoneInfo)">
             <summary>
             Returns TimeZone adjusted time for a given from a Utc or local time.
             Date is first converted to UTC then adjusted.

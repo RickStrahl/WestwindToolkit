@@ -338,7 +338,7 @@
             </summary>
             <param name="target">The target object that is to be called. If null this is used</param>
         </member>
-        <member name="M:Westwind.Web.ICallbackMethodProcessor.WriteErrorResponse(System.String,System.String)">
+        <member name="M:Westwind.Web.ICallbackMethodProcessor.WriteErrorResponse(System.String,System.String,System.Int32)">
             <summary>
             Returns an error response to the client from a callback. Code
             should exit after this call.
@@ -405,7 +405,7 @@
             </summary>
             <param name="target"></param>
         </member>
-        <member name="M:Westwind.Web.JsonCallbackMethodProcessor.WriteErrorResponse(System.String,System.String)">
+        <member name="M:Westwind.Web.JsonCallbackMethodProcessor.WriteErrorResponse(System.String,System.String,System.Int32)">
             <summary>
             Returns an error response to the client from a callback. Code
             should exit after this call.
@@ -477,7 +477,7 @@
             </summary>
             <param name="target"></param>
         </member>
-        <member name="M:Westwind.Web.XmlCallbackMethodProcessor.WriteErrorResponse(System.String,System.String)">
+        <member name="M:Westwind.Web.XmlCallbackMethodProcessor.WriteErrorResponse(System.String,System.String,System.Int32)">
             <summary>
             Returns an error response to the client from a callback. Code
             should exit after this call.
@@ -593,11 +593,7 @@
         </member>
         <member name="P:Westwind.Web.JsonSerializers.JsonNetJsonSerializer.DateSerializationMode">
             <summary>
-            Encodes Dates as a JSON string value that is compatible
-            with MS AJAX and is safe for JSON validators. If false
-            serializes dates as new Date() expression instead.
-            
-            The default is true.
+            ISO or MSAJAX serialization modes. Not supported with JSON.NET
             </summary>
         </member>
         <member name="P:Westwind.Web.JsonSerializers.JsonNetJsonSerializer.FormatJsonOutput">
