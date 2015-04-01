@@ -71,12 +71,15 @@
     <Compile Include="Extensions\ApiControllerExtensions.cs" />
     <Compile Include="Filters\ApiMessageError.cs" />
     <Compile Include="Filters\BasicAuthenticationFilter.cs" />
+    <Compile Include="Filters\WindowsBasicAuthenticationFilter.cs" />
     <Compile Include="Formatters\JsonpFormatter.cs" />
     <Compile Include="Extensions\HttpRequestMessageExtensions.cs" />
     <Compile Include="Handlers\BasicAuthenticationHandler.cs" />
     <Compile Include="Security\BasicAuthenticationIdentity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Filters\UnhandledExceptionFilter.cs" />
+    <Compile Include="Security\LoginStatus.cs" />
+    <Compile Include="Security\Win32Logon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
