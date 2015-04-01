@@ -59,7 +59,7 @@
                 .success(function (data) {                    
                     service.albums = data;                   
                 })
-                .error(onPageError);
+                
         }
 
         function getAlbum(id, useExisting) {            

@@ -7,20 +7,16 @@
 
     
     if (!app.configuration.useLocalData)
-        albumController.$inject = ['$routeParams', '$window', '$animate', 'albumService'];
+        albumController.$inject = ['$routeParams', '$window', '$animate', 'albumService','errorService'];
     else
-        albumController.$inject = [ '$routeParams', '$window', '$animate','albumServiceLocal'];
+        albumController.$inject = [ '$routeParams', '$window', '$animate','albumServiceLocal','errorService'];
 
-    function albumController($routeParams,$window,$animate,albumService) {        
+    function albumController($routeParams,$window,$animate,albumService,errorService) {        
         var vm = this;
         
         vm.album = null;
         vm.selectedArtist = { ArtistName: null, Description: null };
-        vm.error = {
-            message: null,
-            icon: "warning",
-            reset: function() { vm.error = { message: "", icon: "warning"} }
-        };
+        vm.error = errorService.error;
 
         vm.isSongVisible = false;
         vm.song = {
@@ -110,6 +106,7 @@
 
         // set up the type ahead control
         vm.bandTypeAhead();
+        vm.error.reset();
 
         // force explicit animation of the view and edit forms always
         //$animate.addClass("#MainView","slide-animation");
