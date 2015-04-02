@@ -3,7 +3,10 @@
 ### Version 2.62
 *March 31st, 2015*
 
-* **UrlEncodingParser.DecodePlusSignsAsSpaces**<br/>
+* **New AlbumViewerAngular Sample Application**</br>
+Added a new sample application that uses Angular JS and demonstrates using the various West Wind tools in an SPA style ASP.MVC application using Westwind.Data and Sql Server. 
+
+* **UrlEncodingParser.DecodePlusSignsAsSpaces**</br>
 Add option to support parsing + signs as spaces in UrlEncoded content. By default spaces are expected to be encoded with %20, but some older applications still use + as the space encoding character. Off by default and should be set using the constructor.
 
 * **Add JpegCompression Option to ImageUtils.ResizeImage and RotateImage**</br>
@@ -15,17 +18,17 @@ Added default support for enum as string handling to CallbackHandler so that enu
 * **CallbackException StatusCode**</br>
 Added a status code property to the CallbackException instance in order to allow anything that uses CallbackException like CallbackHander to decide what status code to return on exceptions. 
 
-* **JsonSerializationUtils.FormatJsonString() to prettify Json**
+* **JsonSerializationUtils.FormatJsonString() to prettify Json**</br>
 Added method to format an input JSON string to a nicely formatted JSON string.
 
-* **ww.angular.js Helper for a few AngularJs Tasks**
+* **ww.angular.js Helper for a few AngularJs Tasks**</br>
 Capture and parse $http service errors consistently. Turn regular $q promises into 
 $http service compatible promises. Resolve/Reject $q promise helpers.
 
 ### Version 2.59
 *January 21st, 2015*
 
-* **Update to jQuery CSS/Attribute Watcher Plug-in**<br />
+* **Update to jQuery CSS/Attribute Watcher Plug-in**</br>
 <small>Westwind.Web/ww.jquery.js</small>
 Update this plug-in to work properly with newer browser versions. Switch
 to MutationObserver API for much better performance and better modern
@@ -33,7 +36,7 @@ browser support. Fix jQuery version newer than 1.8.3 bug in the plug-in.
 Added support for monitoring attribute changes with the attr_ prefix
 (ie. to monitor class attribute changes: attr_class). Slight interface change passing parameters as an `options` parameter
 
-* **New HttpUtils.JsonRequest**<br/>
+* **New HttpUtils.JsonRequest**</br>
 <small>Westwind.Utilities</small>
 Added a new HttpUtils class with a JsonRequest() and JsonRequestAsync() 
 methods to handle calling JSON services and automatically sending
