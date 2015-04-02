@@ -50,88 +50,101 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="AmazonUrl">Amazon Url:</label>
-                    <input type="text" class="form-control input-sm" id="AmazonUrl"
-                           required
-                           placeholder="Amazon Url" ng-model="view.album.AmazonUrl"/>
-                </div>
-                <div class="form-group">
-                    <label for="ImageUrl">Image Url:</label>
-                    <input type="text" class="form-control input-sm" id="ImageUrl"
-                           required
-                           placeholder="Image Url" ng-model="view.album.ImageUrl"/>
+                    <div class="input-group">
+                        <span class="input-group-addon" title="Image Url"><i class="fa fa-image fa-fw"></i></span>
+                        <input type="text" class="form-control input-sm" id="ImageUrl"
+                               required
+                               placeholder="Url for an image to display" ng-model="view.album.ImageUrl" />
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="YearReleased">Year released:</label>
-                    <input type="number" class="form-control input-sm" id="YearReleased"
-                           required
-                           placeholder="Year of album release" ng-model="view.album.Year"/>
+                    <div class="input-group">
+                        <span class="input-group-addon" title="Url where to buy"><i class="fa fa-dollar fa-fw"></i></span>
+                        <input type="text" class="form-control input-sm" id="AmazonUrl"
+                               required
+                               placeholder="Url where to buy this album" ng-model="view.album.AmazonUrl"/>
+                    </div>
                 </div>
 
-                <button ng-click="view.addSong()" accesskey="a"
-                        ng-show="!view.isSongVisible" title="Add Song (alt-a)"
-                        class="btn btn-info btn-xs" style="margin-bottom: 10px;">
-                    <i class="fa fa-plus-circle"></i> Add Song
-                </button>
-
-                <div ng-show="view.isSongVisible" class="well well-sm">
-
-                    <div class="row">
-                        <div class=" col-sm-9">
-                            <input class="form-control input-sm" id="SongName"
-                                   placeholder="Name of the song"
-                                   ng-model="view.song.SongName"/>
-
-                        </div>
-                        <div class="col-sm-3">
-                            <input class="form-control input-sm" id="Length"
-                                   ng-model="view.song.Length"
-                                   placeholder="0:00"/>
-                        </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon" title="Spotify url to play this album"><i class="fa fa-spotify fa-fw"></i></span>
+                        <input type="text" class="form-control input-sm" id="SpotifyUrl"                               
+                               placeholder="Spotify Url to play this album" ng-model="view.album.SpotifyUrl"/>
+                    </div>
+                </div>
+                
+                    <div class="form-group">
+                        <label for="YearReleased">Year released:</label>
+                        <input type="number" class="form-control input-sm" id="YearReleased"
+                               required
+                               placeholder="Year of album release" ng-model="view.album.Year" />
                     </div>
 
-                    <button class="btn btn-success btn-xs"
-                            ng-click="view.saveSong(view.song)"
-                            ng-disabled="!view.song.SongName || !view.song.Length"
-                            style="margin-top: 8px;" accesskey="">
+                    <button ng-click="view.addSong()" accesskey="a"
+                            ng-show="!view.isSongVisible" title="Add Song (alt-a)"
+                            class="btn btn-info btn-xs" style="margin-bottom: 10px;">
                         <i class="fa fa-plus-circle"></i> Add Song
                     </button>
-                    <button class="btn btn-default btn-xs"
-                            ng-click="view.cancelSong()"
-                            style="margin-top: 8px;">
-                        <i class="fa fa-times"></i> Cancel
-                    </button>
-                </div>
 
-                <table class=" table table-striped small">
-                    <tr ng-repeat="song in view.album.Tracks">
-                        <td>{{song.SongName}}</td>
-                        <td>{{song.Length}}</td>
-                        <td>
-                            <button ng-click="view.removeSong(song)"
-                                    class="btn btn-xs btn-danger">
-                                <i class="fa fa-remove"></i> Remove
-                            </button>
-                        </td>
-                    </tr>
-                </table>
+                    <div ng-show="view.isSongVisible" class="well well-sm">
+
+                        <div class="row">
+                            <div class=" col-sm-9">
+                                <input class="form-control input-sm" id="SongName"
+                                       placeholder="Name of the song"
+                                       ng-model="view.song.SongName" />
+
+                            </div>
+                            <div class="col-sm-3">
+                                <input class="form-control input-sm" id="Length"
+                                       ng-model="view.song.Length"
+                                       placeholder="0:00" />
+                            </div>
+                        </div>
+
+                        <button class="btn btn-success btn-xs"
+                                ng-click="view.saveSong(view.song)"
+                                ng-disabled="!view.song.SongName || !view.song.Length"
+                                style="margin-top: 8px;" accesskey="">
+                            <i class="fa fa-plus-circle"></i> Add Song
+                        </button>
+                        <button class="btn btn-default btn-xs"
+                                ng-click="view.cancelSong()"
+                                style="margin-top: 8px;">
+                            <i class="fa fa-times"></i> Cancel
+                        </button>
+                    </div>
+
+                    <table class=" table table-striped small">
+                        <tr ng-repeat="song in view.album.Tracks">
+                            <td>{{song.SongName}}</td>
+                            <td>{{song.Length}}</td>
+                            <td>
+                                <button ng-click="view.removeSong(song)"
+                                        class="btn btn-xs btn-danger">
+                                    <i class="fa fa-remove"></i> Remove
+                                </button>
+                            </td>
+                        </tr>
+                    </table>
 
 
-                <div class="well well-sm">
-                    <button type="submit" ng-click="view.saveAlbum(view.album)"
-                            class="btn btn-success"
-                            ng-disabled="form1.$invalid" accesskey="S">
-                        <i class="fa fa-check"></i> Save
-                    </button>
-                    <a ng-href="#/album/{{view.album.Id}}" class="btn btn-default">
-                        <i class="fa fa-remove"></i> Cancel
-                    </a>
-                </div>
+                    <div class="well well-sm">
+                        <button type="submit" ng-click="view.saveAlbum(view.album)"
+                                class="btn btn-success"
+                                ng-disabled="form1.$invalid" accesskey="S">
+                            <i class="fa fa-check"></i> Save
+                        </button>
+                        <a ng-href="#/album/{{view.album.Id}}" class="btn btn-default">
+                            <i class="fa fa-remove"></i> Cancel
+                        </a>
+                    </div>
 
-                <div class="separator"></div>
+                    <div class="separator"></div>
 
-            </form>
+</form>
         </div>
 
         <div class="col-sm-7">

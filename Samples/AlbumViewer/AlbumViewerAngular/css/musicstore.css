@@ -295,26 +295,29 @@ input.ng-invalid,textarea.ng-invalid,select.ng-invalid {
 }
 
 .slide-animation {
-    left: 0;   
+    left: 0;           
     -webkit-transition: left 1s ease;    
     transition: all 1s ease;
 }
 .slide-animation.ng-leave-active  {
-    left: -100% !important;    
-
+    left: -100% !important;
+    overflow: hidden !important;
 }
 .slide-animation.ng-enter  {
     left: 100% !important;
     -webkit-transition: none;
+    overflow: hidden;
     transition: none;
+    overflow: hidden !important;
 }
 .slide-animation.ng-enter-stagger {
   /* 200ms will be applied between each sucessive enter operation */ 
   -webkit-transition-delay:0.7s;
+  overflow: hidden !important;
   transition-delay:0.7s;
 
   /* this is here to avoid accidental CSS inheritance */
-  -webkit-transition-duration:0;
+  -webkit-transition-duration:0;  
   transition-duration:0;
 }
 

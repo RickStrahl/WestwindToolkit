@@ -147,6 +147,7 @@
     <Content Include="app\js\artistServiceLocal.js" />
     <Content Include="app\js\errorService.js" />
     <Content Include="app\js\headerController.js" />
+    <Content Include="app\js\optionsController.js" />
     <Content Include="app\views\about.html" />
     <Content Include="app\views\album.html" />
     <Content Include="app\views\albums.html" />

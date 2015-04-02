@@ -9,7 +9,7 @@
 
     function artistService($http,$q) {
         var service = {
-            baseUrl: "./",
+            baseUrl: globals.baseUrl || "./",
             artist: newArtist(),
             artists: [],
             albums: [],

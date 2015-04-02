@@ -26,7 +26,11 @@
             </div>
             <div ng-bind-html="view.album.Description | linebreakFilter"></div>
 
-            <hr />
+            <div style="margin: 10px 0" class="pull-right">
+                &nbsp;
+                <a ng-show="view.album.AmazonUrl" ng-href="{{view.album.AmazonUrl}}" class="btn btn-link btn-sm" target="_amazon"><i class="fa fa-dollar"></i> Buy</a> &nbsp;&nbsp;
+                <a ng-show="view.album.SpotifyUrl" ng-href="{{view.album.SpotifyUrl}}" class="btn btn-link btn-sm" target="_spotify"><i class="fa fa-play"></i> Play</a>
+            </div>
 
             <table class=" table table-striped small">
                 <tr ng-repeat="song in view.album.Tracks">
@@ -37,7 +41,8 @@
 
             <hr />
             More from
-            <a href="#/artist/{{view.album.ArtistId}}">{{view.album.Artist.ArtistName}}<br/>            
+            <a href="#/artist/{{view.album.ArtistId}}">
+                {{view.album.Artist.ArtistName}}<br />
                 <img ng-src="{{view.album.Artist.ImageUrl}}" style="height: 100px; border-radius: 5px;box-shadow: 2px 2px 3px #535353" />
             </a>
         </div>

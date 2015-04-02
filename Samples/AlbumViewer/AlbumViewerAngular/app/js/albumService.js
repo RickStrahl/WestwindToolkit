@@ -10,7 +10,7 @@
 
     function albumService($http,$q) {
         var service = {
-            baseUrl: "./",
+            baseUrl: globals.baseUrl || "./",
             albums: [],
             artists: [],
             album: newAlbum(),
@@ -38,6 +38,7 @@
                 },
                 Title: null,
                 AmazonUrl: null,
+                SpotifyUrl: null,
                 ImageUrl: null
             };
         }
@@ -53,13 +54,13 @@
         function getAlbums(noCache) {
             // if albums exist just return
             if (!noCache && service.albums && service.albums.length > 0)
-                return ww.angular.$httpPromiseFromValue($q, service.albums);                
-            
+                return ww.angular.$httpPromiseFromValue($q, service.albums);
+
             return $http.get(service.baseUrl + "albums/")
-                .success(function (data) {                    
-                    service.albums = data;                   
-                })
-                
+                .success(function(data) {
+                    service.albums = data;
+                });
+
         }
 
         function getAlbum(id, useExisting) {            

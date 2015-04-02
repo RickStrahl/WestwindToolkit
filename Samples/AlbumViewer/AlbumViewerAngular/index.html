@@ -66,7 +66,7 @@
         </div>
 
         <div id="MainView" autoscroll="true" ng-cloak
-             style="width: 100%; padding-top: 10px;" xclass="slide-animation"
+             style="width: 100%; padding-top: 10px;" class="slide-animation"
              ng-view>
         </div>
 
@@ -103,6 +103,11 @@
             //    navigator.userAgent.indexOf('iPad'))
             FastClick.attach(document.body);
         }, false);
+
+        // global script settings
+        globals = {
+            baseUrl: "./"
+        };
     </script>
 
     <!--<script src="js/angular-concat.min.js"></script>-->
