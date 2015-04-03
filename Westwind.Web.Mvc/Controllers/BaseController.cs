@@ -13,7 +13,7 @@ namespace Westwind.Web.Mvc
     /// Base Controller implementation that holds UserState,
     /// ErrorDisplay objects that are preinitialized.
     /// </summary>
-    public class BaseController : System.Web.Mvc.Controller
+    public class BaseController : Controller
     {
         /// <summary>
         /// Contains User state information retrieved from the authentication system
@@ -33,8 +33,8 @@ namespace Westwind.Web.Mvc
             CreateUserState();            
                         
             // have to explicitly add this so Master can see untyped value
-            ViewBag.UserState = this.UserState;
-            ViewBag.ErrorDisplay = this.ErrorDisplay;
+            ViewBag.UserState = UserState;
+            ViewBag.ErrorDisplay = ErrorDisplay;
 
             // custom views should also add these as properties
         }
@@ -47,10 +47,10 @@ namespace Westwind.Web.Mvc
         protected virtual void CreateUserState()
         {
             // Grab the user's login information from FormsAuth            
-            if (this.User.Identity != null && this.User.Identity is FormsIdentity)
-                this.UserState = UserState.CreateFromFormsAuthTicket();
+            if (User.Identity != null && User.Identity is FormsIdentity)
+                UserState = UserState.CreateFromFormsAuthTicket();
             else
-                this.UserState = new UserState();
+                UserState = new UserState();
 
         }
    
@@ -118,7 +118,7 @@ namespace Westwind.Web.Mvc
         protected internal ActionResult DisplayErrorPage(string title, string message, string redirectTo = null, bool isHtml = true)
         {
             ErrorController controller = new ErrorController();            
-            controller.InitializeExplicit(this.ControllerContext.RequestContext);
+            controller.InitializeExplicit(ControllerContext.RequestContext);
             return controller.ShowError(title, message, redirectTo,isHtml);
         }
 
@@ -132,9 +132,8 @@ namespace Westwind.Web.Mvc
         public JsonResult ReturnAjaxError(string errorMessage, int statusCode = 500)
         {
             Response.Clear();
-            Response.StatusCode = statusCode;
-            
-            return Json(new CallbackException() {message = errorMessage}, JsonRequestBehavior.AllowGet);           
+            Response.StatusCode = statusCode;            
+            return Json(new CallbackErrorResponseMessage(errorMessage) { statusCode = statusCode}, JsonRequestBehavior.AllowGet);           
         }
 
         /// <summary>
@@ -147,10 +146,7 @@ namespace Westwind.Web.Mvc
         {
             Response.Clear();
             Response.StatusCode = statusCode;
-
-            var cb = new CallbackException() {message = ex.Message};
-            cb.stackTrace = ex.StackTrace;
-                        
+            var cb = new CallbackErrorResponseMessage(ex,HttpContext.IsDebuggingEnabled);
             return Json(cb, JsonRequestBehavior.AllowGet);
         }
 

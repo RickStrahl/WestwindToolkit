@@ -195,7 +195,7 @@ namespace Westwind.Web
             {
                 WriteErrorResponse(ex.Message,
                                   (HttpContext.Current.IsDebuggingEnabled ? ex.StackTrace : null),
-                                  ex.statusCode);
+                                  ex.StatusCode);
             }
             catch (Exception ex)
             {                
@@ -335,10 +335,9 @@ namespace Westwind.Web
         /// <param name="ErrorMessage"></param>
         public void WriteErrorResponse(string errorMessage, string stackTrace, int statusCode = 500)
         {
-            CallbackException Error = new CallbackException();
-            Error.message = errorMessage;
-            Error.isCallbackError = true;
-            Error.stackTrace = stackTrace;
+            CallbackErrorResponseMessage Error = new CallbackErrorResponseMessage(errorMessage);
+            Error.detail = stackTrace;
+            Error.statusCode = statusCode;
 
             JSONSerializer Serializer = new JSONSerializer( SupportedJsonParserTypes.JavaScriptSerializer);            
             string result = Serializer.Serialize(Error);
@@ -355,8 +354,7 @@ namespace Westwind.Web
             if (Response.StatusCode == 200)
                 Response.StatusCode = statusCode;
             
-            Response.Write(result);
-            
+            Response.Write(result);            
             Response.End();
         }
     }

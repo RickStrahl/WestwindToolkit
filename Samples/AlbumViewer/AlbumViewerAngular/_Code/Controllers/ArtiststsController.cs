@@ -10,6 +10,7 @@ using HttpVerbs = System.Web.Mvc.HttpVerbs;
 
 namespace AlbumViewerAngular.Controllers
 {
+    [CallbackExceptionHandler()]
     public class ArtistsController : Controller
     {
 

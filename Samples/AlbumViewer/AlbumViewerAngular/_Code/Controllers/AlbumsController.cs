@@ -11,7 +11,7 @@ using HttpVerbs = System.Web.Mvc.HttpVerbs;
 
 namespace AlbumViewerAngular.Controllers
 {
-    [CallbackExceptionHandler(false)]
+    [CallbackExceptionHandler()]
     public class AlbumsController : Controller
     {
         [Route("albums")]

@@ -73,11 +73,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CallbackHandler\CallbackHandler\CallbackEnumerations.cs" />
+    <Compile Include="CallbackHandler\CallbackHandler\CallbackErrorResponseMessage.cs" />
     <Compile Include="CallbackHandler\CallbackHandler\CallbackException.cs" />
     <Compile Include="CallbackHandler\CallbackHandler\CallbackHandler.cs" />
     <Compile Include="CallbackHandler\CallbackHandler\CallbackHandlerRouteHandler.cs" />
     <Compile Include="CallbackHandler\CallbackHandler\CallbackMethodAttribute.cs" />
     <Compile Include="CallbackHandler\CallbackHandler\CallbackMethodProcessorHelper.cs" />
+    <Compile Include="CallbackHandler\CallbackHandler\CallbackResponseMessage.cs" />
     <Compile Include="CallbackHandler\CallbackHandler\ICallbackMethodProcessor.cs" />
     <Compile Include="CallbackHandler\CallbackHandler\JsonCallbackMethodProcessor.cs" />
     <Compile Include="CallbackHandler\CallbackHandler\XmlCallbackMethodProcessor.cs" />

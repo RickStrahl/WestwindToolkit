@@ -124,12 +124,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Start\CallbackExceptionHandler.cs" />
-    <Compile Include="App_Start\FilterConfig.cs" />
-    <Compile Include="App_Start\RouteConfig.cs" />
-    <Compile Include="Controllers\AlbumsController.cs" />
-    <Compile Include="Controllers\ArtiststsController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="_Code\Support\CallbackExceptionHandlerAttribute.cs" />
+    <Compile Include="_Code\App_Start\FilterConfig.cs" />
+    <Compile Include="_Code\App_Start\RouteConfig.cs" />
+    <Compile Include="_Code\Controllers\AlbumsController.cs" />
+    <Compile Include="_Code\Controllers\ArtiststsController.cs" />
+    <Compile Include="_Code\Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -975,11 +975,11 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
     <Folder Include="Scripts\angular\i18n\ngLocale\" />
     <Folder Include="Views\Albums\" />
     <Folder Include="Views\Artiststs\" />
     <Folder Include="Views\Home\" />
+    <Folder Include="_Code\Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

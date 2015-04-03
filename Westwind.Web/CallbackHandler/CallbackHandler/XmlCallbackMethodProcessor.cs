@@ -297,11 +297,10 @@ namespace Westwind.Web
         /// <param name="ErrorMessage"></param>
         public void WriteErrorResponse(string errorMessage, string stackTrace, int statusCode = 500)
         {
-            CallbackException Error = new CallbackException();
-            Error.message = errorMessage;
-            Error.isCallbackError = true;
-            Error.stackTrace = stackTrace;
-
+            CallbackErrorResponseMessage Error = new CallbackErrorResponseMessage(errorMessage);            
+            Error.detail = stackTrace;
+            Error.statusCode = statusCode;
+            
             JSONSerializer Serializer = new JSONSerializer();
             string result = null;
             SerializationUtils.SerializeObject(Error, out result);
