@@ -4,9 +4,12 @@ namespace Westwind.Web
 {
     /// <summary>
     /// Special exception type used to indicate that an exception was
-    /// fired on the server. This object is JSON serialized and the
-    /// client can check for Result.IsError to see if a 
-    /// a failure occured on the server.
+    /// fired on the server for a JSON callback. This exception is captured
+    /// by the CallbackHandler and serialized into CallbackErrorResponse
+    /// to the client in a consistent format.
+    /// 
+    /// Also used in various MVC related AJAX error handlers 
+    /// (BaseController and JsonCallback
     /// </summary>    
     public class CallbackException : Exception
     {

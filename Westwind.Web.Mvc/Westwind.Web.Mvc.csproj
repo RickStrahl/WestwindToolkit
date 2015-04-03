@@ -90,6 +90,7 @@
     <Compile Include="Controllers\NegotiatedResult.cs" />
     <Compile Include="Controllers\ErrorController.cs" />
     <Compile Include="Controllers\JsonNetResult.cs" />
+    <Compile Include="Filters\CallbackExceptionHandlerAttribute.cs" />
     <Compile Include="Filters\CompressContentAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Components\ErrorDisplay.cs" />

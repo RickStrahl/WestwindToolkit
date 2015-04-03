@@ -124,7 +124,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="_Code\Support\CallbackExceptionHandlerAttribute.cs" />
     <Compile Include="_Code\App_Start\FilterConfig.cs" />
     <Compile Include="_Code\App_Start\RouteConfig.cs" />
     <Compile Include="_Code\Controllers\AlbumsController.cs" />

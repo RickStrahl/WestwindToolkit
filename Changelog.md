@@ -1,5 +1,24 @@
 #West Wind Toolkit Change Log
 
+### Version 2.63
+*not released yet*
+
+* **CallbackHandlerExceptionHandlerAttribute for MVC Controllers**
+<small>Westwind.Web.Mvc</small>
+Added Callback Handler Exception Attribute to make it easy to throw 
+CallbackException objects and have those exception objects handled
+and returned as JSON errors with appropriate HTTP status codes. Simplifies
+explicit application error responses to clients. Handler also captures
+other exceptions but as generic 500 errors using consistent format.
+
+* **CallbackResponseMessage and CallbackErrorResponseMessage Classes for JSON Results**
+<small>Westwind.Web.Mvc</small>
+Added explicit CallbackErrorResponseMessage and CallbackResponseMessage 
+classes responsible for returning properly JSON formatted message to clients.
+Used to return error results from JSON callbacks in a consistent manner with
+a isError flag used to determine error status. Works in conjunction with
+CallbackException() in CallbackHandler implementation and in MVC BaseController.
+
 ### Version 2.62
 *March 31st, 2015*
 
@@ -7,21 +26,27 @@
 Added a new sample application that uses Angular JS and demonstrates using the various West Wind tools in an SPA style ASP.MVC application using Westwind.Data and Sql Server. 
 
 * **UrlEncodingParser.DecodePlusSignsAsSpaces**</br>
+<small>Westwind.Utilties</small>
 Add option to support parsing + signs as spaces in UrlEncoded content. By default spaces are expected to be encoded with %20, but some older applications still use + as the space encoding character. Off by default and should be set using the constructor.
 
 * **Add JpegCompression Option to ImageUtils.ResizeImage and RotateImage**</br>
+<small>Westwind.Utilties</small>
 You can now specify the jpeg quality by providing a jpeg compression level between 0 and 100. This allows control over the compression level unlike previously which used the relatively low default compression level used when no custom encoder is used. This allows for creating higher quality jpeg images.
 
 * **CallbackHandler JSON.NET Improvements**</br>
+<small>Westwind.Web</small>
 Added default support for enum as string handling to CallbackHandler so that enums serialize/deserialize from string values rather than ordinals. Implemented JSON.NET instance caching rather than dynamic loading to improve performance of JSON.NET serialization.
 
 * **CallbackException StatusCode**</br>
+<small>Westwind.Web</small>
 Added a status code property to the CallbackException instance in order to allow anything that uses CallbackException like CallbackHander to decide what status code to return on exceptions. 
 
 * **JsonSerializationUtils.FormatJsonString() to prettify Json**</br>
+<small>Westwind.Utilties</small>
 Added method to format an input JSON string to a nicely formatted JSON string.
 
 * **ww.angular.js Helper for a few AngularJs Tasks**</br>
+<small>Westwind.Web</small>
 Capture and parse $http service errors consistently. Turn regular $q promises into 
 $http service compatible promises. Resolve/Reject $q promise helpers.
 
