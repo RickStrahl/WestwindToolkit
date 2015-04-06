@@ -16,6 +16,9 @@ http://en.wikipedia.org/wiki/MIT_License
     var self;
     ww.angular = {
         parseHttpError: function (args) {
+            if (!args)
+                args = arguments;
+
             // error/message object passed
             if (args.hasOwnProperty("message"))
                 return args;

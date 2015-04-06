@@ -23,7 +23,8 @@ namespace Westwind.Web
         {
             if (message == null)
                 message = string.Empty;
-
+            
+            StatusCode = statusCode;
         }
 
         public bool IsError {get; set; }

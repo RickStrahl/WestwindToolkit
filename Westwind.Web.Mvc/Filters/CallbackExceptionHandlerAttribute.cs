@@ -49,6 +49,11 @@ namespace AlbumViewerAngular
             CallbackErrorResponseMessage resultMessage = new CallbackErrorResponseMessage(ex,AllowExceptionDetail);
             
             response.ContentType = "application/json";
+            response.StatusCode = 500;
+            var cbEx = ex as CallbackException;
+            if (cbEx != null && cbEx.StatusCode > 0)
+                response.StatusCode = ((CallbackException) ex).StatusCode;
+
             response.Write(JsonConvert.SerializeObject(resultMessage));
             
             filterContext.ExceptionHandled = true;            

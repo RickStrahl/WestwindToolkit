@@ -43,10 +43,7 @@
                         $window.location.hash = "/album/" + album.Id;
                     },1000);
                 })
-                .error(function() {
-                    vm.error.message = "Album not saved";
-                    vm.error.icon = "warning";
-                });
+                .error(parseError);
         };
         vm.addSong = function () {
             vm.isSongVisible = true;            
@@ -104,6 +101,12 @@
                         $input.data('typeahead').source = data;
                     });
             });
+        }
+
+        function parseError() {            
+            var err = vm.error.parseHttpError(arguments);            
+            vm.error.error(err.message, "warning");            
+            $("#MainView")[0].scrollTo(0, 0);
         }
                 
         // Initialization code

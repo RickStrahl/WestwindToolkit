@@ -51,6 +51,11 @@ namespace AlbumViewerAngular.Controllers
             var id = dtoAlbum.Id;
 
             var albumBus = new AlbumBusiness();
+
+
+            if (!albumBus.Validate(dtoAlbum))
+                throw new CallbackException("Album didn't validate: " + albumBus.ErrorMessage);
+
             if (!albumBus.SaveAlbum(dtoAlbum))
                 throw new CallbackException("Album save failed: " + albumBus.ErrorMessage);
 

@@ -16,8 +16,8 @@
                 vm.icon = "warning";
             },
             error: function(message, icon) {
-                vm.error.reset();
-                vm.error.message = message;
+                vm.reset();
+                vm.message = message;
                 if (!icon)
                     icon = "error";
 
@@ -30,33 +30,34 @@
                     icon = "info";
                 vm.icon = icon;
             },            
-            parseHttpError: function() {                
-                var args = arguments;
+            parseHttpError: function (args) {                
+                if (!args)
+                    args = arguments;
 
                 // error/message object passed rather than parm object
                 if (args.hasOwnProperty("message")) {
                     vm.message = args.message;
-                    return;
+                    return vm;
                 }
                 if (args.hasOwnProperty("Message")) {
                     vm.message = args.Message;
-                    return;
+                    return vm;
                 }
 
                 var data = args[0]; // http content
                 var status = args[1];
                 var msg = args[2];
-                if(typeof msg != "String")
+                if(typeof msg != "string")
                    msg = null;
 
                 if (data) {                    
                     if (data.hasOwnProperty("message")) {
                         vm.message = data.message;
-                        return;
+                        return vm;
                     }
                     if (data.hasOwnProperty("Message")) {
                         vm.message = data.Message;
-                        return;
+                        return vm;
                     }
 
                     // assume JSON   
@@ -67,8 +68,8 @@
                         else if (msg.hasOwnProperty("Message"))
                             vm.message = msg.Message;
 
-                        if(vm.message)
-                            return;
+                        if (vm.message)
+                            return vm;
                     } catch (exception) {}
                 }
                 if (!msg) {
@@ -83,6 +84,6 @@
             }
         };
 
-        this.error = vm;
+        this.error = vm;        
     }
 })();

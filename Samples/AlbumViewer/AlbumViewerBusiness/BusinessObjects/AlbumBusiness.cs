@@ -100,6 +100,18 @@ namespace AlbumViewerBusiness
             return base.OnBeforeDelete(entity);
         }
 
+        protected override void OnValidate(Album entity)
+        {
+            var album = entity;
+
+            // Add Validation Errors to invalidate entity
+            if (album.Year > DateTime.UtcNow.Year)
+                ValidationErrors.Add("Year can't be greater than today's year.");
+            if (album.Year < 1930)
+                ValidationErrors.Add("There were no records prior to 1930.");
+            
+            base.OnValidate(entity);
+        }
 
     }
 }
