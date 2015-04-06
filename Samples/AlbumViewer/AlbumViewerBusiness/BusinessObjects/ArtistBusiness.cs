@@ -61,7 +61,25 @@ namespace AlbumViewerBusiness
                            .ToList();
         }
 
-        
+
+        protected override bool OnBeforeDelete(Artist entity)
+        { 	   
+                var albums = Context.Albums.Where(alb => alb.ArtistId == entity.Id);
+
+                var albumBus = new AlbumBusiness(this);
+                foreach (var album in albums)
+                {
+                    if (!albumBus.Delete(album.Id,true,true))
+                    {
+                        SetError(albumBus.ErrorMessage);
+                        return false;
+                    }
+                }
+                return base.OnBeforeDelete(entity);
+        }
+
+
+
     }
     
 }

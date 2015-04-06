@@ -467,10 +467,10 @@ namespace Westwind.Data.EfCodeFirst
         /// <param name="id"></param>
         /// <param name="saveChanges">if true changes are saved to disk. Otherwise entity is removed from context only</param>
         /// <returns></returns>
-        public virtual bool Delete(object id, bool saveChanges = false)
+        public virtual bool Delete(object id, bool saveChanges = false, bool useTransaction = false)
         {
             TEntity entity = DbSet.Find(id);
-            return Delete(entity, saveChanges: saveChanges);
+            return Delete(entity, saveChanges: saveChanges, useTransaction: useTransaction);
         }
         
         /// <summary>

@@ -37,29 +37,9 @@ namespace AlbumViewerAngular.Controllers
             return new JsonNetResult(album);
         }
 
-        [Route("albums/{id}")]
-        [AcceptVerbs(HttpVerbs.Put)]
-        public ActionResult SaveAlbum(int id, Album newAlbum)
-        {
-            bool llNew = id == -2 ? true : false;
-
-            var albumBus = new AlbumBusiness();
-            var album = albumBus.Load(id);
-
-            if (!ModelState.IsValid)
-                throw new CallbackException("Model binding failed.", 500);
-
-            // TODO: Hook up save code
-            
-            DataUtils.CopyObjectData(newAlbum, album, "");
-
-            return new JsonNetResult(album);
-        }
-
-        
-
+      
         [Route("albums")]
-        [AcceptVerbs(HttpVerbs.Post)]
+        [AcceptVerbs(HttpVerbs.Post | HttpVerbs.Put)]
         public ActionResult SaveAlbum(Album dtoAlbum)
         {
             if (dtoAlbum == null)
@@ -77,6 +57,19 @@ namespace AlbumViewerAngular.Controllers
             return new JsonNetResult(albumBus.Entity);
         }
 
+        [Route("albums/{id}")]
+        [AcceptVerbs(HttpVerbs.Delete)]
+        public ActionResult DeleteAlbum(int id)
+        {
+            var albumBus = new AlbumBusiness();
+
+            if (!albumBus.Delete(id, saveChanges: true, useTransaction: true))
+                throw new CallbackException("Couldn't delete album: " + albumBus.ErrorMessage);
+
+            return Json(true, JsonRequestBehavior.AllowGet);
+        }
+
+
         [Route("throw")]
         public ActionResult Throw()
         {
@@ -86,19 +79,5 @@ namespace AlbumViewerAngular.Controllers
         }
 
 
-    }
-
-   //public class ApiException : Exception
-   // {
-   //     public int StatusCode { get; set; }
-   //     public ApiException(string message, int statusCode = 500) :
-   //         base(message)
-   //     {
-   //         StatusCode = StatusCode;
-   //     }
-   //     public ApiException(Exception ex, int statusCode = 500) : base(ex.Message)
-   //     {
-   //         StatusCode = statusCode;
-   //     }
-   // }
+    }  
 }

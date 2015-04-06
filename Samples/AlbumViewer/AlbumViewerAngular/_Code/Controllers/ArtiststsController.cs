@@ -95,15 +95,15 @@ namespace AlbumViewerAngular.Controllers
         }
 
 
-        [Route("artists/delete/{id}")]
-        [AcceptVerbs(HttpVerbs.Get)] // DELETE would not work here???
+        [Route("artists/{id}")]
+        [AcceptVerbs(HttpVerbs.Delete)] 
         public ActionResult DeleteArtist(int id)
         {
             if (id < 1)
                 throw new CallbackException("Invalid Id passed.");
 
             var artistBus = new ArtistBusiness();
-            if (!artistBus.Delete(id,true))
+            if (!artistBus.Delete(id,true,true))
                 throw new CallbackException("Couldn't delete artist: " + artistBus.ErrorMessage);
 
             return new JsonNetResult(true);

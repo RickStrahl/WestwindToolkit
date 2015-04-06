@@ -1,3 +1,5 @@
+/// <reference path="albumService.js" />
+/// <reference path="errorService.js" />
 (function () {
     'use strict';
 
@@ -5,13 +7,17 @@
         .module('app')
         .controller('albumController', albumController);
 
-    
-    if (!app.configuration.useLocalData)
-        albumController.$inject = ['$routeParams', '$window', '$animate', 'albumService','errorService'];
-    else
-        albumController.$inject = [ '$routeParams', '$window', '$animate','albumServiceLocal','errorService'];
 
-    function albumController($routeParams,$window,$animate,albumService,errorService) {        
+    var albumServiceString = "albumService";
+    if (app.configuration.useLocalData)
+        albumServiceString = "albumServiceLocal";
+
+    //    albumController.$inject = ['$routeParams', '$window', '$animate','$location', 'albumService','errorService'];
+    //else
+
+    albumController.$inject = ['$routeParams', '$window', '$animate', '$location', albumServiceString, 'errorService'];
+
+    function albumController($routeParams,$window,$animate,$location,albumService,errorService) {        
         var vm = this;
         
         vm.album = null;
@@ -67,11 +73,14 @@
                 return;
 
             albumService.deleteAlbum(album)
-                .success(function() {
+                .success(function () {
+                    debugger;
                     vm.albums = albumService.albums;
                     $location.path("#/albums");
                 })
-                .error(onPageError);
+                .error(function() {
+                vm.error.message = "Album not deleted"
+            });
         };
         vm.getAlbum = function(id) {            
             albumService.getAlbum(id, true)

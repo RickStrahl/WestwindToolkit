@@ -149,7 +149,7 @@
         }
 
         function deleteAlbum(album){
-            return $http.get(service.baseUrl + "deletealbum/" + album.Id)
+            return $http.delete(service.baseUrl + "albums/" + album.Id)
                 .success(function() {
                     service.albums = _.remove(service.albums, function(alb){
                         return album.Id != alb.Id;

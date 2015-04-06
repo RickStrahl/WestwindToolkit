@@ -297,7 +297,7 @@ input.ng-invalid,textarea.ng-invalid,select.ng-invalid {
 .slide-animation {
     left: 0;           
     -webkit-transition: left 1s ease;    
-    transition: all 1s ease;
+    transition: all 0.5s ease;
 }
 .slide-animation.ng-leave-active  {
     left: -100% !important;
@@ -306,11 +306,10 @@ input.ng-invalid,textarea.ng-invalid,select.ng-invalid {
 .slide-animation.ng-enter  {
     left: 100% !important;
     -webkit-transition: none;
-    overflow: hidden;
     transition: none;
-    overflow: hidden !important;
+    overflow: hidden !important;        
 }
-.slide-animation.ng-enter-stagger {
+.xslide-animation.ng-enter-stagger {
   /* 200ms will be applied between each sucessive enter operation */ 
   -webkit-transition-delay:0.7s;
   overflow: hidden !important;

@@ -10,6 +10,15 @@ namespace AlbumViewerBusiness
 {
     public class AlbumBusiness : EfCodeFirstBusinessBase<Album,AlbumViewerContext>
     {
+        public AlbumBusiness() 
+        {
+            
+        }
+
+        public AlbumBusiness(IBusinessObject<AlbumViewerContext> parentBusiness): base(parentBusiness)
+        { }
+
+
         public ICollection<Album> GetAllAlbums()
         {
             return Context.Albums
@@ -80,5 +89,17 @@ namespace AlbumViewerBusiness
             
             return Save();
         }
+
+        protected override bool OnBeforeDelete(Album entity)
+        {
+            // explicitly have to remove tracks first
+            foreach (var track in entity.Tracks.ToList())
+            {
+                Context.Tracks.Remove(track);                
+            }
+            return base.OnBeforeDelete(entity);
+        }
+
+
     }
 }
