@@ -51,6 +51,7 @@ namespace AlbumViewerAngular
             response.ContentType = "application/json";
             response.StatusCode = 500;
             var cbEx = ex as CallbackException;
+        
             if (cbEx != null && cbEx.StatusCode > 0)
                 response.StatusCode = ((CallbackException) ex).StatusCode;
 

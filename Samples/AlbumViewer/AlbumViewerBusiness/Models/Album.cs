@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AlbumViewerBusiness
@@ -7,7 +8,8 @@ namespace AlbumViewerBusiness
     public class Album
     {
         public int Id { get; set; }
-                
+
+     
         public string Title { get; set; }
         public string Description { get; set; }
         public int Year { get; set; }
@@ -19,14 +21,11 @@ namespace AlbumViewerBusiness
         public int? ArtistId { get; set; }
 
         public virtual Artist Artist { get; set; }
-
-        public virtual ICollection<Track> Tracks { get; set; }
+        public virtual IList<Track> Tracks { get; set; }        
 
         public Album()
-        {
-            //Artist = new Artist();
-            Tracks = new List<Track>();
+        {        
         }
 
     }
-}
+} 

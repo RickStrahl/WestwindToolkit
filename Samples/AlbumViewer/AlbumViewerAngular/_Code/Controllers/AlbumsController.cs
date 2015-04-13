@@ -11,7 +11,7 @@ using HttpVerbs = System.Web.Mvc.HttpVerbs;
 
 namespace AlbumViewerAngular.Controllers
 {
-    [CallbackExceptionHandler()]
+    [CallbackExceptionHandler]
     public class AlbumsController : Controller
     {
         [Route("albums")]
@@ -31,6 +31,7 @@ namespace AlbumViewerAngular.Controllers
 
             var albumBus = new AlbumBusiness();
             var album = albumBus.Load(id);
+            
             if (album == null)
                 throw new CallbackException("Invalid album id passed.");
 
@@ -51,8 +52,7 @@ namespace AlbumViewerAngular.Controllers
             var id = dtoAlbum.Id;
 
             var albumBus = new AlbumBusiness();
-
-
+            
             if (!albumBus.Validate(dtoAlbum))
                 throw new CallbackException("Album didn't validate: " + albumBus.ErrorMessage);
 

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace AlbumViewerBusiness
 {
@@ -12,6 +13,8 @@ namespace AlbumViewerBusiness
         [StringLength(256)]
         public string ImageUrl { get; set; }
         [StringLength(256)]
-        public string AmazonUrl { get; set; }        
+        public string AmazonUrl { get; set; }
+
+
     }
 }

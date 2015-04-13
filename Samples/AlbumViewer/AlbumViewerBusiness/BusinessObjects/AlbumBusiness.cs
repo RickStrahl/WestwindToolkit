@@ -10,9 +10,8 @@ namespace AlbumViewerBusiness
 {
     public class AlbumBusiness : EfCodeFirstBusinessBase<Album,AlbumViewerContext>
     {
-        public AlbumBusiness() 
-        {
-            
+        public AlbumBusiness()
+        {       
         }
 
         public AlbumBusiness(IBusinessObject<AlbumViewerContext> parentBusiness): base(parentBusiness)
@@ -37,6 +36,7 @@ namespace AlbumViewerBusiness
                 .OrderBy(alb => alb.Year)
                 .ToList();
         }
+        
 
         /// <summary>
         /// Creates a ready to be saved instance of EF CodeFirst Context
@@ -52,9 +52,10 @@ namespace AlbumViewerBusiness
             }
 
             var album = Load(dtoAlbum.Id);
+
             if (album == null)
                 album = NewEntity();
-            
+
             var artist = Context.Artists.FirstOrDefault(a => a.ArtistName == dtoAlbum.Artist.ArtistName);
             if (artist == null)
             {
@@ -84,11 +85,12 @@ namespace AlbumViewerBusiness
                 // manual updates
                 track.AlbumId = dtoTrack.AlbumId;
                 track.SongName = dtoTrack.SongName;
-                track.Length = dtoTrack.Length;                               
-            }
-            
+                track.Length = dtoTrack.Length;
+            }                
+
             return Save();
         }
+        
 
         protected override bool OnBeforeDelete(Album entity)
         {
@@ -100,6 +102,8 @@ namespace AlbumViewerBusiness
             return base.OnBeforeDelete(entity);
         }
 
+
+
         protected override void OnValidate(Album entity)
         {
             var album = entity;
@@ -109,6 +113,7 @@ namespace AlbumViewerBusiness
                 ValidationErrors.Add("Year can't be greater than today's year.");
             if (album.Year < 1930)
                 ValidationErrors.Add("There were no records prior to 1930.");
+
             
             base.OnValidate(entity);
         }
