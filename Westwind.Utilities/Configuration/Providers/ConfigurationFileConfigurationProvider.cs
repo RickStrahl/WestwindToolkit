@@ -2,7 +2,7 @@
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          © West Wind Technologies, 2009-2013
+ *          Â© West Wind Technologies, 2009-2013
  *          http://www.west-wind.com/
  * 
  * Created: 09/12/2009
@@ -166,7 +166,7 @@ namespace Westwind.Utilities.Configuration
                 else
                     continue;
 
-                string fieldName = Member.Name.ToLower();
+                string fieldName = Member.Name.ToLowerInvariant();
 
                 // Error Message is an internal public property
                 if (fieldName == "errormessage" || fieldName == "provider")
