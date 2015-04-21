@@ -6,7 +6,7 @@ namespace AlbumViewerBusiness.Migrations
     public partial class initial : DbMigration
     {
         public override void Up()
-        {
+        {            
             CreateTable(
                 "dbo.Albums",
                 c => new
