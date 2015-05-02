@@ -37,6 +37,9 @@ namespace Westwind.Web.Mvc
         {
             get
             {
+                if (DisplayErrors.Count > 0 && string.IsNullOrEmpty(Message))
+                    Message = "Please correct the following errors:";
+
                 return !string.IsNullOrEmpty(Message);
             }
         }
