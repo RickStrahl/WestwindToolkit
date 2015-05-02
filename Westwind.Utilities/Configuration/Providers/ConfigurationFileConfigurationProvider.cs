@@ -118,9 +118,8 @@ namespace Westwind.Utilities.Configuration
                 return Read(config, ConfigurationFile);
 
             Type typeWebConfig = config.GetType();
-            MemberInfo[] Fields =
-                typeWebConfig.GetMembers(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty |
-                                         BindingFlags.GetField);
+            PropertyInfo[] properties =
+                typeWebConfig.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.GetProperty);
 
             // Set a flag for missing fields
             // If we have any we'll need to write them out into .config
@@ -147,26 +146,14 @@ namespace Westwind.Utilities.Configuration
 
 
             // Loop through all fields and properties                 
-            foreach (MemberInfo Member in Fields)
+            foreach (PropertyInfo property in properties)
             {
                 FieldInfo field = null;
-                PropertyInfo property = null;
                 Type fieldType = null;
+                fieldType = property.PropertyType;
 
-                if (Member.MemberType == MemberTypes.Field)
-                {
-                    field = (FieldInfo) Member;
-                    fieldType = field.FieldType;
-                }
-                else if (Member.MemberType == MemberTypes.Property)
-                {
-                    property = (PropertyInfo) Member;
-                    fieldType = property.PropertyType;
-                }
-                else
-                    continue;
 
-                string fieldName = Member.Name.ToLowerInvariant();
+                string fieldName = property.Name.ToLowerInvariant();
 
                 // Error Message is an internal public property
                 if (fieldName == "errormessage" || fieldName == "provider")
@@ -186,7 +173,7 @@ namespace Westwind.Utilities.Configuration
                     try
                     {
                         // Assign the value to the property
-                        ReflectionUtils.SetPropertyEx(config, Member.Name,
+                        ReflectionUtils.SetPropertyEx(config,property.Name,
                             StringToTypedValue(value, fieldType, CultureInfo.InvariantCulture));
                     }
                     catch
@@ -219,7 +206,7 @@ namespace Westwind.Utilities.Configuration
 
                     try
                     {
-                        ReflectionUtils.SetPropertyEx(config, Member.Name, list);
+                        ReflectionUtils.SetPropertyEx(config, property.Name, list);
                     }
                     catch { }
                 }
@@ -263,7 +250,7 @@ namespace Westwind.Utilities.Configuration
         public override bool Read(AppConfiguration config, string filename)
         {
             Type typeWebConfig = config.GetType();
-            MemberInfo[] Fields = typeWebConfig.GetMembers(BindingFlags.Public |
+            PropertyInfo[] properties = typeWebConfig.GetProperties(BindingFlags.Public |
                                                            BindingFlags.Instance);
 
             // Set a flag for missing fields
@@ -296,30 +283,16 @@ namespace Westwind.Utilities.Configuration
                 ConfigSection = "appSettings";
             
 
-            foreach (MemberInfo Member in Fields)
-            {
-                FieldInfo Field = null;
-                PropertyInfo Property = null;
-                Type FieldType = null;
-                string TypeName = null;
-
-                if (Member.MemberType == MemberTypes.Field)
-                {
-                    Field = (FieldInfo) Member;
-                    FieldType = Field.FieldType;
-                    TypeName = Field.FieldType.Name.ToLower();
-                }
-                else if (Member.MemberType == MemberTypes.Property)
-                {
-                    Property = (PropertyInfo) Member;
-                    FieldType = Property.PropertyType;
-                    TypeName = Property.PropertyType.Name.ToLower();
-                }
-                else
-                    continue;
-
-                string Fieldname = Member.Name;
-                if (Fieldname == "Provider" || Fieldname == "ErrorMessage")
+            foreach (var property in properties)
+            {                
+                Type fieldType = null;
+                string typeName = null;
+    
+                fieldType = property.PropertyType;
+                typeName = property.PropertyType.Name.ToLower();
+                
+                string propertyName = property.Name;
+                if (propertyName == "Provider" || propertyName == "ErrorMessage")
                     continue;
 
                 XmlNode Section = Dom.DocumentElement.SelectSingleNode(XmlNamespacePrefix + ConfigSection, XmlNamespaces);
@@ -329,7 +302,7 @@ namespace Westwind.Utilities.Configuration
                     Dom.DocumentElement.AppendChild(Section);
                 }
 
-                string Value = GetNamedValueFromXml(Dom, Fieldname, ConfigSection);
+                string Value = GetNamedValueFromXml(Dom, propertyName, ConfigSection);
                 if (Value == null)
                 {
                     missingFields = true;
@@ -337,8 +310,8 @@ namespace Westwind.Utilities.Configuration
                 }
 
                 // Assign the Property
-                ReflectionUtils.SetPropertyEx(config, Fieldname,
-                    StringToTypedValue(Value, FieldType, CultureInfo.InvariantCulture));
+                ReflectionUtils.SetPropertyEx(config, propertyName,
+                    StringToTypedValue(Value, fieldType, CultureInfo.InvariantCulture));
             }
 
             DecryptFields(config);
@@ -385,8 +358,7 @@ namespace Westwind.Utilities.Configuration
 
                 // Parse through each of hte properties of the properties
                 Type typeWebConfig = config.GetType();
-                MemberInfo[] Fields = typeWebConfig.GetMembers(BindingFlags.Instance | BindingFlags.GetField | BindingFlags.GetProperty | BindingFlags.Public);
-
+                PropertyInfo[] properties = typeWebConfig.GetProperties(BindingFlags.Instance | BindingFlags.GetProperty | BindingFlags.Public);
                 
                 string ConfigSection = "appSettings";
                 if (!string.IsNullOrEmpty(ConfigurationSection))
@@ -395,20 +367,15 @@ namespace Westwind.Utilities.Configuration
                 // make sure we're getting the latest values before we write
                 ConfigurationManager.RefreshSection(ConfigSection);
 
-                foreach (MemberInfo Field in Fields)
+                foreach (var property in properties)
                 {
                     // Don't persist ErrorMessage property
-                    if (Field.Name == "ErrorMessage" || Field.Name == "Provider")
+                    if (property.Name == "ErrorMessage" || property.Name == "Provider")
                         continue;
 
                     object rawValue = null;
-                    if (Field.MemberType == MemberTypes.Field)
-                        rawValue = ((FieldInfo)Field).GetValue(config);
-                    else if (Field.MemberType == MemberTypes.Property)
-                        rawValue = ((PropertyInfo)Field).GetValue(config, null);
-                    else
-                        continue;
-
+                    rawValue = property.GetValue(config, null);
+                    
                     string value = TypedValueToString(rawValue, CultureInfo.InvariantCulture);
 
                     if (value == "ILIST_TYPE")
@@ -417,12 +384,12 @@ namespace Westwind.Utilities.Configuration
                         foreach (var item in rawValue as IList)
                         {
                             value = TypedValueToString(item, CultureInfo.InvariantCulture);
-                            WriteConfigurationValue(Field.Name + ++count, value, Field, Dom, ConfigSection);
+                            WriteConfigurationValue(property.Name + ++count, value, property, Dom, ConfigSection);
                         }
                     }
                     else
                     {
-                            WriteConfigurationValue(Field.Name, value, Field, Dom, ConfigSection);
+                            WriteConfigurationValue(property.Name, value, property, Dom, ConfigSection);
                     }
                 } // for each
 
