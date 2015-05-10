@@ -423,11 +423,21 @@ namespace Westwind.Utilities
                     if ((prop != null) && prop.CanWrite)
                     {                        
                         var val = reader.GetValue(index);
+
+
+                        if (name == "valuetype")
+                        {
+                            var x = 10;
+                        }
+
+                        
                         if (val == DBNull.Value)
                             val = null;           
                         // deal with data drivers return bit values as int64
                         else if (prop.PropertyType == typeof (bool) && val is long)
                             val = (long) val == 1 ? true : false;
+                        else if (prop.PropertyType == typeof (int) && val is long)
+                            val = Convert.ToInt32(val);
                         prop.SetValue(instance, val, null);
                     }
                 }
