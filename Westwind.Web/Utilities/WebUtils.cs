@@ -1165,7 +1165,7 @@ namespace Westwind.Utilities
                         break;
                     default:
                         int i = (int)c;
-                        if (i < 32 || i > 127)
+                        if (i < 32  || c == '<' ||  c == '>')
                         {
                             sb.AppendFormat("\\u{0:X04}", i);
                         }

@@ -109,6 +109,13 @@
   <ItemGroup>
     <Compile Include="Controllers\UtilitiesApiController.cs" />
     <Compile Include="Controllers\UtilitiesController.cs" />
+    <Compile Include="WebForm1.aspx.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="WebForm1.aspx.designer.cs">
+      <DependentUpon>WebForm1.aspx</DependentUpon>
+    </Compile>
     <Compile Include="_App_Code\App_Start\FilterConfig.cs" />
     <Compile Include="_App_Code\App_Start\RouteConfig.cs" />
     <Compile Include="_App_Code\App_Start\WebApiConfig.cs" />
@@ -182,6 +189,7 @@
     <Content Include="Scripts\modernizr-2.7.1.min.js.map">
       <DependentUpon>modernizr-2.7.1.js</DependentUpon>
     </Content>
+    <Content Include="WebForm1.aspx" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

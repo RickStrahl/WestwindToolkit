@@ -1,23 +1,35 @@
-#West Wind Toolkit Change Log
+# West Wind Toolkit Change Log
 
-### Version 2.63
+### Version 2.64
 *not released yet*
 
-* **CallbackHandlerExceptionHandlerAttribute for MVC Controllers**
-<small>Westwind.Web.Mvc</small>
-Added Callback Handler Exception Attribute to make it easy to throw 
+* **JsonVariables prevent XSS by encoding < and > in JSON**<br/>
+<small>Westwind.Web</small>
+The JsonVariables utility that allows embedding of server side data into client script has been updated to generate < and > tags as encoded strings to prevent XSS attacks when rendering.
+
+
+### Version 2.63
+* April 30th, 2015
+
+* **CallbackExceptionHandlerAttribute for MVC Controllers**<br/>
+<small>Westwind.Web.Mvc</small><br/>
+Added CallbackExceptionHandlerAttribute to make it easy to throw 
 CallbackException objects and have those exception objects handled
 and returned as JSON errors with appropriate HTTP status codes. Simplifies
 explicit application error responses to clients. Handler also captures
 other exceptions but as generic 500 errors using consistent format.
 
-* **CallbackResponseMessage and CallbackErrorResponseMessage Classes for JSON Results**
-<small>Westwind.Web.Mvc</small>
+* **CallbackResponseMessage and CallbackErrorResponseMessage Classes for JSON Results**<br/>
+<small>Westwind.Web.Mvc</small><br/>
 Added explicit CallbackErrorResponseMessage and CallbackResponseMessage 
 classes responsible for returning properly JSON formatted message to clients.
 Used to return error results from JSON callbacks in a consistent manner with
 a isError flag used to determine error status. Works in conjunction with
 CallbackException() in CallbackHandler implementation and in MVC BaseController.
+
+* **AppConfiguration ConfigurationFileConfigurationProvider Property Only Serialization**<br/>
+<small>Westwind.Utilities</small><br/>
+Changed behavior of the Config file configuration provider to only serialize/deserialize properties. Originally both properties and fields were serialized, but in light of all the other serializers only working with properties removed the field serialization feature. This also makes it easier to create non-serialized fields that might still have to be externally visible to other classes which caused a number of reported issues in the past.
 
 ### Version 2.62
 *March 31st, 2015*
