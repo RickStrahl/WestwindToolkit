@@ -337,6 +337,67 @@ namespace Westwind.Utilities
 
 
         /// <summary>
+        /// Opens the image and writes it back out, stripping any Exif data
+        /// </summary>
+        /// <param name="imageFile">Image to remove exif data from</param>
+        /// <param name="imageQuality">image quality 0-100 (100 no compression)</param>
+        public static void StripJpgExifData(string imageFile, int imageQuality = 90)
+        {
+            using (var bmp = new Bitmap(imageFile))
+            {
+                using (var bmp2 = new Bitmap(bmp, bmp.Width, bmp.Height))
+                {
+                    bmp.Dispose();
+                    SaveJpeg(bmp2, imageFile, imageQuality);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// If the image contains image rotation Exif data, apply the image rotation and
+        /// remove the Exif data. Optionally also allows for image resizing in the same
+        /// operation.
+        /// </summary>
+        /// <param name="imageFile">Image file to work on</param>
+        /// <param name="imageQuality">Jpg</param>
+        /// <param name="width"></param>
+        /// <param name="height"></param>
+        public static void NormalizeJpgImageRotation(string imageFile, int imageQuality = 90, int width = -1, int height = -1)
+        {
+            using (var bmp = new Bitmap(imageFile))
+            {
+                Bitmap bmp2;
+                using (bmp2 = new Bitmap(bmp, bmp.Width, bmp.Height))
+                {
+                    if (bmp.PropertyItems != null)
+                    {
+                        foreach (var item in bmp.PropertyItems)
+                        {
+                            if (item.Id == 0x112)
+                            {
+                                int orientation = item.Value[0];
+                                if (orientation == 6)
+                                    bmp2.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                                if (orientation == 8)
+                                    bmp2.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                            }
+                        }
+                    }
+
+                    bmp.Dispose();
+
+                    if (width > 0 || height > 0)
+                        bmp2 = ResizeImage(bmp2, width, height);
+
+                    SaveJpeg(bmp2, imageFile, imageQuality);
+                }
+            }
+        }
+
+
+
+        /// <summary>
         /// A quick lookup for getting image encoders
         /// </summary>
         public static Dictionary<string, ImageCodecInfo> Encoders

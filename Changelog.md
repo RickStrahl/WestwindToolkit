@@ -4,8 +4,16 @@
 *not released yet*
 
 * **JsonVariables prevent XSS by encoding < and > in JSON**<br/>
-<small>Westwind.Web</small>
+<small>Westwind.Web</small><br/>
 The JsonVariables utility that allows embedding of server side data into client script has been updated to generate < and > tags as encoded strings to prevent XSS attacks when rendering.
+
+* **ImageUtils.NormalizeJpgImageRotation**<br/>
+<small>Westwind.Utilities</small><br/>
+Method that looks at Exif Orientation data in a jpeg file and rotates the image to match the orientation before removing the Exif data. Useful when capturing images from mobile device which often are natively rotated and contain.
+
+* **ImageUtils.StripJgpExifData**<br/>
+<small>Westwind.Utilities</small><br/>
+Removes Exif data from Jpg images. Helps reduce size of images and normalizes images and keeps them from auto-rotating.
 
 
 ### Version 2.63
