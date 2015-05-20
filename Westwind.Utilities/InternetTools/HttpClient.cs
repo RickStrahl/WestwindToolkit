@@ -39,7 +39,7 @@ using System.Text;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.IO.Compression;
-
+using System.Threading.Tasks;
 using Westwind.Utilities;
 
 namespace Westwind.Utilities.InternetTools
@@ -54,7 +54,7 @@ namespace Westwind.Utilities.InternetTools
     /// simple single level class interface. The underlying WebRequest is also 
     /// exposed so you will not loose any functionality from the .NET BCL class.
 	/// </summary>
-	public class HttpClient
+	public class HttpClient : IDisposable
 	{
 		/// <summary>
 		/// Determines how data is POSTed when when using AddPostKey() and other methods
@@ -593,6 +593,196 @@ namespace Westwind.Utilities.InternetTools
             return DownloadResponse(url);
         }
 
+#if !NET40
+	    public async Task<HttpWebResponse> DownloadResponseAsync(string url)
+	    {
+            Cancelled = false;
+
+            //try 
+            //{
+            _Error = false;
+            _ErrorMessage = string.Empty;
+            _Cancelled = false;
+
+            if (WebRequest == null)
+            {
+                WebRequest = (HttpWebRequest)System.Net.WebRequest.Create(url);
+                //WebRequest.Headers.Add("Cache","no-cache");
+            }
+
+            WebRequest.UserAgent = _UserAgent;
+            WebRequest.Timeout = _timeout * 1000;
+            WebRequest.ReadWriteTimeout = _timeout * 1000;
+
+            // Handle Security for the request
+            if (!string.IsNullOrEmpty(_Username))
+            {
+                if (_Username == "AUTOLOGIN" || _Username == "AutoLogin")
+                    WebRequest.Credentials = CredentialCache.DefaultCredentials;
+                else
+                    WebRequest.Credentials = new NetworkCredential(_Username, _Password);
+            }
+
+            // Handle Proxy Server configuration
+            if (_ProxyAddress.Length > 0)
+            {
+                if (_ProxyAddress == "DEFAULTPROXY")
+                {
+                    WebRequest.Proxy = HttpWebRequest.DefaultWebProxy;
+                }
+                else
+                {
+                    WebProxy Proxy = new WebProxy(_ProxyAddress, true);
+
+                    if (_ProxyBypass.Length > 0)
+                    {
+                        Proxy.BypassList = _ProxyBypass.Split(';');
+                    }
+
+                    if (_ProxyUsername.Length > 0)
+                        Proxy.Credentials = new NetworkCredential(_ProxyUsername, _ProxyPassword);
+
+                    WebRequest.Proxy = Proxy;
+                }
+            }
+
+            if (UseGZip)
+            {
+                // TODO: Check if already set
+                WebRequest.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+            }
+
+            // Handle cookies - automatically re-assign 
+            if (_HandleCookies || (_Cookies != null && _Cookies.Count > 0))
+            {
+                WebRequest.CookieContainer = new CookieContainer();
+                if (_Cookies != null && _Cookies.Count > 0)
+                {
+                    WebRequest.CookieContainer.Add(_Cookies);
+                }
+            }
+
+            HttpTimings.StartRequest();
+
+            // Deal with the POST buffer if any
+            if (_PostData != null)
+            {
+                if (WebRequest.Method == "GET")
+                    WebRequest.Method = "POST";
+
+                switch (_PostMode)
+                {
+                    case HttpPostMode.UrlEncoded:
+                        WebRequest.ContentType = "application/x-www-form-urlencoded";
+                        break;
+                    case HttpPostMode.MultiPart:
+                        WebRequest.ContentType = "multipart/form-data; boundary=" + _MultiPartBoundary;
+                        _PostData.Write(Encoding.GetEncoding(1252).GetBytes("--" + _MultiPartBoundary + "--\r\n"));
+                        break;
+                    case HttpPostMode.Xml:
+                        WebRequest.ContentType = "text/xml";
+                        break;
+                    case HttpPostMode.Json:
+                        WebRequest.ContentType = "application/json";
+                        break;
+                    case HttpPostMode.Raw:
+                        //WebRequest.ContentType = "application/octet-stream";
+                        break;
+                    default:
+                        goto case HttpPostMode.UrlEncoded;
+                }
+
+                if (!string.IsNullOrEmpty(ContentType))
+                    WebRequest.ContentType = ContentType;
+
+                // TODO: Make POSTing async
+                using (Stream requestStream = WebRequest.GetRequestStream())
+                {
+                    if (SendData == null)
+                        _PostStream.WriteTo(requestStream);  // Simplest version - no events
+                    else
+                        StreamPostBuffer(requestStream);     // Send in chunks and fire events
+
+                    //*** Close the memory stream
+                    _PostStream.Close();
+                    _PostStream = null;
+
+                    //*** Close the Binary Writer
+                    if (_PostData != null)
+                    {
+                        _PostData.Dispose();
+                        _PostData = null;
+                    }
+                }
+
+                // clear out the Post buffer
+                ResetPostData();
+
+                // If user cancelled the 'upload' exit
+                if (Cancelled)
+                {
+                    ErrorMessage = "HTTP Request was cancelled.";
+                    Error = true;
+                    return null;
+                }
+            }
+
+            // Retrieve the response headers 
+            HttpWebResponse Response;
+            try
+            {
+                Response = await WebRequest.GetResponseAsync() as HttpWebResponse;
+            }
+            catch (WebException ex)
+            {
+                // Check for 500 error return - if so we still want to return a response
+                // Client can check oHttp.WebResponse.StatusCode
+                if (ex.Status == WebExceptionStatus.ProtocolError)
+                {
+                    Response = (HttpWebResponse)ex.Response;
+                }
+                else
+                    throw;
+            }
+
+            _WebResponse = Response;
+
+            // Close out the request - it cannot be reused
+            WebRequest = null;
+
+            // ** Save cookies the server sends
+            if (_HandleCookies)
+            {
+                if (Response.Cookies.Count > 0)
+                {
+                    if (_Cookies == null)
+                        _Cookies = Response.Cookies;
+                    else
+                    {
+                        // ** If we already have cookies update the list
+                        foreach (Cookie oRespCookie in Response.Cookies)
+                        {
+                            bool bMatch = false;
+                            foreach (Cookie oReqCookie in _Cookies)
+                            {
+                                if (oReqCookie.Name == oRespCookie.Name)
+                                {
+                                    oReqCookie.Value = oRespCookie.Value;
+                                    bMatch = true;
+                                    break; // 
+                                }
+                            } // for each ReqCookies
+                            if (!bMatch)
+                                _Cookies.Add(oRespCookie);
+                        }
+                    }
+                }
+            }
+
+            return Response;	        
+	    }
+#endif
+
 		/// <summary>
 		/// Return an HttpWebResponse object for a request. You can use the Response to
 		/// read the result as needed. This is a low level method. Most of the other 'Get'
@@ -613,17 +803,16 @@ namespace Westwind.Utilities.InternetTools
 
 				if (WebRequest == null) 
 				{
-					WebRequest =  (HttpWebRequest) System.Net.WebRequest.Create(url);
-					WebRequest.Headers.Add("Cache","no-cache");
+					WebRequest =  (HttpWebRequest) System.Net.WebRequest.Create(url);                    
+					//WebRequest.Headers.Add("Cache","no-cache");
 				}
-
 				
 				WebRequest.UserAgent = _UserAgent;
 				WebRequest.Timeout = _timeout * 1000;
 		        WebRequest.ReadWriteTimeout = _timeout * 1000;
 
 				// Handle Security for the request
-				if (_Username.Length > 0) 
+				if (!string.IsNullOrEmpty(_Username)) 
 				{
 					if (_Username  == "AUTOLOGIN" || _Username == "AutoLogin")
 						WebRequest.Credentials = CredentialCache.DefaultCredentials;
@@ -654,10 +843,13 @@ namespace Westwind.Utilities.InternetTools
 					}
 				}
 
-                if (UseGZip)
-                    WebRequest.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
-				
-				// Handle cookies - automatically re-assign 
+		    if (UseGZip)
+		    {                                
+                // TODO: Check if already set
+		        WebRequest.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+		    }
+
+		    // Handle cookies - automatically re-assign 
 				if (_HandleCookies || (_Cookies != null && _Cookies.Count > 0)  )
 				{
 					WebRequest.CookieContainer = new CookieContainer();
@@ -699,29 +891,27 @@ namespace Westwind.Utilities.InternetTools
 
 				    if (!string.IsNullOrEmpty(ContentType))
                         WebRequest.ContentType = ContentType;
-                    
-                    Stream requestStream = WebRequest.GetRequestStream();
-					
-                    
-					if (SendData == null)
-						_PostStream.WriteTo(requestStream);  // Simplest version - no events
-					else 
-						StreamPostBuffer(requestStream);     // Send in chunks and fire events
 
-					//*** Close the memory stream
-					_PostStream.Close();
-					_PostStream = null;
+				    using (Stream requestStream = WebRequest.GetRequestStream())
+				    {
+				        if (SendData == null)
+				            _PostStream.WriteTo(requestStream);  // Simplest version - no events
+				        else 
+				            StreamPostBuffer(requestStream);     // Send in chunks and fire events
 
-					//*** Close the Binary Writer
-                    if (_PostData != null)
-                    {
-                        _PostData.Close();
-                        _PostData = null;
-                    }
-					//*** Close Request Stream
-					requestStream.Close();
+				        //*** Close the memory stream
+				        _PostStream.Close();
+				        _PostStream = null;
 
-                    // clear out the Post buffer
+				        //*** Close the Binary Writer
+				        if (_PostData != null)
+				        {
+				            _PostData.Dispose();
+				            _PostData = null;
+				        }									        
+				    }
+
+				    // clear out the Post buffer
                     ResetPostData();
 
 					// If user cancelled the 'upload' exit
@@ -734,7 +924,7 @@ namespace Westwind.Utilities.InternetTools
 				}
 		
 				// Retrieve the response headers 
-				HttpWebResponse Response = null;
+				HttpWebResponse Response;
 				try
 				{
 					Response = (HttpWebResponse) WebRequest.GetResponse();                    
@@ -753,7 +943,7 @@ namespace Westwind.Utilities.InternetTools
 
 				_WebResponse = Response;
                 				
-				// Close out the request - it cannot be reused
+				// Close out the request - it cannot be reused            
 				WebRequest = null;
 
 				// ** Save cookies the server sends
@@ -924,6 +1114,48 @@ namespace Westwind.Utilities.InternetTools
             }
             return encoding.GetString(bytes);
         }
+#if !NET40
+        /// <summary>
+        /// Returns the content of a URL as a string using a specified Encoding
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="bufferSize">Internal download buffer size used to hold data chunks.</param>
+        /// <param name="encoding">A .NET Encoding scheme or null to attempt sniffing from Charset.</param>
+        /// <returns></returns>
+        public async Task<string> DownloadStringAsync(string url, long bufferSize = 8192, Encoding encoding = null)
+        {
+            byte[] bytes = await DownloadBytesAsync(url, bufferSize);
+            if (bytes == null)
+                return null;
+
+            if (encoding == null)
+            {
+                encoding = Encoding.Default;
+
+                try
+                {
+                    if (!string.IsNullOrEmpty(WebResponse.CharacterSet))
+                    {
+                        string charset = WebResponse.CharacterSet.ToLower();
+
+                        // special case UTF-8 since it's most common
+                        if (charset.Contains("utf-8"))
+                            encoding = Encoding.UTF8;
+                        else if (charset.Contains("utf-16"))
+                            encoding = Encoding.Unicode;
+                        else if (charset.Contains("utf-7"))
+                            encoding = Encoding.UTF7;
+                        else if (charset.Contains("utf-32"))
+                            encoding = Encoding.UTF32;
+                        else
+                            encoding = Encoding.GetEncoding(WebResponse.CharacterSet);
+                    }
+                }
+                catch { } // ignore encoding assignment failures
+            }
+            return encoding.GetString(bytes);
+        }
+#endif
 
         /// <summary>
         /// Returns a partial response from the URL by specifying only 
@@ -983,108 +1215,220 @@ namespace Westwind.Utilities.InternetTools
         public byte[] DownloadBytes(string url, long bufferSize = 8192)
         {         
 
-			HttpWebResponse Response = DownloadResponse(url);
-            if (Response == null)
+			HttpWebResponse response = DownloadResponse(url);
+            if (response == null)
                 return null;
 
             long responseSize = bufferSize;
-            if (Response.ContentLength > 0)
+            if (response.ContentLength > 0)
+                responseSize = _WebResponse.ContentLength;
+            else
+                // No content size provided
+                responseSize = -1;           
+
+            Stream responseStream = null;
+            if (response.ContentEncoding.ToLower().Contains("gzip"))
+            {
+                responseStream = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress);
+                responseSize = -1; // we don't have a size
+            }
+            else if (response.ContentEncoding.ToLower().Contains("deflate"))
+            {
+                responseStream = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress);
+                responseSize = -1; // we don't have a size
+            }
+            else
+                responseStream = response.GetResponseStream();
+
+            if (responseStream == null)
+            {
+                Error = true;
+                ErrorMessage = "Failed to retrieve a response from " + url;
+                return null;
+            }
+
+            using (responseStream)
+            {
+                if (bufferSize < 1)
+                    bufferSize = 4096;                
+                
+                var ms = new MemoryStream((int) bufferSize);
+
+                byte[] buffer = new byte[bufferSize];
+
+                var args = new ReceiveDataEventArgs();
+                args.TotalBytes = responseSize;
+
+                long bytesRead = 1;
+                int count = 0;
+                long totalBytes = 0;
+
+                while (bytesRead > 0)
+                {
+                    if (responseSize != -1 && totalBytes + bufferSize > responseSize)
+                        bufferSize = responseSize - totalBytes;
+
+                    bytesRead = responseStream.Read(buffer, 0, (int) bufferSize);
+
+                    if (bytesRead > 0)
+                    {
+                        if (totalBytes == 0)
+                            HttpTimings.FirstByteTime = DateTime.UtcNow;
+
+                        // write to stream
+                        ms.Write(buffer, 0, (int) bytesRead);
+
+                        count++;
+                        totalBytes += bytesRead;
+
+                        // Raise an event if hooked up
+                        if (ReceiveData != null)
+                        {
+                            /// Update the event handler
+                            args.CurrentByteCount = totalBytes;
+                            args.NumberOfReads = count;
+                            args.CurrentChunk = null; // don't send anything here
+                            ReceiveData(this, args);
+
+                            // Check for cancelled flag
+                            if (args.Cancel)
+                            {
+                                _Cancelled = true;
+                                break;
+                            }
+                        }
+                    }
+                } // while
+
+                HttpTimings.LastByteTime = DateTime.UtcNow;         
+
+
+                // Send Done notification
+                if (ReceiveData != null && !args.Cancel)
+                {
+                    // Update the event handler
+                    args.Done = true;
+                    ReceiveData(this, args);
+                }
+
+                //ms.Flush();
+                ms.Position = 0;
+                return ms.ToArray();
+            }
+        }
+
+#if !NET40
+        /// <summary>
+        /// Retrieves URL into an Byte Array.
+        /// </summary>
+        /// <remarks>Fires the ReceiveData Event</remarks>
+        /// <param name="url">Url to read</param>
+        /// <param name="bufferSize">Size of the buffer for each read. 0 = 8192</param>
+        /// <returns></returns>
+        public async Task<byte[]> DownloadBytesAsync(string url, long bufferSize = 8192)
+        {
+            HttpWebResponse response = await DownloadResponseAsync(url);
+            if (response == null)
+                return null;
+
+            long responseSize = bufferSize;
+            if (response.ContentLength > 0)
                 responseSize = _WebResponse.ContentLength;
             else
                 // No content size provided
                 responseSize = -1;
 
-            Stream responseStream = null;
-            if (Response.ContentEncoding.ToLower().Contains("gzip"))
+            Stream responseStream = response.GetResponseStream();
+            if (responseStream == null)
             {
-                responseStream = new GZipStream(Response.GetResponseStream(), CompressionMode.Decompress);
+                Error = true;
+                ErrorMessage = "Failed to retrieve a response from " + url;
+                return null;
+            }
+
+            if (response.ContentEncoding.ToLower().Contains("gzip"))
+            {
+                responseStream = new GZipStream(responseStream, CompressionMode.Decompress);
                 responseSize = -1; // we don't have a size
             }
-            else if (Response.ContentEncoding.ToLower().Contains("deflate"))
+            else if (response.ContentEncoding.ToLower().Contains("deflate"))
             {
-                responseStream = new DeflateStream(Response.GetResponseStream(), CompressionMode.Decompress);
+                responseStream = new DeflateStream(responseStream, CompressionMode.Decompress);
                 responseSize = -1; // we don't have a size
             }
-            else
-                responseStream = Response.GetResponseStream();
 
-            BinaryReader responseReader =
-                new BinaryReader(responseStream); //Response.GetResponseStream()); 		
+            using (responseStream)
+            {
+                if (bufferSize < 1)
+                    bufferSize = 4096;
 
-			if (responseReader == null)
-				return null;
+                var ms = new MemoryStream((int)bufferSize);
 
-			if (bufferSize < 1)
-				bufferSize = 8192;
+                byte[] buffer = new byte[bufferSize];
 
-            // pre-allocate the buffer
-            MemoryStream ms = new MemoryStream(8192);
+                var args = new ReceiveDataEventArgs();
+                args.TotalBytes = responseSize;
 
-            byte[] buffer = new byte[bufferSize];
+                long bytesRead = 1;
+                int count = 0;
+                long totalBytes = 0;
 
-			ReceiveDataEventArgs args = new ReceiveDataEventArgs();
-			args.TotalBytes = responseSize;
-
-            long bytesRead = 1;
-			int count = 0;
-			long totalBytes = 0;
-
-
-			while (bytesRead > 0) 
-			{
-                if (responseSize != -1 && totalBytes + bufferSize >  responseSize)
-					bufferSize = responseSize - totalBytes;
-                    
-				bytesRead = responseReader.Read(buffer,0,(int) bufferSize);
-
-
-                if (bytesRead > 0)
+                while (bytesRead > 0)
                 {
-                    if (totalBytes == 0)
-                        HttpTimings.FirstByteTime = DateTime.UtcNow;
+                    if (responseSize != -1 && totalBytes + bufferSize > responseSize)
+                        bufferSize = responseSize - totalBytes;
 
-                    // write to stream
-                    ms.Write(buffer, 0, (int) bytesRead);
-                    
-                    count++;
-                    totalBytes += bytesRead;
-                    
-                    // Raise an event if hooked up
-                    if (ReceiveData != null)
+                    bytesRead = await responseStream.ReadAsync(buffer, 0, (int)bufferSize);
+
+                    if (bytesRead > 0)
                     {
-                        /// Update the event handler
-                        args.CurrentByteCount = totalBytes;
-                        args.NumberOfReads = count;
-                        args.CurrentChunk = null;  // don't send anything here
-                        ReceiveData(this, args);
+                        if (totalBytes == 0)
+                            HttpTimings.FirstByteTime = DateTime.UtcNow;
 
-                        // Check for cancelled flag
-                        if (args.Cancel)
+                        // write to stream
+                        ms.Write(buffer, 0, (int)bytesRead);
+
+                        count++;
+                        totalBytes += bytesRead;
+
+                        // Raise an event if hooked up
+                        if (ReceiveData != null)
                         {
-                            _Cancelled = true;
-                            goto CloseDown;
+                            /// Update the event handler
+                            args.CurrentByteCount = totalBytes;
+                            args.NumberOfReads = count;
+                            args.CurrentChunk = null; // don't send anything here
+                            ReceiveData(this, args);
+
+                            // Check for cancelled flag
+                            if (args.Cancel)
+                            {
+                                _Cancelled = true;
+                                break;
+                            }
                         }
                     }
+                } // while
+
+                HttpTimings.LastByteTime = DateTime.UtcNow;
+
+
+                // Send Done notification
+                if (ReceiveData != null && !args.Cancel)
+                {
+                    // Update the event handler
+                    args.Done = true;
+                    ReceiveData(this, args);
                 }
-			} // while
-            
-            HttpTimings.LastByteTime = DateTime.UtcNow;
-
-			CloseDown:
-				responseReader.Close();
                 
+                ms.Position = 0;
+                var bytes = ms.ToArray();
+                ms.Dispose();
 
-			// Send Done notification
-			if (ReceiveData != null && !args.Cancel) 
-			{
-				// Update the event handler
-				args.Done = true;
-				ReceiveData(this,args);
-			}
-            //ms.Flush();
-            ms.Position = 0;
-			return ms.ToArray();
-		}
+                return bytes;
+            }
+        }
+#endif
 
 		/// <summary>
 		/// Writes the output from the URL request to a file firing events.
@@ -1202,6 +1546,22 @@ namespace Westwind.Utilities.InternetTools
 		}
 		#endregion
 
+	    /// <summary>
+	    /// Releases response and request data
+	    /// </summary>
+	    /// <filterpriority>2</filterpriority>
+	    public void Dispose()
+	    {
+	        if (_WebResponse != null)
+	        {
+#if !NET40
+	            _WebResponse.Dispose();  // introduced in 4.5
+#endif
+	            _WebResponse = null;
+	        }
+	        if (_WebRequest != null)
+	            _WebRequest = null;
+	    }
 	}
 
 	/// <summary>

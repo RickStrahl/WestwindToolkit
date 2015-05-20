@@ -15,6 +15,9 @@ Method that looks at Exif Orientation data in a jpeg file and rotates the image 
 <small>Westwind.Utilities</small><br/>
 Removes Exif data from Jpg images. Helps reduce size of images and normalizes images and keeps them from auto-rotating.
 
+* **Add Async Support for HttpClient**
+<small>Westwind.Utilities</small><br/>
+Added support for Async methods to the HttpClient Class for DownloadBytesAsync() and DownloadStringAsync(). Also optimized throughput and fixed explicit disposal of one of the internal streams that previously slowed down high volume requests.
 
 ### Version 2.63
 * April 30th, 2015
