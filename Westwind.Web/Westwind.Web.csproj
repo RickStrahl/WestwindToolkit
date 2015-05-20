@@ -87,7 +87,6 @@
     <Compile Include="CallbackHandler\CallbackHandler\JsonCallbackMethodProcessor.cs" />
     <Compile Include="CallbackHandler\CallbackHandler\XmlCallbackMethodProcessor.cs" />
     <Compile Include="CallbackHandler\JsonSerializers\IJSONSerializer.cs" />
-    <Compile Include="CallbackHandler\JsonSerializers\JsonNetJsonSerializer - Copy.cs" />
     <Compile Include="CallbackHandler\JsonSerializers\JsonNetJsonSerializer.cs" />
     <Compile Include="CallbackHandler\JsonSerializers\JSONSerializer.cs" />
     <Compile Include="CallbackHandler\JsonSerializers\WebExtensionsSerializer.cs" />
