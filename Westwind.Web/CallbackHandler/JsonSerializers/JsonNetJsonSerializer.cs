@@ -10,7 +10,8 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Collections.Specialized;
-
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Westwind.Utilities;
 
 //using Newtonsoft.Json;
@@ -66,7 +67,7 @@ namespace Westwind.Web.JsonSerializers
             masterSerializer = serializer;
         }
 
-        private static dynamic JsonNetJson;
+        private static JsonSerializer JsonNetJson;
         private static object JsonNetLock = new object();
 
         public dynamic CreateJsonNetInstance(bool forceReload = false)
@@ -79,28 +80,27 @@ namespace Westwind.Web.JsonSerializers
                 lock (JsonNetLock)
                 {
                     if (JsonNetJson == null)
-                        JsonNetJson = ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonSerializer");
+                        JsonNetJson = new JsonSerializer();
                 }
             }
 
-            JsonNetJson.ObjectCreationHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.ObjectCreationHandling", "Replace");
-            JsonNetJson.MissingMemberHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.MissingMemberHandling", "Ignore");
-            JsonNetJson.ReferenceLoopHandling = (dynamic) ReflectionUtils.GetStaticProperty("Newtonsoft.Json.ReferenceLoopHandling","Ignore");
+            JsonNetJson.ObjectCreationHandling = ObjectCreationHandling.Replace;
+            JsonNetJson.MissingMemberHandling = MissingMemberHandling.Ignore;
+            JsonNetJson.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
 
-            //JsonNetJson.Converters.Add((dynamic) ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.Converters.IsoDateTimeConverter") );
-            JsonNetJson.Converters.Add((dynamic)ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.Converters.StringEnumConverter"));
+            JsonNetJson.Converters.Add(new StringEnumConverter());
             
             return JsonNetJson;
         }
 
-        public dynamic CreateJsonNetWriter(StringWriter sw)
-        {                       
-            dynamic writer = ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonTextWriter", sw);
+        public JsonTextWriter CreateJsonNetWriter(StringWriter sw)
+        {
+            var writer = new JsonTextWriter(sw);
 
             if (FormatJsonOutput)
-                writer.Formatting = (dynamic)ReflectionUtils.GetStaticProperty("Newtonsoft.Json.Formatting", "Indented");
+                writer.Formatting = Formatting.Indented;
             else
-                writer.Formatting = (dynamic)ReflectionUtils.GetStaticProperty("Newtonsoft.Json.Formatting", "None");
+                writer.Formatting = Formatting.None;
 
             return writer;
         }
@@ -134,12 +134,12 @@ namespace Westwind.Web.JsonSerializers
         {
             Type type = value.GetType();
 
-            CreateJsonNetInstance();
+            var json = CreateJsonNetInstance();
 
             StringWriter sw = new StringWriter();
             var writer = CreateJsonNetWriter(sw);
-            
             writer.QuoteChar = '"';
+
             JsonNetJson.Serialize(writer, value);
             
             string output = sw.ToString();
@@ -176,9 +176,11 @@ namespace Westwind.Web.JsonSerializers
             CreateJsonNetInstance();
 
             StringReader sr = new StringReader(jsonText);
-            dynamic reader = ReflectionUtils.CreateInstanceFromString("Newtonsoft.Json.JsonTextReader",sr);            
-            object result = JsonNetJson.Deserialize(reader, valueType);
-            reader.Close();
+            object result;
+            using (var reader = new JsonTextReader(sr))
+            {
+                result = JsonNetJson.Deserialize(reader, valueType);
+            }
 
             return result;
         }

@@ -7,6 +7,14 @@
 <small>Westwind.Web</small><br/>
 The JsonVariables utility that allows embedding of server side data into client script has been updated to generate < and > tags as encoded strings to prevent XSS attacks when rendering.
 
+* **CallbackHandler improved JSON.NET Suppport**<br/>
+<small>Westwind.Web</small><br/>
+Switched to hard linked JSON.NET support in CallbackHandler instead of the previous dynamic loading to avoid the assembly reference to JSON.NET. This fixes odd version incompatibilities that have been reported as well as improving JSON performance slightly.
+
+* **Add Async Support for HttpClient**
+<small>Westwind.Utilities</small><br/>
+Added support for Async methods to the HttpClient Class for DownloadBytesAsync() and DownloadStringAsync(). Also optimized throughput and fixed explicit disposal of one of the internal streams that previously slowed down high volume requests.
+ 
 * **ImageUtils.NormalizeJpgImageRotation**<br/>
 <small>Westwind.Utilities</small><br/>
 Method that looks at Exif Orientation data in a jpeg file and rotates the image to match the orientation before removing the Exif data. Useful when capturing images from mobile device which often are natively rotated and contain.
@@ -15,9 +23,6 @@ Method that looks at Exif Orientation data in a jpeg file and rotates the image 
 <small>Westwind.Utilities</small><br/>
 Removes Exif data from Jpg images. Helps reduce size of images and normalizes images and keeps them from auto-rotating.
 
-* **Add Async Support for HttpClient**
-<small>Westwind.Utilities</small><br/>
-Added support for Async methods to the HttpClient Class for DownloadBytesAsync() and DownloadStringAsync(). Also optimized throughput and fixed explicit disposal of one of the internal streams that previously slowed down high volume requests.
 
 ### Version 2.63
 * April 30th, 2015

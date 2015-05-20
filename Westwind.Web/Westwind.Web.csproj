@@ -62,6 +62,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\Temp\wwgtest\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
@@ -84,6 +87,7 @@
     <Compile Include="CallbackHandler\CallbackHandler\JsonCallbackMethodProcessor.cs" />
     <Compile Include="CallbackHandler\CallbackHandler\XmlCallbackMethodProcessor.cs" />
     <Compile Include="CallbackHandler\JsonSerializers\IJSONSerializer.cs" />
+    <Compile Include="CallbackHandler\JsonSerializers\JsonNetJsonSerializer - Copy.cs" />
     <Compile Include="CallbackHandler\JsonSerializers\JsonNetJsonSerializer.cs" />
     <Compile Include="CallbackHandler\JsonSerializers\JSONSerializer.cs" />
     <Compile Include="CallbackHandler\JsonSerializers\WebExtensionsSerializer.cs" />
@@ -127,6 +131,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Readme.md" />
   </ItemGroup>
   <ItemGroup>

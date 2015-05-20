@@ -119,6 +119,7 @@ namespace Westwind.Web.JsonSerializers
 #if (true) //JSONNET_REFERENCE)
             else if (parserType == SupportedJsonParserTypes.JsonNet)
                 _serializer = new JsonNetJsonSerializer(this);
+                //_serializer = new JsonNetJsonSerializerOld(this);
 #endif
             else if (parserType == SupportedJsonParserTypes.JavaScriptSerializer)
                 _serializer = new WebExtensionsJavaScriptSerializer(this);
