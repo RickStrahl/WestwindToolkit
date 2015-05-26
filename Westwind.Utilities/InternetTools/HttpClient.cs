@@ -177,8 +177,8 @@ namespace Westwind.Utilities.InternetTools
 
         
         /// <summary>
-        /// Determines whether requests attempt to use GZip when retrieving content
-        /// from the server.
+        /// When true will automatically add Accept-Encoding: gzip,deflate header
+        /// and automatically decompress gzip and deflate content
         /// </summary>
         public bool UseGZip
         {
@@ -564,14 +564,14 @@ namespace Westwind.Utilities.InternetTools
 				// Invalid encoding passed
 				enc = Encoding.Default; 
 			}
+
+
+            Stream responseStream = Response.GetResponseStream();
+            //if (Response.ContentEncoding.ToLower().Contains("gzip"))
+            //    responseStream = new GZipStream(Response.GetResponseStream(), CompressionMode.Decompress);
+            //else if (Response.ContentEncoding.ToLower().Contains("deflate"))
+            //    responseStream = new DeflateStream(Response.GetResponseStream(), CompressionMode.Decompress);
             
-            Stream responseStream = null;
-            if (Response.ContentEncoding.ToLower().Contains("gzip"))
-                responseStream = new GZipStream(Response.GetResponseStream(), CompressionMode.Decompress);
-            else if (Response.ContentEncoding.ToLower().Contains("deflate"))
-                responseStream = new DeflateStream(Response.GetResponseStream(), CompressionMode.Decompress);
-            else
-                responseStream = Response.GetResponseStream();
             			
 			// drag to a stream
 			StreamReader strResponse = new StreamReader(responseStream,enc); 
@@ -624,7 +624,7 @@ namespace Westwind.Utilities.InternetTools
             }
 
             // Handle Proxy Server configuration
-            if (_ProxyAddress.Length > 0)
+            if (!string.IsNullOrEmpty(_ProxyAddress))
             {
                 if (_ProxyAddress == "DEFAULTPROXY")
                 {
@@ -648,8 +648,9 @@ namespace Westwind.Utilities.InternetTools
 
             if (UseGZip)
             {
-                // TODO: Check if already set
+                // TODO: Check if already set                
                 WebRequest.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+                WebRequest.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             }
 
             // Handle cookies - automatically re-assign 
@@ -845,8 +846,9 @@ namespace Westwind.Utilities.InternetTools
 
 		    if (UseGZip)
 		    {                                
-                // TODO: Check if already set
-		        WebRequest.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+                // TODO: Check if already set                
+                WebRequest.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+                WebRequest.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
 		    }
 
 		    // Handle cookies - automatically re-assign 
@@ -1224,22 +1226,23 @@ namespace Westwind.Utilities.InternetTools
                 responseSize = _WebResponse.ContentLength;
             else
                 // No content size provided
-                responseSize = -1;           
+                responseSize = -1;
 
-            Stream responseStream = null;
-            if (response.ContentEncoding.ToLower().Contains("gzip"))
-            {
-                responseStream = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress);
-                responseSize = -1; // we don't have a size
-            }
-            else if (response.ContentEncoding.ToLower().Contains("deflate"))
-            {
-                responseStream = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress);
-                responseSize = -1; // we don't have a size
-            }
-            else
-                responseStream = response.GetResponseStream();
 
+            Stream responseStream = responseStream = response.GetResponseStream();
+            
+            //if (response.ContentEncoding.ToLower().Contains("gzip"))
+            //{
+            //    responseStream = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress);
+            //    responseSize = -1; // we don't have a size
+            //}
+            //else if (response.ContentEncoding.ToLower().Contains("deflate"))
+            //{
+            //    responseStream = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress);
+            //    responseSize = -1; // we don't have a size
+            //}
+            //else
+                
             if (responseStream == null)
             {
                 Error = true;
