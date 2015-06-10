@@ -59,6 +59,21 @@ namespace Westwind.Web.Mvc
             return RenderViewToStringInternal(viewPath, model, false);
         }
 
+        /// <summary>
+        /// Renders a full MVC view to a writer. Will render with the full MVC
+        /// View engine including running _ViewStart and merging into _Layout        
+        /// </summary>
+        /// <param name="viewPath">
+        /// The path to the view to render. Either in same controller, shared by 
+        /// name or as fully qualified ~/ path including extension
+        /// </param>
+        /// <param name="model">The model to render the view with</param>
+        /// <returns>String of the rendered view or null on error</returns>
+        public void RenderView(string viewPath, object model, TextWriter writer)
+        {
+            RenderViewToWriterInternal(viewPath, writer, model, false);
+        }
+
 
         /// <summary>
         /// Renders a partial MVC view to string. Use this method to render
@@ -74,6 +89,22 @@ namespace Westwind.Web.Mvc
         public string RenderPartialViewToString(string viewPath, object model = null)
         {
             return RenderViewToStringInternal(viewPath, model, true);
+        }
+
+        /// <summary>
+        /// Renders a partial MVC view to given Writer. Use this method to render
+        /// a partial view that doesn't merge with _Layout and doesn't fire
+        /// _ViewStart.
+        /// </summary>
+        /// <param name="viewPath">
+        /// The path to the view to render. Either in same controller, shared by 
+        /// name or as fully qualified ~/ path including extension
+        /// </param>
+        /// <param name="model">The model to pass to the viewRenderer</param>
+        /// <param name="writer">Writer to render the view to</param>
+        public void RenderPartialView(string viewPath, object model, TextWriter writer)
+        {
+            RenderViewToWriterInternal(viewPath, writer, model, true);
         }
 
         /// <summary>
@@ -95,6 +126,85 @@ namespace Westwind.Web.Mvc
             return renderer.RenderViewToString(viewPath, model);
         }
 
+        /// <summary>
+        /// Renders a partial MVC view to the given writer. Use this method to render
+        /// a partial view that doesn't merge with _Layout and doesn't fire
+        /// _ViewStart.
+        /// </summary>
+        /// <param name="viewPath">
+        /// The path to the view to render. Either in same controller, shared by 
+        /// name or as fully qualified ~/ path including extension
+        /// </param>
+        /// <param name="model">The model to pass to the viewRenderer</param>
+        /// <param name="writer">Writer to render the view to</param>
+        /// <param name="controllerContext">Active Controller context</param>
+        /// <returns>String of the rendered view or null on error</returns>
+        public static void RenderView(string viewPath, TextWriter writer, object model = null,
+                                        ControllerContext controllerContext = null)
+        {
+            ViewRenderer renderer = new ViewRenderer(controllerContext);
+            renderer.RenderView(viewPath, model, writer);
+        }
+
+        /// <summary>
+        /// Renders a partial MVC view to string. Use this method to render
+        /// a partial view that doesn't merge with _Layout and doesn't fire
+        /// _ViewStart.
+        /// </summary>
+        /// <param name="viewPath">
+        /// The path to the view to render. Either in same controller, shared by 
+        /// name or as fully qualified ~/ path including extension
+        /// </param>
+        /// <param name="model">The model to pass to the viewRenderer</param>
+        /// <param name="controllerContext">Active Controller context</param>
+        /// <param name="errorMessage">optional out parameter that captures an error message instead of throwing</param>
+        /// <returns>String of the rendered view or null on error</returns>
+        public static string RenderView(string viewPath, object model,
+                                        ControllerContext controllerContext,
+                                        out string errorMessage)
+        {
+            errorMessage = null;
+            try
+            {
+                ViewRenderer renderer = new ViewRenderer(controllerContext);
+                return renderer.RenderViewToString(viewPath, model);
+            }
+            catch (Exception ex)
+            {
+                errorMessage = ex.GetBaseException().Message;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Renders a partial MVC view to the given writer. Use this method to render
+        /// a partial view that doesn't merge with _Layout and doesn't fire
+        /// _ViewStart.
+        /// </summary>
+        /// <param name="viewPath">
+        /// The path to the view to render. Either in same controller, shared by 
+        /// name or as fully qualified ~/ path including extension
+        /// </param>
+        /// <param name="model">The model to pass to the viewRenderer</param>
+        /// <param name="controllerContext">Active Controller context</param>
+        /// <param name="writer">Writer to render the view to</param>
+        /// <param name="errorMessage">optional out parameter that captures an error message instead of throwing</param>
+        /// <returns>String of the rendered view or null on error</returns>
+        public static void RenderView(string viewPath, object model, TextWriter writer,
+                                        ControllerContext controllerContext,
+                                        out string errorMessage)
+        {
+            errorMessage = null;
+            try
+            {
+                ViewRenderer renderer = new ViewRenderer(controllerContext);
+                renderer.RenderView(viewPath, model, writer);
+            }
+            catch (Exception ex)
+            {
+                errorMessage = ex.GetBaseException().Message;
+            }
+        }
 
 
         /// <summary>
@@ -110,12 +220,66 @@ namespace Westwind.Web.Mvc
         /// <param name="controllerContext">Active controller context</param>
         /// <returns>String of the rendered view or null on error</returns>
         public static string RenderPartialView(string viewPath, object model = null,
-                                               ControllerContext controllerContext = null)
+                                                ControllerContext controllerContext = null)
         {
             ViewRenderer renderer = new ViewRenderer(controllerContext);
             return renderer.RenderPartialViewToString(viewPath, model);
         }
 
+        /// <summary>
+        /// Renders a partial MVC view to string. Use this method to render
+        /// a partial view that doesn't merge with _Layout and doesn't fire
+        /// _ViewStart.
+        /// </summary>
+        /// <param name="viewPath">
+        /// The path to the view to render. Either in same controller, shared by 
+        /// name or as fully qualified ~/ path including extension
+        /// </param>
+        /// <param name="model">The model to pass to the viewRenderer</param>
+        /// <param name="controllerContext">Active controller context</param>
+        /// <param name="writer">Text writer to render view to</param>
+        /// <param name="errorMessage">optional output parameter to receive an error message on failure</param>
+        public static void RenderPartialView(string viewPath, TextWriter writer, object model = null,
+                                                ControllerContext controllerContext = null)
+        {
+            ViewRenderer renderer = new ViewRenderer(controllerContext);
+            renderer.RenderPartialView(viewPath, model, writer);
+        }
+
+
+        /// <summary>
+        /// Internal method that handles rendering of either partial or 
+        /// or full views.
+        /// </summary>
+        /// <param name="viewPath">
+        /// The path to the view to render. Either in same controller, shared by 
+        /// name or as fully qualified ~/ path including extension
+        /// </param>
+        /// <param name="model">Model to render the view with</param>
+        /// <param name="partial">Determines whether to render a full or partial view</param>
+        /// <param name="writer">Text writer to render view to</param>
+        protected void RenderViewToWriterInternal(string viewPath, TextWriter writer, object model = null, bool partial = false)
+        {
+            // first find the ViewEngine for this view
+            ViewEngineResult viewEngineResult = null;
+            if (partial)
+                viewEngineResult = ViewEngines.Engines.FindPartialView(Context, viewPath);
+            else
+                viewEngineResult = ViewEngines.Engines.FindView(Context, viewPath, null);
+
+            if (viewEngineResult == null)
+                throw new FileNotFoundException();
+
+            // get the view and attach the model to view data
+            var view = viewEngineResult.View;
+            Context.Controller.ViewData.Model = model;
+
+            var ctx = new ViewContext(Context, view,
+                                        Context.Controller.ViewData,
+                                        Context.Controller.TempData,
+                                        writer);
+            view.Render(ctx, writer);
+        }
 
         /// <summary>
         /// Internal method that handles rendering of either partial or 
@@ -150,9 +314,9 @@ namespace Westwind.Web.Mvc
             using (var sw = new StringWriter())
             {
                 var ctx = new ViewContext(Context, view,
-                                          Context.Controller.ViewData,
-                                          Context.Controller.TempData,
-                                          sw);
+                                            Context.Controller.ViewData,
+                                            Context.Controller.TempData,
+                                            sw);
                 view.Render(ctx, sw);
                 result = sw.ToString();
             }
