@@ -80,9 +80,13 @@ namespace AlbumViewerAngular.Controllers
         {
             string value = null;
             throw new  ArgumentException("Explicitly thrown error");
-            return Content(value.ToString());
+            
         }
 
-
+        [Route("helloworld")]
+        public ActionResult HelloWorld()
+        {
+            return Json(new {helloMessage = "Hello Johnny Doe. time is:" + DateTime.Now},JsonRequestBehavior.AllowGet);
+        }
     }  
 }

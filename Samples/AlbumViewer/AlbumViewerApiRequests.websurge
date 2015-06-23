@@ -50,12 +50,18 @@ Websurge-Request-Inactive: 1
 
 ------------------------------------------------------------------
 
+GET http://localhost/AlbumViewerAngular/HelloWorld HTTP/1.1
+Accept-Encoding: gzip,deflate
+
+------------------------------------------------------------------
+
 
 ----- Start WebSurge Options -----
 
 {
   "NoProgressEvents": false,
   "DelayTimeMs": 0,
+  "NoContentDecompression": false,
   "CaptureMinimalResponseData": false,
   "MaxResponseSize": 0,
   "ReplaceCookieValue": null,
