@@ -31,13 +31,28 @@ namespace Westwind.Utilities.Test
             string html = await HttpUtils.HttpRequestStringAsync("http://microsoft.com");
             Assert.IsNotNull(html);
         }
+
+        [TestMethod]
+        public void InvalidUrlTest()
+        {
+            var settings = new HttpRequestSettings()
+            {
+                Url = "http://west-wind.com/invalidurl.html",
+            };
+
+            string html = HttpUtils.HttpRequestString(settings);                       
+            Assert.IsTrue(settings.ResponseStatusCode == System.Net.HttpStatusCode.NotFound);
+
+        }
+
+        
         
         [TestMethod]
         public void HttpRequestStringWithSettingsTest()
         {
             var settings = new HttpRequestSettings()
             {
-                Url = "http://microsoft.com",
+                Url = "http://microsoft.com",                 
             };
 
             string html = HttpUtils.HttpRequestString(settings);

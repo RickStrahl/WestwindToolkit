@@ -25,6 +25,18 @@ namespace Westwind.Utilities.InternetTools
         }
 
         [TestMethod]
+        public void InvalidUrlTest()
+        {
+            var client = new HttpClient();
+
+            var html = client.DownloadString("http://weblog.west-wind.com/nonexistantpage.htm");
+            Assert.IsTrue(client.WebResponse.StatusCode == System.Net.HttpStatusCode.NotFound);            
+            Console.WriteLine(client.WebResponse.StatusCode);                        
+        }
+
+
+
+        [TestMethod]
         public async void HttpTimingsTestsAsync()
         {
             var client = new HttpClient();
