@@ -124,6 +124,9 @@ namespace Westwind.Utilities
             foreach (string key in Keys)
             {
                 string[] values = GetValues(key);
+                if (values == null)
+                    continue;
+
                 foreach (var val in values)
                 {
                     query += key + "=" + Uri.EscapeUriString(val) + "&";
