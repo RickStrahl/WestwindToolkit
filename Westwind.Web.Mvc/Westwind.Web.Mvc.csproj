@@ -105,9 +105,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Filters\RequireSslAttribute.cs" />
-    <Compile Include="Utils\MvcHandlerSTA.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
+    <Compile Include="Utils\MvcHandlerSTA.cs" />
     <Compile Include="Utils\MvcHtmlUtils.cs" />
     <Compile Include="Utils\ViewRenderer.cs" />
     <Compile Include="ViewEngines\BuildManager.cs" />

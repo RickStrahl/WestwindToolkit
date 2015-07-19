@@ -139,8 +139,8 @@ namespace Westwind.Web.Mvc
         /// <param name="writer">Writer to render the view to</param>
         /// <param name="controllerContext">Active Controller context</param>
         /// <returns>String of the rendered view or null on error</returns>
-        public static void RenderView(string viewPath, TextWriter writer, object model = null,
-                                        ControllerContext controllerContext = null)
+        public static void RenderView(string viewPath, TextWriter writer, object model,
+                                        ControllerContext controllerContext)
         {
             ViewRenderer renderer = new ViewRenderer(controllerContext);
             renderer.RenderView(viewPath, model, writer);
