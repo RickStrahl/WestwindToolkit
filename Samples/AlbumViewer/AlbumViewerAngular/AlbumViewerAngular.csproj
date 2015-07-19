@@ -963,7 +963,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="App_Data\" />
     <Folder Include="Scripts\angular\i18n\ngLocale\" />
     <Folder Include="Views\Albums\" />
     <Folder Include="Views\Artiststs\" />
@@ -981,6 +980,7 @@
     <Content Include="css\fonts\glyphicons-halflings-regular.eot" />
     <Content Include="css\fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="css\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="App_Data\albumviewer.sql2012.bak" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\angular\angular-animate.min.js.map" />
     <Content Include="Scripts\angular\angular-aria.min.js.map" />

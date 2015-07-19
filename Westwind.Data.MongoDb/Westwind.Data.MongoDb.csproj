@@ -62,9 +62,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.XML" />
-    <Reference Include="Westwind.Utilities, Version=2.58.5434.41162, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Westwind.Utilities, Version=2.64.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Libraries\Westwind.QueueMessageManager\packages\Westwind.Utilities.2.58\lib\net45\Westwind.Utilities.dll</HintPath>
+      <HintPath>..\..\Libraries\Westwind.QueueMessageManager\packages\Westwind.Utilities.2.64\lib\net45\Westwind.Utilities.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

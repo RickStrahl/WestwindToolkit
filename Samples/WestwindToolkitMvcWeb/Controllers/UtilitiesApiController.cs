@@ -13,7 +13,7 @@ namespace WestwindToolkitMvcWeb.Controllers
         [HttpGet]
         public string RenderView()
         {            
-            return ViewRenderer.RenderView("~/Views/Utilities/ScriptVariables.cshtml", null);
+            return ViewRenderer.RenderView("~/Views/Utilities/ScriptVariables.cshtml");
         }
     }
 }

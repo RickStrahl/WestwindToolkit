@@ -1,10 +1,15 @@
+GET http://localhost/AlbumViewerAngular/HelloWorld HTTP/1.1
+Accept-Encoding: gzip,deflate
+
+------------------------------------------------------------------
+
 GET http://localhost/AlbumViewerAngular/artists HTTP/1.1
 Accept-Encoding: gzip,deflate
 Accept: application/json
 
 ------------------------------------------------------------------
 
-GET http://localhost/AlbumViewerAngular/artists/2 HTTP/1.1
+GET http://localhost/AlbumViewerAngular/artists HTTP/1.1
 Accept-Encoding: gzip,deflate
 Accept: application/json
 
@@ -50,11 +55,6 @@ Websurge-Request-Inactive: 1
 
 ------------------------------------------------------------------
 
-GET http://localhost/AlbumViewerAngular/HelloWorld HTTP/1.1
-Accept-Encoding: gzip,deflate
-
-------------------------------------------------------------------
-
 
 ----- Start WebSurge Options -----
 
@@ -67,7 +67,7 @@ Accept-Encoding: gzip,deflate
   "ReplaceCookieValue": null,
   "ReplaceAuthorization": null,
   "ReplaceQueryStringValuePairs": null,
-  "ReplaceDomain": "rasxps",
+  "ReplaceDomain": "localhost/dummyvirtual",
   "Username": null,
   "Password": "",
   "RandomizeRequests": false,

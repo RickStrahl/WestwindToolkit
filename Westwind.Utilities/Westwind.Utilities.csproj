@@ -86,9 +86,9 @@
     <Compile Include="Data\DAL\SqlDataAccess.cs" />
     <Compile Include="Data\ValidationErrorCollection.cs" />
     <Compile Include="Data\ValidationErrors.cs" />
-    <Compile Include="ExensionMethods\DateTimeExtensions.cs" />
-    <Compile Include="ExensionMethods\DictionaryExtensions.cs" />
-    <Compile Include="ExensionMethods\MemoryStreamExtensions.cs" />
+    <Compile Include="Utilities\ExensionMethods\DateTimeExtensions.cs" />
+    <Compile Include="Utilities\ExensionMethods\DictionaryExtensions.cs" />
+    <Compile Include="Utilities\ExensionMethods\MemoryStreamExtensions.cs" />
     <Compile Include="Utilities\HttpUtils.cs" />
     <Compile Include="Logging\ILogAdapter.cs" />
     <Compile Include="Logging\LogEntry.cs" />
