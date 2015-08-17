@@ -1,11 +1,10 @@
-GET http://localhost/AlbumViewerAngular/HelloWorld HTTP/1.1
+GET http://localhost/AlbumViewerAngular/test.html HTTP/1.1
 Accept-Encoding: gzip,deflate
 
 ------------------------------------------------------------------
 
-GET http://localhost/AlbumViewerAngular/artists HTTP/1.1
+GET http://localhost/AlbumViewerAngular/HelloWorld HTTP/1.1
 Accept-Encoding: gzip,deflate
-Accept: application/json
 
 ------------------------------------------------------------------
 
@@ -35,7 +34,6 @@ Accept: application/json
 
 DELETE http://localhost/AlbumViewerAngular/artists/1705 HTTP/1.1
 Accept-Encoding: gzip,deflate
-Websurge-Request-Inactive: 1
 
 ------------------------------------------------------------------
 
@@ -43,15 +41,13 @@ POST http://localhost/AlbumViewerAngular/albums HTTP/1.1
 Accept-Encoding: gzip,deflate
 Content-Type: application/json;charset=UTF-8
 Accept: application/json
-Websurge-Request-Inactive: 1
 
-{"Artist":{"Id":331,"ArtistName":"Motörhead","Description":"Motörhead have never JUST been the best rock'n'roll band in the world. They've never JUST been the loudest. Or the hardest. Or the toughest. Or the bad-ass-est. No...Motörhead are also a lifestyle.","ImageUrl":"http://alealerocknroll.com/wp-content/uploads/2014/07/motorhead.jpg","AmazonUrl":"http://www.amazon.com/gp/product/B00005NHO2/ref=as_li_ss_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=B00005NHO2&linkCode=as2&tag=westwindtechn-20"},"Tracks":[{"Id":5224,"AlbumId":516,"SongName":"Ace of Spades","Length":"2:49","Bytes":0,"UnitPrice":0.00},{"Id":5225,"AlbumId":516,"SongName":"Love me like a Reptile","Length":"2:23","Bytes":0,"UnitPrice":0.00},{"Id":5226,"AlbumId":516,"SongName":"Shoot you in back","Length":"2:39","Bytes":0,"UnitPrice":0.00},{"Id":5227,"AlbumId":516,"SongName":"We are the Road Crew","Length":"3:12","Bytes":0,"UnitPrice":0.00},{"Id":5228,"AlbumId":516,"SongName":"The Chase is better than the Catch","Length":"4:18","Bytes":0,"UnitPrice":0.00},{"Id":7600,"AlbumId":516,"SongName":"Jailbait","Length":"3:12","Bytes":0,"UnitPrice":0.00}],"Id":516,"Title":"Ace of Spades","Description":"Motörhead are the founding fathers of speed and thrash metal. Without this band, there would be no Slayer or Sepultura, so you've at least got to give Lemmy and Co. props for being so influential. And \"Aces of Spades\" is an essential, legendary speed metal classic. It's full of fast, meaty riffs, great solos, toe-tapping drums, and catchy, gruff vocals. Almost every song on here (especially the title track, \"Love Me Like a Reptile,\" and \"We Are The Road Crew\") is very catchy. And the album opening title track, which has a speedy, groove-y main riff, is world renowned. Other highlights include the wah-wah solo and shout-along refrain on \"Fire, Fire,\" \"Jailbait,\" \"Dance\" (which has a pair of tasty guitar solos), the X-rated \"The Chase Is Better Than The Catch,\" and the famous, rhythmic, nearly dance-able \"Please Don't Touch.\" All in all, if you're looking for great, groove-y, contagious and exciting speed metal, Motorhead \"aces\" it.","Year":1978,"ImageUrl":"https://images-na.ssl-images-amazon.com/images/I/618Zuqc4J5L._SL250_.jpg","AmazonUrl":"http://www.amazon.com/gp/product/B00005NHO2/ref=as_li_ss_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=B00005NHO2&linkCode=as2&tag=westwindtechn-20","SpotifyUrl":"https://play.spotify.com/album/2La9yFPh8VZ1VsaVXtHazI","ArtistId":331}
+{"Artist":{"Id":331,"ArtistName":"Motörhead","Description":"Motörhead have never JUST been the best rock'n'roll band in the world. They've never JUST been the loudest. Or the hardest. Or the toughest. Or the bad-ass-est. No...Motörhead are also a lifestyle.","ImageUrl":"http://alealerocknroll.com/wp-content/uploads/2014/07/motorhead.jpg","AmazonUrl":"http://www.amazon.com/gp/product/B00005NHO2/ref=as_li_ss_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=B00005NHO2&linkCode=as2&tag=westwindtechn-20"},"Tracks":[{"Id":5224,"AlbumId":516,"SongName":"Ace of Spades","Length":"2:49","Bytes":0,"UnitPrice":0.00},{"Id":5225,"AlbumId":516,"SongName":"Love me like a Reptile","Length":"2:23","Bytes":0,"UnitPrice":0.00},{"Id":5226,"AlbumId":516,"SongName":"Shoot you in back","Length":"2:39","Bytes":0,"UnitPrice":0.00},{"Id":5227,"AlbumId":516,"SongName":"We are the Road Crew","Length":"3:12","Bytes":0,"UnitPrice":0.00},{"Id":5228,"AlbumId":516,"SongName":"The Chase is better than the Catch","Length":"4:18","Bytes":0,"UnitPrice":0.00},{"Id":7600,"AlbumId":516,"SongName":"Jailbait","Length":"3:12","Bytes":0,"UnitPrice":0.00}],"Id":516,"Title":"Ace of Spades asdasasd","Description":"Motörhead are the founding fathers of speed and thrash metal. Without this band, there would be no Slayer or Sepultura, so you've at least got to give Lemmy and Co. props for being so influential. And \"Aces of Spades\" is an essential, legendary speed metal classic. It's full of fast, meaty riffs, great solos, toe-tapping drums, and catchy, gruff vocals. Almost every song on here (especially the title track, \"Love Me Like a Reptile,\" and \"We Are The Road Crew\") is very catchy. And the album opening title track, which has a speedy, groove-y main riff, is world renowned. Other highlights include the wah-wah solo and shout-along refrain on \"Fire, Fire,\" \"Jailbait,\" \"Dance\" (which has a pair of tasty guitar solos), the X-rated \"The Chase Is Better Than The Catch,\" and the famous, rhythmic, nearly dance-able \"Please Don't Touch.\" All in all, if you're looking for great, groove-y, contagious and exciting speed metal, Motorhead \"aces\" it.","Year":1978,"ImageUrl":"https://images-na.ssl-images-amazon.com/images/I/618Zuqc4J5L._SL250_.jpg","AmazonUrl":"http://www.amazon.com/gp/product/B00005NHO2/ref=as_li_ss_tl?ie=UTF8&camp=1789&creative=390957&creativeASIN=B00005NHO2&linkCode=as2&tag=westwindtechn-20","SpotifyUrl":"https://play.spotify.com/album/2La9yFPh8VZ1VsaVXtHazI","ArtistId":331}
 
 ------------------------------------------------------------------
 
 DELETE http://localhost/AlbumViewerAngular/albums/1728 HTTP/1.1
 Accept-Encoding: gzip,deflate
-Websurge-Request-Inactive: 1
 
 ------------------------------------------------------------------
 
@@ -67,7 +63,7 @@ Websurge-Request-Inactive: 1
   "ReplaceCookieValue": null,
   "ReplaceAuthorization": null,
   "ReplaceQueryStringValuePairs": null,
-  "ReplaceDomain": "localhost/dummyvirtual",
+  "ReplaceDomain": "",
   "Username": null,
   "Password": "",
   "RandomizeRequests": false,
@@ -75,9 +71,9 @@ Websurge-Request-Inactive: 1
   "WarmupSeconds": 2,
   "ReloadTemplates": false,
   "FormattedPreviewTheme": "visualstudio",
-  "LastThreads": 50,
+  "LastThreads": 10,
   "IgnoreCertificateErrors": false,
-  "LastSecondsToRun": 60
+  "LastSecondsToRun": 30
 }
 
 // This file was generated by West Wind WebSurge

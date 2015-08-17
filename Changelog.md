@@ -1,7 +1,34 @@
 # West Wind Toolkit Change Log
 
-### Version 2.64
+### Version 2.65
 *not released yet*
+
+* **SqlDataAccess.QueryList<T>()**
+<small>Westwind.Utilities</small>
+New method that returns List<T> for a query into an entity. This method directly returns a list and is slightly more efficient than the Query<T>() plus .ToList() as it just directly grabs elements into the list.
+
+* **ww.jquery.js refactoring**
+<small>Westwind.Web</small>
+Cleaned up a number of minor issues in ww.jquery.js. Fix small issue in jquery-watch when using old IE versions and MutationObserver option in FireFox. Remove shadow functionality from the tooltip plug-in for IE old - now only CSS is used which removes a bunch of otherwise redundant code. Removed other IE old shadow effects from various plugins resulting in reduction of size.
+
+* **Add TextWriter support to MVC ViewRenderer**
+<small>Westwind.Web.Mvc</small>
+Add TextWriter output support to the ViewRenderer class for better compatibility with MVC and to support output from large templates directly to stream or file rather than to string first.
+
+* **Fixes to UrlEncodingParser**
+<small>Westwind.Utilities</small>
+Fix a number of small issues in the UrlEncodingParser class used to create and parse UrlEncoded content easily. Fixed several null exception scenarios.
+
+* **HttpClient.UseGZip optimizations**
+<small>Westwind.Utilities</small>
+The HttpClient class now uses the built in decompression tooling in .NET for HttpWebRequest to handle GZip/Deflate compression on request and response content removing the manual filtering. 
+
+* **HttpClient.HttpTimings object to track Request Time**
+<small>Westwind.Utilities</small>
+HttpClient now includes an HttpTimings sub object that contains started and end times for a request. End times provide for first byte and last byte timings as part of every request (except for stream results).
+
+### Version 2.64
+*June 25th, 2015*
 
 * **JsonVariables prevent XSS by encoding < and > in JSON**<br/>
 <small>Westwind.Web</small><br/>
@@ -25,7 +52,7 @@ Removes Exif data from Jpg images. Helps reduce size of images and normalizes im
 
 
 ### Version 2.63
-* April 30th, 2015
+* April 30th, 2015*
 
 * **CallbackExceptionHandlerAttribute for MVC Controllers**<br/>
 <small>Westwind.Web.Mvc</small><br/>

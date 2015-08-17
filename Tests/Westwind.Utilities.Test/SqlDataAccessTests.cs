@@ -223,6 +223,26 @@ namespace Westwind.Utilities.Data.Tests
         }
 
         [TestMethod]
+        public void QueryToListTest()
+        {
+            SqlDataAccess data = new SqlDataAccess(STR_ConnectionString);
+
+            var swatch = new Stopwatch();
+            swatch.Start();
+
+            var recs = data.QueryList<WebLogEntry>("select * from ApplicationLog");
+
+            swatch.Stop();
+
+            Assert.IsNotNull(recs, "Null");
+            Assert.IsTrue(recs.Count > 0, "Count < 1");
+            Assert.IsTrue(recs[0].Entered > DateTime.MinValue);
+
+            Console.WriteLine(swatch.ElapsedMilliseconds);
+            Console.WriteLine(recs.Count);
+        }
+
+        [TestMethod]
         public void QueryToCustomer()
         {
             using (var data = new SqlDataAccess(STR_ConnectionString))

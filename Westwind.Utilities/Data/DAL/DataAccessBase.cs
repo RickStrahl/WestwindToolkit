@@ -569,9 +569,10 @@ namespace Westwind.Utilities.Data
 
         /// <summary>
         /// Executes a SQL statement and creates an object list using
-        /// Reflection.
+        /// optimized Reflection.
         /// 
-        /// Not very efficient but provides an easy way to retrieve
+        /// Not very efficient but provides an easy way to retrieve 
+        /// an object list from query.
         /// </summary>
         /// <typeparam name="T">Entity type to create from DataReader data</typeparam>
         /// <param name="sql">Sql string to execute</param>        
@@ -597,10 +598,64 @@ namespace Westwind.Utilities.Data
         }
 
         /// <summary>
+        /// Returns list of objects from a query.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public virtual List<T> QueryList<T>(string sql, params object[] parameters)
+                where T : class, new()
+        {
+            var reader = ExecuteReader(sql, parameters);
+
+            if (reader == null)
+                return null;
+
+            try
+            {
+                return DataUtils.DataReaderToObjectList<T>(reader,null);
+            }
+            catch (Exception ex)
+            {
+                SetError(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Returns list of objects from a query.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="propertiesToSkip">Comma delimited list of property names to skip</param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public virtual List<T> QueryListWithExclusions<T>(string sql, string propertiesToSkip, params object[] parameters)
+                where T : class, new()
+        {
+            var reader = ExecuteReader(sql, parameters);
+
+            if (reader == null)
+                return null;
+
+            try
+            {
+                return DataUtils.DataReaderToObjectList<T>(reader, propertiesToSkip);
+            }
+            catch (Exception ex)
+            {
+                SetError(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
         /// Executes a SQL command and creates an object list using
         /// Reflection.
         /// 
         /// Not very efficient but provides an easy way to retrieve
+        /// object lists from queries.
         /// </summary>
         /// <typeparam name="T">Entity type to create from DataReader data</typeparam>
         /// <param name="command">Command object containing configured SQL command to execute</param>        
@@ -630,6 +685,7 @@ namespace Westwind.Utilities.Data
         /// Reflection.
         /// 
         /// Not very efficient but provides an easy way to retrieve
+        /// object lists from queries
         /// </summary>
         /// <typeparam name="T">Entity type to create from DataReader data</typeparam>
         /// <param name="sql">Sql string to execute</param>        
@@ -1119,14 +1175,14 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// </summary>
         /// <param name="entity">The object to update</param>
         /// <param name="command">Database command object</param>
-        /// <param name="fieldsToSkip"></param>
+        /// <param name="propertiesToSkip"></param>
         /// <returns></returns>
-        public virtual bool GetEntity(object entity, DbCommand command, string fieldsToSkip = null)
+        public virtual bool GetEntity(object entity, DbCommand command, string propertiesToSkip = null)
         {
             SetError();
 
-            if (string.IsNullOrEmpty(fieldsToSkip))
-                fieldsToSkip = string.Empty;
+            if (string.IsNullOrEmpty(propertiesToSkip))
+                propertiesToSkip = string.Empty;
 
             DbDataReader reader = ExecuteReader(command);
             if (reader == null)
@@ -1139,7 +1195,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 return false;
             }
 
-            DataUtils.DataReaderToObject(reader, entity, fieldsToSkip);
+            DataUtils.DataReaderToObject(reader, entity, propertiesToSkip);
 
             reader.Close();
             CloseConnection();
@@ -1151,8 +1207,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// Retrieves a single record and returns it as an entity
         /// </summary>
         /// <param name="entity"></param>
-        /// <param name="sql"></param>
-        /// <param name="fieldsToSkip"></param>
+        /// <param name="sql"></param>        
         /// <param name="parameters"></param>
         /// <returns></returns>
         public bool GetEntity(object entity, string sql, object[] parameters)
@@ -1166,22 +1221,22 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// Generic routine to return an Entity that matches the field names of a 
         /// table exactly.
         /// </summary>
-        /// <param name="Entity"></param>
-        /// <param name="Table"></param>
-        /// <param name="KeyField"></param>
-        /// <param name="KeyValue"></param>
-        /// <param name="FieldsToSkip"></param>
+        /// <param name="entity"></param>
+        /// <param name="table"></param>
+        /// <param name="keyField"></param>
+        /// <param name="keyValue"></param>
+        /// <param name="propertiesToSkip"></param>
         /// <returns></returns>
-        public virtual bool GetEntity(object Entity, string Table, string KeyField, object KeyValue, string FieldsToSkip = null)
+        public virtual bool GetEntity(object entity, string table, string keyField, object keyValue, string propertiesToSkip = null)
         {
             SetError();
 
-            DbCommand Command = CreateCommand("select * from " + Table + " where [" + KeyField + "]=" + ParameterPrefix + "Key",
-                                                    CreateParameter(ParameterPrefix + "Key", KeyValue));
+            DbCommand Command = CreateCommand("select * from " + table + " where [" + keyField + "]=" + ParameterPrefix + "Key",
+                                                    CreateParameter(ParameterPrefix + "Key", keyValue));
             if (Command == null)
                 return false;
 
-            return GetEntity(Entity, Command, FieldsToSkip);
+            return GetEntity(entity, Command, propertiesToSkip);
         }
 
         /// <summary>
@@ -1228,14 +1283,14 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// </summary>
         /// <typeparam name="T">Entity type to return</typeparam>
         /// <param name="sql">Sql string to execute. Use @0,@1,@2 for positional parameters</param>
-        /// <param name="fieldsToSkip">fields to not update from the resultset</param>
+        /// <param name="propertiesToSkip">fields to not update from the resultset</param>
         /// <param name="parameters">Parameters to pass to SQL statement</param>
         /// <returns></returns>
-        public virtual T FindEx<T>(string sql, string fieldsToSkip, params object[] parameters)
+        public virtual T FindEx<T>(string sql, string propertiesToSkip, params object[] parameters)
             where T : class,new()
         {
             T obj = new T();
-            if (!GetEntity(obj, CreateCommand( sql, parameters),fieldsToSkip))
+            if (!GetEntity(obj, CreateCommand( sql, parameters),propertiesToSkip))
                 return null;
 
             return obj;
@@ -1250,16 +1305,16 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <param name="entity">entity to update</param>
         /// <param name="table">the table name to update</param>
         /// <param name="keyField">keyfield used to find entity</param>
-        /// <param name="fieldsToSkip"></param>
+        /// <param name="propertiesToSkip"></param>
         /// <returns></returns>
-        public virtual bool UpdateEntity(object entity, string table, string keyField, string fieldsToSkip = null)
+        public virtual bool UpdateEntity(object entity, string table, string keyField, string propertiesToSkip = null)
         {
             SetError();
 
-            if (string.IsNullOrEmpty(fieldsToSkip))
-                fieldsToSkip = string.Empty;
+            if (string.IsNullOrEmpty(propertiesToSkip))
+                propertiesToSkip = string.Empty;
             else
-                fieldsToSkip = "," + fieldsToSkip.ToLower() + ",";
+                propertiesToSkip = "," + propertiesToSkip.ToLower() + ",";
 
             DbCommand Command = CreateCommand(string.Empty);
 
@@ -1276,7 +1331,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
                 string Name = Property.Name;
 
-                if (fieldsToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
+                if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
                     continue;
 
                 object Value = Property.GetValue(entity, null);
@@ -1316,17 +1371,17 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <param name="entity">Entity to update</param>
         /// <param name="table">DB Table to udpate</param>
         /// <param name="keyField">The keyfield to query on</param>
-        /// <param name="fieldsToSkip">fields to skip in update</param>
+        /// <param name="propertiesToSkip">fields to skip in update</param>
         /// <param name="fieldsToUpdate">fields that should be updated</param>
         /// <returns></returns>
-        public virtual bool UpdateEntity(object entity, string table, string keyField, string fieldsToSkip, string fieldsToUpdate)
+        public virtual bool UpdateEntity(object entity, string table, string keyField, string propertiesToSkip, string fieldsToUpdate)
         {
             SetError();
 
-            if (fieldsToSkip == null)
-                fieldsToSkip = string.Empty;
+            if (propertiesToSkip == null)
+                propertiesToSkip = string.Empty;
             else
-                fieldsToSkip = "," + fieldsToSkip.ToLower() + ",";
+                propertiesToSkip = "," + propertiesToSkip.ToLower() + ",";
 
             DbCommand Command = CreateCommand(string.Empty);
 
@@ -1338,7 +1393,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             string[] Fields = fieldsToUpdate.Split(',');
             foreach (string Name in Fields)
             {
-                if (fieldsToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
+                if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
                     continue;
 
                 PropertyInfo Property = ObjType.GetProperty(Name);
@@ -1376,23 +1431,23 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <summary>
         /// Inserts an object into the database based on its type information.
         /// The properties must match the database structure and you can skip
-        /// over fields in the FieldsToSkip list.        
+        /// over fields in the propertiesToSkip list.        
         /// </summary>        
         /// <seealso cref="SaveEntity">
         /// <seealso cref="UpdateEntity"/>
         /// <param name="entity"></param>
         /// <param name="table"></param>
         /// <param name="KeyField"></param>
-        /// <param name="fieldsToSkip"></param>
+        /// <param name="propertiesToSkip"></param>
         /// <returns>Scope Identity or Null</returns>
-        public object InsertEntity(object entity, string table, string fieldsToSkip = null, bool returnIdentityKey = true)
+        public object InsertEntity(object entity, string table, string propertiesToSkip = null, bool returnIdentityKey = true)
         {
             SetError();
 
-            if (string.IsNullOrEmpty(fieldsToSkip))
-                fieldsToSkip = string.Empty;
+            if (string.IsNullOrEmpty(propertiesToSkip))
+                propertiesToSkip = string.Empty;
             else
-                fieldsToSkip = "," + fieldsToSkip.ToLower() + ",";
+                propertiesToSkip = "," + propertiesToSkip.ToLower() + ",";
 
             DbCommand Command = CreateCommand(string.Empty);
 
@@ -1411,7 +1466,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
                 string Name = Property.Name;
 
-                if (fieldsToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
+                if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
                     continue;
 
                 object Value = Property.GetValue(entity, null);
@@ -1458,9 +1513,9 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <param name="entity">entity to save</param>
         /// <param name="table">table to save to</param>
         /// <param name="keyField">keyfield to update</param>
-        /// <param name="fieldsToSkip">optional fields to skip when updating (keys related items etc)</param>
+        /// <param name="propertiesToSkip">optional fields to skip when updating (keys related items etc)</param>
         /// <returns></returns>
-        public virtual bool SaveEntity(object entity, string table, string keyField, string fieldsToSkip = null)
+        public virtual bool SaveEntity(object entity, string table, string keyField, string propertiesToSkip = null)
         {
             object pkValue = ReflectionUtils.GetProperty(entity, keyField);
             object res = null;
@@ -1471,12 +1526,12 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
             if (res == null)
             {
-                InsertEntity(entity, table, fieldsToSkip);
+                InsertEntity(entity, table, propertiesToSkip);
                 if (!string.IsNullOrEmpty(ErrorMessage))
                     return false;
             }
             else
-                return UpdateEntity(entity, table, keyField, fieldsToSkip);
+                return UpdateEntity(entity, table, keyField, propertiesToSkip);
 
             return true;
         }

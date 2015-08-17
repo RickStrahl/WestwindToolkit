@@ -289,7 +289,7 @@ namespace Westwind.Utilities
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="reader">An open DataReader that's in position to read</param>
-        /// <param name="fieldsToSkip">Optional - comma delimited list of fields that you don't want to update</param>
+        /// <param name="propertiesToSkip">Optional - comma delimited list of fields that you don't want to update</param>
         /// <param name="piList">
         /// Optional - Cached PropertyInfo dictionary that holds property info data for this object.
         /// Can be used for caching hte PropertyInfo structure for multiple operations to speed up
@@ -297,28 +297,29 @@ namespace Westwind.Utilities
         /// </param>
         /// <returns></returns>
         /// <remarks>DataReader is not closed by this method. Make sure you call reader.close() afterwards</remarks>
-        public static List<T> DataReaderToObjectList<T>(IDataReader reader, string fieldsToSkip = null, Dictionary<string, PropertyInfo> piList = null)
+        public static List<T> DataReaderToObjectList<T>(IDataReader reader, string propertiesToSkip = null, Dictionary<string, PropertyInfo> piList = null)
             where T : new()
         {
             List<T> list = new List<T>();
 
-            // Get a list of PropertyInfo objects we can cache for looping            
-            if (piList == null)
+            using (reader)
             {
-                piList = new Dictionary<string, PropertyInfo>();
-                var props = typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
-                foreach (var prop in props)
-                    piList.Add(prop.Name.ToLower(), prop);
-            }
+                // Get a list of PropertyInfo objects we can cache for looping            
+                if (piList == null)
+                {
+                    piList = new Dictionary<string, PropertyInfo>();
+                    var props = typeof (T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                    foreach (var prop in props)
+                        piList.Add(prop.Name.ToLower(), prop);
+                }
 
-            while (reader.Read())
-            {
-                T inst = new T(); 
-                DataReaderToObject(reader, inst, fieldsToSkip, piList);
-                list.Add(inst);
+                while (reader.Read())
+                {
+                    T inst = new T();
+                    DataReaderToObject(reader, inst, propertiesToSkip, piList);
+                    list.Add(inst);
+                }             
             }
-
-            reader.Close();
 
             return list;
         }
@@ -331,20 +332,48 @@ namespace Westwind.Utilities
         /// conversions on the fly and with anonymous types.
         /// </summary>
         /// <param name="reader">An open DataReader that's in position to read</param>
-        /// <param name="fieldsToSkip">Optional - comma delimited list of fields that you don't want to update</param>
+        /// <param name="propertiesToSkip">Optional - comma delimited list of fields that you don't want to update</param>
         /// <param name="piList">
         /// Optional - Cached PropertyInfo dictionary that holds property info data for this object.
         /// Can be used for caching hte PropertyInfo structure for multiple operations to speed up
         /// translation. If not passed automatically created.
         /// </param>
         /// <returns></returns>
-        public static IEnumerable<T> DataReaderToIEnumerable<T>(IDataReader reader, string fieldsToSkip = null, Dictionary<string, PropertyInfo> piList = null)            
+        public static IEnumerable<T> DataReaderToIEnumerable<T>(IDataReader reader, string propertiesToSkip = null, Dictionary<string, PropertyInfo> piList = null)            
             where T : new()
         {
             if (reader != null)
             {
                 using (reader)
-                {                   
+                {
+                    // Get a list of PropertyInfo objects we can cache for looping            
+                    if (piList == null)
+                    {
+                        piList = new Dictionary<string, PropertyInfo>();
+                        var props = typeof (T).GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                        foreach (var prop in props)
+                            piList.Add(prop.Name.ToLower(), prop);
+                    }
+
+                    while (reader.Read())
+                    {
+                        T inst = new T();
+                        DataReaderToObject(reader, inst, propertiesToSkip, piList);
+                        yield return inst;
+                    }
+                }
+            }
+        }
+
+        public static List<T> DataReaderToList<T>(IDataReader reader, string propertiesToSkip = null, Dictionary<string, PropertyInfo> piList = null)
+          where T : new()
+        {
+            var list = new List<T>();
+
+            if (reader != null)
+            {
+                using (reader)
+                {
                     // Get a list of PropertyInfo objects we can cache for looping            
                     if (piList == null)
                     {
@@ -357,12 +386,12 @@ namespace Westwind.Utilities
                     while (reader.Read())
                     {
                         T inst = new T();
-                        DataReaderToObject(reader, inst, fieldsToSkip, piList);
-                        yield return inst;
+                        DataReaderToObject(reader, inst, propertiesToSkip, piList);
+                        list.Add(inst);                        
                     }
-                    
                 }
             }
+            return list;
         }
 
         /// <summary>
@@ -379,21 +408,21 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="reader">Instance of the DataReader to read data from. Should be located on the correct record (Read() should have been called on it before calling this method)</param>
         /// <param name="instance">Instance of the object to populate properties on</param>
-        /// <param name="fieldsToSkip">Optional - A comma delimited list of object properties that should not be updated</param>
+        /// <param name="propertiesToSkip">Optional - A comma delimited list of object properties that should not be updated</param>
         /// <param name="piList">Optional - Cached PropertyInfo dictionary that holds property info data for this object</param>
         public static void DataReaderToObject(IDataReader reader, object instance, 
-                                              string fieldsToSkip = null, 
+                                              string propertiesToSkip = null, 
                                               Dictionary<string,PropertyInfo> piList = null)
         {
             if (reader.IsClosed)
                 throw new InvalidOperationException(Resources.DataReaderPassedToDataReaderToObjectCannot);
 
-            if (string.IsNullOrEmpty(fieldsToSkip))
-                fieldsToSkip = string.Empty;
+            if (string.IsNullOrEmpty(propertiesToSkip))
+                propertiesToSkip = string.Empty;
             else
-                fieldsToSkip = "," + fieldsToSkip + ",";
+                propertiesToSkip = "," + propertiesToSkip + ",";
 
-            fieldsToSkip = fieldsToSkip.ToLower();
+            propertiesToSkip = propertiesToSkip.ToLower();
 
             // create a dictionary of properties to look up
             // we can pass this in so we can cache the list once 
@@ -416,7 +445,7 @@ namespace Westwind.Utilities
                     var prop = piList[name];
 
                     // skip fields in skip list
-                    if (!string.IsNullOrEmpty(fieldsToSkip) && fieldsToSkip.Contains("," + name + ","))
+                    if (!string.IsNullOrEmpty(propertiesToSkip) && propertiesToSkip.Contains("," + name + ","))
                         continue;
 
                     // find writable properties and assign
