@@ -7,6 +7,14 @@
 <small>Westwind.Utilities</small>
 New method that returns List<T> for a query into an entity. This method directly returns a list and is slightly more efficient than the Query<T>() plus .ToList() as it just directly grabs elements into the list.
 
+* **resizable jQuery Plugin**  
+<small>Westwind.Web</small>    
+Added a minimal jQuery().resizable() plugin to allow simple resizing of elements via sizing handle element.
+
+* **debounce() function in ww.jquery.js**  
+<small>Westwind.Web</small>
+Added a debounce() function that delays multiple quick firing events to a specified timeout. Minimizes many often useless repeating events on UI operations such as resizing or dragging.
+
 * **ww.jquery.js refactoring**
 <small>Westwind.Web</small>
 Cleaned up a number of minor issues in ww.jquery.js. Fix small issue in jquery-watch when using old IE versions and MutationObserver option in FireFox. Remove shadow functionality from the tooltip plug-in for IE old - now only CSS is used which removes a bunch of otherwise redundant code. Removed other IE old shadow effects from various plugins resulting in reduction of size.
