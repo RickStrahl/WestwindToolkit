@@ -33,6 +33,7 @@ namespace Westwind.Utilities.Test
         }
 
         [TestMethod]
+        [ExpectedException(typeof(WebException))]
         public void InvalidUrlTest()
         {
             var settings = new HttpRequestSettings()
