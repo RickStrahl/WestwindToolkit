@@ -635,7 +635,7 @@ namespace Westwind.Data.MongoDb
             
             if (result.HasLastErrorMessage)
             {
-                SetError(result.ErrorMessage);
+                SetError(result.LastErrorMessage);
                 return false;
             }
             return true;
