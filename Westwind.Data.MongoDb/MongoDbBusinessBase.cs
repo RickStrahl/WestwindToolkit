@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
 using MongoDB.Driver;
 using MongoDB.Driver.Builders;
+using Newtonsoft.Json;
 using Westwind.Data.MongoDb.Properties;
 using Westwind.Utilities;
 
@@ -817,12 +818,45 @@ namespace Westwind.Data.MongoDb
 
             return true;
         }
+        
 
         /// <summary>
-        /// Saves 
+        /// Parses an .NET object into a BSON document
         /// </summary>
-        /// <param name="entity"></param>
-        /// <param name="collectionName"></param>
+        /// <param name="data">.NET object ir value</param>
+        /// <returns></returns>
+        public BsonDocument ParseObject(object data)
+        {
+            string json = JsonConvert.SerializeObject(data);
+
+            BsonDocument doc = null;
+            try
+            {
+                doc = BsonDocument.Parse(json);
+                if (doc == null)
+                {
+                    SetError("No entity to save passed.");
+                    return null;
+                }
+            }
+            catch (Exception ex)
+            {
+                SetError(ex, true);
+                return null;
+            }
+
+            return doc;
+        }
+        
+
+        /// <summary>
+        /// Saves a Json string based document into a collection.        
+        /// </summary>
+        /// <remarks>
+        /// If you have _id or Id properties make sure those are strings or BSON Ids.
+        /// Integer values cannot be saved as Ids.
+        /// </remarks>
+        /// <param name="collectionName">Name of the collection to write to</param>
         /// <returns>Id of object saved</returns>
         public string SaveFromJson(string entityJson, string collectionName = null)
         {
@@ -835,15 +869,57 @@ namespace Westwind.Data.MongoDb
                 return null;
             }
 
+            BsonDocument doc = null;
             try
             {
-                var doc = BsonDocument.Parse(entityJson);
+                
+                doc = BsonSerializer.Deserialize<BsonDocument>(entityJson);  //BsonDocument.Parse(entityJson);
                 if (doc == null)
                 {
                     SetError("No entity to save passed.");
                     return null;
                 }
+            }
+            catch (Exception ex)
+            {
+                SetError(ex, true);
+                return null;
+            }
 
+            return SaveFromDocument(doc,collectionName);
+        }
+
+        /// <summary>
+        /// Saves a generic object to a collection
+        /// </summary>
+        /// <param name="data">.NET object to save</param>
+        /// <param name="collectionName">name of the collection to save to</param>
+        /// <returns></returns>
+        public string SaveFromObject(object data, string collectionName = null)
+        {
+            var doc = ParseObject(data);
+            if (doc == null)
+                return null;
+
+            return SaveFromDocument(doc, collectionName);
+        }
+
+        /// <summary>
+        /// Saves a BSON document to a collection by name
+        /// </summary>
+        /// <param name="doc">A populated BSON document</param>
+        /// <param name="collectionName">Collection to save to</param>
+        /// <returns></returns>
+        public string SaveFromDocument(BsonDocument doc, string collectionName = null)
+        {
+            if (doc == null)
+            {
+                SetError("No entity to save passed.");
+                return null;
+            }
+
+            try
+            {                             
                 var result = Database.GetCollection(collectionName).Save(doc);
 
                 if (result.HasLastErrorMessage)
@@ -860,8 +936,10 @@ namespace Westwind.Data.MongoDb
                 SetError(ex, true);
                 return null;
             }
-
         }
+
+
+        
 
         /// <summary>
         /// Hook point fired just before the save method is called.
