@@ -50,9 +50,9 @@
     <Compile Include="BusinessObjects\AlbumBusiness.cs" />
     <Compile Include="Configuration\App.cs" />
     <Compile Include="Configuration\AlbumViewerConfiguration.cs" />
-    <Compile Include="Migrations\201504010043520_initial.cs" />
-    <Compile Include="Migrations\201504010043520_initial.Designer.cs">
-      <DependentUpon>201504010043520_initial.cs</DependentUpon>
+    <Compile Include="Migrations\201601130055407_initial.cs" />
+    <Compile Include="Migrations\201601130055407_initial.Designer.cs">
+      <DependentUpon>201601130055407_initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AlbumViewerContext.cs" />
@@ -76,8 +76,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201504010043520_initial.resx">
-      <DependentUpon>201504010043520_initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201601130055407_initial.resx">
+      <DependentUpon>201601130055407_initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -99,19 +99,6 @@
             }
             </example>
         </member>
-        <member name="M:Westwind.Web.Mvc.NegotiatedResult.#ctor(System.Object)">
-            <summary>
-            Pass in data to serialize
-            </summary>
-            <param name="data">Data to serialize</param>        
-        </member>
-        <member name="M:Westwind.Web.Mvc.NegotiatedResult.#ctor(System.String,System.Object)">
-            <summary>
-            Pass in data and an optional view for HTML views
-            </summary>
-            <param name="data"></param>
-            <param name="viewName"></param>
-        </member>
         <member name="P:Westwind.Web.Mvc.NegotiatedResult.Data">
             <summary>
             Data stored to be 'serialized'. Public
@@ -130,6 +117,19 @@
             output is formatted. By default Debug settings
             of project are used - debug is formatted
             </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.NegotiatedResult.#ctor(System.Object)">
+            <summary>
+            Pass in data to serialize
+            </summary>
+            <param name="data">Data to serialize</param>        
+        </member>
+        <member name="M:Westwind.Web.Mvc.NegotiatedResult.#ctor(System.String,System.Object)">
+            <summary>
+            Pass in data and an optional view for HTML views
+            </summary>
+            <param name="data"></param>
+            <param name="viewName"></param>
         </member>
         <member name="T:Westwind.Web.Mvc.NegotiatedResultExtensions">
             <summary>
@@ -307,33 +307,6 @@
             The icon links link to images.
             </summary>
         </member>
-        <member name="M:Westwind.Web.Mvc.ErrorDisplay.Render(System.Int32,System.Boolean)">
-            <summary>
-            Method 
-            </summary>
-            <param name="width"></param>
-            <param name="center"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Web.Mvc.ErrorDisplay.AddMessages(System.Web.Mvc.ModelStateDictionary,System.String)">
-            <summary>
-            Adds ModelState errors to the validationErrors
-            </summary>
-            <param name="modelErrors"></param>
-        </member>
-        <member name="M:Westwind.Web.Mvc.ErrorDisplay.AddMessages(Westwind.Utilities.ValidationErrorCollection,System.String)">
-            <summary>
-            Adds an existing set of Validation Errors to the DisplayErrors
-            </summary>
-            <param name="validationErrors"></param>
-        </member>
-        <member name="M:Westwind.Web.Mvc.ErrorDisplay.AddMessage(System.String,System.String)">
-            <summary>
-            Adds an individual model error
-            </summary>
-            <param name="errorMessage"></param>
-            <param name="control"></param>
-        </member>
         <member name="P:Westwind.Web.Mvc.ErrorDisplay.Message">
             <summary>
             The message that is displayed
@@ -360,31 +333,32 @@
             Holds a modelstate errors collection
             </summary>
         </member>
-        <member name="M:Westwind.Web.Mvc.BaseControl.ApplyAttributes">
+        <member name="M:Westwind.Web.Mvc.ErrorDisplay.Render(System.Int32,System.Boolean)">
             <summary>
-            renders standard attributes. Override for any custom attributes
-            you want to add to the control. When overriding the base class
-            method call the base method to include the stock rendering.
-            
-            Called by RenderAttributes.
+            Method 
             </summary>
-        </member>
-        <member name="M:Westwind.Web.Mvc.BaseControl.RenderAttributes">
-            <summary>
-            Renders the attributes into the output stream
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.Mvc.BaseControl.Render">
-            <summary>
-            Returns rendered HTML output
-            </summary>
+            <param name="width"></param>
+            <param name="center"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Web.Mvc.BaseControl.MergeAttributes(System.Object)">
+        <member name="M:Westwind.Web.Mvc.ErrorDisplay.AddMessages(System.Web.Mvc.ModelStateDictionary,System.String)">
             <summary>
-            Merges attributes from an object map 
+            Adds ModelState errors to the validationErrors
             </summary>
-            <param name="attributes"></param>
+            <param name="modelErrors"></param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorDisplay.AddMessages(Westwind.Utilities.ValidationErrorCollection,System.String)">
+            <summary>
+            Adds an existing set of Validation Errors to the DisplayErrors
+            </summary>
+            <param name="validationErrors"></param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ErrorDisplay.AddMessage(System.String,System.String)">
+            <summary>
+            Adds an individual model error
+            </summary>
+            <param name="errorMessage"></param>
+            <param name="control"></param>
         </member>
         <member name="P:Westwind.Web.Mvc.BaseControl.Id">
             <summary>
@@ -438,12 +412,38 @@
             use internally in the control's code
             </summary>
         </member>
+        <member name="M:Westwind.Web.Mvc.BaseControl.ApplyAttributes">
+            <summary>
+            renders standard attributes. Override for any custom attributes
+            you want to add to the control. When overriding the base class
+            method call the base method to include the stock rendering.
+            
+            Called by RenderAttributes.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.BaseControl.RenderAttributes">
+            <summary>
+            Renders the attributes into the output stream
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.BaseControl.Render">
+            <summary>
+            Returns rendered HTML output
+            </summary>
+            <returns></returns>
+        </member>
         <member name="P:Westwind.Web.Mvc.BaseControl.IsFirstRenderOnPage">
             <summary>
             Determines whether the control has already been rendered. Use to control
             whether scripts or other shared page components get rendered more than
             once.
             </summary>
+        </member>
+        <member name="M:Westwind.Web.Mvc.BaseControl.MergeAttributes(System.Object)">
+            <summary>
+            Merges attributes from an object map 
+            </summary>
+            <param name="attributes"></param>
         </member>
         <member name="T:Westwind.Web.Mvc.DateControl">
             <summary>
@@ -480,6 +480,11 @@
             common high level functionality
             </summary>
         </member>
+        <member name="P:Westwind.Web.Mvc.PageEnvironment.Current">
+            <summary>
+            Current Page State Instance
+            </summary>
+        </member>
         <member name="M:Westwind.Web.Mvc.PageEnvironment.EmbedScriptString(System.Text.StringBuilder,System.String,System.String,System.Boolean)">
             <summary>
             Embeds a piece of script into the page uniquely by id. 
@@ -491,6 +496,11 @@
             <param name="script"></param>
             <param name="id"></param>
             <param name="addScriptTags"></param>
+        </member>
+        <member name="P:Westwind.Web.Mvc.PageEnvironment.CachedPageInstance">
+            <summary>
+            Internal Cached Page instance for access to client script
+            </summary>
         </member>
         <member name="M:Westwind.Web.Mvc.PageEnvironment.GetWebResourceUrl(System.Type,System.String)">
             <summary>
@@ -515,16 +525,6 @@
             <param name="output"></param>
             <param name="url"></param>
             <param name="id"></param>
-        </member>
-        <member name="P:Westwind.Web.Mvc.PageEnvironment.Current">
-            <summary>
-            Current Page State Instance
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Mvc.PageEnvironment.CachedPageInstance">
-            <summary>
-            Internal Cached Page instance for access to client script
-            </summary>
         </member>
         <member name="T:Westwind.Web.Mvc.UrlHelperExtensions">
             <summary>
@@ -651,6 +651,11 @@
             work, but works outside of the context of MVC
             </summary>
         </member>
+        <member name="P:Westwind.Web.Mvc.ViewRenderer.Context">
+            <summary>
+            Required Controller Context
+            </summary>
+        </member>
         <member name="M:Westwind.Web.Mvc.ViewRenderer.#ctor(System.Web.Mvc.ControllerContext)">
             <summary>
             Initializes the ViewRenderer with a Context.
@@ -673,6 +678,18 @@
             <param name="model">The model to render the view with</param>
             <returns>String of the rendered view or null on error</returns>
         </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderView(System.String,System.Object,System.IO.TextWriter)">
+            <summary>
+            Renders a full MVC view to a writer. Will render with the full MVC
+            View engine including running _ViewStart and merging into _Layout        
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">The model to render the view with</param>
+            <returns>String of the rendered view or null on error</returns>
+        </member>
         <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderPartialViewToString(System.String,System.Object)">
             <summary>
             Renders a partial MVC view to string. Use this method to render
@@ -685,6 +702,19 @@
             </param>
             <param name="model">The model to pass to the viewRenderer</param>
             <returns>String of the rendered view or null on error</returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderPartialView(System.String,System.Object,System.IO.TextWriter)">
+            <summary>
+            Renders a partial MVC view to given Writer. Use this method to render
+            a partial view that doesn't merge with _Layout and doesn't fire
+            _ViewStart.
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">The model to pass to the viewRenderer</param>
+            <param name="writer">Writer to render the view to</param>
         </member>
         <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderView(System.String,System.Object,System.Web.Mvc.ControllerContext)">
             <summary>
@@ -700,6 +730,52 @@
             <param name="controllerContext">Active Controller context</param>
             <returns>String of the rendered view or null on error</returns>
         </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderView(System.String,System.IO.TextWriter,System.Object,System.Web.Mvc.ControllerContext)">
+            <summary>
+            Renders a partial MVC view to the given writer. Use this method to render
+            a partial view that doesn't merge with _Layout and doesn't fire
+            _ViewStart.
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">The model to pass to the viewRenderer</param>
+            <param name="writer">Writer to render the view to</param>
+            <param name="controllerContext">Active Controller context</param>
+            <returns>String of the rendered view or null on error</returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderView(System.String,System.Object,System.Web.Mvc.ControllerContext,System.String@)">
+            <summary>
+            Renders a partial MVC view to string. Use this method to render
+            a partial view that doesn't merge with _Layout and doesn't fire
+            _ViewStart.
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">The model to pass to the viewRenderer</param>
+            <param name="controllerContext">Active Controller context</param>
+            <param name="errorMessage">optional out parameter that captures an error message instead of throwing</param>
+            <returns>String of the rendered view or null on error</returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderView(System.String,System.Object,System.IO.TextWriter,System.Web.Mvc.ControllerContext,System.String@)">
+            <summary>
+            Renders a partial MVC view to the given writer. Use this method to render
+            a partial view that doesn't merge with _Layout and doesn't fire
+            _ViewStart.
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">The model to pass to the viewRenderer</param>
+            <param name="controllerContext">Active Controller context</param>
+            <param name="writer">Writer to render the view to</param>
+            <param name="errorMessage">optional out parameter that captures an error message instead of throwing</param>
+            <returns>String of the rendered view or null on error</returns>
+        </member>
         <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderPartialView(System.String,System.Object,System.Web.Mvc.ControllerContext)">
             <summary>
             Renders a partial MVC view to string. Use this method to render
@@ -713,6 +789,34 @@
             <param name="model">The model to pass to the viewRenderer</param>
             <param name="controllerContext">Active controller context</param>
             <returns>String of the rendered view or null on error</returns>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderPartialView(System.String,System.IO.TextWriter,System.Object,System.Web.Mvc.ControllerContext)">
+            <summary>
+            Renders a partial MVC view to string. Use this method to render
+            a partial view that doesn't merge with _Layout and doesn't fire
+            _ViewStart.
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">The model to pass to the viewRenderer</param>
+            <param name="controllerContext">Active controller context</param>
+            <param name="writer">Text writer to render view to</param>
+            <param name="errorMessage">optional output parameter to receive an error message on failure</param>
+        </member>
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderViewToWriterInternal(System.String,System.IO.TextWriter,System.Object,System.Boolean)">
+            <summary>
+            Internal method that handles rendering of either partial or 
+            or full views.
+            </summary>
+            <param name="viewPath">
+            The path to the view to render. Either in same controller, shared by 
+            name or as fully qualified ~/ path including extension
+            </param>
+            <param name="model">Model to render the view with</param>
+            <param name="partial">Determines whether to render a full or partial view</param>
+            <param name="writer">Text writer to render view to</param>
         </member>
         <member name="M:Westwind.Web.Mvc.ViewRenderer.RenderViewToStringInternal(System.String,System.Object,System.Boolean)">
             <summary>
@@ -736,11 +840,6 @@
             <returns>Controller Context for T</returns>
             <exception cref="T:System.InvalidOperationException">thrown if HttpContext not available</exception>
         </member>
-        <member name="P:Westwind.Web.Mvc.ViewRenderer.Context">
-            <summary>
-            Required Controller Context
-            </summary>
-        </member>
         <member name="T:Westwind.Web.Mvc.EmptyController">
             <summary>
             Empty MVC Controller instance used to 
@@ -756,6 +855,17 @@
         <member name="F:Westwind.Web.Mvc.PagingDetails.ClientPageClickHandler">
             <summary>
             Client handler function called on POST operation with page number as parameter
+            </summary>
+        </member>
+        <member name="P:AlbumViewerAngular.CallbackExceptionHandlerAttribute.AllowExceptionDetail">
+            <summary>
+            Determines whether ExceptionDetail is allowed
+            </summary>
+        </member>
+        <member name="P:AlbumViewerAngular.CallbackExceptionHandlerAttribute.ShowErrorPageInDebugMode">
+            <summary>
+            When true returns standard ASP.NET yellow screen of death
+            when DebugMode is enabled.
             </summary>
         </member>
     </members>

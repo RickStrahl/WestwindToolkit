@@ -30,13 +30,27 @@ namespace AlbumViewerTests
             Assert.IsNotNull(artists, albumBus.ErrorMessage);
 
             
-            foreach (object art in artists)
-            {
-                var artist = (dynamic) art;
-                string name = artist.ArtistName;
+            foreach (var artist in artists)
+            {                
+                string name = artist.ArtistName as string;
                 int count = artist.AlbumCount;
                 Console.WriteLine(name + " (" + count + ")");
             }
         }
+
+        [TestMethod]
+        public void GetAlbumsTest()
+        {
+            var albumBus = new AlbumBusiness();
+            var albums = albumBus.GetAllAlbums();
+            Assert.IsNotNull(albums, albumBus.ErrorMessage);
+
+            var albumList = albums.ToList();
+
+            Console.WriteLine(albumList.Count);
+
+            Assert.IsTrue(albumList.Count > 0, "List should return some data.");
+        }
+
     }
 }

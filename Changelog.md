@@ -1,13 +1,13 @@
 # West Wind Toolkit Change Log
 
-### Version 2.65
-*not released yet*
+### Version 2.66
+*January 12, 2016*
 
-* **SqlDataAccess.QueryList<T>()**
-<small>Westwind.Utilities</small>
-New method that returns List<T> for a query into an entity. This method directly returns a list and is slightly more efficient than the Query<T>() plus .ToList() as it just directly grabs elements into the list.
+* **SqlDataAccess.QueryList<T>()**  
+<small>Westwind.Utilities</small>  
+New method that returns List<T> for a query into an entity. This method directly returns a list and is slightly more efficient than the Query<T>() (which returns an IEnumerable) plus .ToList() as it just directly grabs elements into the list.
 
-* **resizable jQuery Plugin**  
+* **resizable jQuery Plugin in ww.jquery.js**  
 <small>Westwind.Web</small>    
 Added a minimal jQuery().resizable() plugin to allow simple resizing of elements via sizing handle element.
 
@@ -19,48 +19,48 @@ Added a debounce() function that delays multiple quick firing events to a specif
 <small>Westwind.Web</small>
 Cleaned up a number of minor issues in ww.jquery.js. Fix small issue in jquery-watch when using old IE versions and MutationObserver option in FireFox. Remove shadow functionality from the tooltip plug-in for IE old - now only CSS is used which removes a bunch of otherwise redundant code. Removed other IE old shadow effects from various plugins resulting in reduction of size.
 
-* **Add TextWriter support to MVC ViewRenderer**
-<small>Westwind.Web.Mvc</small>
+* **Add TextWriter support to MVC ViewRenderer**  
+<small>Westwind.Web.Mvc</small>  
 Add TextWriter output support to the ViewRenderer class for better compatibility with MVC and to support output from large templates directly to stream or file rather than to string first.
 
-* **Fixes to UrlEncodingParser**
-<small>Westwind.Utilities</small>
+* **Fixes to UrlEncodingParser**   
+<small>Westwind.Utilities</small>  
 Fix a number of small issues in the UrlEncodingParser class used to create and parse UrlEncoded content easily. Fixed several null exception scenarios.
 
-* **HttpClient.UseGZip optimizations**
-<small>Westwind.Utilities</small>
+* **HttpClient.UseGZip optimizations**   
+<small>Westwind.Utilities</small>  
 The HttpClient class now uses the built in decompression tooling in .NET for HttpWebRequest to handle GZip/Deflate compression on request and response content removing the manual filtering. 
 
-* **HttpClient.HttpTimings object to track Request Time**
-<small>Westwind.Utilities</small>
+* **HttpClient.HttpTimings object to track Request Time**  
+<small>Westwind.Utilities</small>  
 HttpClient now includes an HttpTimings sub object that contains started and end times for a request. End times provide for first byte and last byte timings as part of every request (except for stream results).
 
 ### Version 2.64
 *June 25th, 2015*
 
 * **JsonVariables prevent XSS by encoding < and > in JSON**<br/>
-<small>Westwind.Web</small><br/>
+<small>Westwind.Web</small>  
 The JsonVariables utility that allows embedding of server side data into client script has been updated to generate < and > tags as encoded strings to prevent XSS attacks when rendering.
 
 * **CallbackHandler improved JSON.NET Suppport**<br/>
-<small>Westwind.Web</small><br/>
+<small>Westwind.Web</small>   
 Switched to hard linked JSON.NET support in CallbackHandler instead of the previous dynamic loading to avoid the assembly reference to JSON.NET. This fixes odd version incompatibilities that have been reported as well as improving JSON performance slightly.
 
 * **Add Async Support for HttpClient**
-<small>Westwind.Utilities</small><br/>
+<small>Westwind.Utilities</small>   
 Added support for Async methods to the HttpClient Class for DownloadBytesAsync() and DownloadStringAsync(). Also optimized throughput and fixed explicit disposal of one of the internal streams that previously slowed down high volume requests.
  
-* **ImageUtils.NormalizeJpgImageRotation**<br/>
-<small>Westwind.Utilities</small><br/>
+* **ImageUtils.NormalizeJpgImageRotation**  
+<small>Westwind.Utilities</small>  
 Method that looks at Exif Orientation data in a jpeg file and rotates the image to match the orientation before removing the Exif data. Useful when capturing images from mobile device which often are natively rotated and contain.
 
-* **ImageUtils.StripJgpExifData**<br/>
-<small>Westwind.Utilities</small><br/>
+* **ImageUtils.StripJgpExifData**  
+<small>Westwind.Utilities</small>  
 Removes Exif data from Jpg images. Helps reduce size of images and normalizes images and keeps them from auto-rotating.
 
 
 ### Version 2.63
-* April 30th, 2015*
+*April 30th, 2015*
 
 * **CallbackExceptionHandlerAttribute for MVC Controllers**<br/>
 <small>Westwind.Web.Mvc</small><br/>

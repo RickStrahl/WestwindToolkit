@@ -23,7 +23,7 @@ namespace AlbumViewerBusiness.Migrations
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Artists", t => t.ArtistId)
                 .Index(t => t.ArtistId);
-
+            
             CreateTable(
                 "dbo.Artists",
                 c => new
@@ -35,7 +35,7 @@ namespace AlbumViewerBusiness.Migrations
                         AmazonUrl = c.String(maxLength: 256),
                     })
                 .PrimaryKey(t => t.Id);
-
+            
             CreateTable(
                 "dbo.Tracks",
                 c => new

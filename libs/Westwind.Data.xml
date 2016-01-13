@@ -98,10 +98,41 @@
             Maps to the Context property. 
             </typeparam>
         </member>
-        <member name="T:Westwind.Data.EfCodeFirst.IBusinessObject`1">
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.DbSet">
             <summary>
-            Marker interface for business objects and so we have access to
-            DbContext instance.
+            Internally re-usable DbSet instance.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ObjectContext">
+            <summary>
+            Get an instance of the underlying object context
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ValidationErrors">
+            <summary>
+            A collection that can be used to hold errors or
+            validation errors. This 
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.AutoValidate">
+            <summary>
+            Determines whether or not the Save operation causes automatic
+            validation
+            </summary>                        
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Entity">
+            <summary>
+            Internally loaded instance from load and newentity calls
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ErrorMessage">
+            <summary>
+            Error Message of the last exception
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ErrorException">
+            <summary>
+            Instance of an exception object that caused the last error
             </summary>
         </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.#ctor">
@@ -263,7 +294,7 @@
             <param name="addNew"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Delete(System.Object,System.Boolean)">
+        <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Delete(System.Object,System.Boolean,System.Boolean)">
             <summary>
             Deletes an entity from the main entity set
             based on a key value.
@@ -344,6 +375,11 @@
             </param>
             <returns></returns>
         </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.TransactionScopeOptions">
+            <summary>
+            Default TransactionScope options for CreateTransactionScope
+            </summary>
+        </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.CreateTransactionScope(System.Transactions.IsolationLevel)">
             <summary>
             Allows you to configure how the transaction scope is created internally.
@@ -406,6 +442,7 @@
             </summary>
             <param name="entity">The entity to be validated</param>
         </member>
+        <!-- Badly formed XML comment ignored for member "P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Properties" -->
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.GetProperty(System.String)">
             <summary>
             Retrieves a value from the Properties collection safely.
@@ -564,49 +601,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.DbSet">
-            <summary>
-            Internally re-usable DbSet instance.
-            </summary>
-        </member>
-        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ObjectContext">
-            <summary>
-            Get an instance of the underlying object context
-            </summary>
-        </member>
-        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ValidationErrors">
-            <summary>
-            A collection that can be used to hold errors or
-            validation errors. This 
-            </summary>
-        </member>
-        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.AutoValidate">
-            <summary>
-            Determines whether or not the Save operation causes automatic
-            validation
-            </summary>                        
-        </member>
-        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Entity">
-            <summary>
-            Internally loaded instance from load and newentity calls
-            </summary>
-        </member>
-        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ErrorMessage">
-            <summary>
-            Error Message of the last exception
-            </summary>
-        </member>
-        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.ErrorException">
-            <summary>
-            Instance of an exception object that caused the last error
-            </summary>
-        </member>
-        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.TransactionScopeOptions">
-            <summary>
-            Default TransactionScope options for CreateTransactionScope
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "P:Westwind.Data.EfCodeFirst.EfCodeFirstBusinessBase`2.Properties" -->
         <member name="T:Westwind.Data.EfCodeFirst.EfCodeFirstContext">
             <summary>
             Optional customized EF CodeFirst Context class that adds 
@@ -617,6 +611,15 @@
             instead of DbContext only if you need more sophisticated
             low level data access.
             </summary>
+        </member>
+        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstContext.Db">
+            <summary>
+            Low level ADO.NET SQL data access object that
+            allows simple abstractions of the most common
+            data operations. Execute queries, run non-queries
+            retrieve scalars, retrieve lists to objects and call
+            stored procedures directly and easily.
+            </summary>        
         </member>
         <member name="M:Westwind.Data.EfCodeFirst.EfCodeFirstContext.#ctor(Westwind.Utilities.Data.DataAccessBase)">
             <summary>
@@ -632,14 +635,11 @@
             <param name="nameOrConnectionString"></param>
             <param name="providerName"></param>
         </member>
-        <member name="P:Westwind.Data.EfCodeFirst.EfCodeFirstContext.Db">
+        <member name="T:Westwind.Data.EfCodeFirst.IBusinessObject`1">
             <summary>
-            Low level ADO.NET SQL data access object that
-            allows simple abstractions of the most common
-            data operations. Execute queries, run non-queries
-            retrieve scalars, retrieve lists to objects and call
-            stored procedures directly and easily.
-            </summary>        
+            Marker interface for business objects and so we have access to
+            DbContext instance.
+            </summary>
         </member>
         <member name="T:Westwind.Data.Properties.Resources">
             <summary>

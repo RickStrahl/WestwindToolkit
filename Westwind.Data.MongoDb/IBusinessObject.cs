@@ -3,8 +3,7 @@ using System;
 namespace Westwind.Data.MongoDb
 {
     /// <summary>
-    /// Marker interface for business object and so we have access to
-    /// DbContext instance.
+    /// Marker interface for business object
     /// </summary>
     public interface IBusinessObject
     {       

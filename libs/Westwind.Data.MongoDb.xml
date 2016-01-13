@@ -10,150 +10,6 @@
             each entity has an Id property    
             </summary>
         </member>
-        <member name="T:Westwind.Utilities.Logging.MongoDbLogAdapter">
-            <summary>
-            Log adapter that writes to a SQL Server Database
-            </summary>
-        </member>
-        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.#ctor(System.String,System.String)">
-            <summary>
-            Must pass in a SQL Server connection string or 
-            config ConnectionString Id.
-            </summary>
-            <param name="connectionString">Connection string to a MongoDb database</param>        
-            <param name="tableName">Name of the table to create in MongoDb database</param>        
-        </member>
-        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.#ctor">
-            <summary>
-            this version configures itself from the LogManager 
-            configuration section
-            </summary>
-        </member>
-        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.WriteEntry(Westwind.Utilities.Logging.WebLogEntry)">
-            <summary>
-            Writes a new Web specific entry into the log file
-            
-            Assumes that your log file is set up to be a Web Log file
-            </summary>
-            <param name="webEntry"></param>
-            <returns></returns>
-            <exception cref="T:System.InvalidOperationException">Thrown if the insert operation fails</exception>
-        </member>
-        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.GetEntry(System.Int32)">
-            <summary>
-            Returns an individual Web log entry from the log table
-            </summary>
-            <param name="id"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.GetEntries(Westwind.Utilities.Logging.ErrorLevels,System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String)">
-            <summary>
-            Returns entries for a given error level, and date range
-            </summary>
-            <param name="errorLevel"></param>
-            <param name="count"></param>
-            <param name="dateFrom"></param>
-            <param name="dateTo"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.CreateLog">
-            <summary>
-            Creates a new log table in the current database. If the table exists already it
-            is dropped and recreated.
-            
-            Requires database admin access.
-            </summary>
-            <param name="logType"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.DeleteLog">
-            <summary>
-            Deletes the Sql Log Table
-            </summary>
-            <param name="logType"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.Clear">
-            <summary>
-            Clears all the records of the log table
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.Clear(System.Int32)">
-            <summary>
-            Clears the table and leaves the last number of records specified intact
-            Note: the count to Leave is ignored
-            </summary>
-            <param name="countToLeave"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.GetEntryCount(Westwind.Utilities.Logging.ErrorLevels)">
-            <summary>
-            Returns the number of total log entries
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="P:Westwind.Utilities.Logging.MongoDbLogAdapter.LogFilename">
-            <summary>
-            The name of the table that data in SQL Server is written to
-            </summary>
-        </member>
-        <member name="P:Westwind.Utilities.Logging.MongoDbLogAdapter.MongoBusiness">
-            <summary>
-            Instance of the MongoDb core database instance.
-            </summary>
-        </member>
-        <member name="T:Westwind.Data.MongoDb.MongoDbContext">
-            <summary>
-            Describes a Mongo Applications overall connectivity and 
-            status for a MongoDb connection.
-            
-            This class handles some connection and Configuration
-            tasks for Mongo globally.
-            </summary>
-        </member>
-        <member name="M:Westwind.Data.MongoDb.MongoDbContext.SetConventions(System.Collections.Generic.IEnumerable{MongoDB.Bson.Serialization.Conventions.IConvention})">
-            <summary>
-            Sets MongoDb global Conventions
-            
-            This method should be called only once on startup
-            </summary>
-            <param name="conventions"></param>
-        </member>
-        <member name="M:Westwind.Data.MongoDb.MongoDbContext.GetDatabase(System.String,System.String)">
-            <summary>
-            Creates a connection to a databaseName based on the Databasename and 
-            optional server connection string.
-            
-            Returned Mongo DatabaseName 'connection' can be cached and reused.
-            </summary>
-            <param name="connectionString">Mongo server connection string.
-            Can either be a connection string entry name from the ConnectionStrings
-            section in the config file or a full server string.        
-            If not specified looks for connectionstring entry in  same name as
-            the context. Failing that mongodb://localhost is used.
-             
-            Examples:
-            MyDatabaseConnectionString   (ConnectionStrings Config Name)       
-            mongodb://localhost
-            mongodb://localhost:22011/MyDatabase
-            mongodb://username:password@localhost:22011/MyDatabase        
-            </param>        
-            <param name="databaseName">Name of the databaseName to work with if not specified on the connection string</param>
-            <returns>Database instance</returns>
-        </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbContext.ConnectionString">
-            <summary>
-            A full connection string to a MongoDb server
-            Optionally include the database name as a path        
-            </summary>
-        </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbContext.DatabaseName">
-            <summary>
-            The name of the database to access if not specified
-            on the connectionstring path.
-            </summary>
-        </member>
         <member name="T:Westwind.Data.MongoDb.MongoDbDataAccess">
             <summary>
             A non-generic version of the Mongo data access component that requires explicitly
@@ -170,6 +26,40 @@
             results into. this is mainly a convenience parameter that removes
             the need to specify a generic type for each operation.
             </typeparam>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbDataAccess`1.Database">
+            <summary>
+            Instance of the MongoDb core database instance.
+            Set internally when the driver is initialized.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbDataAccess`1.ConnectionString">
+            <summary>
+            ConnectionString to the database
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbDataAccess`1.DatabaseName">
+            <summary>
+            Name of the database that this instance is connected to
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbDataAccess`1.Collection">
+            <summary>
+            Re-usable MongoDb Collection instance.
+            Set internally when the driver is initialized
+            and accessible after that.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbDataAccess`1.ErrorMessage">
+            <summary>
+            Error Message set by the last operation. Check if 
+            results of a method call return an error status.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbDataAccess`1.ErrorException">
+            <summary>
+            Instance of an exception object that caused the last error
+            </summary>
         </member>
         <member name="M:Westwind.Data.MongoDb.MongoDbDataAccess`1.#ctor(System.String,System.String,System.String)">
             <summary>
@@ -483,39 +373,56 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbDataAccess`1.Database">
+        <member name="T:Westwind.Data.MongoDb.MongoDbContext">
             <summary>
-            Instance of the MongoDb core database instance.
-            Set internally when the driver is initialized.
+            Describes a Mongo Applications overall connectivity and 
+            status for a MongoDb connection.
+            
+            This class handles some connection and Configuration
+            tasks for Mongo globally.
             </summary>
         </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbDataAccess`1.ConnectionString">
+        <member name="P:Westwind.Data.MongoDb.MongoDbContext.ConnectionString">
             <summary>
-            ConnectionString to the database
+            A full connection string to a MongoDb server
+            Optionally include the database name as a path        
             </summary>
         </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbDataAccess`1.DatabaseName">
+        <member name="P:Westwind.Data.MongoDb.MongoDbContext.DatabaseName">
             <summary>
-            Name of the database that this instance is connected to
+            The name of the database to access if not specified
+            on the connectionstring path.
             </summary>
         </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbDataAccess`1.Collection">
+        <member name="M:Westwind.Data.MongoDb.MongoDbContext.SetConventions(System.Collections.Generic.IEnumerable{MongoDB.Bson.Serialization.Conventions.IConvention})">
             <summary>
-            Re-usable MongoDb Collection instance.
-            Set internally when the driver is initialized
-            and accessible after that.
+            Sets MongoDb global Conventions
+            
+            This method should be called only once on startup
             </summary>
+            <param name="conventions"></param>
         </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbDataAccess`1.ErrorMessage">
+        <member name="M:Westwind.Data.MongoDb.MongoDbContext.GetDatabase(System.String,System.String)">
             <summary>
-            Error Message set by the last operation. Check if 
-            results of a method call return an error status.
+            Creates a connection to a databaseName based on the Databasename and 
+            optional server connection string.
+            
+            Returned Mongo DatabaseName 'connection' can be cached and reused.
             </summary>
-        </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbDataAccess`1.ErrorException">
-            <summary>
-            Instance of an exception object that caused the last error
-            </summary>
+            <param name="connectionString">Mongo server connection string.
+            Can either be a connection string entry name from the ConnectionStrings
+            section in the config file or a full server string.        
+            If not specified looks for connectionstring entry in  same name as
+            the context. Failing that mongodb://localhost is used.
+             
+            Examples:
+            MyDatabaseConnectionString   (ConnectionStrings Config Name)       
+            mongodb://localhost
+            mongodb://localhost:22011/MyDatabase
+            mongodb://username:password@localhost:22011/MyDatabase        
+            </param>        
+            <param name="databaseName">Name of the databaseName to work with if not specified on the connection string</param>
+            <returns>Database instance</returns>
         </member>
         <member name="T:Westwind.Data.MongoDb.MongoDbBusinessBase`2">
             <summary>
@@ -546,10 +453,45 @@
             A MongoDbContext type that configures MongoDb driver behavior and startup operation.
             </typeparam>
         </member>
-        <member name="T:Westwind.Data.MongoDb.IBusinessObject">
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Database">
             <summary>
-            Marker interface for business object and so we have access to
-            DbContext instance.
+            Instance of the MongoDb core database instance.
+            Set internally when the driver is initialized.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Collection">
+            <summary>
+            Re-usable MongoDb Collection instance.
+            Set internally when the driver is initialized
+            and accessible after that.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ValidationErrors">
+            <summary>
+            A collection that holds validation errors after Validate()
+            or Save with AutoValidate on is called
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.AutoValidate">
+            <summary>
+            Determines whether or not the Save operation causes automatic
+            validation. Default is false.
+            </summary>                        
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Entity">
+            <summary>
+            Internally loaded instance from load and newentity calls
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ErrorMessage">
+            <summary>
+            Error Message set by the last operation. Check if 
+            results of a method call return an error status.
+            </summary>
+        </member>
+        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ErrorException">
+            <summary>
+            Instance of an exception object that caused the last error
             </summary>
         </member>
         <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.#ctor(System.String,System.String,System.String)">
@@ -827,13 +769,39 @@
             </remarks>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ParseObject(System.Object)">
+            <summary>
+            Parses an .NET object into a BSON document
+            </summary>
+            <param name="data">.NET object ir value</param>
+            <returns></returns>
+        </member>
         <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.SaveFromJson(System.String,System.String)">
             <summary>
-            Saves 
+            Saves a Json string based document into a collection.        
             </summary>
-            <param name="entity"></param>
-            <param name="collectionName"></param>
+            <remarks>
+            If you have _id or Id properties make sure those are strings or BSON Ids.
+            Integer values cannot be saved as Ids.
+            </remarks>
+            <param name="collectionName">Name of the collection to write to</param>
             <returns>Id of object saved</returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.SaveFromObject(System.Object,System.String)">
+            <summary>
+            Saves a generic object to a collection
+            </summary>
+            <param name="data">.NET object to save</param>
+            <param name="collectionName">name of the collection to save to</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.SaveFromDocument(MongoDB.Bson.BsonDocument,System.String)">
+            <summary>
+            Saves a BSON document to a collection by name
+            </summary>
+            <param name="doc">A populated BSON document</param>
+            <param name="collectionName">Collection to save to</param>
+            <returns></returns>
         </member>
         <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.OnBeforeSave(`0)">
             <summary>
@@ -884,6 +852,7 @@
             </summary>
             <param name="entity">The entity to be validated</param>
         </member>
+        <!-- Badly formed XML comment ignored for member "P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Properties" -->
         <member name="M:Westwind.Data.MongoDb.MongoDbBusinessBase`2.GetProperty(System.String)">
             <summary>
             Retrieves a value from the Properties collectionName safely.
@@ -931,48 +900,6 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Database">
-            <summary>
-            Instance of the MongoDb core database instance.
-            Set internally when the driver is initialized.
-            </summary>
-        </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Collection">
-            <summary>
-            Re-usable MongoDb Collection instance.
-            Set internally when the driver is initialized
-            and accessible after that.
-            </summary>
-        </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ValidationErrors">
-            <summary>
-            A collection that holds validation errors after Validate()
-            or Save with AutoValidate on is called
-            </summary>
-        </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.AutoValidate">
-            <summary>
-            Determines whether or not the Save operation causes automatic
-            validation. Default is false.
-            </summary>                        
-        </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Entity">
-            <summary>
-            Internally loaded instance from load and newentity calls
-            </summary>
-        </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ErrorMessage">
-            <summary>
-            Error Message set by the last operation. Check if 
-            results of a method call return an error status.
-            </summary>
-        </member>
-        <member name="P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.ErrorException">
-            <summary>
-            Instance of an exception object that caused the last error
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "P:Westwind.Data.MongoDb.MongoDbBusinessBase`2.Properties" -->
         <member name="T:Westwind.Data.MongoDb.MongoDbBusinessBase">
             <summary>
             A MongoDb Business object and data acces library that provides a thin 
@@ -989,6 +916,11 @@
             connectionstring name.
             </summary>
             <param name="connectionString">Connection string name</param>
+        </member>
+        <member name="T:Westwind.Data.MongoDb.IBusinessObject">
+            <summary>
+            Marker interface for business object
+            </summary>
         </member>
         <member name="T:Westwind.Data.MongoDb.Pluralizer">
             <summary>
@@ -1027,6 +959,99 @@
             <summary>
               Looks up a localized string similar to Couldn&apos;t load Entity - invalid key provided..
             </summary>
+        </member>
+        <member name="T:Westwind.Utilities.Logging.MongoDbLogAdapter">
+            <summary>
+            Log adapter that writes to a SQL Server Database
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.Logging.MongoDbLogAdapter.LogFilename">
+            <summary>
+            The name of the table that data in SQL Server is written to
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.Logging.MongoDbLogAdapter.MongoBusiness">
+            <summary>
+            Instance of the MongoDb core database instance.
+            </summary>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.#ctor(System.String,System.String)">
+            <summary>
+            Must pass in a SQL Server connection string or 
+            config ConnectionString Id.
+            </summary>
+            <param name="connectionString">Connection string to a MongoDb database</param>        
+            <param name="tableName">Name of the table to create in MongoDb database</param>        
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.#ctor">
+            <summary>
+            this version configures itself from the LogManager 
+            configuration section
+            </summary>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.WriteEntry(Westwind.Utilities.Logging.WebLogEntry)">
+            <summary>
+            Writes a new Web specific entry into the log file
+            
+            Assumes that your log file is set up to be a Web Log file
+            </summary>
+            <param name="webEntry"></param>
+            <returns></returns>
+            <exception cref="T:System.InvalidOperationException">Thrown if the insert operation fails</exception>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.GetEntry(System.Int32)">
+            <summary>
+            Returns an individual Web log entry from the log table
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.GetEntries(Westwind.Utilities.Logging.ErrorLevels,System.Int32,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.String)">
+            <summary>
+            Returns entries for a given error level, and date range
+            </summary>
+            <param name="errorLevel"></param>
+            <param name="count"></param>
+            <param name="dateFrom"></param>
+            <param name="dateTo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.CreateLog">
+            <summary>
+            Creates a new log table in the current database. If the table exists already it
+            is dropped and recreated.
+            
+            Requires database admin access.
+            </summary>
+            <param name="logType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.DeleteLog">
+            <summary>
+            Deletes the Sql Log Table
+            </summary>
+            <param name="logType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.Clear">
+            <summary>
+            Clears all the records of the log table
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.Clear(System.Int32)">
+            <summary>
+            Clears the table and leaves the last number of records specified intact
+            Note: the count to Leave is ignored
+            </summary>
+            <param name="countToLeave"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Logging.MongoDbLogAdapter.GetEntryCount(Westwind.Utilities.Logging.ErrorLevels)">
+            <summary>
+            Returns the number of total log entries
+            </summary>
+            <returns></returns>
         </member>
     </members>
 </doc>

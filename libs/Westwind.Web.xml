@@ -73,18 +73,21 @@
             JsonCallbacks.ashx/jsdebug
             </summary>
         </member>
-        <member name="T:Westwind.Web.CallbackException">
-            <summary>
-            Special return type used to indicate that an exception was
-            fired on the server. This object is JSON serialized and the
-            client can check for Result.IsCallbackError to see if a 
-            a failure occured on the server.
-            </summary>    
-        </member>
-        <member name="T:Westwind.Web.CallbackMessage">
+        <member name="T:Westwind.Web.CallbackErrorResponseMessage">
             <summary>
             Special return type that can be used to return messages to the
             caller directly rather than throwing an exception.
+            </summary>    
+        </member>
+        <member name="T:Westwind.Web.CallbackException">
+            <summary>
+            Special exception type used to indicate that an exception was
+            fired on the server for a JSON callback. This exception is captured
+            by the CallbackHandler and serialized into CallbackErrorResponse
+            to the client in a consistent format.
+            
+            Also used in various MVC related AJAX error handlers 
+            (BaseController and JsonCallback
             </summary>    
         </member>
         <member name="T:Westwind.Web.CallbackHandler">
@@ -130,12 +133,6 @@
             <see cref="!:_24I0VDWUR">Using CallbackHandler with REST Calls</see>.
             </summary>
         </member>
-        <member name="M:Westwind.Web.CallbackHandler.ProcessRequest(System.Web.HttpContext)">
-            <summary>
-            Handle the actual callback by deferring to JsonCallbackMethodProcessor()
-            </summary>
-            <param name="context"></param>
-        </member>
         <member name="P:Westwind.Web.CallbackHandler.Response">
             <summary>
             Shortcut to the ASP.NET Response object.
@@ -176,6 +173,12 @@
             so we can access it internally
             </summary>
         </member>
+        <member name="M:Westwind.Web.CallbackHandler.ProcessRequest(System.Web.HttpContext)">
+            <summary>
+            Handle the actual callback by deferring to JsonCallbackMethodProcessor()
+            </summary>
+            <param name="context"></param>
+        </member>
         <member name="T:Westwind.Web.CallbackHandlerRouteHandler">
             <summary>
             Route handler that can create instances of CallbackHandler derived
@@ -183,6 +186,20 @@
             creates an instance of the service in a predictable manner
             </summary>
             <typeparam name="TCallbackHandler">CallbackHandler type</typeparam>
+        </member>
+        <member name="P:Westwind.Web.CallbackHandlerRouteHandler.MethodName">
+            <summary>
+            Method name that is to be called on this route.
+            Set by the automatically generated RegisterRoutes 
+            invokatio.n
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.CallbackHandlerRouteHandler.CallbackHandlerType">
+            <summary>
+            The type of the handler we're going to instantiate.
+            Needed so we can semi-generically instantiate the
+            handler and call the method on it.
+            </summary>
         </member>
         <member name="M:Westwind.Web.CallbackHandlerRouteHandler.#ctor(System.String,System.Type)">
             <summary>
@@ -207,29 +224,10 @@
             <typeparam name="TCallbackHandler"></typeparam>
             <param name="routes"></param>
         </member>
-        <member name="P:Westwind.Web.CallbackHandlerRouteHandler.MethodName">
-            <summary>
-            Method name that is to be called on this route.
-            Set by the automatically generated RegisterRoutes 
-            invokatio.n
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.CallbackHandlerRouteHandler.CallbackHandlerType">
-            <summary>
-            The type of the handler we're going to instantiate.
-            Needed so we can semi-generically instantiate the
-            handler and call the method on it.
-            </summary>
-        </member>
         <member name="T:Westwind.Web.CallbackMethodAttribute">
             <summary>
             Marker Attribute to be used on Callback methods. Signals
             parser that the method is allowed to be executed remotely
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.CallbackMethodAttribute.#ctor">
-            <summary>
-            Default Constructor for CallbackMethodAttribute. No functionality added
             </summary>
         </member>
         <member name="P:Westwind.Web.CallbackMethodAttribute.RouteUrl">
@@ -298,6 +296,11 @@
             return string values as raw strings.
             </summary>
         </member>
+        <member name="M:Westwind.Web.CallbackMethodAttribute.#ctor">
+            <summary>
+            Default Constructor for CallbackMethodAttribute. No functionality added
+            </summary>
+        </member>
         <member name="T:Westwind.Web.CallbackMethodProcessorHelper">
             <summary>
             This class provides helper services to the CallbackProcessor classes with 
@@ -320,6 +323,11 @@
             <param name="parameters">An array of json Strings that make up the parameters for the method call. This value can be null in which case parms are parsed out of GET QueryString or POST values</param>
             <param name="callbackMethodAttribute">An optional instance of an CallbackAttribute that is set by this method</param>
             <returns>the result of the method execution</returns>
+        </member>
+        <member name="T:Westwind.Web.CallbackResponseMessage">
+            <summary>
+            A generic Callback/Service Response message object
+            </summary>
         </member>
         <member name="T:Westwind.Web.ICallbackMethodProcessor">
             <summary>
@@ -374,6 +382,11 @@
             describe the incoming parameter data and method to call.
             </summary>
         </member>
+        <member name="P:Westwind.Web.JsonCallbackMethodProcessor.JsonPMethod">
+            <summary>
+            JSONP method parameter value if provided
+            </summary>
+        </member>
         <member name="M:Westwind.Web.JsonCallbackMethodProcessor.ProcessCallbackMethodCall(System.Object,System.String)">
             <summary>
             Generic method that handles processing a Callback request by routing to
@@ -412,11 +425,6 @@
             </summary>
             <param name="ErrorMessage"></param>
         </member>
-        <member name="P:Westwind.Web.JsonCallbackMethodProcessor.JsonPMethod">
-            <summary>
-            JSONP method parameter value if provided
-            </summary>
-        </member>
         <member name="T:Westwind.Web.XmlCallbackMethodProcessor">
             <summary>
             This is the core implementation of the JSON callback method handler that 
@@ -444,6 +452,11 @@
             This processor is expected to execute in an environment where 
             HttpContext.Current is available and where POST data is available to 
             describe the incoming parameter data and method to call.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.XmlCallbackMethodProcessor.JsonDateEncoding">
+            <summary>
+            Implemented only for compatibility
             </summary>
         </member>
         <member name="M:Westwind.Web.XmlCallbackMethodProcessor.ProcessCallbackMethodCall(System.Object,System.String)">
@@ -484,22 +497,11 @@
             </summary>
             <param name="ErrorMessage"></param>
         </member>
-        <member name="P:Westwind.Web.XmlCallbackMethodProcessor.JsonDateEncoding">
-            <summary>
-            Implemented only for compatibility
-            </summary>
-        </member>
         <member name="F:Westwind.Web.JsonSerializers.JSONSerializerBase.masterSerializer">
             <summary>
             Master instance of the JSONSerializer that the user interacts with
             Used to read option properties
             </summary>
-        </member>
-        <member name="M:Westwind.Web.JsonSerializers.JSONSerializerBase.#ctor(Westwind.Web.JsonSerializers.JSONSerializer)">
-            <summary>
-             Force a master Serializer to be passed for settings
-            </summary>
-            <param name="serializer"></param>
         </member>
         <member name="P:Westwind.Web.JsonSerializers.JSONSerializerBase.DateSerializationMode">
             <summary>
@@ -516,6 +518,12 @@
             JSON to make it more easily human readable.
             </summary>
         </member>
+        <member name="M:Westwind.Web.JsonSerializers.JSONSerializerBase.#ctor(Westwind.Web.JsonSerializers.JSONSerializer)">
+            <summary>
+             Force a master Serializer to be passed for settings
+            </summary>
+            <param name="serializer"></param>
+        </member>
         <member name="T:Westwind.Web.JsonSerializers.JsonNetJsonSerializer">
             <summary>
             More text is a basic JSON serializer and deserializer that 
@@ -531,6 +539,17 @@
             <summary>
             Master instance of the JSONSerializer that the user interacts with
             Used to read option properties
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.JsonSerializers.JsonNetJsonSerializer.DateSerializationMode">
+            <summary>
+            ISO or MSAJAX serialization modes. Not supported with JSON.NET
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.JsonSerializers.JsonNetJsonSerializer.FormatJsonOutput">
+            <summary>
+            Determines if there are line breaks inserted into the 
+            JSON to make it more easily human readable.
             </summary>
         </member>
         <member name="M:Westwind.Web.JsonSerializers.JsonNetJsonSerializer.#ctor(Westwind.Web.JsonSerializers.JSONSerializer)">
@@ -591,17 +610,6 @@
             The type of the object that is to be created from the JSON text.
             </param>
         </member>
-        <member name="P:Westwind.Web.JsonSerializers.JsonNetJsonSerializer.DateSerializationMode">
-            <summary>
-            ISO or MSAJAX serialization modes. Not supported with JSON.NET
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.JsonSerializers.JsonNetJsonSerializer.FormatJsonOutput">
-            <summary>
-            Determines if there are line breaks inserted into the 
-            JSON to make it more easily human readable.
-            </summary>
-        </member>
         <member name="T:Westwind.Web.JsonSerializers.JSONSerializer">
             <summary>
             The high level JSON Serializer wrapper that provides 
@@ -632,11 +640,6 @@
             Determines whether fields are serialized. Supported only for the West Wind JSON Serializer        
             </summary>
         </member>
-        <member name="M:Westwind.Web.JsonSerializers.JSONSerializer.#ctor">
-            <summary>
-            Default Constructor - assigns default 
-            </summary>
-        </member>
         <member name="P:Westwind.Web.JsonSerializers.JSONSerializer.DateSerializationMode">
             <summary>
             Determines the date serialization mode supported 
@@ -649,6 +652,11 @@
             JSON to make it more easily human readable.
             
             By default if running in DebugMode this flag will be set to true
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.JsonSerializers.JSONSerializer.#ctor">
+            <summary>
+            Default Constructor - assigns default 
             </summary>
         </member>
         <member name="F:Westwind.Web.JsonSerializers.SupportedJsonParserTypes.WestWindJsonSerializer">
@@ -694,11 +702,6 @@
             of properties.
             </summary>
         </member>
-        <member name="F:Westwind.Web.JsonSerializers.WestwindJsonSerializer.STR_WHITESPACE">
-            <summary>
-            White space checking for char values
-            </summary>
-        </member>
         <member name="F:Westwind.Web.JsonSerializers.WestwindJsonSerializer.DAT_JAVASCRIPT_BASEDATE">
             <summary>
             The JavaScript base date on which all date time values
@@ -713,10 +716,30 @@
             Used to read option properties
             </summary>
         </member>
+        <member name="F:Westwind.Web.JsonSerializers.WestwindJsonSerializer.STR_WHITESPACE">
+            <summary>
+            White space checking for char values
+            </summary>
+        </member>
         <member name="F:Westwind.Web.JsonSerializers.WestwindJsonSerializer._traversedTypes">
             <summary>
             Internally held set of types traversed. Circular references are
             not serialized and return null
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.JsonSerializers.WestwindJsonSerializer.DateSerializationMode">
+            <summary>
+            Encodes Dates as a JSON string value that is compatible
+            with MS AJAX and is safe for JSON validators. If false
+            serializes dates as new Date() expression instead.
+            
+            The default is true.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.JsonSerializers.WestwindJsonSerializer.FormatJsonOutput">
+            <summary>
+            Determines if there are line breaks inserted into the 
+            JSON to make it more easily human readable.
             </summary>
         </member>
         <member name="F:Westwind.Web.JsonSerializers.WestwindJsonSerializer.SerializeFields">
@@ -915,21 +938,6 @@
             </summary>
             <param name="sb"></param>
         </member>
-        <member name="P:Westwind.Web.JsonSerializers.WestwindJsonSerializer.DateSerializationMode">
-            <summary>
-            Encodes Dates as a JSON string value that is compatible
-            with MS AJAX and is safe for JSON validators. If false
-            serializes dates as new Date() expression instead.
-            
-            The default is true.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.JsonSerializers.WestwindJsonSerializer.FormatJsonOutput">
-            <summary>
-            Determines if there are line breaks inserted into the 
-            JSON to make it more easily human readable.
-            </summary>
-        </member>
         <member name="T:Westwind.Web.ClientScriptProxy">
             <summary>
             This is a proxy object for the Page.ClientScript and MS Ajax ScriptManager 
@@ -975,6 +983,15 @@
             Cached value to see whether the script manager is
             on the page. This value caches here once per page.
             </summary>
+        </member>
+        <member name="P:Westwind.Web.ClientScriptProxy.Current">
+            <summary>
+            Current instance of this class which should always be used to 
+            access this object. There are no public constructors to
+            ensure the reference is used as a Singleton to further
+            ensure that all scripts are written to the same clientscript
+            manager.
+            </summary>        
         </member>
         <member name="M:Westwind.Web.ClientScriptProxy.#ctor">
             <summary>
@@ -1160,15 +1177,6 @@
             <param name="hiddenFieldName"></param>
             <param name="hiddenFieldInitialValue"></param>
         </member>
-        <member name="P:Westwind.Web.ClientScriptProxy.Current">
-            <summary>
-            Current instance of this class which should always be used to 
-            access this object. There are no public constructors to
-            ensure the reference is used as a Singleton to further
-            ensure that all scripts are written to the same clientscript
-            manager.
-            </summary>        
-        </member>
         <member name="T:Westwind.Web.ScriptRenderModes">
             <summary>
             Determines how scripts are included into the page
@@ -1277,6 +1285,11 @@
         <member name="F:Westwind.Web.JsonVariables.ScriptVars">
             <summary>Edit
             Internally holds all script variables declared
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.JsonVariables.ClientObjectName">
+            <summary>
+            The name of the object generated in client script code
             </summary>
         </member>
         <member name="F:Westwind.Web.JsonVariables.JsonSerializer">
@@ -1396,11 +1409,6 @@
             Outputs the the dictionary as a JSON string for MVC
             </summary>
             <returns></returns>
-        </member>
-        <member name="P:Westwind.Web.JsonVariables.ClientObjectName">
-            <summary>
-            The name of the object generated in client script code
-            </summary>
         </member>
         <member name="T:Westwind.Web.JavaScriptMinifier">
             <summary>
@@ -1655,6 +1663,12 @@
             The theme that is applied to the jQueryUiCssBaseUrl
             </summary>
         </member>
+        <member name="P:Westwind.Web.ScriptLoader.CachedPage">
+            <summary>
+            Internally used Page instance so we can get access to
+            a Page instance when no Page might be available. To Access ClientScript etc.
+            </summary>
+        </member>
         <member name="M:Westwind.Web.ScriptLoader.LoadjQuery(System.Web.UI.Control,System.String)">
             <summary>
             Loads jQuery depending on configuration settings (CDN, WebResource or site url) 
@@ -1722,12 +1736,6 @@
             <param name="control"></param>
             <param name="jQueryUiUrl">Optional url to jQuery as a virtual or absolute server path</param>
         </member>
-        <member name="P:Westwind.Web.ScriptLoader.CachedPage">
-            <summary>
-            Internally used Page instance so we can get access to
-            a Page instance when no Page might be available. To Access ClientScript etc.
-            </summary>
-        </member>
         <member name="T:Westwind.Web.jQueryLoadModes">
             <summary>
             The location from which jQuery and jQuery UI are loaded
@@ -1768,6 +1776,37 @@
             Ticket data to keep basic user data without having to
             hit the database
             </summary>    
+        </member>
+        <member name="P:Westwind.Web.UserState.Name">
+            <summary>
+            The display name for the userId
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.UserState.Email">
+            <summary>
+            The user's email address or login acount
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.UserState.UserId">
+            <summary>
+            The user's user Id as a string
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.UserState.IsAdmin">
+            <summary>
+            The users admin status
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.UserState.UserIdInt">
+            <summary>
+            Returns the User Id as an int if convertiable
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.UserState.SecurityToken">
+            <summary>
+            A unique id created for this entry that can be used to
+            identify the user outside of the UserState context
+            </summary>
         </member>
         <member name="M:Westwind.Web.UserState.ToString">
             <summary>
@@ -1829,37 +1868,6 @@
             holds user information.
             </summary>
             <returns></returns>
-        </member>
-        <member name="P:Westwind.Web.UserState.Name">
-            <summary>
-            The display name for the userId
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.UserState.Email">
-            <summary>
-            The user's email address or login acount
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.UserState.UserId">
-            <summary>
-            The user's user Id as a string
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.UserState.IsAdmin">
-            <summary>
-            The users admin status
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.UserState.UserIdInt">
-            <summary>
-            Returns the User Id as an int if convertiable
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.UserState.SecurityToken">
-            <summary>
-            A unique id created for this entry that can be used to
-            identify the user outside of the UserState context
-            </summary>
         </member>
         <member name="T:Westwind.Web.ScriptCompressionModule">
             <summary>
@@ -2059,7 +2067,7 @@
             page and highlights it.
             </summary>
             <param name="clientId"></param>
-            <param name="?"></param>
+            <param name="??"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Web.Controls.BindingErrors.ToString">
@@ -2112,7 +2120,7 @@
              is always the UserId.
             <seealso>Class WebStoreCookie</seealso>
             </summary>
-            <param name="String Value">
+            <param name="String ValueValue">
             Writes a value into the specified cookie.
             </param>
             <returns>Void</returns>
@@ -2123,7 +2131,7 @@
              is always the UserId.
             <seealso>Class WebStoreCookie</seealso>
             </summary>
-            <param name="String Value">
+            <param name="String ValueValue">
             Writes a value into the specified cookie.
             </param>
             <returns>Void</returns>
@@ -2244,67 +2252,6 @@
             </summary>
             <param name="Cookie"></param>
         </member>
-        <member name="T:System.Web.HttpRequestBaseExtensions">
-            <summary>
-            HttpRequest Extension methods to facilitate various input retrieval tasks tasks
-            </summary>
-        </member>
-        <member name="M:System.Web.HttpRequestBaseExtensions.IsFormVar(System.Web.HttpRequestBase,System.String)">
-            <summary>
-            Determines whether a form variable exists
-            </summary>
-            <param name="request"></param>
-            <param name="formVarName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:System.Web.HttpRequestBaseExtensions.ParamsInt(System.Web.HttpRequestBase,System.String,System.Int32)">
-            <summary>
-            Returns a value via Params[] and attempts
-            to convert it to an integer.
-            </summary>
-            <param name="request"></param>
-            <param name="FormVarName"></param>
-            <param name="defaultValue"></param>
-            <returns></returns>
-        </member>
-        <member name="M:System.Web.HttpRequestBaseExtensions.ParamsDecimal(System.Web.HttpRequestBase,System.String,System.Decimal)">
-            <summary>
-            Returns a value via Params[] and attempts
-            to convert it to a decimal value.
-            </summary>
-            <param name="request"></param>
-            <param name="FormVarName"></param>
-            <param name="defaultValue"></param>
-            <returns></returns>
-        </member>
-        <member name="T:System.Web.HttpResponseExtensions">
-            <summary>
-            HttpResponse Extension methods to facilitate various output tasks
-            </summary>
-        </member>
-        <member name="M:System.Web.HttpResponseExtensions.WriteLine(System.Web.HttpResponse,System.Object)">
-            <summary>
-            Writes output as an HTML 'line' by appending a &lt;br /&gt; and linefeed at the end
-            </summary>
-            <param name="response"></param>
-            <param name="output">String to output</param>
-        </member>
-        <member name="M:System.Web.HttpResponseExtensions.WriteLine(System.Web.HttpResponse,System.String,System.Object[])">
-            <summary>
-            Writes formatted output as an HTML 'line' by appending a &lt;br /&gt; and linefeed at the end
-            </summary>
-            <param name="response">HttpResponse object</param>
-            <param name="format">format string</param>
-            <param name="args">format string arguments</param>
-        </member>
-        <member name="M:System.Web.HttpResponseExtensions.Write(System.Web.HttpResponse,System.String,System.Object[])">
-            <summary>
-            Writes formatted output into the Response
-            </summary>
-            <param name="response">HttpResponse object</param>
-            <param name="format">format string</param>
-            <param name="args">format string arguments</param>
-        </member>
         <member name="T:Westwind.Web.FormVariableBinder">
             <summary>
             The class that provides FormVariable to Model binding by matching
@@ -2323,27 +2270,6 @@
             then a single '_' will also work. The separator is converted to . when
             parsing for child property names.
             </remarks>
-        </member>
-        <member name="M:Westwind.Web.FormVariableBinder.#ctor(System.Object,System.String)">
-            <summary>        
-            </summary>
-            <param name="model">The object to unbind to</param>
-            <param name="exceptions">Comma seperated list of properties to exclude</param>
-        </member>
-        <member name="M:Westwind.Web.FormVariableBinder.Unbind">
-            <summary>
-            Unbinds form variables into the specified target object 
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Web.FormVariableBinder.Unbind(System.Object,System.String,System.String)">
-            <summary>
-            Unbinds form variable data into a model object.
-            </summary>
-            <param name="model">Object to unbind to</param>
-            <param name="propertyExceptions">Properties to skip</param>
-            <param name="formvarPrefixes">Form Variable prefixes to include. Prefix is stripped. (txtName maps to Name)</param>
-            <returns></returns>
         </member>
         <member name="P:Westwind.Web.FormVariableBinder.Model">
             <summary>
@@ -2372,6 +2298,27 @@
             <summary>
             Binding Errors that occur on unbining into the model
             </summary>
+        </member>
+        <member name="M:Westwind.Web.FormVariableBinder.#ctor(System.Object,System.String)">
+            <summary>        
+            </summary>
+            <param name="model">The object to unbind to</param>
+            <param name="exceptions">Comma seperated list of properties to exclude</param>
+        </member>
+        <member name="M:Westwind.Web.FormVariableBinder.Unbind">
+            <summary>
+            Unbinds form variables into the specified target object 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.FormVariableBinder.Unbind(System.Object,System.String,System.String)">
+            <summary>
+            Unbinds form variable data into a model object.
+            </summary>
+            <param name="model">Object to unbind to</param>
+            <param name="propertyExceptions">Properties to skip</param>
+            <param name="formvarPrefixes">Form Variable prefixes to include. Prefix is stripped. (txtName maps to Name)</param>
+            <returns></returns>
         </member>
         <member name="T:Westwind.Web.ResponseFilterStream">
             <summary>
@@ -2419,69 +2366,6 @@
             
             </summary>
             <param name="responseStream"></param>
-        </member>
-        <member name="M:Westwind.Web.ResponseFilterStream.OnTransformCompleteString(System.String)">
-            <summary>
-            Allows transforming of strings
-            
-            Note this handler is internal and not meant to be overridden
-            as the TransformString Event has to be hooked up in order
-            for this handler to even fire to avoid the overhead of string
-            conversion on every pass through.
-            </summary>
-            <param name="responseText"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Web.ResponseFilterStream.OnTransformCompleteStringInternal(System.IO.MemoryStream)">
-            <summary>
-            Wrapper method form OnTransformString that handles
-            stream to string and vice versa conversions
-            </summary>
-            <param name="ms"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Web.ResponseFilterStream.Seek(System.Int64,System.IO.SeekOrigin)">
-            <summary>
-            
-            </summary>
-            <param name="offset"></param>
-            <param name="direction"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Web.ResponseFilterStream.SetLength(System.Int64)">
-            <summary>
-            
-            </summary>
-            <param name="length"></param>
-        </member>
-        <member name="M:Westwind.Web.ResponseFilterStream.Close">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.ResponseFilterStream.Flush">
-            <summary>
-            Override flush by writing out the cached stream data
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.ResponseFilterStream.Read(System.Byte[],System.Int32,System.Int32)">
-            <summary>
-            
-            </summary>
-            <param name="buffer"></param>
-            <param name="offset"></param>
-            <param name="count"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Web.ResponseFilterStream.Write(System.Byte[],System.Int32,System.Int32)">
-            <summary>
-            Overriden to capture output written by ASP.NET and captured
-            into a cached stream that is written out later when Flush()
-            is called.
-            </summary>
-            <param name="buffer"></param>
-            <param name="offset"></param>
-            <param name="count"></param>
         </member>
         <member name="P:Westwind.Web.ResponseFilterStream.IsCaptured">
             <summary>
@@ -2558,6 +2442,26 @@
             Use with care on large content.
             </summary>
         </member>
+        <member name="M:Westwind.Web.ResponseFilterStream.OnTransformCompleteString(System.String)">
+            <summary>
+            Allows transforming of strings
+            
+            Note this handler is internal and not meant to be overridden
+            as the TransformString Event has to be hooked up in order
+            for this handler to even fire to avoid the overhead of string
+            conversion on every pass through.
+            </summary>
+            <param name="responseText"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.ResponseFilterStream.OnTransformCompleteStringInternal(System.IO.MemoryStream)">
+            <summary>
+            Wrapper method form OnTransformString that handles
+            stream to string and vice versa conversions
+            </summary>
+            <param name="ms"></param>
+            <returns></returns>
+        </member>
         <member name="P:Westwind.Web.ResponseFilterStream.CanRead">
             <summary>
             
@@ -2578,6 +2482,49 @@
             
             </summary>
         </member>
+        <member name="M:Westwind.Web.ResponseFilterStream.Seek(System.Int64,System.IO.SeekOrigin)">
+            <summary>
+            
+            </summary>
+            <param name="offset"></param>
+            <param name="direction"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.ResponseFilterStream.SetLength(System.Int64)">
+            <summary>
+            
+            </summary>
+            <param name="length"></param>
+        </member>
+        <member name="M:Westwind.Web.ResponseFilterStream.Close">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.ResponseFilterStream.Flush">
+            <summary>
+            Override flush by writing out the cached stream data
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.ResponseFilterStream.Read(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            
+            </summary>
+            <param name="buffer"></param>
+            <param name="offset"></param>
+            <param name="count"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.ResponseFilterStream.Write(System.Byte[],System.Int32,System.Int32)">
+            <summary>
+            Overriden to capture output written by ASP.NET and captured
+            into a cached stream that is written out later when Flush()
+            is called.
+            </summary>
+            <param name="buffer"></param>
+            <param name="offset"></param>
+            <param name="count"></param>
+        </member>
         <member name="T:Westwind.Web.ApplicationErrorModule">
             <summary>
             Application Error Module that can be used to handle
@@ -2586,6 +2533,14 @@
             the error handling to OnLogError and OnDisplayError
             hooks to manage only the parts that we are typically
             interested in in error processing.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.ApplicationErrorModule.ErrorHandlingMode">
+            <summary>
+            Determines the error handling mode - 
+            if you want to customize this value override it
+            in your application's startup code or from a configuration
+            value by overriding the Init().
             </summary>
         </member>
         <member name="M:Westwind.Web.ApplicationErrorModule.Init(System.Web.HttpApplication)">
@@ -2623,14 +2578,6 @@
             <param name="errorHandler">Contains formatted error and request information</param>
             <param name="ex">The original exception that caused the error</param>
         </member>
-        <member name="P:Westwind.Web.ApplicationErrorModule.ErrorHandlingMode">
-            <summary>
-            Determines the error handling mode - 
-            if you want to customize this value override it
-            in your application's startup code or from a configuration
-            value by overriding the Init().
-            </summary>
-        </member>
         <member name="T:Westwind.Web.WebErrorHandler">
             <summary>
             Class that can be used to parse ASP.NET and exception error information
@@ -2642,56 +2589,6 @@
             processing error information with hooks for logging and displaying
             of an error page. 
             </summary>
-        </member>
-        <member name="M:Westwind.Web.WebErrorHandler.#ctor(System.Exception)">
-            <summary>
-            Public constructor requires that an exception is passed in. Generally you'll want to do this is in Application_Error
-            and pass in in the InnerException of the error:
-            
-            WebErrorHandler Handler = new WebErrorHandler(Server.GetLastError().InnerException);
-            </summary>
-            <param name="lastException">The Exception to log</param>
-        </member>
-        <member name="M:Westwind.Web.WebErrorHandler.Parse">
-            <summary>
-            Parses the Exception into properties of this object. Called internally 
-            by LogError, but can also be called externally to get easier information
-            about the error through the property interface.
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.WebErrorHandler.ParseServerVariables">
-            <summary>
-            Parses all ServerVariables into a string
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.WebErrorHandler.ParseSourceCode">
-            <summary>
-            Parses source code related properties
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:Westwind.Web.WebErrorHandler.ToString" -->
-        <member name="M:Westwind.Web.WebErrorHandler.HandleError(Westwind.Web.ErrorHandlingModes)">
-            <summary>
-            Semi generic Application_Error handler method that can be used
-            to handle errors without additional code. You should implement
-            the DisplayError event and LogError Event methods to display
-            a message when ErrorHandlingModes is not Default
-            </summary>
-            <param name="errorHandlingMode"></param>
-        </member>
-        <member name="M:Westwind.Web.WebErrorHandler.OnLogError(Westwind.Web.WebErrorHandler,System.Exception)">
-            <summary>
-            Allows overriding for logging error information in a subclass
-            </summary>
-            <param name="error"></param>
-            <param name="ex"></param>
-        </member>
-        <member name="M:Westwind.Web.WebErrorHandler.OnDisplayError(Westwind.Web.WebErrorHandler,Westwind.Web.ErrorViewModel)">
-            <summary>
-            Allows overriding of DisplayError
-            </summary>
-            <param name="error"></param>
-            <param name="model"></param>
         </member>
         <member name="P:Westwind.Web.WebErrorHandler.LastException">
             <summary>
@@ -2810,17 +2707,67 @@
             Gets the HTTP Status Code
             </summary>
         </member>
+        <member name="M:Westwind.Web.WebErrorHandler.#ctor(System.Exception)">
+            <summary>
+            Public constructor requires that an exception is passed in. Generally you'll want to do this is in Application_Error
+            and pass in in the InnerException of the error:
+            
+            WebErrorHandler Handler = new WebErrorHandler(Server.GetLastError().InnerException);
+            </summary>
+            <param name="lastException">The Exception to log</param>
+        </member>
+        <member name="M:Westwind.Web.WebErrorHandler.Parse">
+            <summary>
+            Parses the Exception into properties of this object. Called internally 
+            by LogError, but can also be called externally to get easier information
+            about the error through the property interface.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.WebErrorHandler.ParseServerVariables">
+            <summary>
+            Parses all ServerVariables into a string
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.WebErrorHandler.ParseSourceCode">
+            <summary>
+            Parses source code related properties
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Westwind.Web.WebErrorHandler.ToString" -->
+        <member name="M:Westwind.Web.WebErrorHandler.HandleError(Westwind.Web.ErrorHandlingModes)">
+            <summary>
+            Semi generic Application_Error handler method that can be used
+            to handle errors without additional code. You should implement
+            the DisplayError event and LogError Event methods to display
+            a message when ErrorHandlingModes is not Default
+            </summary>
+            <param name="errorHandlingMode"></param>
+        </member>
         <member name="E:Westwind.Web.WebErrorHandler.LogError">
             <summary>
             Fired when all error information has been collected and 
             the information is ready for logging.
             </summary>
         </member>
+        <member name="M:Westwind.Web.WebErrorHandler.OnLogError(Westwind.Web.WebErrorHandler,System.Exception)">
+            <summary>
+            Allows overriding for logging error information in a subclass
+            </summary>
+            <param name="error"></param>
+            <param name="ex"></param>
+        </member>
         <member name="E:Westwind.Web.WebErrorHandler.DisplayError">
             <summary>
             Fired when at the end of the error handling process when an error page 
             needs to be displayed
             </summary>
+        </member>
+        <member name="M:Westwind.Web.WebErrorHandler.OnDisplayError(Westwind.Web.WebErrorHandler,Westwind.Web.ErrorViewModel)">
+            <summary>
+            Allows overriding of DisplayError
+            </summary>
+            <param name="error"></param>
+            <param name="model"></param>
         </member>
         <member name="T:Westwind.Utilities.WebUtils">
             <summary>
@@ -3241,6 +3188,67 @@
             and returns IIS version instead.
             </summary>
             <returns>version number or -1 </returns>
+        </member>
+        <member name="T:System.Web.HttpRequestBaseExtensions">
+            <summary>
+            HttpRequest Extension methods to facilitate various input retrieval tasks tasks
+            </summary>
+        </member>
+        <member name="M:System.Web.HttpRequestBaseExtensions.IsFormVar(System.Web.HttpRequestBase,System.String)">
+            <summary>
+            Determines whether a form variable exists
+            </summary>
+            <param name="request"></param>
+            <param name="formVarName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Web.HttpRequestBaseExtensions.ParamsInt(System.Web.HttpRequestBase,System.String,System.Int32)">
+            <summary>
+            Returns a value via Params[] and attempts
+            to convert it to an integer.
+            </summary>
+            <param name="request"></param>
+            <param name="FormVarName"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="M:System.Web.HttpRequestBaseExtensions.ParamsDecimal(System.Web.HttpRequestBase,System.String,System.Decimal)">
+            <summary>
+            Returns a value via Params[] and attempts
+            to convert it to a decimal value.
+            </summary>
+            <param name="request"></param>
+            <param name="FormVarName"></param>
+            <param name="defaultValue"></param>
+            <returns></returns>
+        </member>
+        <member name="T:System.Web.HttpResponseExtensions">
+            <summary>
+            HttpResponse Extension methods to facilitate various output tasks
+            </summary>
+        </member>
+        <member name="M:System.Web.HttpResponseExtensions.WriteLine(System.Web.HttpResponse,System.Object)">
+            <summary>
+            Writes output as an HTML 'line' by appending a &lt;br /&gt; and linefeed at the end
+            </summary>
+            <param name="response"></param>
+            <param name="output">String to output</param>
+        </member>
+        <member name="M:System.Web.HttpResponseExtensions.WriteLine(System.Web.HttpResponse,System.String,System.Object[])">
+            <summary>
+            Writes formatted output as an HTML 'line' by appending a &lt;br /&gt; and linefeed at the end
+            </summary>
+            <param name="response">HttpResponse object</param>
+            <param name="format">format string</param>
+            <param name="args">format string arguments</param>
+        </member>
+        <member name="M:System.Web.HttpResponseExtensions.Write(System.Web.HttpResponse,System.String,System.Object[])">
+            <summary>
+            Writes formatted output into the Response
+            </summary>
+            <param name="response">HttpResponse object</param>
+            <param name="format">format string</param>
+            <param name="args">format string arguments</param>
         </member>
     </members>
 </doc>

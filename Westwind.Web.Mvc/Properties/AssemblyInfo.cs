@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Westwind Technologies")]
 [assembly: AssemblyProduct("Westwind.Web.Mvc")]
-[assembly: AssemblyCopyright("Copyright © West Wind Technologies, 2011-2015")]
+[assembly: AssemblyCopyright("Copyright © West Wind Technologies, 2011-2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.64")]
-[assembly: AssemblyFileVersion("2.64")]
+[assembly: AssemblyVersion("2.66")]
+[assembly: AssemblyFileVersion("2.66")]

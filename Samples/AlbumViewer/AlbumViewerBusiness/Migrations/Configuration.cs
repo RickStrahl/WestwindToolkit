@@ -10,7 +10,6 @@ namespace AlbumViewerBusiness.Migrations
         public Configuration()
         {
             AutomaticMigrationsEnabled = false;
-            ContextKey = "AlbumViewerBusiness.AlbumViewerContext";
         }
 
         protected override void Seed(AlbumViewerBusiness.AlbumViewerContext context)

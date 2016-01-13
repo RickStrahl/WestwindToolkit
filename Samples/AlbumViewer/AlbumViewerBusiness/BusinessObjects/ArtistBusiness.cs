@@ -38,12 +38,12 @@ namespace AlbumViewerBusiness
 
             return artists
                 .OrderBy(art => art.ArtistName)
-                .Select(art => new
+                .Select(art => new ArtistWithAlbumCount()
                 {
-                    art.ArtistName,
-                    art.Description,
-                    art.ImageUrl,
-                    art.Id,
+                    ArtistName = art.ArtistName,
+                    Description = art.Description,
+                    ImageUrl = art.ImageUrl,
+                    Id = art.Id,
                     AlbumCount = Context.Albums.Count(alb => alb.ArtistId == art.Id)
                 })
                 .ToList();
@@ -78,8 +78,14 @@ namespace AlbumViewerBusiness
                 return base.OnBeforeDelete(entity);
         }
 
-
-
     }
-    
+
+    public class ArtistWithAlbumCount
+    {
+        public string ArtistName { get; set; }
+        public string Description { get; set; }
+        public string ImageUrl { get; set; }
+        public int Id { get; set; }
+        public int AlbumCount { get; set; }
+    }
 }

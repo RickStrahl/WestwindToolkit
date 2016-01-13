@@ -42,33 +42,29 @@
             <param name="request"></param>
             <returns></returns>
         </member>
-        <member name="M:System.Web.Http.ApiControllerExtensions.ThrowHttpException(System.Web.Http.ApiController,System.Net.HttpStatusCode,System.String)">
-            <summary>
-            Throws a safe exception that results in a consistent error message being returned.
-            </summary>
-            <param name="statusCode"></param>
-            <param name="message"></param>
-        </member>
-        <member name="M:System.Web.Http.ApiControllerExtensions.ThrowHttpException(System.Web.Http.ApiController,System.Net.HttpStatusCode,System.Exception)">
-            <summary>
-            Turn a regular exception into an ApiMessageError exception to display for the client.
-            </summary>
-            <param name="controller"></param>
-            <param name="statusCode"></param>
-            <param name="ex"></param>
-        </member>
-        <member name="M:System.Web.Http.ApiControllerExtensions.ThrowHttpException(System.Web.Http.ApiController,System.Net.HttpStatusCode)">
-            <summary>
-            Just returns an empty response with just the specified status code. No error message is sent.
-            </summary>
-            <param name="controller"></param>
-            <param name="statusCode"></param>
-        </member>
         <member name="T:Westwind.Web.WebApi.ApiMessageError">
             <summary>
             Class that represents an error returned to
             the client caller. Can be explicitly returned or
             as part of the UnhandledExceptionFilter.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebApi.ApiMessageError.message">
+            <summary>
+            The text message for the errors
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebApi.ApiMessageError.isCallbackError">
+            <summary>
+            Flag value that indicates to the client that this
+            is an error response
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebApi.ApiMessageError.errors">
+            <summary>
+            An optional list of errors that can be set on the
+            error object. Automatically set when passing in 
+            a model dictionary with errors.
             </summary>
         </member>
         <member name="M:Westwind.Web.WebApi.ApiMessageError.#ctor">
@@ -101,24 +97,6 @@
             </summary>
             <param name="msg"></param>
             <returns></returns>
-        </member>
-        <member name="P:Westwind.Web.WebApi.ApiMessageError.message">
-            <summary>
-            The text message for the errors
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.WebApi.ApiMessageError.isCallbackError">
-            <summary>
-            Flag value that indicates to the client that this
-            is an error response
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.WebApi.ApiMessageError.errors">
-            <summary>
-            An optional list of errors that can be set on the
-            error object. Automatically set when passing in 
-            a model dictionary with errors.
-            </summary>
         </member>
         <member name="T:Westwind.Web.WebApi.BasicAuthenticationFilter">
             <summary>
@@ -178,9 +156,20 @@
             <param name="message"></param>
             <param name="actionContext"></param>
         </member>
+        <member name="T:Westwind.Web.WebApi.Filters.WindowsBasicAuthenticationFilter">
+            <summary>
+            Basic Authentication using Windows 
+            </summary>
+        </member>
         <member name="T:Westwind.Web.WebApi.JsonpFormatter">
             <summary>
             Handles JsonP requests when requests are fired with text/javascript
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebApi.JsonpFormatter.JsonpParameterName">
+            <summary>
+             Name of the query string parameter to look for
+             the jsonp function name
             </summary>
         </member>
         <member name="F:Westwind.Web.WebApi.JsonpFormatter.JsonpCallbackFunction">
@@ -205,11 +194,107 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="P:Westwind.Web.WebApi.JsonpFormatter.JsonpParameterName">
+        <member name="T:Westwind.Web.WebApi.BasicAuthenticationHandler">
             <summary>
-             Name of the query string parameter to look for
-             the jsonp function name
+            MessageHandler implementation of BasicAuthentication.
+            This handler parses out Authorization headers into a
+            BasicAuthenticationIdentity and sets it on the thread principle.
+            
+            Fires Authentication challenge on outbound 401 Unauthorized responses
             </summary>
+        </member>
+        <member name="M:Westwind.Web.WebApi.BasicAuthenticationHandler.ParseAuthorizationHeader(System.Net.Http.HttpRequestMessage)">
+            <summary>
+            Parses the Authorization header and creates user credentials
+            </summary>
+            <param name="actionContext"></param>
+        </member>
+        <member name="M:Westwind.Web.WebApi.BasicAuthenticationHandler.Challenge(System.Net.Http.HttpRequestMessage,System.Net.Http.HttpResponseMessage)">
+            <summary>
+            Send the Authentication Challenge request
+            </summary>
+            <param name="message"></param>
+            <param name="actionContext"></param>
+        </member>
+        <member name="T:Westwind.Web.WebApi.BasicAuthenticationIdentity">
+            <summary>
+            Custom Identity that adds a password captured by basic authentication
+            to allow for an auth filter to do custom authorization
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.WebApi.BasicAuthenticationIdentity.Password">
+            <summary>
+            Basic Auth Password for custom authentication
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.WebApi.Security.LoginStatus">
+            <summary>
+            Login Status
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.WebApi.Security.Win32Logon.Login(System.String,System.String)">
+            <summary>
+            Logins the specified user name.
+            </summary>
+            <param name="userName">Name of the user.</param>
+            <param name="password">The password.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.WebApi.Security.Win32Logon.LogonUser(System.String,System.String,System.String,Westwind.Web.WebApi.Security.Win32Logon.LogonTypes,Westwind.Web.WebApi.Security.Win32Logon.LogonProviders,System.IntPtr@)">
+            <summary>
+            Logons the user.
+            </summary>
+            <param name="principal">The principal.</param>
+            <param name="authority">The authority.</param>
+            <param name="password">The password.</param>
+            <param name="logonType">Type of the logon.</param>
+            <param name="logonProvider">The logon provider.</param>
+            <param name="token">The token.</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.WebApi.Security.Win32Logon.CloseHandle(System.IntPtr)">
+            <summary>
+            Closes the handle.
+            </summary>
+            <param name="handle">The handle.</param>
+            <returns></returns>
+        </member>
+        <member name="T:Westwind.Web.WebApi.Security.Win32Logon.LogonUserErrors">
+            <summary>
+            Possible Error Codes for Logon User
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.WebApi.Security.Win32Logon.LogonTypes">
+            <summary>
+            Logon Types for Logon User
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.WebApi.Security.Win32Logon.LogonProviders">
+            <summary>
+            Logon Providers for Logon User
+            </summary>
+        </member>
+        <member name="M:System.Web.Http.ApiControllerExtensions.ThrowHttpException(System.Web.Http.ApiController,System.Net.HttpStatusCode,System.String)">
+            <summary>
+            Throws a safe exception that results in a consistent error message being returned.
+            </summary>
+            <param name="statusCode"></param>
+            <param name="message"></param>
+        </member>
+        <member name="M:System.Web.Http.ApiControllerExtensions.ThrowHttpException(System.Web.Http.ApiController,System.Net.HttpStatusCode,System.Exception)">
+            <summary>
+            Turn a regular exception into an ApiMessageError exception to display for the client.
+            </summary>
+            <param name="controller"></param>
+            <param name="statusCode"></param>
+            <param name="ex"></param>
+        </member>
+        <member name="M:System.Web.Http.ApiControllerExtensions.ThrowHttpException(System.Web.Http.ApiController,System.Net.HttpStatusCode)">
+            <summary>
+            Just returns an empty response with just the specified status code. No error message is sent.
+            </summary>
+            <param name="controller"></param>
+            <param name="statusCode"></param>
         </member>
         <member name="T:System.Web.Http.HttpRequestMessageExtensions">
             <summary>
@@ -249,39 +334,6 @@
             <param name="request"></param>
             <param name="cookieName"></param>
             <returns></returns>
-        </member>
-        <member name="T:Westwind.Web.WebApi.BasicAuthenticationHandler">
-            <summary>
-            MessageHandler implementation of BasicAuthentication.
-            This handler parses out Authorization headers into a
-            BasicAuthenticationIdentity and sets it on the thread principle.
-            
-            Fires Authentication challenge on outbound 401 Unauthorized responses
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.WebApi.BasicAuthenticationHandler.ParseAuthorizationHeader(System.Net.Http.HttpRequestMessage)">
-            <summary>
-            Parses the Authorization header and creates user credentials
-            </summary>
-            <param name="actionContext"></param>
-        </member>
-        <member name="M:Westwind.Web.WebApi.BasicAuthenticationHandler.Challenge(System.Net.Http.HttpRequestMessage,System.Net.Http.HttpResponseMessage)">
-            <summary>
-            Send the Authentication Challenge request
-            </summary>
-            <param name="message"></param>
-            <param name="actionContext"></param>
-        </member>
-        <member name="T:Westwind.Web.WebApi.BasicAuthenticationIdentity">
-            <summary>
-            Custom Identity that adds a password captured by basic authentication
-            to allow for an auth filter to do custom authorization
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.WebApi.BasicAuthenticationIdentity.Password">
-            <summary>
-            Basic Auth Password for custom authentication
-            </summary>
         </member>
     </members>
 </doc>

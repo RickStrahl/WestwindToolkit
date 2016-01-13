@@ -70,6 +70,35 @@
             Internally tracked reference to the Page object
             </summary>
         </member>
+        <member name="P:Westwind.Web.ScriptVariables.ClientObjectName">
+            <summary>
+            The name of the object generated in client script code
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.ScriptVariables.AutoRenderClientScript">
+            <summary>
+            Determines whether the output object script is rendered
+            automatically as part of Page PreRenderComplete. If false
+            you can manually call the GetClientScript() method to
+            retrieve the script as a string and embed it yourself.
+            </summary>        
+        </member>
+        <member name="P:Westwind.Web.ScriptVariables.UpdateMode">
+            <summary>
+            Determines how updates to the server from the client are performed.
+            If enabled changes to the client side properties post back to the
+            server on a full Postback. 
+            
+            Options allow for none, updating the properties only or updating
+            only the Items collection (use .add() on the client to add new items)
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.ScriptVariables.PostBackValue">
+            <summary>
+            Internal string of the postback value for the field values
+            if AllowUpdates is true
+            </summary>
+        </member>
         <member name="F:Westwind.Web.ScriptVariables.JsonSerializer">
             <summary>
             Internal instance of the Json Serializer used to serialize
@@ -262,35 +291,6 @@
             is hooked to Page_PreRenderComplete
             </summary>
         </member>
-        <member name="P:Westwind.Web.ScriptVariables.ClientObjectName">
-            <summary>
-            The name of the object generated in client script code
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.ScriptVariables.AutoRenderClientScript">
-            <summary>
-            Determines whether the output object script is rendered
-            automatically as part of Page PreRenderComplete. If false
-            you can manually call the GetClientScript() method to
-            retrieve the script as a string and embed it yourself.
-            </summary>        
-        </member>
-        <member name="P:Westwind.Web.ScriptVariables.UpdateMode">
-            <summary>
-            Determines how updates to the server from the client are performed.
-            If enabled changes to the client side properties post back to the
-            server on a full Postback. 
-            
-            Options allow for none, updating the properties only or updating
-            only the Items collection (use .add() on the client to add new items)
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.ScriptVariables.PostBackValue">
-            <summary>
-            Internal string of the postback value for the field values
-            if AllowUpdates is true
-            </summary>
-        </member>
         <member name="T:Westwind.Web.WebForms.Properties.Resources">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.
@@ -441,37 +441,6 @@
             Wrapper ClientScript used to allow use ScriptManager methods
             </summary>
         </member>
-        <member name="M:Westwind.Web.Controls.AjaxMethodCallback.OnPreRender(System.EventArgs)">
-            <summary>
-            This method just builds the various JavaScript blocks as strings
-            and assigns them to the ClientScript object.
-            </summary>
-            <param name="e"></param>
-        </member>
-        <member name="M:Westwind.Web.Controls.AjaxMethodCallback.GenerateControlSpecificJavaScript">
-            <summary>
-            Generates the ControlSpecific JavaScript. This script is safe to
-            allow multiple callbacks to run simultaneously.
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.Controls.AjaxMethodCallback.GenerateClassWrapperForCallbackMethods">
-            <summary>
-            Creates the JavaScript client side object that matches the 
-            server side method signature. The JScript function maps
-            to a CallMethod() call on the client.
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.Controls.AjaxMethodCallback.CreateControlInstanceOnPage(System.Web.UI.Control,System.Object)">
-            <summary>
-            Can be called to create a new instance of the AjaxMethodCallbackControl
-            and attach it to the current page. This can be useful for control developers
-            so they don't have to manually add the control to the page.
-            
-            The call to this method should be made pre-OnLoad() preferrably in OnInit().
-            </summary>
-            <param name="page">Instance of the Page object</param>
-            <returns>An instance of the Callback Control</returns>
-        </member>
         <member name="P:Westwind.Web.Controls.AjaxMethodCallback.ServerUrl">
             <summary>
             The Url to hit on the server for the callback to return the result. Note: Not used when doing a MethodCallback
@@ -592,6 +561,37 @@
             naming container prefixes.
             </summary>
         </member>
+        <member name="M:Westwind.Web.Controls.AjaxMethodCallback.OnPreRender(System.EventArgs)">
+            <summary>
+            This method just builds the various JavaScript blocks as strings
+            and assigns them to the ClientScript object.
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Westwind.Web.Controls.AjaxMethodCallback.GenerateControlSpecificJavaScript">
+            <summary>
+            Generates the ControlSpecific JavaScript. This script is safe to
+            allow multiple callbacks to run simultaneously.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Controls.AjaxMethodCallback.GenerateClassWrapperForCallbackMethods">
+            <summary>
+            Creates the JavaScript client side object that matches the 
+            server side method signature. The JScript function maps
+            to a CallMethod() call on the client.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Controls.AjaxMethodCallback.CreateControlInstanceOnPage(System.Web.UI.Control,System.Object)">
+            <summary>
+            Can be called to create a new instance of the AjaxMethodCallbackControl
+            and attach it to the current page. This can be useful for control developers
+            so they don't have to manually add the control to the page.
+            
+            The call to this method should be made pre-OnLoad() preferrably in OnInit().
+            </summary>
+            <param name="page">Instance of the Page object</param>
+            <returns>An instance of the Callback Control</returns>
+        </member>
         <member name="T:Westwind.Web.Controls.AjaxMethodCallbackDesigner">
             <summary>
             Control designer used so we get a grey button display instead of the 
@@ -633,31 +633,6 @@
             to a CallbackHandler HTTP Handler service for example) or directly to the page using an
             event based callback to the controls CallbackHandler event.
             </summary>
-        </member>
-        <member name="M:Westwind.Web.Controls.AutoComplete.RegisterResources(Westwind.Web.ClientScriptProxy)">
-            <summary>
-            Code that embeds related resources (.js and css)
-            </summary>
-            <param name="scriptProxy"></param>
-        </member>
-        <member name="M:Westwind.Web.Controls.AutoComplete.OnPreRender(System.EventArgs)">
-            <summary>
-            Most of the work happens here for generating the hook up script code
-            </summary>
-            <param name="e"></param>
-        </member>
-        <member name="M:Westwind.Web.Controls.AutoComplete.RenderControl(System.Web.UI.HtmlTextWriter)">
-            <summary>
-            
-            </summary>
-            <param name="writer"></param>
-        </member>
-        <member name="M:Westwind.Web.Controls.AutoComplete.AutoCompleteCallbackHandler(System.String)">
-            <summary>
-            Method that handles the actual callback routing.
-            </summary>
-            <param name="term"></param>
-            <returns></returns>
         </member>
         <member name="P:Westwind.Web.Controls.AutoComplete.ServerUrl">
             <summary>
@@ -706,6 +681,31 @@
             The handler receives two parameter - a ssda
             </summary>
         </member>
+        <member name="M:Westwind.Web.Controls.AutoComplete.RegisterResources(Westwind.Web.ClientScriptProxy)">
+            <summary>
+            Code that embeds related resources (.js and css)
+            </summary>
+            <param name="scriptProxy"></param>
+        </member>
+        <member name="M:Westwind.Web.Controls.AutoComplete.OnPreRender(System.EventArgs)">
+            <summary>
+            Most of the work happens here for generating the hook up script code
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Westwind.Web.Controls.AutoComplete.RenderControl(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="M:Westwind.Web.Controls.AutoComplete.AutoCompleteCallbackHandler(System.String)">
+            <summary>
+            Method that handles the actual callback routing.
+            </summary>
+            <param name="term"></param>
+            <returns></returns>
+        </member>
         <member name="T:Westwind.Web.Controls.DragPanel">
             <summary>
             A draggable Panel control that can be dragged around the current browser window.
@@ -715,11 +715,6 @@
             
             The control can also optionally display a close button that allows hiding the control
             by changing its client side visibility.
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.Controls.DragPanel.ScriptProxy">
-            <summary>
-            Internal reference of the Client Script Proxy - set up in OnInit
             </summary>
         </member>
         <member name="P:Westwind.Web.Controls.DragPanel.DragHandleID">
@@ -801,6 +796,11 @@
             Determines where the jquery.js resource is loaded from. WebResources, Url or leave empty to do nothing
             </summary>
         </member>
+        <member name="F:Westwind.Web.Controls.DragPanel.ScriptProxy">
+            <summary>
+            Internal reference of the Client Script Proxy - set up in OnInit
+            </summary>
+        </member>
         <member name="T:Westwind.Web.Controls.HoverPanel">
             <summary>
             The HoverPanel class provides an easy to use base AJAX control that  
@@ -826,35 +826,6 @@
             <summary>
             
             </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:Westwind.Web.Controls.HoverPanel.OnPreRender(System.EventArgs)" -->
-        <member name="M:Westwind.Web.Controls.HoverPanel.GenerateControlSpecificJavaScript">
-            <summary>
-            Generates the ControlSpecific JavaScript. This script is safe to
-            allow multiple callbacks to run simultaneously.
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.Controls.HoverPanel.GetCallbackEventReference(System.String)">
-            <summary>
-            Returns an Event Callback reference string that can be used in Client
-            script to initiate a callback request. 
-            </summary>
-            <param name="QueryStringExpression">
-            An expression that is evaluated in script code and embedded as the second parameter.
-            The value of this second parameter is interpreted as a QueryString to the URL that
-            is fired in response to the request to the server.
-            
-            This expression can be a static string or any value or expression that is in scope
-            at the time of calling the event method. The expression must evaluate to a string
-             
-            Example: 
-            string GetCallbackEventReference("'CustomerId=' + forms[0].txtCustomerId.value + "'");
-             
-            A callback event reference result looks like this:
-            
-            ControlID_StartCallback(event,'CustomerId=_12312')
-            </param>
-            <returns></returns>
         </member>
         <member name="P:Westwind.Web.Controls.HoverPanel.ClientCompleteHandler">
             <summary>
@@ -960,6 +931,35 @@
             naming container prefixes.
             </summary>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:Westwind.Web.Controls.HoverPanel.OnPreRender(System.EventArgs)" -->
+        <member name="M:Westwind.Web.Controls.HoverPanel.GenerateControlSpecificJavaScript">
+            <summary>
+            Generates the ControlSpecific JavaScript. This script is safe to
+            allow multiple callbacks to run simultaneously.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Controls.HoverPanel.GetCallbackEventReference(System.String)">
+            <summary>
+            Returns an Event Callback reference string that can be used in Client
+            script to initiate a callback request. 
+            </summary>
+            <param name="QueryStringExpression">
+            An expression that is evaluated in script code and embedded as the second parameter.
+            The value of this second parameter is interpreted as a QueryString to the URL that
+            is fired in response to the request to the server.
+            
+            This expression can be a static string or any value or expression that is in scope
+            at the time of calling the event method. The expression must evaluate to a string
+             
+            Example: 
+            string GetCallbackEventReference("'CustomerId=' + forms[0].txtCustomerId.value + "'");
+             
+            A callback event reference result looks like this:
+            
+            ControlID_StartCallback(event,'CustomerId=_12312')
+            </param>
+            <returns></returns>
+        </member>
         <member name="F:Westwind.Web.Controls.HoverEventHandlerModes.ShowHtmlAtMousePosition">
             <summary>
             Displays a hover window at the current mouse position. Calls a URL 
@@ -1014,24 +1014,6 @@
             to reference or distribute anything. You can however override
             each of these resources with relative URL based resources.
             </summary>
-        </member>
-        <member name="M:Westwind.Web.Controls.jQueryDatePicker.RegisterResources(Westwind.Web.ClientScriptProxy)">
-            <summary>
-            Code that embeds related resources (.js and css)
-            </summary>
-            <param name="scriptProxy"></param>
-        </member>
-        <member name="M:Westwind.Web.Controls.jQueryDatePicker.OnPreRender(System.EventArgs)">
-            <summary>
-            Most of the work happens here for generating the hook up script code
-            </summary>
-            <param name="e"></param>
-        </member>
-        <member name="M:Westwind.Web.Controls.jQueryDatePicker.RenderControl(System.Web.UI.HtmlTextWriter)">
-            <summary>
-            
-            </summary>
-            <param name="writer"></param>
         </member>
         <member name="P:Westwind.Web.Controls.jQueryDatePicker.SelectedDate">
             <summary>
@@ -1099,6 +1081,24 @@
             Determines where the Close icon is displayed. True = top, false = bottom.
             </summary>
         </member>
+        <member name="M:Westwind.Web.Controls.jQueryDatePicker.RegisterResources(Westwind.Web.ClientScriptProxy)">
+            <summary>
+            Code that embeds related resources (.js and css)
+            </summary>
+            <param name="scriptProxy"></param>
+        </member>
+        <member name="M:Westwind.Web.Controls.jQueryDatePicker.OnPreRender(System.EventArgs)">
+            <summary>
+            Most of the work happens here for generating the hook up script code
+            </summary>
+            <param name="e"></param>
+        </member>
+        <member name="M:Westwind.Web.Controls.jQueryDatePicker.RenderControl(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            
+            </summary>
+            <param name="writer"></param>
+        </member>
         <member name="T:Westwind.Web.Controls.ModalDialog">
             <summary>
             This control allows creating client side pop up window that blocks out the 
@@ -1122,12 +1122,6 @@
             dialog without controls on the page to map to.
             </summary>
         </member>
-        <member name="M:Westwind.Web.Controls.ModalDialog.Show">
-            <summary>
-            Shows the dialog as designed without any customizations
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:Westwind.Web.Controls.ModalDialog.Show(System.String,System.String,System.Boolean)" -->
         <member name="P:Westwind.Web.Controls.ModalDialog.BackgroundOpacity">
             <summary>
             The opacity of of the overlay background in a decimal percentage. Default to .85
@@ -1188,6 +1182,12 @@
             Override to force simple IDs all around
             </summary>
         </member>
+        <member name="M:Westwind.Web.Controls.ModalDialog.Show">
+            <summary>
+            Shows the dialog as designed without any customizations
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Westwind.Web.Controls.ModalDialog.Show(System.String,System.String,System.Boolean)" -->
         <member name="T:Westwind.Web.Controls.ScriptContainer">
             <summary>
             Class that provides script embedding functionality to ASP.NET pages. 
@@ -1248,10 +1248,46 @@
             exception is thrown.
             </remarks>
         </member>
+        <member name="P:Westwind.Web.Controls.ScriptContainer.Current">
+            <summary>
+            Returns a current instance of this control if an instance
+            is already loaded on the page. Otherwise a new instance is
+            created, added to the Form and returned.
+            
+            It's important this function is not called too early in the
+            page cycle - it should not be called before Page.OnInit().
+            
+            This property is the preferred way to get a reference to a
+            ScriptContainer control that is either already on a page
+            or needs to be created. Controls in particular should always
+            use this property.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.ScriptContainer.Scripts">
+            <summary>
+            Collection of ScriptItems
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.ScriptContainer.InternalScripts">
+            <summary>
+            Internally stored list of parsed or manually added Scripts
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.ScriptContainer.RenderMode">
+            <summary>
+            Determines where scripts are rendered by default. Defaults to script which renders using ClientScript or ScriptManager.
+            </summary>
+        </member>
         <member name="F:Westwind.Web.Controls.ScriptContainer.scriptProxy">
             <summary>
             Internally tracked client script proxy that goes either
             to MS Ajax ScriptManager if available or to Page.ClientScript 
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.ScriptContainer.MinScriptExtension">
+            <summary>
+            Script extension for minimized or packed scripts. Used only
+            for entries that AllowMinScript=True.
             </summary>
         </member>
         <member name="M:Westwind.Web.Controls.ScriptContainer.OnInit(System.EventArgs)">
@@ -1334,42 +1370,6 @@
             </summary>
             <param name="ctl"></param>
             <returns></returns>
-        </member>
-        <member name="P:Westwind.Web.Controls.ScriptContainer.Current">
-            <summary>
-            Returns a current instance of this control if an instance
-            is already loaded on the page. Otherwise a new instance is
-            created, added to the Form and returned.
-            
-            It's important this function is not called too early in the
-            page cycle - it should not be called before Page.OnInit().
-            
-            This property is the preferred way to get a reference to a
-            ScriptContainer control that is either already on a page
-            or needs to be created. Controls in particular should always
-            use this property.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.ScriptContainer.Scripts">
-            <summary>
-            Collection of ScriptItems
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.ScriptContainer.InternalScripts">
-            <summary>
-            Internally stored list of parsed or manually added Scripts
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.ScriptContainer.RenderMode">
-            <summary>
-            Determines where scripts are rendered by default. Defaults to script which renders using ClientScript or ScriptManager.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.ScriptContainer.MinScriptExtension">
-            <summary>
-            Script extension for minimized or packed scripts. Used only
-            for entries that AllowMinScript=True.
-            </summary>
         </member>
         <member name="T:Westwind.Web.Controls.ScriptItem">
             <summary>
@@ -1551,9 +1551,157 @@
             <seealso>Databinding with DataBinder</seealso>
             </summary>
         </member>
+        <member name="P:Westwind.Web.Controls.DataBinder.DataBindingItems">
+            <summary>
+            A collection of all the DataBindingItems that are to be bound. Each 
+            &lt;&lt;%= TopicLink([DataBindingItem],[_1UL03RIKQ]) %&gt;&gt; contains 
+            the information needed to bind and unbind a DataSource to a Control 
+            property.
+            <seealso>Class DataBinder</seealso>
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.DataBinder.BindingErrors">
+            <summary>
+            A collection of binding errors that is filled after binding or unbinding
+            if errors occur during binding and unbinding.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.DataBinder.ShowBindingErrorsOnControls">
+            <summary>
+            Determines whether binding errors are display on controls.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.DataBinder.HideValidators">
+            <summary>
+            Hides the Validator display and uses only the DataBinder's display for errors
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.DataBinder.DefaultBindingSource">
+            <summary>
+            A default binding source that is used if the binding source 
+            on an individual item is not set.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.DataBinder.ErrorIconUrl">
+            <summary>
+            Optional Url to the Warning and Info Icons.
+            Note: Used only if the control uses images.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.DataBinder.UseClientScriptHtmlInjection">
+            <summary>
+            Determines whether the control uses client script to inject error 
+            notification icons/messages into the page. Setting this flag to true causes
+             JavaScript to be added to the page to create the messages. If false, the 
+            DataBinder uses Controls.Add to add controls to the Page or other 
+            Containers.
+            
+            JavaScript injection is preferrable as it works reliable under all 
+            environments except when JavaScript is off. Controls.Add() can have 
+            problems if &lt;% %&gt; &lt;%= %&gt; script is used in a container that has
+             an error and needs to add a control.
+            <seealso>Class DataBinder</seealso>
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.DataBinder.ErrorIconWebResource">
+            <summary>
+            The Web Resource Url used to access retrieve the Error Icon.
+            Used to minimize reloading this URL from the resource manager
+            repeatedly.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.DataBinder.AutoLoadDataBoundControls">
+            <summary>
+            Automatically imports all controls on the form that implement the IDataBinder interface and adds them to the DataBinder
+            </summary>
+        </member>
         <member name="F:Westwind.Web.Controls.DataBinder._AutoLoadedDataBoundControls">
             <summary>
             Flag that determines whether controls where auto-loaded from the page.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.DataBinder.IsExtender">
+            <summary>
+            Determines whether this control works as an Extender object to other controls on the form.
+            In some situations it might be useful to disable the extender functionality such
+            as when all databinding is driven through code or when using the IDataBinder
+            interface with custom designed controls that have their own DataBinder objects.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.DataBinder.IsRequiredErrorMessage">
+            <summary>
+            Message displayed when IsRequired is blank. 
+            
+            Format string where {0} is the derived field name or UserFieldName.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.DataBinder.UnBindingErrorMessage">
+            <summary>
+            Error displayed when an unbinding error occurs. Typically
+            this will be some sort of format conversion problem
+            {0} denotes the derived field name.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.DataBinder.BindingErrorMessage">
+            <summary>
+            Binding Error message when a control fails to bind
+            </summary>
+        </member>
+        <member name="E:Westwind.Web.Controls.DataBinder.ValidateControl">
+            <summary>
+            Event that can be hooked to validate each control after it's been unbound. 
+            Allows for doing application level validation of the data once it's been 
+            returned.
+            
+            This method receives a DataBindingItem parameter which includes a 
+            reference to both the control and the DataSource object where you can check
+             values. Return false from the event method to indicate that validation 
+            failed which causes a new BindingError to be created and added to the 
+            BindingErrors collection.
+            <seealso>Class DataBinder</seealso>
+            </summary>
+            <example>
+            &lt;&lt;code lang=&quot;C#&quot;&gt;&gt;protected bool 
+            DataBinder_ValidateControl(Westwind.Web.Controls.DataBindingItem Item)
+            {
+                if (Item.ControlInstance == txtCategoryId)
+                {
+                    DropDownList List = Item.ControlInstance as DropDownList;
+                    if (List.SelectedItem.Text == &quot;Dairy Products&quot;)
+                    {
+                        Item.BindingErrorMessage = &quot;Dairy Properties not allowed 
+            (ValidateControl)&quot;;
+                        return false;
+                    }
+                }
+            
+                return true;
+            }&lt;&lt;/code&gt;&gt;
+            </example>
+        </member>
+        <member name="E:Westwind.Web.Controls.DataBinder.BeforeBindControl">
+            <summary>
+            Fired just before the control is bound. You can return false from the 
+            handler to cause the control to not be bound
+            <seealso>Class DataBinder</seealso>
+            </summary>
+        </member>
+        <member name="E:Westwind.Web.Controls.DataBinder.AfterBindControl">
+            <summary>
+            Fires immediately after the control has been bound. You can check for
+            errors or perform additional validation.
+            </summary>
+        </member>
+        <member name="E:Westwind.Web.Controls.DataBinder.BeforeUnbindControl">
+            <summary>
+            Fires immediately before unbinding of a control takes place.
+            You can return false to abort DataUnbinding.
+            </summary>
+        </member>
+        <member name="E:Westwind.Web.Controls.DataBinder.AfterUnbindControl">
+            <summary>
+            Fires immediately after binding is complete. You can check for errors 
+            and take additional action. 
             </summary>
         </member>
         <member name="F:Westwind.Web.Controls.DataBinder.ClientScriptProxy">
@@ -1936,154 +2084,6 @@
             every time there is a change in the sub-ordinate validators
             </summary>
         </member>
-        <member name="P:Westwind.Web.Controls.DataBinder.DataBindingItems">
-            <summary>
-            A collection of all the DataBindingItems that are to be bound. Each 
-            &lt;&lt;%= TopicLink([DataBindingItem],[_1UL03RIKQ]) %&gt;&gt; contains 
-            the information needed to bind and unbind a DataSource to a Control 
-            property.
-            <seealso>Class DataBinder</seealso>
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.DataBinder.BindingErrors">
-            <summary>
-            A collection of binding errors that is filled after binding or unbinding
-            if errors occur during binding and unbinding.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.DataBinder.ShowBindingErrorsOnControls">
-            <summary>
-            Determines whether binding errors are display on controls.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.DataBinder.HideValidators">
-            <summary>
-            Hides the Validator display and uses only the DataBinder's display for errors
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.DataBinder.DefaultBindingSource">
-            <summary>
-            A default binding source that is used if the binding source 
-            on an individual item is not set.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.DataBinder.ErrorIconUrl">
-            <summary>
-            Optional Url to the Warning and Info Icons.
-            Note: Used only if the control uses images.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.DataBinder.UseClientScriptHtmlInjection">
-            <summary>
-            Determines whether the control uses client script to inject error 
-            notification icons/messages into the page. Setting this flag to true causes
-             JavaScript to be added to the page to create the messages. If false, the 
-            DataBinder uses Controls.Add to add controls to the Page or other 
-            Containers.
-            
-            JavaScript injection is preferrable as it works reliable under all 
-            environments except when JavaScript is off. Controls.Add() can have 
-            problems if &lt;% %&gt; &lt;%= %&gt; script is used in a container that has
-             an error and needs to add a control.
-            <seealso>Class DataBinder</seealso>
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.DataBinder.ErrorIconWebResource">
-            <summary>
-            The Web Resource Url used to access retrieve the Error Icon.
-            Used to minimize reloading this URL from the resource manager
-            repeatedly.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.DataBinder.AutoLoadDataBoundControls">
-            <summary>
-            Automatically imports all controls on the form that implement the IDataBinder interface and adds them to the DataBinder
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.DataBinder.IsExtender">
-            <summary>
-            Determines whether this control works as an Extender object to other controls on the form.
-            In some situations it might be useful to disable the extender functionality such
-            as when all databinding is driven through code or when using the IDataBinder
-            interface with custom designed controls that have their own DataBinder objects.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.DataBinder.IsRequiredErrorMessage">
-            <summary>
-            Message displayed when IsRequired is blank. 
-            
-            Format string where {0} is the derived field name or UserFieldName.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.DataBinder.UnBindingErrorMessage">
-            <summary>
-            Error displayed when an unbinding error occurs. Typically
-            this will be some sort of format conversion problem
-            {0} denotes the derived field name.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.DataBinder.BindingErrorMessage">
-            <summary>
-            Binding Error message when a control fails to bind
-            </summary>
-        </member>
-        <member name="E:Westwind.Web.Controls.DataBinder.ValidateControl">
-            <summary>
-            Event that can be hooked to validate each control after it's been unbound. 
-            Allows for doing application level validation of the data once it's been 
-            returned.
-            
-            This method receives a DataBindingItem parameter which includes a 
-            reference to both the control and the DataSource object where you can check
-             values. Return false from the event method to indicate that validation 
-            failed which causes a new BindingError to be created and added to the 
-            BindingErrors collection.
-            <seealso>Class DataBinder</seealso>
-            </summary>
-            <example>
-            &lt;&lt;code lang=&quot;C#&quot;&gt;&gt;protected bool 
-            DataBinder_ValidateControl(Westwind.Web.Controls.DataBindingItem Item)
-            {
-                if (Item.ControlInstance == txtCategoryId)
-                {
-                    DropDownList List = Item.ControlInstance as DropDownList;
-                    if (List.SelectedItem.Text == &quot;Dairy Products&quot;)
-                    {
-                        Item.BindingErrorMessage = &quot;Dairy Properties not allowed 
-            (ValidateControl)&quot;;
-                        return false;
-                    }
-                }
-            
-                return true;
-            }&lt;&lt;/code&gt;&gt;
-            </example>
-        </member>
-        <member name="E:Westwind.Web.Controls.DataBinder.BeforeBindControl">
-            <summary>
-            Fired just before the control is bound. You can return false from the 
-            handler to cause the control to not be bound
-            <seealso>Class DataBinder</seealso>
-            </summary>
-        </member>
-        <member name="E:Westwind.Web.Controls.DataBinder.AfterBindControl">
-            <summary>
-            Fires immediately after the control has been bound. You can check for
-            errors or perform additional validation.
-            </summary>
-        </member>
-        <member name="E:Westwind.Web.Controls.DataBinder.BeforeUnbindControl">
-            <summary>
-            Fires immediately before unbinding of a control takes place.
-            You can return false to abort DataUnbinding.
-            </summary>
-        </member>
-        <member name="E:Westwind.Web.Controls.DataBinder.AfterUnbindControl">
-            <summary>
-            Fires immediately after binding is complete. You can check for errors 
-            and take additional action. 
-            </summary>
-        </member>
         <member name="T:Westwind.Web.Controls.DataBinderDesigner">
             <summary>
             Control designer used so we get a grey button display instead of the 
@@ -2122,63 +2122,6 @@
             creating the DataBinder child items.
             </summary>
             <param name="Parent"></param>
-        </member>
-        <member name="M:Westwind.Web.Controls.DataBindingItem.OnValidate">
-            <summary>
-            Fires the Validation Event
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Web.Controls.DataBindingItem.DataBind">
-            <summary>
-            Binds a source object and property to a control's property. For example
-            you can bind a business object to a the text property of a text box, or 
-            a DataRow field to a text box field. You specify a binding source object 
-            (Customer.Entity or Customer.DataRow) and property or field(Company, FirstName)
-            and bind it to the control and the property specified (Text).
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.Controls.DataBindingItem.DataBind(System.Web.UI.Control)">
-            <summary>
-            Binds a source object and property to a control's property. For example
-            you can bind a business object to a the text property of a text box, or 
-            a DataRow field to a text box field. You specify a binding source object 
-            (Customer.Entity or Customer.DataRow) and property or field(Company, FirstName)
-            and bind it to the control and the property specified (Text).
-            </summary>
-            <param name="container">the Base control that binding source objects are attached to</param>
-        </member>
-        <member name="M:Westwind.Web.Controls.DataBindingItem.Unbind">
-            <summary>
-            Unbinds control properties back into the control source.
-            
-            This method uses reflection to lift the data out of the control, then 
-            parses the string value back into the type of the data source. If an error 
-            occurs the exception is not caught internally, but generally the 
-            FormUnbindData method captures the error and assigns an error message to 
-            the BindingErrorMessage property of the control.
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.Controls.DataBindingItem.Unbind(System.Web.UI.Control)">
-            <summary>
-            Unbinds control properties back into the control source.
-            
-            This method uses reflection to lift the data out of the control, then 
-            parses the string value back into the type of the data source. If an error 
-            occurs the exception is not caught internally, but generally the 
-            FormUnbindData method captures the error and assigns an error message to 
-            the BindingErrorMessage property of the control.
-            <seealso>Class wwWebDataHelper</seealso>
-            </summary>
-            <param name="WebPage">
-            The base control that binding sources are based on.
-            </param>
-        </member>
-        <member name="M:Westwind.Web.Controls.DataBindingItem.ToString">
-            <summary>
-            Returns a the control bindingsource and binding source member
-            </summary>
-            <returns></returns>
         </member>
         <member name="P:Westwind.Web.Controls.DataBindingItem.Binder">
             <summary>
@@ -2308,6 +2251,63 @@
             Use this event to hook up special validation logic. Called after binding completes. Return false to indicate validation failed
             </summary>
         </member>
+        <member name="M:Westwind.Web.Controls.DataBindingItem.OnValidate">
+            <summary>
+            Fires the Validation Event
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Controls.DataBindingItem.DataBind">
+            <summary>
+            Binds a source object and property to a control's property. For example
+            you can bind a business object to a the text property of a text box, or 
+            a DataRow field to a text box field. You specify a binding source object 
+            (Customer.Entity or Customer.DataRow) and property or field(Company, FirstName)
+            and bind it to the control and the property specified (Text).
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Controls.DataBindingItem.DataBind(System.Web.UI.Control)">
+            <summary>
+            Binds a source object and property to a control's property. For example
+            you can bind a business object to a the text property of a text box, or 
+            a DataRow field to a text box field. You specify a binding source object 
+            (Customer.Entity or Customer.DataRow) and property or field(Company, FirstName)
+            and bind it to the control and the property specified (Text).
+            </summary>
+            <param name="container">the Base control that binding source objects are attached to</param>
+        </member>
+        <member name="M:Westwind.Web.Controls.DataBindingItem.Unbind">
+            <summary>
+            Unbinds control properties back into the control source.
+            
+            This method uses reflection to lift the data out of the control, then 
+            parses the string value back into the type of the data source. If an error 
+            occurs the exception is not caught internally, but generally the 
+            FormUnbindData method captures the error and assigns an error message to 
+            the BindingErrorMessage property of the control.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Controls.DataBindingItem.Unbind(System.Web.UI.Control)">
+            <summary>
+            Unbinds control properties back into the control source.
+            
+            This method uses reflection to lift the data out of the control, then 
+            parses the string value back into the type of the data source. If an error 
+            occurs the exception is not caught internally, but generally the 
+            FormUnbindData method captures the error and assigns an error message to 
+            the BindingErrorMessage property of the control.
+            <seealso>Class wwWebDataHelper</seealso>
+            </summary>
+            <param name="WebPage">
+            The base control that binding sources are based on.
+            </param>
+        </member>
+        <member name="M:Westwind.Web.Controls.DataBindingItem.ToString">
+            <summary>
+            Returns a the control bindingsource and binding source member
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Westwind.Web.Controls.BindingErrorMessageLocations">
             <summary>
             Enumeration for the various binding error message locations possible
@@ -2409,6 +2409,13 @@
             Binder object in the overloaded version.
             </summary>
         </member>
+        <member name="P:Westwind.Web.Controls.DataBindingItemCollection.Item(System.Int32)">
+            <summary>
+            Public indexer for the Items
+            </summary>
+            <param name="index"></param>
+            <returns></returns>
+        </member>
         <member name="M:Westwind.Web.Controls.DataBindingItemCollection.Add(Westwind.Web.Controls.DataBindingItem)">
             <summary>
             Add a DataBindingItem to the collection
@@ -2428,13 +2435,6 @@
             added to the collection just for editing. This way we may have one 'extra'
             item, but not a whole long list of items.
             </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.DataBindingItemCollection.Item(System.Int32)">
-            <summary>
-            Public indexer for the Items
-            </summary>
-            <param name="index"></param>
-            <returns></returns>
         </member>
         <member name="T:Westwind.Web.Controls.IDataBinder">
             <summary>
@@ -2456,14 +2456,6 @@
             with it in ControlState data, so unlike image captcha there's no separate
             handler involved.
             </summary>
-        </member>
-        <member name="M:Westwind.Web.Controls.Captcha.GenerateExpression">
-            <summary>
-            Method can be used to generate a new Expression object
-            with new values to use. Use this method to update the
-            wwCaptcha expression after you've saved an entry.        
-            </summary>
-            <returns></returns>
         </member>
         <member name="P:Westwind.Web.Controls.Captcha.Validated">
             <summary>
@@ -2499,6 +2491,14 @@
             Highly recommended you set this.
             </summary>
         </member>
+        <member name="M:Westwind.Web.Controls.Captcha.GenerateExpression">
+            <summary>
+            Method can be used to generate a new Expression object
+            with new values to use. Use this method to update the
+            wwCaptcha expression after you've saved an entry.        
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Westwind.Web.Controls.ErrorDisplay">
             <summary>
             The ErrorDisplay control provides a simple mechanism for displaying error
@@ -2524,45 +2524,6 @@
             can also have the control timeout and 'fade out' after a few seconds of  
             dplaying the message text.
             </summary>
-        </member>
-        <member name="M:Westwind.Web.Controls.ErrorDisplay.Render(System.Web.UI.HtmlTextWriter)">
-            <summary>
-            Method 
-            </summary>
-            <param name="width"></param>
-            <param name="center"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Web.Controls.ErrorDisplay.ShowError(System.String)">
-            <summary>
-            Assigns an error message to the control
-            <seealso>Class ErrorDisplay</seealso>
-            </summary>
-            <param name="Text">
-            The main message text that is displayed.
-            </param>
-        </member>
-        <member name="M:Westwind.Web.Controls.ErrorDisplay.ShowError(System.String,System.String)">
-            <summary>
-            Assigns an error message to the control as well as a UserMessage
-            <seealso>Class ErrorDisplay</seealso>
-            </summary>
-            <param name="text">
-            The main message text that is displayed.
-            </param>
-            <param name="Message">
-            Optional Message header shown above the message text.
-            </param>
-        </member>
-        <member name="M:Westwind.Web.Controls.ErrorDisplay.ShowMessage(System.String)">
-            <summary>
-            Displays a simple message in the display area along with the info icon 
-            before it.
-            <seealso>Class ErrorDisplay</seealso>
-            </summary>
-            <param name="Message">
-            The message to display.
-            </param>
         </member>
         <member name="P:Westwind.Web.Controls.ErrorDisplay.Text">
             <summary>
@@ -2625,6 +2586,45 @@
             A timeout in milliseconds for how long the error display is visible. 0 means no timeout.
             </summary>
         </member>
+        <member name="M:Westwind.Web.Controls.ErrorDisplay.Render(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            Method 
+            </summary>
+            <param name="width"></param>
+            <param name="center"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Controls.ErrorDisplay.ShowError(System.String)">
+            <summary>
+            Assigns an error message to the control
+            <seealso>Class ErrorDisplay</seealso>
+            </summary>
+            <param name="Text">
+            The main message text that is displayed.
+            </param>
+        </member>
+        <member name="M:Westwind.Web.Controls.ErrorDisplay.ShowError(System.String,System.String)">
+            <summary>
+            Assigns an error message to the control as well as a UserMessage
+            <seealso>Class ErrorDisplay</seealso>
+            </summary>
+            <param name="text">
+            The main message text that is displayed.
+            </param>
+            <param name="Message">
+            Optional Message header shown above the message text.
+            </param>
+        </member>
+        <member name="M:Westwind.Web.Controls.ErrorDisplay.ShowMessage(System.String)">
+            <summary>
+            Displays a simple message in the display area along with the info icon 
+            before it.
+            <seealso>Class ErrorDisplay</seealso>
+            </summary>
+            <param name="Message">
+            The message to display.
+            </param>
+        </member>
         <member name="F:Westwind.Web.Controls.RenderModes.Text">
             <summary>
             Error Text is Text and needs fixing up
@@ -2649,6 +2649,39 @@
             depends on methods in this class to figure out base URLs.
             
             Note: The image does not display in design mode.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.HelpControl.HelpTopic">
+            <summary>
+            The Help Topic to display. This should be just the help detail - usually
+            the filename only (ie. _SomePage.htm) in your help base path.
+            
+            If this value is blank it inherits the page's HelpTopic. If both are
+            blank this help link is not displayed.
+            
+            Note: Make sure you set the static <see cref="!:wwWebForm.HelpBaseUrl">wwWebForm.HelpBaseUrl</see>> property in your application
+            startup so the proper help base path is used.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.HelpControl.Text">
+            <summary>
+            The text of the label. Leave blank to show only the image
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.HelpControl.AltText">
+            <summary>
+            The alternate text for the image displayed when the mouse hovers over the image.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.HelpControl.HelpControlType">
+            <summary>
+            Determines whether this control handles a help link and/or F1 key operation
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.HelpControl.HelpImage">
+            <summary>
+            The image used for the help icon. Defaults to ~/images/help.gif
+            <seealso>Class wwHelpControl                                         </seealso>
             </summary>
         </member>
         <member name="F:Westwind.Web.Controls.HelpControl.HelpBaseUrl">
@@ -2679,39 +2712,6 @@
             </summary>
         </member>
         <!-- Badly formed XML comment ignored for member "M:Westwind.Web.Controls.HelpControl.GetHelpHyperLink(System.String,System.String,System.String,System.String,System.String)" -->
-        <member name="P:Westwind.Web.Controls.HelpControl.HelpTopic">
-            <summary>
-            The Help Topic to display. This should be just the help detail - usually
-            the filename only (ie. _SomePage.htm) in your help base path.
-            
-            If this value is blank it inherits the page's HelpTopic. If both are
-            blank this help link is not displayed.
-            
-            Note: Make sure you set the static <see cref="!:wwWebForm.HelpBaseUrl">wwWebForm.HelpBaseUrl</see>&gt; property in your application
-            startup so the proper help base path is used.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.HelpControl.Text">
-            <summary>
-            The text of the label. Leave blank to show only the image
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.HelpControl.AltText">
-            <summary>
-            The alternate text for the image displayed when the mouse hovers over the image.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.HelpControl.HelpControlType">
-            <summary>
-            Determines whether this control handles a help link and/or F1 key operation
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.HelpControl.HelpImage">
-            <summary>
-            The image used for the help icon. Defaults to ~/images/help.gif
-            <seealso>Class wwHelpControl                                         </seealso>
-            </summary>
-        </member>
         <member name="T:Westwind.Web.Controls.HelpControlTypes">
             <summary>
             Determines whether link is treated as a link or as a page F1 handler.
@@ -2748,6 +2748,32 @@
         <member name="F:Westwind.Web.Controls.MessageDisplayBase.Pagename">
             <summary>
             Static member that determines the name of the MessageDisplay page.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.MessageDisplayBase.MessageHeader">
+            <summary>
+            The Header to be displayed on the page. Used only in the 'display' code.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.MessageDisplayBase.Message">
+            <summary>
+            The message to be displayed on the page. This text may be in HTML format. Used only in the display code.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.MessageDisplayBase.RedirectUrl">
+            <summary>
+            The Url to redirect to. Optional. Used only in the display code
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.MessageDisplayBase.StyleSheet">
+            <summary>
+            A stylesheet reference that gets embedded into the page if set.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.MessageDisplayBase.BasePath">
+            <summary>
+            This property is set during the loading of the page and can be used
+            inside of the page to allow relative links to be found.
             </summary>
         </member>
         <member name="M:Westwind.Web.Controls.MessageDisplayBase.DisplayPage(System.Web.UI.WebControls.Label,System.Web.UI.WebControls.Label,System.Web.UI.WebControls.Label)">
@@ -2833,32 +2859,6 @@
             	"/default.aspx",4);
             </example>
         </member>
-        <member name="P:Westwind.Web.Controls.MessageDisplayBase.MessageHeader">
-            <summary>
-            The Header to be displayed on the page. Used only in the 'display' code.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.MessageDisplayBase.Message">
-            <summary>
-            The message to be displayed on the page. This text may be in HTML format. Used only in the display code.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.MessageDisplayBase.RedirectUrl">
-            <summary>
-            The Url to redirect to. Optional. Used only in the display code
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.MessageDisplayBase.StyleSheet">
-            <summary>
-            A stylesheet reference that gets embedded into the page if set.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.MessageDisplayBase.BasePath">
-            <summary>
-            This property is set during the loading of the page and can be used
-            inside of the page to allow relative links to be found.
-            </summary>
-        </member>
         <member name="T:Westwind.Web.Controls.Pager">
             <summary>
             The Pager class provides a standalone pager that can be added
@@ -2869,76 +2869,6 @@
             &lt;&lt;img src="images/pager1.png" /&gt;&gt;
             <seealso>Using the Pager Web Control to Page Content and Data Results</seealso>
             </summary>
-        </member>
-        <member name="F:Westwind.Web.Controls.Pager._startPage">
-            <summary>
-            Internally used to hold the first page to render when max pages is exceeded
-            </summary>
-        </member>
-        <member name="F:Westwind.Web.Controls.Pager._endPage">
-            <summary>
-            Internally used to hold the last page to render when max pages are exceeded
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.Controls.Pager.Render(System.Web.UI.HtmlTextWriter)">
-            <summary>
-            overridden to handle custom pager rendering for runtime and design time
-            </summary>
-            <param name="writer"></param>
-        </member>
-        <member name="M:Westwind.Web.Controls.Pager.ConfigurePagesToRender">
-            <summary>
-            Determines the startpage and endpage which are the first
-            and last page numbers that are rendered.
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.Controls.Pager.FixupBaseUrl">
-            <summary>
-            Tries to retrieve the Page url if one wasn't provided
-            </summary>
-        </member>
-        <member name="M:Westwind.Web.Controls.Pager.OnInit(System.EventArgs)">
-            <summary>
-            Updates the internal settings based on the url
-            </summary>
-        </member>
-        <!-- Badly formed XML comment ignored for member "M:Westwind.Web.Controls.Pager.FilterIQueryable``1(System.Linq.IQueryable{``0},System.Int32)" -->
-        <member name="M:Westwind.Web.Controls.Pager.FilterIQueryable``1(System.Linq.IQueryable{``0})">
-            <summary>
-            Queries the database for the ActivePage applied manually
-            or from the Request["page"] variable. This routine
-            figures out and sets TotalPages, ActivePage and
-            returns a filtered subset IQueryable that contains
-            only the items from the ActivePage.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="query"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Web.Controls.Pager.FilterIEnumerable``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
-            <summary>
-            
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="items"></param>
-            <param name="activePage"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Web.Controls.Pager.FilterDataTable(System.Data.DataTable,System.Int32)">
-            <summary>
-            Filters a data table for an ActivePage.
-            
-            Note: Modifies the data set permanently by remove DataRows
-            </summary>
-            <param name="dt">Full result DataTable</param>
-            <param name="activePage">Page to display. 0 to use ActivePage property </param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Web.Controls.Pager.CalculateTotalPagesFromTotalItems">
-            <summary>
-            Calculates total pages from TotalItems
-            </summary>
-            <returns></returns>
         </member>
         <member name="P:Westwind.Web.Controls.Pager.TotalPages">
             <summary>
@@ -3050,6 +2980,76 @@
             The CSS Class used for the container div
             </summary>
         </member>
+        <member name="F:Westwind.Web.Controls.Pager._startPage">
+            <summary>
+            Internally used to hold the first page to render when max pages is exceeded
+            </summary>
+        </member>
+        <member name="F:Westwind.Web.Controls.Pager._endPage">
+            <summary>
+            Internally used to hold the last page to render when max pages are exceeded
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Controls.Pager.Render(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            overridden to handle custom pager rendering for runtime and design time
+            </summary>
+            <param name="writer"></param>
+        </member>
+        <member name="M:Westwind.Web.Controls.Pager.ConfigurePagesToRender">
+            <summary>
+            Determines the startpage and endpage which are the first
+            and last page numbers that are rendered.
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Controls.Pager.FixupBaseUrl">
+            <summary>
+            Tries to retrieve the Page url if one wasn't provided
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Controls.Pager.OnInit(System.EventArgs)">
+            <summary>
+            Updates the internal settings based on the url
+            </summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:Westwind.Web.Controls.Pager.FilterIQueryable``1(System.Linq.IQueryable{``0},System.Int32)" -->
+        <member name="M:Westwind.Web.Controls.Pager.FilterIQueryable``1(System.Linq.IQueryable{``0})">
+            <summary>
+            Queries the database for the ActivePage applied manually
+            or from the Request["page"] variable. This routine
+            figures out and sets TotalPages, ActivePage and
+            returns a filtered subset IQueryable that contains
+            only the items from the ActivePage.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="query"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Controls.Pager.FilterIEnumerable``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="items"></param>
+            <param name="activePage"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Controls.Pager.FilterDataTable(System.Data.DataTable,System.Int32)">
+            <summary>
+            Filters a data table for an ActivePage.
+            
+            Note: Modifies the data set permanently by remove DataRows
+            </summary>
+            <param name="dt">Full result DataTable</param>
+            <param name="activePage">Page to display. 0 to use ActivePage property </param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Web.Controls.Pager.CalculateTotalPagesFromTotalItems">
+            <summary>
+            Calculates total pages from TotalItems
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:Westwind.Web.Controls.PreservePropertyControl">
             <summary>
             Control used to automatically preserve properties on a page.
@@ -3065,6 +3065,12 @@
             values without having to use Viewstate on a page.
             </summary>
         </member>
+        <member name="P:Westwind.Web.Controls.PreservePropertyControl.PreservedProperties">
+            <summary>
+            Collection of all the preserved properties that are to
+            be preserved/restored. Collection hold, ControlId, Property
+            </summary>
+        </member>
         <member name="M:Westwind.Web.Controls.PreservePropertyControl.AddParsedSubObject(System.Object)">
             <summary>
             Required to be able to properly PreservedProperty Collection 
@@ -3076,6 +3082,16 @@
             Internal persistance object used to serialize
             into the state store. Hashtable is Serializable
             and can be serialized by the LosFormatter
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.PreservePropertyControl.StorageMode">
+            <summary>
+            Determines the storage mode for the control.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.PreservePropertyControl.Enabled">
+            <summary>
+            Determines whether the control preserves and restores values
             </summary>
         </member>
         <member name="F:Westwind.Web.Controls.PreservePropertyControl.PreservePropertyKey">
@@ -3138,22 +3154,6 @@
             <summary>
             Retrieves the serialized data from the Storage medium
             as string using LosFormatter formatting.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.PreservePropertyControl.PreservedProperties">
-            <summary>
-            Collection of all the preserved properties that are to
-            be preserved/restored. Collection hold, ControlId, Property
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.PreservePropertyControl.StorageMode">
-            <summary>
-            Determines the storage mode for the control.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.PreservePropertyControl.Enabled">
-            <summary>
-            Determines whether the control preserves and restores values
             </summary>
         </member>
         <member name="T:Westwind.Web.Controls.PreservedProperty">
@@ -3237,6 +3237,11 @@
             &lt;&lt;/code&gt;&gt;
             </example>
         </member>
+        <member name="P:Westwind.Web.Controls.TabControl.TabPages">
+            <summary>
+            Collection of Tabpages.
+            </summary>
+        </member>
         <member name="F:Westwind.Web.Controls.TabControl.Output">
             <summary>
             The completed control output
@@ -3250,6 +3255,36 @@
         <member name="F:Westwind.Web.Controls.TabControl.Script">
             <summary>
             The output of the Script block required to handle tab activation
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.TabControl.SelectedTab">
+            <summary>
+            The Selected Tab. Set this to the TabPageClientId of the tab that you want to have selected
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.TabControl.TabWidth">
+            <summary>
+            The width for each of the tabs. Each tab will be this width.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.TabControl.TabHeight">
+            <summary>
+            The height of each of the tabs.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.TabControl.TabCssClass">
+            <summary>
+            The CSS class that is used to render nonselected tabs.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.TabControl.SelectedTabCssClass">
+            <summary>
+            The CSS class that is used to render a selected button. Defaults to selectedtabbutton.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.Controls.TabControl.TabStripSeparatorCssClass">
+            <summary>
+            The class used for the separator strip between tab and content
             </summary>
         </member>
         <member name="F:Westwind.Web.Controls.TabControl.ClientScriptProxy">
@@ -3301,41 +3336,6 @@
             The master HTML template into which the dynamically generated tab display is rendered.
             </summary>
         </member>
-        <member name="P:Westwind.Web.Controls.TabControl.TabPages">
-            <summary>
-            Collection of Tabpages.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.TabControl.SelectedTab">
-            <summary>
-            The Selected Tab. Set this to the TabPageClientId of the tab that you want to have selected
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.TabControl.TabWidth">
-            <summary>
-            The width for each of the tabs. Each tab will be this width.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.TabControl.TabHeight">
-            <summary>
-            The height of each of the tabs.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.TabControl.TabCssClass">
-            <summary>
-            The CSS class that is used to render nonselected tabs.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.TabControl.SelectedTabCssClass">
-            <summary>
-            The CSS class that is used to render a selected button. Defaults to selectedtabbutton.
-            </summary>
-        </member>
-        <member name="P:Westwind.Web.Controls.TabControl.TabStripSeparatorCssClass">
-            <summary>
-            The class used for the separator strip between tab and content
-            </summary>
-        </member>
         <member name="T:Westwind.Web.Controls.TabPage">
             <summary>
             The individual TabPage class that holds the intermediary Tab page values
@@ -3351,14 +3351,14 @@
             Image placed on the left of the Tab
             </summary>
         </member>
-        <member name="M:Westwind.Web.Controls.TabCollection.Add(Westwind.Web.Controls.TabPage)">
-            <summary>
-            Adds a new error to the collection
-            </summary>
-        </member>
         <member name="P:Westwind.Web.Controls.TabCollection.Item(System.Int32)">
             <summary>
             Indexer property for the collection that returns and sets an item
+            </summary>
+        </member>
+        <member name="M:Westwind.Web.Controls.TabCollection.Add(Westwind.Web.Controls.TabPage)">
+            <summary>
+            Adds a new error to the collection
             </summary>
         </member>
     </members>
