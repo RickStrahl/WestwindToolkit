@@ -933,7 +933,10 @@
             </summary>
             <typeparam name="T">Entity type to create from DataReader data</typeparam>
             <param name="command">Command object containing configured SQL command to execute</param>        
-            <param name="parameters">DbParameters to fill the SQL statement</param>
+            <param name="parameters">
+            DbParameters (CreateParameter()) for named parameters
+             or use @0,@1 parms in SQL and plain values
+            </param>
             <returns>List of objects or null. Null is returned if there are no matches</returns>   
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.QueryWithExclusions``1(System.String,System.String,System.Object[])">
@@ -947,7 +950,10 @@
             <typeparam name="T">Entity type to create from DataReader data</typeparam>
             <param name="sql">Sql string to execute</param>        
             <param name="propertiesToExclude">Comma delimited list of properties that are not to be updated</param>
-            <param name="parameters">DbParameters to fill the SQL statement</param>
+            <param name="parameters">
+             DbParameters (CreateParameter()) for named parameters
+             or use @0,@1 parms in SQL and plain values
+            </param>
             <returns>List of objects</returns>        
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.QueryWithExclusions``1(System.Data.Common.DbCommand,System.String,System.Object[])">
@@ -974,6 +980,7 @@
             </param>
             <returns>A DataReader or null on failure</returns>
         </member>
+        <!-- Badly formed XML comment ignored for member "M:Westwind.Utilities.Data.DataAccessBase.ExecuteStoredProcedureReader``1(System.String,System.Object[])" -->
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteStoredProcedureNonQuery(System.String,System.Object[])">
             <summary>
             Executes a stored procedure that doesn't return a result set.
@@ -983,7 +990,7 @@
             Parameters to pass. Note that if you need to pass out/inout/return parameters
             you need to pass DbParameter instances or use the CreateParameter() method
             </param>
-            <returns>> -1 on success, -1 on failure</returns>
+            <returns>> 0 or greater on success, -1 on failure</returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteReader``1(System.String,System.Object[])">
             <summary>
@@ -991,25 +998,23 @@
             </summary>
             <typeparam name="T">Type of object to create from data record</typeparam>
             <param name="sql">Sql string</param>
-            <param name="parameters">Either object values (@0,@1 syntax) or (@name,@name2 syntax using CreateParameter</param>
+            <param name="parameters">
+             DbParameters (CreateParameter()) for named parameters
+             or use @0,@1 parms in SQL and plain values
+            </param> 
             <returns>An enumerated list of objects or null</returns>
         </member>
-        <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteReader``1(System.Data.Common.DbCommand,System.Object[])">
-            <summary>
-            Allows querying and return a list of entities.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="command"></param>
-            <param name="parameters"></param>
-            <returns></returns>
-        </member>
+        <!-- Badly formed XML comment ignored for member "M:Westwind.Utilities.Data.DataAccessBase.ExecuteReader``1(System.Data.Common.DbCommand,System.Object[])" -->
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteDynamicDataReader(System.String,System.Object[])">
             <summary>
             Executes a Sql statement and returns a dynamic DataReader instance 
             that exposes each field as a property
             </summary>
             <param name="sql">Sql String to executeTable</param>
-            <param name="parameters">Array of DbParameters to pass</param>
+            <param name="parameters">
+            DbParameters (CreateParameter()) for named parameters
+            or use @0,@1 parms in SQL and plain values
+            </param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteTable(System.String,System.Data.Common.DbCommand,System.Object[])">
@@ -1018,7 +1023,10 @@
             </summary>
             <param name="tablename"></param>
             <param name="command"></param>
-            <param name="parameters"></param>
+            <param name="parameters">
+            DbParameters (CreateParameter()) for named parameters
+             or use @0,@1 parms in SQL and plain values
+            </param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteTable(System.String,System.String,System.Object[])">
@@ -1028,7 +1036,10 @@
             <param name="Tablename"></param>
             <param name="ConnectionString"></param>
             <param name="Sql"></param>
-            <param name="Parameters"></param>
+            <param name="parameters">
+            DbParameters (CreateParameter()) for named parameters
+             or use @0,@1 parms in SQL and plain values
+            </param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteDataSet(System.String,System.Data.Common.DbCommand,System.Object[])">
@@ -1037,7 +1048,10 @@
             </summary>
             <param name="Tablename">The name for the table generated or the base names</param>
             <param name="Command"></param>
-            <param name="Parameters"></param>
+            <param name="parameters">
+            DbParameters (CreateParameter()) for named parameters
+             or use @0,@1 parms in SQL and plain values
+            </param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteDataSet(System.String,System.String,System.Object[])">
@@ -1070,7 +1084,11 @@
             <summary>
             Executes a command and returns a scalar value from it
             </summary>
-            <param name="SqlCommand">A SQL Command object</param>
+            <param name="command">DbCommand containing command to run</param>
+            <param name="parameters">
+            DbParameters (CreateParameter()) for named parameters
+             or use @0,@1 parms in SQL and plain values
+            </param>
             <returns>value or null on failure</returns>        
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteScalar(System.String,System.Object[])">
@@ -1078,7 +1096,10 @@
             Executes a Sql command and returns a single value from it.
             </summary>
             <param name="Sql">Sql string to execute</param>
-            <param name="Parameters">Any named SQL parameters</param>
+            <param name="parameters">
+            DbParameters (CreateParameter()) for named parameters
+            or use @0,@1 parms in SQL and plain values
+            </param>
             <returns>Result value or null. Check ErrorMessage on Null if unexpected</returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.CloseConnection(System.Data.Common.DbCommand)">
@@ -1101,7 +1122,7 @@
             <param name="pageSize"></param>
             <param name="page"></param>
             <param name="sortOrderFields"></param>
-            <param name="Parameters"></param>
+            <param name="parameters"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.RunSqlScript(System.String,System.Boolean,System.Boolean)">
@@ -1110,8 +1131,8 @@
             breaks the script into individual commands and captures all execution errors.
             
             If ContinueOnError is false, operations are run inside of a transaction and
-            changes are rolled back. If true commands are accepted even if failures occur
-            and are not rolled back.
+            changes are rolled back. If true commands are accepted and continue running
+             even if failures occur  and are not rolled back.
             </summary>
             <param name="script"></param>
             <param name="continueOnError"></param>
@@ -1355,7 +1376,7 @@
             <param name="pageSize"></param>
             <param name="page"></param>
             <param name="sortOrderFields"></param>
-            <param name="Parameters"></param>
+            <param name="parameters"></param>
             <returns></returns>
         </member>
         <member name="T:Westwind.Utilities.ValidationErrorCollection">
