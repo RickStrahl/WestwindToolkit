@@ -659,7 +659,10 @@ namespace Westwind.Utilities.Data
         /// </summary>
         /// <typeparam name="T">Entity type to create from DataReader data</typeparam>
         /// <param name="command">Command object containing configured SQL command to execute</param>        
-        /// <param name="parameters">DbParameters to fill the SQL statement</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        ///  or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns>List of objects or null. Null is returned if there are no matches</returns>   
         public virtual IEnumerable<T> Query<T>(DbCommand command, params object[] parameters)
             where T : class, new()
@@ -690,7 +693,10 @@ namespace Westwind.Utilities.Data
         /// <typeparam name="T">Entity type to create from DataReader data</typeparam>
         /// <param name="sql">Sql string to execute</param>        
         /// <param name="propertiesToExclude">Comma delimited list of properties that are not to be updated</param>
-        /// <param name="parameters">DbParameters to fill the SQL statement</param>
+        /// <param name="parameters">
+        ///  DbParameters (CreateParameter()) for named parameters
+        ///  or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns>List of objects</returns>        
         public virtual IEnumerable<T> QueryWithExclusions<T>(string sql, string propertiesToExclude, params object[] parameters)            
             where T: class, new()
@@ -764,6 +770,20 @@ namespace Westwind.Utilities.Data
             return ExecuteReader(command);
         }
 
+
+        /// <summary>
+        /// Calls a stored procedure that returns a cursor results
+        /// The result is returned as an IEnumerable<T> list
+        /// </summary>
+        /// <example>
+        /// IEnumerable&lt;Customer%gt; customers = context.Db.ExecuteStoredProcedureReader&lt;Customer&gt;("GetCustomers",        
+        //              context.Db.CreateParameter("@cCompany","W%"));
+        /// </example>
+        /// <param name="storedProc">Name of the Stored Procedure to call</param>
+        /// <param name="parameters">
+        /// Use CreateParameter() for named, output or return parameters. Plain values for others.
+        /// </param>
+        /// <returns>A DataReader or null on failure</returns>
         public virtual IEnumerable<T> ExecuteStoredProcedureReader<T>(string storedProc, params object[] parameters)
             where T : class, new()
         {
@@ -784,7 +804,7 @@ namespace Westwind.Utilities.Data
         /// Parameters to pass. Note that if you need to pass out/inout/return parameters
         /// you need to pass DbParameter instances or use the CreateParameter() method
         /// </param>
-        /// <returns>> -1 on success, -1 on failure</returns>
+        /// <returns>> 0 or greater on success, -1 on failure</returns>
         public virtual int ExecuteStoredProcedureNonQuery(string storedProc, params object[] parameters)
         {
             var command = CreateCommand(storedProc, parameters);
@@ -801,7 +821,10 @@ namespace Westwind.Utilities.Data
         /// </summary>
         /// <typeparam name="T">Type of object to create from data record</typeparam>
         /// <param name="sql">Sql string</param>
-        /// <param name="parameters">Either object values (@0,@1 syntax) or (@name,@name2 syntax using CreateParameter</param>
+        /// <param name="parameters">
+        ///  DbParameters (CreateParameter()) for named parameters
+        ///  or use @0,@1 parms in SQL and plain values
+        /// </param> 
         /// <returns>An enumerated list of objects or null</returns>
         [Obsolete("Use the Query method instead with the same syntax")]
         public virtual IEnumerable<T> ExecuteReader<T>(string sql, params object[] parameters)
@@ -813,9 +836,13 @@ namespace Westwind.Utilities.Data
         /// <summary>
         /// Allows querying and return a list of entities.
         /// </summary>
+        /// <example>
         /// <typeparam name="T"></typeparam>
         /// <param name="command"></param>
-        /// <param name="parameters"></param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        ///  or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns></returns>
         [Obsolete("Use the Query method instead with the same syntax")]
         public virtual IEnumerable<T> ExecuteReader<T>(DbCommand command, params object[] parameters)
@@ -825,27 +852,17 @@ namespace Westwind.Utilities.Data
         }
 
 
-        
-        //  /// <summary>
-        ///// Allows querying and return a list of entities.
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="command"></param>
-        ///// <param name="parameters"></param>
-        ///// <returns></returns>
-        //public virtual IEnumerable<T> QueryWithExclusions<T>(DbCommand command, string propertiesToExclude, params object[] parameters)
-        //    where T : class, new()
-        //{
-        //    return ExecuteReader<T>(command, propertiesToExclude, parameters);
-        //}
-        
+
 
         /// <summary>
         /// Executes a Sql statement and returns a dynamic DataReader instance 
         /// that exposes each field as a property
         /// </summary>
         /// <param name="sql">Sql String to executeTable</param>
-        /// <param name="parameters">Array of DbParameters to pass</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns></returns>
         public virtual dynamic ExecuteDynamicDataReader(string sql, params object[] parameters)
         {
@@ -859,7 +876,10 @@ namespace Westwind.Utilities.Data
         /// </summary>
         /// <param name="tablename"></param>
         /// <param name="command"></param>
-        /// <param name="parameters"></param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        ///  or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns></returns>
         public virtual DataTable ExecuteTable(string tablename, DbCommand command, params object[] parameters)
         {
@@ -895,7 +915,10 @@ namespace Westwind.Utilities.Data
         /// <param name="Tablename"></param>
         /// <param name="ConnectionString"></param>
         /// <param name="Sql"></param>
-        /// <param name="Parameters"></param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        ///  or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns></returns>
         public virtual DataTable ExecuteTable(string Tablename, string Sql, params object[] Parameters)
         {
@@ -914,7 +937,10 @@ namespace Westwind.Utilities.Data
         /// </summary>
         /// <param name="Tablename">The name for the table generated or the base names</param>
         /// <param name="Command"></param>
-        /// <param name="Parameters"></param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        ///  or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns></returns>
         public virtual DataSet ExecuteDataSet(string Tablename, DbCommand Command, params object[] Parameters)
         {
@@ -994,12 +1020,14 @@ namespace Westwind.Utilities.Data
         }
 
 
-
-
         /// <summary>
         /// Executes a command and returns a scalar value from it
         /// </summary>
-        /// <param name="SqlCommand">A SQL Command object</param>
+        /// <param name="command">DbCommand containing command to run</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        ///  or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns>value or null on failure</returns>        
         public virtual object ExecuteScalar(DbCommand command, params object[] parameters)
         {
@@ -1027,7 +1055,10 @@ namespace Westwind.Utilities.Data
         /// Executes a Sql command and returns a single value from it.
         /// </summary>
         /// <param name="Sql">Sql string to execute</param>
-        /// <param name="Parameters">Any named SQL parameters</param>
+        /// <param name="parameters">
+        /// DbParameters (CreateParameter()) for named parameters
+        /// or use @0,@1 parms in SQL and plain values
+        /// </param>
         /// <returns>Result value or null. Check ErrorMessage on Null if unexpected</returns>
         public virtual object ExecuteScalar(string sql, params object[] parameters)
         {
