@@ -330,13 +330,13 @@ namespace Westwind.Web.Mvc
         /// when no existing ControllerContext is present       
         /// </summary>
         /// <typeparam name="T">Type of the controller to create</typeparam>
-        /// <returns>Controller Context for T</returns>
+        /// <returns>Controller for T</returns>
         /// <exception cref="InvalidOperationException">thrown if HttpContext not available</exception>
-        public static T CreateController<T>(RouteData routeData = null)
+        public static T CreateController<T>(RouteData routeData = null, params object[] parameters)
                     where T : Controller, new()
         {
             // create a disconnected controller instance
-            T controller = new T();
+            T controller = (T) Activator.CreateInstance(typeof (T), parameters);
 
             // get context wrapper from HttpContext if available
             HttpContextBase wrapper = null;
