@@ -134,59 +134,30 @@ namespace Westwind.Utilities.Data
         /// <summary>
         /// An error message if a method fails
         /// </summary>
-        public virtual string ErrorMessage
-        {
-            get { return _ErrorMessage; }
-            set { _ErrorMessage = value; }
-        }
-        private string _ErrorMessage = string.Empty;
+        public virtual string ErrorMessage { get; set; } = string.Empty;
 
         /// <summary>
         /// Optional error number returned by failed SQL commands
         /// </summary>
-        public int ErrorNumber
-        {
-            get { return _ErrorNumber; }
-            set { _ErrorNumber = value; }
-        }
-        private int _ErrorNumber = 0;
+        public int ErrorNumber { get; set; } = 0;
 
         /// <summary>
         /// The prefix used by the provider
         /// </summary>
-        public string ParameterPrefix
-        {
-            get { return _ParameterPrefix; }
-            set { _ParameterPrefix = value; }
-        }
-        private string _ParameterPrefix = "@";
-        
+        public string ParameterPrefix { get; set; } = "@";
+
 
         /// <summary>
         /// ConnectionString for the data access component
         /// </summary>
-        public virtual string ConnectionString
-        {
-            get { return _ConnectionString; }
-            set { 
-
-
-                _ConnectionString = value; 
-            }
-        }
-        private string _ConnectionString = string.Empty;
+        public virtual string ConnectionString { get; set; } = string.Empty;
 
 
         /// <summary>
         /// A SQL Transaction object that may be active. You can 
         /// also set this object explcitly
         /// </summary>
-        public virtual DbTransaction Transaction
-        {
-            get { return _Transaction; }
-            set { _Transaction = value; }
-        }
-        private DbTransaction _Transaction = null;
+        public virtual DbTransaction Transaction { get; set; }
 
 
         /// <summary>
@@ -204,26 +175,20 @@ namespace Westwind.Utilities.Data
         /// Set to -1 for whatever the system default is.
         /// Set to 0 to never timeout (not recommended).
         /// </summary>
-        public int Timeout
-        {
-            get { return _timeout; }
-            set { _timeout = value; }
-        }
-        private int _timeout = -1;
-        
+        public int Timeout { get; set; } = -1;
+
 
         /// <summary>
         /// Determines whether extended schema information is returned for 
         /// queries from the server. Useful if schema needs to be returned
         /// as part of DataSet XML creation 
         /// </summary>
-        public virtual bool ExecuteWithSchema
-        {
-            get { return _ExecuteWithSchema; }
-            set { _ExecuteWithSchema = value; }
-        }
-        private bool _ExecuteWithSchema = false;
+        public virtual bool ExecuteWithSchema { get; set; } = false;
 
+        /// <summary>
+        /// Holds the last SQL string executed
+        /// </summary>
+        public string LastSql { get; set; }
 
         /// <summary>
         /// Opens a Sql Connection based on the connection string.
@@ -470,6 +435,8 @@ namespace Westwind.Utilities.Data
 
             try
             {
+                LastSql = Command.CommandText;
+
                 RecordCount = Command.ExecuteNonQuery();
                 if (RecordCount == -1)
                     RecordCount = 0;
@@ -539,6 +506,7 @@ namespace Westwind.Utilities.Data
             DbDataReader Reader = null;
             try
             {
+                LastSql = command.CommandText;
                 Reader = command.ExecuteReader(CommandBehavior.CloseConnection);
             }
             catch (Exception ex)
@@ -890,6 +858,8 @@ namespace Westwind.Utilities.Data
             DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
             Adapter.SelectCommand = command;
 
+            LastSql = command.CommandText;
+
             DataTable dt = new DataTable(tablename);
 
             try
@@ -975,6 +945,8 @@ namespace Westwind.Utilities.Data
 
             DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
             Adapter.SelectCommand = command;
+            LastSql = command.CommandText;
+
 
             if (ExecuteWithSchema)
                 Adapter.MissingSchemaAction = MissingSchemaAction.AddWithKey;
@@ -1038,6 +1010,7 @@ namespace Westwind.Utilities.Data
             object Result = null;
             try
             {
+                LastSql = command.CommandText;
                 Result = command.ExecuteScalar();
             }
             catch (Exception ex)
@@ -1524,10 +1497,14 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
             object result = res;
 
+            string lastSql = Command.CommandText;
+
             if (returnIdentityKey)
             {
                 result = ExecuteScalar("select SCOPE_IDENTITY()");
                 CloseConnection();
+
+                LastSql = lastSql + ";\r\n" + LastSql;
                 return result;
             }         
 
