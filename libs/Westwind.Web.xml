@@ -90,6 +90,23 @@
             (BaseController and JsonCallback
             </summary>    
         </member>
+        <member name="P:Westwind.Web.CallbackException.ErrorDetail">
+            <summary>
+            Additional Error Detail to assign to this error instance
+            </summary>
+        </member>
+        <member name="T:Westwind.Web.CallbackError">
+            <summary>
+            Mimicks the CallbackException class except this is not based on an Exception.
+            Ideal for passing back as an error result from a failed serialization request
+            in an API or other service interface.
+            </summary>
+        </member>
+        <member name="P:Westwind.Web.CallbackError.ErrorDetail">
+            <summary>
+            Additional Error Detail to assign to this error instance
+            </summary>
+        </member>
         <member name="T:Westwind.Web.CallbackHandler">
             <summary>
             CallbackHandler is an Http Handler base class that allows you to create a

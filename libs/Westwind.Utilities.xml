@@ -732,6 +732,12 @@
             The prefix used by the provider
             </summary>
         </member>
+        <member name="P:Westwind.Utilities.Data.DataAccessBase.UsePositionalParameters">
+            <summary>
+            Determines whether parameters are positional or named. Positional
+            parameters are added without adding the name using just the ParameterPrefix
+            </summary>
+        </member>
         <member name="P:Westwind.Utilities.Data.DataAccessBase.ConnectionString">
             <summary>
             ConnectionString for the data access component
@@ -762,6 +768,11 @@
             as part of DataSet XML creation 
             </summary>
         </member>
+        <member name="P:Westwind.Utilities.Data.DataAccessBase.LastSql">
+            <summary>
+            Holds the last SQL string executed
+            </summary>
+        </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.OpenConnection">
             <summary>
             Opens a Sql Connection based on the connection string.
@@ -780,86 +791,66 @@
             <summary>
             Creates a Command object and opens a connection
             </summary>
-            <param name="ConnectionString">Connection string or ConnnectionString configuration name</param>
             <param name="sql">Sql string to create</param>
-            <param name="commandType">Type of command to create</param>
-            <param name="parameters">Parameter values that map to @0,@1 or DbParameter objects created with CreateParameter()</param>
-            <returns></returns>
+            <param name="sql">Sql string to execute</param>
+            <param name="parameters">Either values mapping to @0,@1,@2 etc. or DbParameter objects created with CreateParameter()</param>
+            <returns>Command object or null on error</returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateCommand(System.String,System.Object[])">
             <summary>
             Creates a Command object and opens a connection
-            </summary>
-            <param name="ConnectionString">Connection String or Connection String Entry from config file</param>
+            </summary>        
             <param name="sql">Sql string to execute</param>
-            <returns>Parameters. Either values mapping to @0,@1,@2 etc. or DbParameter objects created with CreateParameter()</returns>
+            <param name="parameters">Either values mapping to @0,@1,@2 etc. or DbParameter objects created with CreateParameter()</param>
+            <returns>command object</returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.AddParameters(System.Data.Common.DbCommand,System.Object[])">
             <summary>
             Adds parameters to a DbCommand instance. Parses value and DbParameter parameters
             properly into the command's Parameters collection.
             </summary>
-            <param name="command"></param>
-            <param name="parameters"></param>
-        </member>
-        <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object)">
-            <summary>
-            Used to create named parameters to pass to commands or the various
-            methods of this class.
-            </summary>
-            <param name="parameterName"></param>
-            <param name="value"></param>
-            <param name="dbType"></param>
-            <returns></returns>
+            <param name="command">A preconfigured DbCommand object that should have all connection information set</param>
+            <param name="parameters">Either values mapping to @0,@1,@2 etc. or DbParameter objects created with CreateParameter()</param>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object,System.Data.ParameterDirection)">
             <summary>
             Used to create named parameters to pass to commands or the various
             methods of this class.
             </summary>
-            <param name="parameterName"></param>
-            <param name="value"></param>
-            <param name="dbType"></param>
+            <param name="parameterName">Name of hte parameter to create</param>
+            <param name="value">Value to set</param>
+            <param name="parameterDirection">Parameter direction. Defaults to input</param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object,System.Int32)">
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object,System.Data.DbType,System.Int32,System.Data.ParameterDirection)">
             <summary>
             Used to create named parameters to pass to commands or the various
             methods of this class.
             </summary>
-            <param name="parameterName"></param>
-            <param name="value"></param>
-            <param name="size"></param>
-            <returns></returns>
+            <param name="parameterName">Name of the parameter to create</param>
+            <param name="value">The value of the parameter</param>
+            <param name="type">The type of the parameter</param>
+            <param name="size">The size of the parameter</param>
+            <param name="direction">Dirction of the parameter - defaults to input</param>
+            <returns>A parameter instance</returns>
         </member>
-        <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object,System.Data.DbType)">
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object,System.Int32,System.Data.ParameterDirection)">
             <summary>
             Used to create named parameters to pass to commands or the various
             methods of this class.
             </summary>
-            <param name="parameterName"></param>
-            <param name="value"></param>
-            <param name="dbType"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object,System.Data.DbType,System.Int32)">
-            <summary>
-            Used to create named parameters to pass to commands or the various
-            methods of this class.
-            </summary>
-            <param name="parameterName"></param>
-            <param name="value"></param>
-            <param name="type"></param>
-            <param name="size"></param>
+            <param name="parameterName">Name of the parameter</param>
+            <param name="value">value to set it to</param>
+            <param name="size">size of a numeric field</param>
+            <param name="direction">Dirction of the parameter - defaults to input</param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteNonQuery(System.Data.Common.DbCommand)">
             <summary>
             Executes a non-query command and returns the affected records
             </summary>
-            <param name="Command">Command should be created with GetSqlCommand to have open connection</param>
-            <param name="Parameters"></param>
-            <returns></returns>
+            <param name="Command">Command should be created with GetSqlCommand to have open connection</param>       
+            <returns>Affected Record count or -1 on error</returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteNonQuery(System.String,System.Object[])">
             <summary>
@@ -1122,7 +1113,7 @@
             <param name="pageSize"></param>
             <param name="page"></param>
             <param name="sortOrderFields"></param>
-            <param name="parameters"></param>
+            <param name="Parameters"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.RunSqlScript(System.String,System.Boolean,System.Boolean)">
@@ -1131,8 +1122,8 @@
             breaks the script into individual commands and captures all execution errors.
             
             If ContinueOnError is false, operations are run inside of a transaction and
-            changes are rolled back. If true commands are accepted and continue running
-             even if failures occur  and are not rolled back.
+            changes are rolled back. If true commands are accepted even if failures occur
+            and are not rolled back.
             </summary>
             <param name="script"></param>
             <param name="continueOnError"></param>
@@ -1376,7 +1367,7 @@
             <param name="pageSize"></param>
             <param name="page"></param>
             <param name="sortOrderFields"></param>
-            <param name="parameters"></param>
+            <param name="Parameters"></param>
             <returns></returns>
         </member>
         <member name="T:Westwind.Utilities.ValidationErrorCollection">

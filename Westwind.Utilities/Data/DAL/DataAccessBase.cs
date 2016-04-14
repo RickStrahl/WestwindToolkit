@@ -1,4 +1,5 @@
 ﻿#region License
+#region License
 //#define SupportWebRequestProvider
 /*
  **************************************************************
@@ -40,6 +41,7 @@ using System.Configuration;
 using System.Data.Common;
 using System.IO;
 using System.Collections.Generic;
+using System.Data.OleDb;
 using System.Diagnostics;
 using Westwind.Utilities.Properties;
 using System.Data.SqlClient;
@@ -58,7 +60,7 @@ namespace Westwind.Utilities.Data
     /// providers and override a few methods that might have provider
     /// specific SQL Syntax.
     /// </summary>
-    [DebuggerDisplay("{ ErrorMessage } {ConnectionString}")]
+    [DebuggerDisplay("{ ErrorMessage } {ConnectionString} {LastSql}")]
     public abstract class DataAccessBase : IDisposable
     {        
         private const string STR_DefaultProviderName = "System.Data.SqlClient";
@@ -146,11 +148,27 @@ namespace Westwind.Utilities.Data
         /// </summary>
         public string ParameterPrefix { get; set; } = "@";
 
+        /// <summary>
+        /// Determines whether parameters are positional or named. Positional
+        /// parameters are added without adding the name using just the ParameterPrefix
+        /// </summary>
+        public bool UsePositionalParameters { get; set; } = false;
+
+        /// <summary>
+        /// Character used for the left bracket on field names. Can be empty or null to use none
+        /// </summary>
+        public string LeftFieldBracket { get; set; } = "[";
+
+        /// <summary>
+        /// Character used for the right bracket on field names. Can be empty or null to use none
+        /// </summary>
+        public string RightFieldBracket { get; set; } = "]";
 
         /// <summary>
         /// ConnectionString for the data access component
         /// </summary>
         public virtual string ConnectionString { get; set; } = string.Empty;
+
 
 
         /// <summary>
@@ -234,6 +252,11 @@ namespace Westwind.Utilities.Data
                     _Connection.Open();
             }
             catch (SqlException ex)
+            {
+                SetError(ex);
+                return false;
+            }
+            catch (OleDbException ex)
             {
                 SetError(ex);
                 return false;
@@ -329,10 +352,10 @@ namespace Westwind.Utilities.Data
                     if (parameter is DbParameter)
                         command.Parameters.Add(parameter);
                     else
-                    {
+                    {                        
                         var parm = CreateParameter(ParameterPrefix + parmCount, parameter);
                         command.Parameters.Add(parm);
-                        parmCount++;
+                        parmCount++;                        
                     }
                 }
             }
@@ -1144,6 +1167,8 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             return false;
         }
 
+        #endregion
+
         #region Generic Entity features
         /// <summary>
         /// Generic routine to retrieve an object from a database record
@@ -1207,7 +1232,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         {
             SetError();
 
-            DbCommand Command = CreateCommand("select * from " + table + " where [" + keyField + "]=" + ParameterPrefix + "Key",
+            DbCommand Command = CreateCommand("select * from " + table + " where " + LeftFieldBracket + keyField + RightFieldBracket + "=" + ParameterPrefix + "Key",
                                                     CreateParameter(ParameterPrefix + "Key", keyValue));
             if (Command == null)
                 return false;
@@ -1238,10 +1263,15 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
         /// <summary>
         /// Returns the first matching record retrieved from data based on a SQL statement
-        /// as an entity or null if no match was found.
+        /// as an entity or null if no match was found.        
         /// </summary>
         /// <typeparam name="T">Entity type to fill</typeparam>
-        /// <param name="sql">SQL string to execute. Use @0,@1,@2 for parameters</param>
+        /// <param name="sql">SQL string to execute. Use @0,@1,@2 for parameters.
+        /// 
+        /// Recommend you use `TOP1` in your SQL statements to limit the 
+        /// amount of data returned from the underlying query even though
+        /// a full list returns the same result.
+        /// </param>
         /// <param name="parameters">SQL parameter values to pass.</param>
         /// <returns></returns>
         public virtual T Find<T>(string sql, params object[] parameters)
@@ -1272,6 +1302,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             return obj;
         }
 
+        
         /// <summary>
         /// Updates an entity object that has matching fields in the database for each
         /// public property. Kind of a poor man's quick entity update mechanism.
@@ -1312,16 +1343,17 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
                 object Value = Property.GetValue(entity, null);
 
-                sb.Append(" [" + Name + "]=" + ParameterPrefix +  Name + ",");
+                string parmString = UsePositionalParameters ? ParameterPrefix : ParameterPrefix + Name;
+                sb.Append(" " + LeftFieldBracket + Name + RightFieldBracket + "=" + parmString + ",");
 
-                if (Value == null && Property.PropertyType == typeof(Byte[]))
+                if (Value == null && Property.PropertyType == typeof(byte[]))
                 {
                     Command.Parameters.Add(
                         CreateParameter(ParameterPrefix + Name, DBNull.Value, DataUtils.DotNetTypeToDbType(Property.PropertyType))
                     );
                 }
                 else
-                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value == null ? DBNull.Value : Value));
+                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value ?? DBNull.Value));
             }
 
             object pkValue = ReflectionUtils.GetProperty(entity, keyField);
@@ -1359,45 +1391,47 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             else
                 propertiesToSkip = "," + propertiesToSkip.ToLower() + ",";
 
-            DbCommand Command = CreateCommand(string.Empty);
-
-            Type ObjType = entity.GetType();
-
-            StringBuilder sb = new StringBuilder();
-            sb.Append("update " + table + " set ");
-
-            string[] Fields = fieldsToUpdate.Split(',');
-            foreach (string Name in Fields)
+            bool Result;
+            
+            using (DbCommand Command = CreateCommand(string.Empty))
             {
-                if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
-                    continue;
+                Type ObjType = entity.GetType();
 
-                PropertyInfo Property = ObjType.GetProperty(Name);
-                if (Property == null)
-                    continue;
+                StringBuilder sb = new StringBuilder();
+                sb.Append("update " + table + " set ");
 
-                object Value = Property.GetValue(entity, null);
-
-                sb.Append(" [" + Name + "]=" + ParameterPrefix + Name + ",");
-
-                if (Value == null && Property.PropertyType == typeof(Byte[]))
+                string[] Fields = fieldsToUpdate.Split(',');
+                foreach (string Name in Fields)
                 {
-                    Command.Parameters.Add(
-                        CreateParameter(ParameterPrefix + Name, DBNull.Value, DataUtils.DotNetTypeToDbType(Property.PropertyType))
-                    );
+                    if (propertiesToSkip.IndexOf("," + Name.ToLower() + ",") > -1)
+                        continue;
+
+                    PropertyInfo Property = ObjType.GetProperty(Name);
+                    if (Property == null)
+                        continue;
+
+                    object Value = Property.GetValue(entity, null);
+                                        
+                    string parmString = UsePositionalParameters ? ParameterPrefix : ParameterPrefix + Name;
+                    sb.Append(" " + LeftFieldBracket + Name + RightFieldBracket + "=" + parmString + ",");
+
+                    if (Value == null && Property.PropertyType == typeof (byte[]))
+                        Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, DBNull.Value,
+                            DataUtils.DotNetTypeToDbType(Property.PropertyType)));
+                    else
+                        Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value ?? DBNull.Value));
                 }
-                else
-                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value == null ? DBNull.Value : Value));              
+                object pkValue = ReflectionUtils.GetProperty(entity, keyField);
+
+                // check to see if 
+                string commandText = sb.ToString().TrimEnd(',') + 
+                   " where " + LeftFieldBracket + keyField + RightFieldBracket + "=" + ParameterPrefix + (UsePositionalParameters ? "" : "__PK");
+                Command.Parameters.Add(CreateParameter(ParameterPrefix + "__PK", pkValue));
+                Command.CommandText = commandText;        
+                Result = ExecuteNonQuery(Command) > -1;
+
+                CloseConnection(Command);
             }
-            object pkValue = ReflectionUtils.GetProperty(entity, keyField);
-
-            String CommandText = sb.ToString().TrimEnd(',') + " where " + keyField + "=" + ParameterPrefix + "__PK";
-
-            Command.Parameters.Add(CreateParameter(ParameterPrefix + "__PK", pkValue));
-            Command.CommandText = CommandText;
-
-            bool Result = ExecuteNonQuery(Command) > -1;
-            CloseConnection(Command);
 
             return Result;
         }
@@ -1426,6 +1460,8 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 propertiesToSkip = "," + propertiesToSkip.ToLower() + ",";
 
             DbCommand Command = CreateCommand(string.Empty);
+            if (Command == null)
+                return null;
 
             Type ObjType = entity.GetType();
 
@@ -1447,17 +1483,19 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
                 object Value = Property.GetValue(entity, null);
 
-                FieldList.Append("[" + Name + "],");
-                DataList.Append(ParameterPrefix + Name + ",");
+                FieldList.Append(" " + LeftFieldBracket + Name + RightFieldBracket +",");
 
-                if (Value == null && Property.PropertyType == typeof(Byte[]))
-                {
-                    Command.Parameters.Add(
-                        CreateParameter(ParameterPrefix + Name,  DBNull.Value, DataUtils.DotNetTypeToDbType(Property.PropertyType))
-                    );
-                }
+                string parmString = ParameterPrefix;
+                if (!UsePositionalParameters)
+                    parmString += Name;
+                                
+                DataList.Append(parmString + ",");
+
+                if (Value == null && Property.PropertyType == typeof (byte[]))
+                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, DBNull.Value,
+                        DataUtils.DotNetTypeToDbType(Property.PropertyType)));
                 else
-                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value == null ? DBNull.Value : Value));
+                    Command.Parameters.Add(CreateParameter(ParameterPrefix + Name, Value ?? DBNull.Value));
             }
 
             Command.CommandText = FieldList.ToString().TrimEnd(',') + ") " +
@@ -1500,7 +1538,9 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             object pkValue = ReflectionUtils.GetProperty(entity, keyField);
             object res = null;
             if (pkValue != null)
-                res = ExecuteScalar("select [" + keyField + "] from [" + table + "] where [" + keyField + "]=" + ParameterPrefix + "id",
+                res = ExecuteScalar("select " + LeftFieldBracket + keyField + RightFieldBracket + " from " + 
+                                    LeftFieldBracket + table + RightFieldBracket + "] " +
+                                    "where " + LeftFieldBracket + keyField + RightFieldBracket + "=" + ParameterPrefix + "id",
                                          CreateParameter(ParameterPrefix + "id", pkValue));
 
 
