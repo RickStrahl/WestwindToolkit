@@ -831,13 +831,13 @@
             <param name="partial">Determines whether to render a full or partial view</param>
             <returns>String of the rendered view</returns>
         </member>
-        <member name="M:Westwind.Web.Mvc.ViewRenderer.CreateController``1(System.Web.Routing.RouteData)">
+        <member name="M:Westwind.Web.Mvc.ViewRenderer.CreateController``1(System.Web.Routing.RouteData,System.Object[])">
             <summary>
             Creates an instance of an MVC controller from scratch 
             when no existing ControllerContext is present       
             </summary>
             <typeparam name="T">Type of the controller to create</typeparam>
-            <returns>Controller Context for T</returns>
+            <returns>Controller for T</returns>
             <exception cref="T:System.InvalidOperationException">thrown if HttpContext not available</exception>
         </member>
         <member name="T:Westwind.Web.Mvc.EmptyController">

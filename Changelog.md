@@ -1,5 +1,12 @@
 # West Wind Toolkit Change Log
 
+### Version 2.67
+*Not released yet*
+
+* **Add better Parameter Support to Sql DataAccess**
+The DAL Data access components now allow you to specify how the higher level functions generate parameters. A new `UsePostionalParameters` writes only the `ParameterPrefix` now, not the name. You can also specify the name of the character for wrapping high level SQL commands fired from within methods using `LeftFieldBracket` and `RightFieldBracket`.
+
+
 ### Version 2.66
 *January 12, 2016*
 

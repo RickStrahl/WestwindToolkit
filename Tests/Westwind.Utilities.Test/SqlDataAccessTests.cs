@@ -118,6 +118,33 @@ namespace Westwind.Utilities.Data.Tests
         }
 
         [TestMethod]
+        public void UdateEntityTest()
+        {
+            using (var data = new SqlDataAccess(STR_ConnectionString))
+            {
+                int id = (int) data.ExecuteScalar("select TOP 1 id from customers order by entered");
+                Console.WriteLine(id);
+
+                Customer customer = new Customer()
+                {
+                    Id = id,
+                    FirstName = "Updated Entry " + DateTime.UtcNow,
+                    Entered = DateTime.UtcNow,
+                    Updated = DateTime.UtcNow
+                };
+
+                // insert into customers and skip Id,Order properties and return id
+                object newId = data.UpdateEntity(customer, "Customers","Id",null, "Id,Orders");
+
+                Assert.IsNotNull(newId, data.ErrorMessage);
+                Console.WriteLine(newId);
+            }
+        }
+
+
+
+
+        [TestMethod]
         public void FindTest()
         {
             using (var data = new SqlDataAccess(STR_ConnectionString))
