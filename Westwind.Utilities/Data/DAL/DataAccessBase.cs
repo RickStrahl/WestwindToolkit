@@ -255,11 +255,10 @@ namespace Westwind.Utilities.Data
         /// <summary>
         /// Creates a Command object and opens a connection
         /// </summary>
-        /// <param name="ConnectionString">Connection string or ConnnectionString configuration name</param>
         /// <param name="sql">Sql string to create</param>
-        /// <param name="commandType">Type of command to create</param>
-        /// <param name="parameters">Parameter values that map to @0,@1 or DbParameter objects created with CreateParameter()</param>
-        /// <returns></returns>
+        /// <param name="sql">Sql string to execute</param>
+        /// <param name="parameters">Either values mapping to @0,@1,@2 etc. or DbParameter objects created with CreateParameter()</param>
+        /// <returns>Command object or null on error</returns>
         public virtual DbCommand CreateCommand(string sql, CommandType commandType, params object[] parameters)
         {
             SetError();
@@ -305,10 +304,10 @@ namespace Westwind.Utilities.Data
 
         /// <summary>
         /// Creates a Command object and opens a connection
-        /// </summary>
-        /// <param name="ConnectionString">Connection String or Connection String Entry from config file</param>
+        /// </summary>        
         /// <param name="sql">Sql string to execute</param>
-        /// <returns>Parameters. Either values mapping to @0,@1,@2 etc. or DbParameter objects created with CreateParameter()</returns>
+        /// <param name="parameters">Either values mapping to @0,@1,@2 etc. or DbParameter objects created with CreateParameter()</param>
+        /// <returns>command object</returns>
         public virtual DbCommand CreateCommand(string sql, params object[] parameters)
         {
             return CreateCommand(sql, CommandType.Text, parameters);
@@ -318,8 +317,8 @@ namespace Westwind.Utilities.Data
         /// Adds parameters to a DbCommand instance. Parses value and DbParameter parameters
         /// properly into the command's Parameters collection.
         /// </summary>
-        /// <param name="command"></param>
-        /// <param name="parameters"></param>
+        /// <param name="command">A preconfigured DbCommand object that should have all connection information set</param>
+        /// <param name="parameters">Either values mapping to @0,@1,@2 etc. or DbParameter objects created with CreateParameter()</param>
         protected void AddParameters(DbCommand command, object[] parameters)
         {
             if (parameters != null)
@@ -339,53 +338,43 @@ namespace Westwind.Utilities.Data
             }
 
         }
-
+        
         /// <summary>
         /// Used to create named parameters to pass to commands or the various
         /// methods of this class.
         /// </summary>
-        /// <param name="parameterName"></param>
-        /// <param name="value"></param>
-        /// <param name="dbType"></param>
+        /// <param name="parameterName">Name of hte parameter to create</param>
+        /// <param name="value">Value to set</param>
+        /// <param name="parameterDirection">Parameter direction. Defaults to input</param>
         /// <returns></returns>
-        public virtual DbParameter CreateParameter(string parameterName, object value)
-        {
+        public virtual DbParameter CreateParameter(string parameterName, object value, ParameterDirection parameterDirection = ParameterDirection.Input)
+        {            
             DbParameter parm = dbProvider.CreateParameter();
             parm.ParameterName = parameterName;
             if (value == null)
                 value = DBNull.Value;
             parm.Value = value;
-            return parm;
-        }
-
-
-        /// <summary>
-        /// Used to create named parameters to pass to commands or the various
-        /// methods of this class.
-        /// </summary>
-        /// <param name="parameterName"></param>
-        /// <param name="value"></param>
-        /// <param name="dbType"></param>
-        /// <returns></returns>
-        public virtual DbParameter CreateParameter(string parameterName, object value, ParameterDirection parameterDirection = ParameterDirection.Input)
-        {
-            DbParameter parm = CreateParameter(parameterName, value);
             parm.Direction = parameterDirection;
             return parm;
         }
+       
 
         /// <summary>
         /// Used to create named parameters to pass to commands or the various
         /// methods of this class.
         /// </summary>
-        /// <param name="parameterName"></param>
-        /// <param name="value"></param>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        public virtual DbParameter CreateParameter(string parameterName, object value, int size)
+        /// <param name="parameterName">Name of the parameter to create</param>
+        /// <param name="value">The value of the parameter</param>
+        /// <param name="type">The type of the parameter</param>
+        /// <param name="size">The size of the parameter</param>
+        /// <param name="direction">Dirction of the parameter - defaults to input</param>
+        /// <returns>A parameter instance</returns>
+        public virtual DbParameter CreateParameter(string parameterName, object value, DbType type, int size = -1, ParameterDirection direction = ParameterDirection.Input)
         {
-            DbParameter parm = CreateParameter(parameterName, value);
-            parm.Size = size;
+            DbParameter parm = CreateParameter(parameterName, value,direction);
+            parm.DbType = type;
+            if (size != -1)
+                parm.Size = size;                        
             return parm;
         }
 
@@ -393,30 +382,14 @@ namespace Westwind.Utilities.Data
         /// Used to create named parameters to pass to commands or the various
         /// methods of this class.
         /// </summary>
-        /// <param name="parameterName"></param>
-        /// <param name="value"></param>
-        /// <param name="dbType"></param>
+        /// <param name="parameterName">Name of the parameter</param>
+        /// <param name="value">value to set it to</param>
+        /// <param name="size">size of a numeric field</param>
+        /// <param name="direction">Dirction of the parameter - defaults to input</param>
         /// <returns></returns>
-        public virtual DbParameter CreateParameter(string parameterName, object value, DbType type)
+        public virtual DbParameter CreateParameter(string parameterName, object value, int size, ParameterDirection direction = ParameterDirection.Input)
         {
-            DbParameter parm = CreateParameter(parameterName, value);
-            parm.DbType = type;
-            return parm;
-        }
-
-        /// <summary>
-        /// Used to create named parameters to pass to commands or the various
-        /// methods of this class.
-        /// </summary>
-        /// <param name="parameterName"></param>
-        /// <param name="value"></param>
-        /// <param name="type"></param>
-        /// <param name="size"></param>
-        /// <returns></returns>
-        public virtual DbParameter CreateParameter(string parameterName, object value, DbType type, int size)
-        {
-            DbParameter parm = CreateParameter(parameterName, value);
-            parm.DbType = type;
+            DbParameter parm = CreateParameter(parameterName, value, direction);
             parm.Size = size;
             return parm;
         }
@@ -424,9 +397,8 @@ namespace Westwind.Utilities.Data
         /// <summary>
         /// Executes a non-query command and returns the affected records
         /// </summary>
-        /// <param name="Command">Command should be created with GetSqlCommand to have open connection</param>
-        /// <param name="Parameters"></param>
-        /// <returns></returns>
+        /// <param name="Command">Command should be created with GetSqlCommand to have open connection</param>       
+        /// <returns>Affected Record count or -1 on error</returns>
         public virtual int ExecuteNonQuery(DbCommand Command)
         {
             SetError();
