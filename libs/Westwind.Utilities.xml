@@ -738,6 +738,16 @@
             parameters are added without adding the name using just the ParameterPrefix
             </summary>
         </member>
+        <member name="P:Westwind.Utilities.Data.DataAccessBase.LeftFieldBracket">
+            <summary>
+            Character used for the left bracket on field names. Can be empty or null to use none
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.Data.DataAccessBase.RightFieldBracket">
+            <summary>
+            Character used for the right bracket on field names. Can be empty or null to use none
+            </summary>
+        </member>
         <member name="P:Westwind.Utilities.Data.DataAccessBase.ConnectionString">
             <summary>
             ConnectionString for the data access component
@@ -1174,10 +1184,15 @@
         <member name="M:Westwind.Utilities.Data.DataAccessBase.Find``1(System.String,System.Object[])">
             <summary>
             Returns the first matching record retrieved from data based on a SQL statement
-            as an entity or null if no match was found.
+            as an entity or null if no match was found.        
             </summary>
             <typeparam name="T">Entity type to fill</typeparam>
-            <param name="sql">SQL string to execute. Use @0,@1,@2 for parameters</param>
+            <param name="sql">SQL string to execute. Use @0,@1,@2 for parameters.
+            
+            Recommend you use `TOP1` in your SQL statements to limit the 
+            amount of data returned from the underlying query even though
+            a full list returns the same result.
+            </param>
             <param name="parameters">SQL parameter values to pass.</param>
             <returns></returns>
         </member>
