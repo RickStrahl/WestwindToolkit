@@ -443,21 +443,21 @@ namespace Westwind.Utilities.InternetTools
 
 		/// <summary>
 		/// Strips out just the email address from a full email address that might contain a display name
-		/// in the format of: "Web Monitor" <rstrahl@west-wind.com>
+		/// in the format of: "Web Monitor" &lt;rstrahl@west-wind.com&gt;
 		/// </summary>
-		/// <param name="lcFullEmail">Full email address to parse. Note currently only "<" and ">" tags are recognized as message delimiters</param>
+		/// <param name="fullEmail">Full email address to parse. Note currently only "<" and ">" tags are recognized as message delimiters</param>
 		/// <returns>only the email address</returns>
-		string GetEmailFromFullAddress(string lcFullEmail) 
+		string GetEmailFromFullAddress(string fullEmail) 
 		{
-			if (lcFullEmail.IndexOf("<") > 0) 
+			if (fullEmail.IndexOf("<") > 0) 
 			{
-				int lnIndex=lcFullEmail.IndexOf("<");
-				int lnIndex2 = lcFullEmail.IndexOf(">");
-				string lcEmail = lcFullEmail.Substring(lnIndex+1,lnIndex2-lnIndex -1);
+				int lnIndex=fullEmail.IndexOf("<");
+				int lnIndex2 = fullEmail.IndexOf(">");
+				string lcEmail = fullEmail.Substring(lnIndex+1,lnIndex2-lnIndex -1);
 				return lcEmail;
 			}
 
-			return lcFullEmail;
+			return fullEmail;
 		}
 
 		/// <summary>

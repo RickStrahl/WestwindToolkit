@@ -1287,7 +1287,7 @@ namespace Westwind.Utilities.InternetTools
                         // Raise an event if hooked up
                         if (ReceiveData != null)
                         {
-                            /// Update the event handler
+                            // Update the event handler
                             args.CurrentByteCount = totalBytes;
                             args.NumberOfReads = count;
                             args.CurrentChunk = null; // don't send anything here

@@ -5,13 +5,6 @@ VisualStudioVersion = 14.0.23103.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Utilities", "Westwind.Utilities\Westwind.Utilities.csproj", "{1C9829A8-8979-4493-863C-635726F8A61C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{3CB4166E-C005-4928-BB9C-736DB354362B}"
-	ProjectSection(SolutionItems) = preProject
-		.nuget\NuGet.Config = .nuget\NuGet.Config
-		.nuget\nuget.exe = .nuget\nuget.exe
-		.nuget\NuGet.targets = .nuget\NuGet.targets
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Westwind.Data", "Westwind.Data\Westwind.Data.csproj", "{1618C87C-1C5B-4E50-BB14-F6663FE4C0B6}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{90FB62AD-E28A-460D-AB4B-38F39F51ADC0}"
