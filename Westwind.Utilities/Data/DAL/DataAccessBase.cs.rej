@@ -1,0 +1,9 @@
+diff a/Westwind.Utilities/Data/DAL/DataAccessBase.cs b/Westwind.Utilities/Data/DAL/DataAccessBase.cs	(rejected hunks)
+@@ -389,6 +389,7 @@
+         /// <param name="size">size of a numeric field</param>
+         /// <param name="direction">Dirction of the parameter - defaults to input</param>
+         /// <returns></returns>
++        public virtual DbParameter CreateParameter(string parameterName, object value, int size, ParameterDirection direction = ParameterDirection.Input)
+         {
+             DbParameter parm = CreateParameter(parameterName, value, direction);
+             parm.Size = size;

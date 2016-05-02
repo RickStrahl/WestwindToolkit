@@ -366,38 +366,48 @@ namespace Westwind.Utilities.Data
         /// Used to create named parameters to pass to commands or the various
         /// methods of this class.
         /// </summary>
-        /// <param name="parameterName">Name of hte parameter to create</param>
-        /// <param name="value">Value to set</param>
-        /// <param name="parameterDirection">Parameter direction. Defaults to input</param>
+        /// <param name="parameterName"></param>
+        /// <param name="value"></param>
+        /// <param name="dbType"></param>
         /// <returns></returns>
-        public virtual DbParameter CreateParameter(string parameterName, object value, ParameterDirection parameterDirection = ParameterDirection.Input)
-        {            
+        public virtual DbParameter CreateParameter(string parameterName, object value)
+        {
             DbParameter parm = dbProvider.CreateParameter();
             parm.ParameterName = parameterName;
             if (value == null)
                 value = DBNull.Value;
             parm.Value = value;
+            return parm;
+        }
+
+
+        /// <summary>
+        /// Used to create named parameters to pass to commands or the various
+        /// methods of this class.
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name="value"></param>
+        /// <param name="dbType"></param>
+        /// <returns></returns>
+        public virtual DbParameter CreateParameter(string parameterName, object value, ParameterDirection parameterDirection = ParameterDirection.Input)
+        {
+            DbParameter parm = CreateParameter(parameterName, value);
             parm.Direction = parameterDirection;
             return parm;
         }
-       
 
         /// <summary>
         /// Used to create named parameters to pass to commands or the various
         /// methods of this class.
         /// </summary>
-        /// <param name="parameterName">Name of the parameter to create</param>
-        /// <param name="value">The value of the parameter</param>
-        /// <param name="type">The type of the parameter</param>
-        /// <param name="size">The size of the parameter</param>
-        /// <param name="direction">Dirction of the parameter - defaults to input</param>
-        /// <returns>A parameter instance</returns>
-        public virtual DbParameter CreateParameter(string parameterName, object value, DbType type, int size = -1, ParameterDirection direction = ParameterDirection.Input)
+        /// <param name="parameterName"></param>
+        /// <param name="value"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public virtual DbParameter CreateParameter(string parameterName, object value, int size)
         {
-            DbParameter parm = CreateParameter(parameterName, value,direction);
-            parm.DbType = type;
-            if (size != -1)
-                parm.Size = size;                        
+            DbParameter parm = CreateParameter(parameterName, value);
+            parm.Size = size;
             return parm;
         }
 
@@ -405,14 +415,30 @@ namespace Westwind.Utilities.Data
         /// Used to create named parameters to pass to commands or the various
         /// methods of this class.
         /// </summary>
-        /// <param name="parameterName">Name of the parameter</param>
-        /// <param name="value">value to set it to</param>
-        /// <param name="size">size of a numeric field</param>
-        /// <param name="direction">Dirction of the parameter - defaults to input</param>
+        /// <param name="parameterName"></param>
+        /// <param name="value"></param>
+        /// <param name="dbType"></param>
         /// <returns></returns>
-        public virtual DbParameter CreateParameter(string parameterName, object value, int size, ParameterDirection direction = ParameterDirection.Input)
+        public virtual DbParameter CreateParameter(string parameterName, object value, DbType type)
         {
-            DbParameter parm = CreateParameter(parameterName, value, direction);
+            DbParameter parm = CreateParameter(parameterName, value);
+            parm.DbType = type;
+            return parm;
+        }
+
+        /// <summary>
+        /// Used to create named parameters to pass to commands or the various
+        /// methods of this class.
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name="value"></param>
+        /// <param name="type"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public virtual DbParameter CreateParameter(string parameterName, object value, DbType type, int size)
+        {
+            DbParameter parm = CreateParameter(parameterName, value);
+            parm.DbType = type;
             parm.Size = size;
             return parm;
         }
