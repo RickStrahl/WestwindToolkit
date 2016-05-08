@@ -111,7 +111,8 @@ namespace Westwind.Utilities
 
 
         /// <summary>
-        /// String replace function that support
+        /// String replace function that supports replacing a specific instance with 
+        /// case insensitivity
         /// </summary>
         /// <param name="origString">Original input string</param>
         /// <param name="findString">The string that is to be replaced</param>

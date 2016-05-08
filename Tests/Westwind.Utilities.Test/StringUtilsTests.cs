@@ -232,8 +232,43 @@ namespace Westwind.Utilities.Tests
 
             Console.WriteLine(extract);
             Assert.AreEqual(extract, "<rant />");
-
         }
+
+        [TestMethod]
+        public void ExtractStringWithDelimitersTest()
+        {
+            string source = @"
+# Another Test Blog Post
+
+So this is a new test blog post. I can read this and can do some cool stuff with this.
+
+
+
+<!-- Post Configuration -->
+---
+```xml
+<abstract>
+This is the abstract ofr this blog post.
+</abstract>
+<categories>
+</categories>
+<postid>1420322</postid>
+<keywords>
+</keywords>
+<weblog>
+Rick Strahl's Weblog
+</weblog>
+```
+<!-- End Post Configuration -->
+";
+
+            string extract = StringUtils.ExtractString(source, "<!-- Post Configuration -->", "<!-- End Post Configuration -->", false,  true, true );
+
+            Console.WriteLine(extract);
+            Assert.IsTrue(extract.Contains("<!-- Post Configuration -->"));
+            Assert.IsTrue(extract.Contains("<!-- End Post Configuration -->"));
+        }
+
 
         [TestMethod]
         public void GetLinesTest()
