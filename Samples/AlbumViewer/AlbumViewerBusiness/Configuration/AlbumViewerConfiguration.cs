@@ -7,11 +7,18 @@ using Westwind.Utilities.Configuration;
 
 namespace AlbumViewerBusiness
 {
-    class AlbumViewerConfiguration : AppConfiguration
+    public class AlbumViewerConfiguration : AppConfiguration
     {
         public string ApplicationName { get; set; }
         public string BaseUrl { get; set; }
         public int MaxAlbumsToReturn { get; set; }
+
+        public string ApplicationRootPath { get; set;  }
+
+        public AlbumViewerConfiguration()
+        {
+            ApplicationRootPath = Environment.CurrentDirectory;
+        }
     }
 
 }

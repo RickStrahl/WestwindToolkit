@@ -38,6 +38,10 @@
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.8.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
@@ -50,14 +54,16 @@
     <Compile Include="BusinessObjects\AlbumBusiness.cs" />
     <Compile Include="Configuration\App.cs" />
     <Compile Include="Configuration\AlbumViewerConfiguration.cs" />
-    <Compile Include="Migrations\201601140110091_Initial.cs" />
-    <Compile Include="Migrations\201601140110091_Initial.Designer.cs">
-      <DependentUpon>201601140110091_Initial.cs</DependentUpon>
+    <Compile Include="Migrations\201605302201344_Initial.cs" />
+    <Compile Include="Migrations\201605302201344_Initial.Designer.cs">
+      <DependentUpon>201605302201344_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AlbumViewerContext.cs" />
     <Compile Include="Models\Album.cs" />
+    <Compile Include="Models\AlbumViewerImporter.cs" />
     <Compile Include="Models\Artist.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Models\Track.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -76,8 +82,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201601140110091_Initial.resx">
-      <DependentUpon>201601140110091_Initial.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201605302201344_Initial.resx">
+      <DependentUpon>201605302201344_Initial.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

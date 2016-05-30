@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,10 +24,37 @@ namespace AlbumViewerBusiness
         public DbSet<Artist> Artists { get; set; }
         public DbSet<Track> Tracks { get; set; }
 
+        public DbSet<User> Users { get; set; }
+
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
-            Database.SetInitializer<AlbumViewerContext>(new CreateDatabaseIfNotExists<AlbumViewerContext>());
+            Database.SetInitializer<AlbumViewerContext>(new AlbumViewerInitializer());
+
+        }        
+    }
+
+
+    public class AlbumViewerInitializer : CreateDatabaseIfNotExists<AlbumViewerContext>
+    {
+        public override void InitializeDatabase(AlbumViewerContext context)
+        {
+            base.InitializeDatabase(context);
+        }
+
+        protected override void Seed(AlbumViewerContext context)
+        {
+            base.Seed(context);
+
+            
+            // serves as model warmup and db initialization            
+            if (!context.Users.Any())
+            {
+                string jsonFile = Path.Combine(App.Configuration.ApplicationRootPath, "data\\albums.js");
+                string json = File.ReadAllText(jsonFile);
+
+                AlbumViewerDataImporter.ImportFromJson(context, json);
+            }
         }
     }
 }

@@ -13,7 +13,7 @@ namespace AlbumViewerBusiness.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201601140110091_Initial"; }
+            get { return "201605302201344_Initial"; }
         }
         
         string IMigrationMetadata.Source
