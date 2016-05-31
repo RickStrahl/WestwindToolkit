@@ -42,10 +42,23 @@ namespace AlbumViewerBusiness
             base.InitializeDatabase(context);
         }
 
+        /*
+            To reset database: 
+            ----------------
+            drop table users
+            drop table tracks
+            drop table albums
+            drop table artists
+            drop table __MigrationHistory
+        */
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="context"></param>
         protected override void Seed(AlbumViewerContext context)
         {
             base.Seed(context);
-
             
             // serves as model warmup and db initialization            
             if (!context.Users.Any())

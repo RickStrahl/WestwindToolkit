@@ -20,8 +20,7 @@ namespace WestwindToolkitMvcWeb.Controllers
 
         public ActionResult ScriptVariables()
         {
-    
-
+   
             return View();
         }
 

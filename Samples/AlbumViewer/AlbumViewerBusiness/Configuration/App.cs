@@ -7,7 +7,7 @@ using Westwind.Utilities.Configuration;
 
 namespace AlbumViewerBusiness
 {
-    class App
+    public class App
     {
         public static AlbumViewerConfiguration Configuration { get; set; }
 

@@ -74,7 +74,7 @@ namespace Westwind.Utilities.Data.Tests
                 
                 while (reader.Read())
                 {
-                    Console.WriteLine((string)reader["LastName"] + " " + (DateTime)reader["Entered"]);
+                    Console.WriteLine(reader["LastName"] + " " + (DateTime)reader["Entered"]);
                 }
             }
         }

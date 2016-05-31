@@ -7,7 +7,6 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using AlbumViewerBusiness;
 
 namespace AlbumViewerAngular
 {
@@ -19,7 +18,7 @@ namespace AlbumViewerAngular
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
 
-            App.Configuration.ApplicationRootPath = Context.ApplicationInstance.Server.MapPath("~/");
+            AlbumViewerBusiness.App.Configuration.ApplicationRootPath = Context.ApplicationInstance.Server.MapPath("~/");
 
         }
     }
