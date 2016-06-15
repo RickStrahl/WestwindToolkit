@@ -129,7 +129,7 @@ namespace Westwind.Utilities
 
                 foreach (var val in values)
                 {
-                    query += key + "=" + Uri.EscapeUriString(val) + "&";
+                    query += key + "=" + Uri.EscapeDataString(val) + "&";
                 }
             }
             query = query.Trim('&');
