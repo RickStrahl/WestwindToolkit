@@ -6,6 +6,7 @@ using System.Data.Entity;
 using Westwind.Utilities;
 using System.Linq;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace Westwind.Data.Test
 {
@@ -422,6 +423,28 @@ namespace Westwind.Data.Test
             Console.WriteLine("Validation Failed (test passed): " + customerBus.ErrorMessage);
         }
 
+        
+        [TestMethod]
+        public void ExceptionHandling()
+        {
+            var customerBus = new busCustomer()
+            {
+                // Validates on Save automatically
+                ErrorHandlingMode = ErrorHandlingModes.ThrowExecptions
+            };
+
+            try
+            {
+                var custList = customerBus.ExecuteList<Customer>("select * from customerss where company like '%Wind%'");
+            }
+            catch (SqlException ex)
+            {
+                Console.WriteLine("Error correctly thrown: " + customerBus.ErrorMessage);                       
+                return;
+            }
+
+            Assert.IsTrue(false, "Exception should have fired and code should not get here.");
+        }
 
     }
 

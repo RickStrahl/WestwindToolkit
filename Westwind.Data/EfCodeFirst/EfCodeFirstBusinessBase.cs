@@ -143,7 +143,11 @@ namespace Westwind.Data.EfCodeFirst
         [XmlIgnore]
         public Exception ErrorException { get; set; }        
 
-        #region ObjectInitializers
+
+        public ErrorHandlingModes ErrorHandlingMode {get; set; }
+        
+
+        #region ObjectInitializers and Disposables
 
         /// <summary>
         /// Base constructor using default behavior loading context by 
@@ -153,6 +157,9 @@ namespace Westwind.Data.EfCodeFirst
         {
             InitializeInternal();
             Context = CreateContext();
+
+            ErrorHandlingMode = ErrorHandlingModes.CapturedErrors;
+
             Initialize();
         }
 
@@ -256,9 +263,25 @@ namespace Westwind.Data.EfCodeFirst
             // and potential meta data pre-parsing
         }
 
+
+        private bool disposed = false;
+        public void Dispose()
+        {
+            if (disposed)
+                return;
+
+            disposed = true;
+
+            if (Context != null)
+            {
+                Context.Dispose();
+                Context = null;
+            }
+        }
+
         #endregion
 
-
+        #region CRUD Operations
         /// <summary>
         /// Creates a new instance of an Entity tracked
         /// by the DbContext.
@@ -394,7 +417,7 @@ namespace Westwind.Data.EfCodeFirst
             catch (InvalidOperationException)
             {
                 // Handles errors where an invalid Id was passed, but SQL is valid
-                SetError(Westwind.Data.Properties.Resources.CouldnTLoadEntityInvalidKeyProvided);            
+                SetError(Data.Properties.Resources.CouldnTLoadEntityInvalidKeyProvided);            
                 return null;
             }
             catch (Exception ex)
@@ -404,15 +427,6 @@ namespace Westwind.Data.EfCodeFirst
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Fired after an entity has been loaded with the .Load() method
-        /// </summary>
-        /// <param name="entity"></param>
-        protected virtual void OnEntityLoaded(TEntity entity)
-        {
-
         }
 
         /// <summary>
@@ -555,28 +569,6 @@ namespace Westwind.Data.EfCodeFirst
 
 
         /// <summary>
-        /// Called before a delete operation occurs
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        protected virtual bool OnBeforeDelete(TEntity entity)
-        {
-            return true;
-        }
-
-        /// <summary>
-        /// Called after a resource is deleted. Runs within the same
-        /// transaction scope
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        protected virtual bool OnAfterDelete(TEntity entity)
-        {
-            return true;
-        }
-
-
-        /// <summary>
         /// Cancel Changes on the current connected context
         /// </summary>
         public virtual void AbortChanges()
@@ -605,7 +597,61 @@ namespace Westwind.Data.EfCodeFirst
         //{
         //}
 
-        
+        /// <summary>
+        /// Validate() is used to validate business rules on the business object. 
+        /// Validates both EF entity validation rules on pending changes as well
+        /// as any custom validation rules you implement in the OnValidate() method.
+        /// 
+        /// Do not override this method for custom Validation(). Instead override
+        /// OnValidate() or add error entries to the ValidationErrors collection.        
+        /// <remarks>
+        /// If the AutoValidate flag is set to true causes Save()
+        /// to automatically call this method. Must be overridden to perform any 
+        /// validation.
+        /// </remarks>
+        /// <seealso>Class wwBusiness Class ValidationErrorCollection</seealso>
+        /// </summary>
+        /// <param name="entity">Optional entity to validate. Defaults to this.Entity</param>
+        /// <param name="clearValidationErrors">If true clears all validation errors before processing rules</param>
+        /// <returns>True or False.</returns>
+        public bool Validate(TEntity entity = null, bool clearValidationErrors = false)
+        {
+            if (clearValidationErrors)
+                ValidationErrors.Clear();
+
+            if (entity == null)
+                entity = Entity;
+
+            // No entity - no validation errors
+            if (entity == null)
+                return true;
+
+            var validationErrors = Context.GetValidationErrors();
+
+            // First check for model validation errors
+            foreach (var entry in validationErrors)
+            {
+                foreach (var error in entry.ValidationErrors)
+                {
+                    ValidationErrors.Add(error.ErrorMessage, error.PropertyName);
+                }
+            }
+
+            // call business object level validation errors                        
+            OnValidate(entity);
+
+            if (ValidationErrors.Count > 0)
+            {
+                SetError(ValidationErrors.ToString());
+                return false;
+            }
+
+            return true;
+        }
+
+
+
+
         /// <summary>
         /// Saves all changes. 
         /// </summary>
@@ -697,6 +743,159 @@ namespace Westwind.Data.EfCodeFirst
             return true;
         }
 
+        #endregion
+
+        #region Raw SQL Access
+        /// <summary>
+        /// Allows execution of an arbitrary non query SQL command against
+        /// the database.
+        /// 
+        /// Format can either be named parameters (@pk, @name)
+        /// with DbParameter objects (CreateParameter) or by using {0},{1} for
+        /// positional parameters and passing in the actual values.
+        /// 
+        /// Uses the Entity Sql Connection
+        /// </summary>
+        /// <param name="sql">Sql statement as a string</param>
+        /// <param name="parameters">Named parameter objects referenced with {0}-{n} in the Sql command</param>
+        /// <returns></returns>
+        public int ExecuteNonQuery(string sql, params object[] parameters)
+        {
+            int result = -1;
+            try
+            {
+                result = Context.Database.ExecuteSqlCommand(sql, parameters);
+            }
+            catch (Exception ex)
+            {
+                SetError(ex);
+                return -1;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Allows execution of a SQL command as s tring agains the Context's
+        /// provider and return the result as an Entity collection
+        /// 
+        /// Format can either be named parameters (@pk, @name)
+        /// with DbParameter objects (CreateParameter) or by using {0}, {1} for
+        /// positional parameters and passing in the actual values.
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="sql">Sql String. 
+        /// </param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public IEnumerable<TResult> Execute<TResult>(string sql, params object[] parameters)                        
+        {
+            try
+            {                
+                return Context.Database.SqlQuery<TResult>(sql, parameters);                
+            }
+            catch(Exception ex)
+            {
+                SetError(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Allows execution of a SQL command as s tring agains the Context's
+        /// provider and return the result as an Entity collection
+        /// 
+        /// Format can either be named parameters (@pk, @name)
+        /// with DbParameter objects (CreateParameter) or by using {0}, {1} for
+        /// positional parameters and passing in the actual values.
+        /// </summary>
+        /// <typeparam name="TResult"></typeparam>
+        /// <param name="sql">Sql String. 
+        /// </param>
+        /// <param name="parameters"></param>
+        /// <returns></returns>
+        public IList<TResult> ExecuteList<TResult>(string sql, params object[] parameters)
+        {
+            try
+            {
+                return Context.Database.SqlQuery<TResult>(sql, parameters).ToList();
+            }
+            catch (Exception ex)
+            {
+                SetError(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Creates a new SQL Parameter
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <param name="direction"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public DbParameter CreateParameter(string name, object value, 
+            ParameterDirection direction, 
+            DbType type = DbType.Object)
+        {
+            var cmd = Context.Database.Connection.CreateCommand();
+            var parm = cmd.CreateParameter();
+
+            parm.ParameterName = name;
+            parm.Value = value;
+            parm.Direction = direction;
+            parm.DbType = type;
+
+            return parm;
+        }
+
+        /// <summary>
+        /// Opens the connection on this business object's Context.
+        /// Use this before manually creating Transactions to ensure
+        /// transactions execute on a single connection.
+        /// </summary>
+        public void OpenConnection()
+        {
+            CloseConnection();       
+     
+            if (Context.Database.Connection.State != ConnectionState.Open)            
+                Context.Database.Connection.Open();
+        }
+        /// <summary>
+        /// explicitly closes a connection
+        /// </summary>
+        public void CloseConnection()
+        {
+            if (Context.Database.Connection.State != ConnectionState.Closed)
+                Context.Database.Connection.Close();
+        }
+        /// <summary>
+        /// Createst a new Sql Parameter
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
+        /// <param name="direction"></param>
+        /// <returns></returns>
+        public DbParameter CreateParameter(string name, object value,
+            ParameterDirection direction = ParameterDirection.Input)
+        {
+            var cmd = Context.Database.Connection.CreateCommand();
+            
+            var parm = cmd.CreateParameter();            
+            parm.ParameterName = name;
+            parm.Value = value;
+            parm.Direction = direction;
+            
+            cmd.Dispose();
+
+            return parm;
+        }
+        #endregion
+
+
+        #region Transactions
+
 
         /// <summary>
         /// Default TransactionScope options for CreateTransactionScope
@@ -721,6 +920,31 @@ namespace Westwind.Data.EfCodeFirst
       
             return  new TransactionScope(TransactionScopeOption.Required,
                                          options);
+        }
+
+        #endregion
+
+
+        #region Overridable Event Hooks
+        /// <summary>
+        /// Fired after an entity has been loaded with the .Load() method
+        /// </summary>
+        /// <param name="entity"></param>
+        protected virtual void OnEntityLoaded(TEntity entity)
+        {
+
+        }
+
+
+        /// <summary>
+        /// Method that should be overridden in a business object to handle actual validation. 
+        /// This method is called from the Validate method.
+        /// 
+        /// This method should add any errors to the <see cref="ValidationErrors"/> collection.
+        /// </summary>
+        /// <param name="entity">The entity to be validated</param>
+        protected virtual void OnValidate(TEntity entity)
+        {
         }
 
         /// <summary>
@@ -757,72 +981,30 @@ namespace Westwind.Data.EfCodeFirst
         protected virtual void OnAfterSaveError(TEntity entity)
         {            
         }
-                
+
 
         /// <summary>
-        /// Validate() is used to validate business rules on the business object. 
-        /// Validates both EF entity validation rules on pending changes as well
-        /// as any custom validation rules you implement in the OnValidate() method.
-        /// 
-        /// Do not override this method for custom Validation(). Instead override
-        /// OnValidate() or add error entries to the ValidationErrors collection.        
-        /// <remarks>
-        /// If the AutoValidate flag is set to true causes Save()
-        /// to automatically call this method. Must be overridden to perform any 
-        /// validation.
-        /// </remarks>
-        /// <seealso>Class wwBusiness Class ValidationErrorCollection</seealso>
+        /// Called before a delete operation occurs
         /// </summary>
-        /// <param name="entity">Optional entity to validate. Defaults to this.Entity</param>
-        /// <param name="clearValidationErrors">If true clears all validation errors before processing rules</param>
-        /// <returns>True or False.</returns>
-        public bool Validate(TEntity entity = null, bool clearValidationErrors = false)
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        protected virtual bool OnBeforeDelete(TEntity entity)
         {
-            if (clearValidationErrors)
-                ValidationErrors.Clear();
-
-            if (entity == null)
-                entity = Entity;
-            
-            // No entity - no validation errors
-            if (entity == null)
-                return true;  
-
-            var validationErrors = Context.GetValidationErrors();
-
-            // First check for model validation errors
-            foreach (var entry in validationErrors)
-            {
-                foreach (var error in entry.ValidationErrors)
-                {
-                    ValidationErrors.Add(error.ErrorMessage, error.PropertyName);
-                }
-            }
-
-            // call business object level validation errors                        
-            OnValidate(entity);
-
-            if (ValidationErrors.Count > 0)
-            {
-                SetError(ValidationErrors.ToString());
-                return false;
-            }
-
             return true;
         }
 
-
-
         /// <summary>
-        /// Method that should be overridden in a business object to handle actual validation. 
-        /// This method is called from the Validate method.
-        /// 
-        /// This method should add any errors to the <see cref="ValidationErrors"/> collection.
+        /// Called after a resource is deleted. Runs within the same
+        /// transaction scope
         /// </summary>
-        /// <param name="entity">The entity to be validated</param>
-        protected virtual void OnValidate(TEntity entity)
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        protected virtual bool OnAfterDelete(TEntity entity)
         {
+            return true;
         }
+
+        #endregion
 
 
         #region GenericPropertyStorage
@@ -852,7 +1034,7 @@ namespace Westwind.Data.EfCodeFirst
         /// <returns></returns>
         public object GetProperty(string key)
         {
-            if (this.Properties == null)
+            if (Properties == null)
                 return null;
 
             object value = null;
@@ -873,7 +1055,7 @@ namespace Westwind.Data.EfCodeFirst
             Properties = null;
 
             if (entity == null)
-                entity = this.Entity;
+                entity = Entity;
 
             // Always create a new property bag
             Properties = new PropertyBag();            
@@ -894,7 +1076,7 @@ namespace Westwind.Data.EfCodeFirst
         protected void SetProperties(string stringFieldToSaveTo = "Properties", object entity = null)
         {
             if (entity == null)
-                entity = this.Entity;
+                entity = Entity;
 
             //string xml = DataContractSerializationUtils.SerializeToXmlString(Properties,true);
 
@@ -907,6 +1089,9 @@ namespace Westwind.Data.EfCodeFirst
             ReflectionUtils.SetProperty(Entity, stringFieldToSaveTo, xml);
         }
         #endregion
+
+
+        #region Entity Management
 
         /// <summary>
         /// Makes a separate business object a child business object,
@@ -996,130 +1181,9 @@ namespace Westwind.Data.EfCodeFirst
 
             return res;
         }
+        #endregion
 
-
-        /// <summary>
-        /// Allows execution of an arbitrary non query SQL command against
-        /// the database.
-        /// 
-        /// Format can either be named parameters (@pk, @name)
-        /// with DbParameter objects (CreateParameter) or by using {0},{1} for
-        /// positional parameters and passing in the actual values.
-        /// 
-        /// Uses the Entity Sql Connection
-        /// </summary>
-        /// <param name="sql">Sql statement as a string</param>
-        /// <param name="parameters">Named parameter objects referenced with {0}-{n} in the Sql command</param>
-        /// <returns></returns>
-        public int ExecuteNonQuery(string sql, params object[] parameters)
-        {
-            int result = -1;
-            try
-            {
-                result = this.Context.Database.ExecuteSqlCommand(sql, parameters);
-            }
-            catch (Exception ex)
-            {
-                SetError(ex);
-                return -1;
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        /// Allows execution of a SQL command as s tring agains the Context's
-        /// provider and return the result as an Entity collection
-        /// 
-        /// Format can either be named parameters (@pk, @name)
-        /// with DbParameter objects (CreateParameter) or by using {0}, {1} for
-        /// positional parameters and passing in the actual values.
-        /// </summary>
-        /// <typeparam name="TResult"></typeparam>
-        /// <param name="sql">Sql String. 
-        /// </param>
-        /// <param name="parameters"></param>
-        /// <returns></returns>
-        public IEnumerable<TResult> Execute<TResult>(string sql, params object[] parameters)                        
-        {
-            try
-            {                
-                return Context.Database.SqlQuery<TResult>(sql, parameters);                
-            }
-            catch(Exception ex)
-            {
-                SetError(ex);
-                return null;
-            }
-        }
-
-        
-        /// <summary>
-        /// Creates a new SQL Parameter
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <param name="direction"></param>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public DbParameter CreateParameter(string name, object value, 
-                                           ParameterDirection direction, 
-                                           DbType type = DbType.Object)
-        {
-            var cmd = Context.Database.Connection.CreateCommand();
-            var parm = cmd.CreateParameter();
-
-            parm.ParameterName = name;
-            parm.Value = value;
-            parm.Direction = direction;
-            parm.DbType = type;
-
-            return parm;
-        }
-
-        /// <summary>
-        /// Opens the connection on this business object's Context.
-        /// Use this before manually creating Transactions to ensure
-        /// transactions execute on a single connection.
-        /// </summary>
-        public void OpenConnection()
-        {
-            this.CloseConnection();       
-     
-            if (Context.Database.Connection.State != ConnectionState.Open)            
-                Context.Database.Connection.Open();
-        }
-        /// <summary>
-        /// explicitly closes a connection
-        /// </summary>
-        public void CloseConnection()
-        {
-            if (Context.Database.Connection.State != ConnectionState.Closed)
-                Context.Database.Connection.Close();
-        }
-        /// <summary>
-        /// Createst a new Sql Parameter
-        /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
-        /// <param name="direction"></param>
-        /// <returns></returns>
-        public DbParameter CreateParameter(string name, object value,
-                                           ParameterDirection direction = ParameterDirection.Input)
-        {
-            var cmd = Context.Database.Connection.CreateCommand();
-            
-            var parm = cmd.CreateParameter();            
-            parm.ParameterName = name;
-            parm.Value = value;
-            parm.Direction = direction;
-            
-            cmd.Dispose();
-
-            return parm;
-        }
-
-
+        #region Error Management
         /// <summary>
         /// Sets an internal error message.
         /// </summary>
@@ -1134,8 +1198,8 @@ namespace Westwind.Data.EfCodeFirst
 
             ErrorException = new ApplicationException(Message);
 
-            //if (Options.ThrowExceptions)
-            //    throw ErrorException;
+            if (ErrorHandlingMode == ErrorHandlingModes.ThrowExecptions)
+                throw ErrorException;
 
         }
 
@@ -1152,8 +1216,8 @@ namespace Westwind.Data.EfCodeFirst
 
             ErrorMessage = ErrorException.Message;
             
-            //if (ex != null && this.Option Options.ThrowExceptions)
-            //    throw ex;
+            if (ex != null && ErrorHandlingMode == ErrorHandlingModes.ThrowExecptions)
+                throw ex;
         }
 
         /// <summary>
@@ -1171,25 +1235,32 @@ namespace Westwind.Data.EfCodeFirst
         /// <returns></returns>
         public override string ToString()
         {
-            if (!string.IsNullOrEmpty(this.ErrorMessage))
+            if (!string.IsNullOrEmpty(ErrorMessage))
                 return Resources.ErrorColon + ErrorMessage;
 
             return base.ToString();
         }
 
-        private bool disposed = false;
-        public void Dispose()
-        {
-            if (disposed)
-                return;
+        #endregion
 
-            disposed = true; 
-            
-            if (Context != null)
-            {
-                Context.Dispose();                
-                Context = null;
-            }            
-        }
+    }
+
+    /// <summary>
+    /// Determines how data errors are handled either as handled
+    /// errors that return a results error message via captured exceptions
+    /// or as raw exceptions.
+    /// </summary>
+    public enum ErrorHandlingModes
+    {
+        /// <summary>
+        /// Errors are captured and returned in the ErrorException and
+        /// ErrorMessage properties
+        /// </summary>
+        CapturedErrors,
+
+        /// <summary>
+        /// Errors are thrown as exceptions
+        /// </summary>
+        ThrowExecptions
     }
 }
