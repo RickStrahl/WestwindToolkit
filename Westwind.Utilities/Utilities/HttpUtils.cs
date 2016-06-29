@@ -31,7 +31,7 @@ namespace Westwind.Utilities
         /// <returns>string of HTTP response</returns>
         public static string HttpRequestString(HttpRequestSettings settings)
         {
-            var client = new HttpUtilsWebClient();
+            var client = new HttpUtilsWebClient(settings);
 
             if (settings.Credentials != null)
                 client.Credentials = settings.Credentials;
@@ -46,6 +46,7 @@ namespace Westwind.Utilities
                     client.Headers[header.Key] = header.Value;
                 }
             }
+            
 
             if (settings.HttpVerb == "GET")
                 settings.CapturedResponseContent = client.DownloadString(settings.Url);
@@ -69,6 +70,7 @@ namespace Westwind.Utilities
             }
 
             settings.Response = client.Response;
+            
 
             return settings.CapturedResponseContent;
         }
@@ -290,6 +292,11 @@ namespace Westwind.Utilities
         /// in the Data property.
         /// </summary>
         public string ContentType { get; set; }
+
+        /// <summary>
+        /// The request timeout in milliseconds. 0 for default (20 seconds typically)
+        /// </summary>
+        public int Timeout { get; set; }
 
         /// <summary>
         /// Any Http request headers you want to set for this request

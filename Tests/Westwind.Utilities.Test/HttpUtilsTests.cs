@@ -222,6 +222,19 @@ namespace Westwind.Utilities.Test
                 Console.WriteLine(header + ": " + settings.Response.Headers[header.ToString()]);
             }
         }
+
+        [ExpectedException(typeof(WebException))]
+        [TestMethod()]
+        public void HttpTimeout()
+        {
+            string result = HttpUtils.HttpRequestString(new HttpRequestSettings()
+            {
+                Url="http://west-wind.com/files/wconnect.exe",
+                Timeout = 200
+            });
+
+            Assert.IsNotNull(result);
+        }
     }
 
     public class CodeSnippet
