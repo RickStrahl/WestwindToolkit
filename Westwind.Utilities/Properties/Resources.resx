@@ -174,4 +174,7 @@
   <data name="JSON_NET_library_not_avaiable" xml:space="preserve">
     <value>JSON.NET library not avaiable. Please add the Newtonsoft.Json package to your project.</value>
   </data>
+  <data name="NoActiveTransactionToCommit" xml:space="preserve">
+    <value>No active Transaction to commit.</value>
+  </data>
 </root>

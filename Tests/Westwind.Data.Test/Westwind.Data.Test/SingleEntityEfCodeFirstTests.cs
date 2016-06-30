@@ -421,6 +421,7 @@ namespace Westwind.Data.Test
             Assert.IsFalse(customerBus.Save());
             Assert.IsFalse(string.IsNullOrEmpty(customerBus.ErrorMessage));
             Console.WriteLine("Validation Failed (test passed): " + customerBus.ErrorMessage);
+            Console.WriteLine("Exception: " + customerBus.ErrorException.Message + " " + customerBus.ErrorException);
         }
 
         
@@ -430,7 +431,7 @@ namespace Westwind.Data.Test
             var customerBus = new busCustomer()
             {
                 // Validates on Save automatically
-                ErrorHandlingMode = ErrorHandlingModes.ThrowExecptions
+                ErrorHandlingMode = ErrorHandlingModes.ThrowExceptions
             };
 
             try

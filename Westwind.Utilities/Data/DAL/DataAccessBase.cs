@@ -127,7 +127,6 @@ namespace Westwind.Utilities.Data
             dbProvider = connInfo.Provider;                       
         }
 
-
         /// <summary>
         /// The internally used dbProvider
         /// </summary>
@@ -142,6 +141,11 @@ namespace Westwind.Utilities.Data
         /// Optional error number returned by failed SQL commands
         /// </summary>
         public int ErrorNumber { get; set; } = 0;
+
+        public Exception ErrorException { get; set; }
+
+        public bool ThrowExceptions { get; set; } = false;
+
 
         /// <summary>
         /// The prefix used by the provider
@@ -237,6 +241,10 @@ namespace Westwind.Utilities.Data
                         if (connInfo == null)
                         {
                             SetError(Resources.InvalidConnectionString);
+
+                            if (ThrowExceptions)
+                                throw new ApplicationException(ErrorMessage);
+
                             return false;
                         }
 
@@ -889,7 +897,7 @@ namespace Westwind.Utilities.Data
             }
             catch (Exception ex)
             {
-                SetError(ex.GetBaseException().Message);
+                SetError(ex.GetBaseException());
                 return null;
             }
             finally
@@ -985,7 +993,7 @@ namespace Westwind.Utilities.Data
             }
             catch (Exception ex)
             {
-                SetError(ex.Message);
+                SetError(ex);
                 return null;
             }
             finally
@@ -1153,7 +1161,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 }
                 catch (Exception ex)
                 {
-                    SetError(ex.Message);
+                    SetError(ex.GetBaseException());
                     return false;
                 }
             }
@@ -1615,7 +1623,9 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         {
             if (Transaction == null)
             {
-                SetError("No active Transaction to commit.");
+                SetError(Resources.NoActiveTransactionToCommit);
+                if (ThrowExceptions)
+                    new ApplicationException(Resources.NoActiveTransactionToCommit);
                 return false;
             }
 
@@ -1645,6 +1655,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         }
 
 
+        #region Error Handling
 
         /// <summary>
         /// Sets the error message for the failure operations
@@ -1656,11 +1667,12 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             {
                 ErrorMessage = string.Empty;
                 ErrorNumber = 0;
+                ErrorException = null;
                 return;
             }
 
             ErrorMessage = Message;
-            ErrorNumber = errorNumber;
+            ErrorNumber = errorNumber;            
         }        
 
         /// <summary>
@@ -1675,10 +1687,19 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         protected virtual void SetError(DbException ex)
         {
             SetError(ex.Message, ex.ErrorCode);
+
+            ErrorException = ex;
+
+            if (ThrowExceptions)
+                throw ex;
         }
         protected virtual void SetError(SqlException ex)
         {
             SetError(ex.Message, ex.Number);
+            ErrorException = ex;
+
+            if (ThrowExceptions)
+                throw ex;
         }
 
         protected virtual void SetError(Exception ex)
@@ -1689,6 +1710,11 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
                 SetError(ex as DbException);
             else
                 SetError(ex.Message, 0);
+
+            ErrorException = ex;
+
+            if (ThrowExceptions)
+                throw ex;
         }
 
         /// <summary>
@@ -1698,7 +1724,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         {
             SetError(null,0);
         }
-
+#endregion
 
         #region IDisposable Members
 

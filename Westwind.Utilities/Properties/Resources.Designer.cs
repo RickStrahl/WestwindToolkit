@@ -196,6 +196,15 @@ namespace Westwind.Utilities.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No active Transaction to commit..
+        /// </summary>
+        public static string NoActiveTransactionToCommit {
+            get {
+                return ResourceManager.GetString("NoActiveTransactionToCommit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Object could not be deserialized from Xml..
         /// </summary>
         public static string ObjectCouldNotBeDeserializedFromXml {

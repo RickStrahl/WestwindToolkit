@@ -123,6 +123,7 @@ namespace Westwind.Data.EfCodeFirst
             {
                 if (ErrorException == null)
                     return "";
+
                 return ErrorException.Message;
             }
             set
@@ -372,52 +373,63 @@ namespace Westwind.Data.EfCodeFirst
         /// <param name="id"></param>
         /// <returns></returns>
         protected virtual TEntity LoadBase(object id)
-        {            
-            object match = DbSet.Find(new object[] { id });
-            if (match == null)
+        {
+            object match = null;
+            try
             {
-                SetError(Resources.UnableToFindMatchingEntityForKey);
+                match = DbSet.Find(new object[] {id});
+                if (match == null)
+                {
+                    SetError(Resources.UnableToFindMatchingEntityForKey);
+                    return null;
+                }            
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Handles errors where an invalid Id was passed, but SQL is valid                
+                SetError(Data.Properties.Resources.CouldnTLoadEntityInvalidKeyProvided);
                 return null;
-            }                       
+            }
+            catch (Exception ex)
+            {
+                // handles Sql errors                                
+                SetError(ex);
+            }
+
 
             // Assign to internal member
             Entity = match as TEntity;            
 
             OnEntityLoaded(Entity);
 
-            return Entity as TEntity;
+            return Entity;
         }
 
         /// <summary>
         /// Loads an entity based on a Lambda expression
         /// </summary>
         /// <param name="whereClauseLambda"></param>
-        /// <returns></returns>
+        /// <returns></returns>        "
         protected virtual TEntity LoadBase(Expression<Func<TEntity, bool>> whereClauseLambda)
         {
             SetError();
             Entity = null;
 
             try
-            {
-                TContext context = Context;
-                
-                var dbSet = Context.Set<TEntity>();
-                if (dbSet == null)                                   
-                    return null;
-                
-                //var res = dbSet.Where(whereClauseLambda);
-                Entity = dbSet.Where(whereClauseLambda).FirstOrDefault();
+            {                                
+                Entity = DbSet.FirstOrDefault(whereClauseLambda);
 
                 if (Entity != null)
                     OnEntityLoaded(Entity);
+                else
+                    SetError(Resources.UnableToFindMatchingEntityForKey);
 
                 return Entity;
             }
-            catch (InvalidOperationException)
+            catch (InvalidOperationException ex)
             {
-                // Handles errors where an invalid Id was passed, but SQL is valid
-                SetError(Data.Properties.Resources.CouldnTLoadEntityInvalidKeyProvided);            
+                // Handles errors where an invalid Id was passed, but SQL is valid                
+                SetError( Data.Properties.Resources.CouldnTLoadEntityInvalidKeyProvided);                            
                 return null;
             }
             catch (Exception ex)
@@ -880,14 +892,14 @@ namespace Westwind.Data.EfCodeFirst
         public DbParameter CreateParameter(string name, object value,
             ParameterDirection direction = ParameterDirection.Input)
         {
-            var cmd = Context.Database.Connection.CreateCommand();
-            
-            var parm = cmd.CreateParameter();            
-            parm.ParameterName = name;
-            parm.Value = value;
-            parm.Direction = direction;
-            
-            cmd.Dispose();
+            DbParameter parm;
+            using (var cmd = Context.Database.Connection.CreateCommand())
+            {
+                parm = cmd.CreateParameter();            
+                parm.ParameterName = name;
+                parm.Value = value;
+                parm.Direction = direction;                          
+            }
 
             return parm;
         }
@@ -1187,36 +1199,36 @@ namespace Westwind.Data.EfCodeFirst
         /// <summary>
         /// Sets an internal error message.
         /// </summary>
-        /// <param name="Message"></param>
-        public void SetError(string Message)
+        /// <param name="message"></param>
+        public void SetError(string message)
         {
-            if (string.IsNullOrEmpty(Message))
+            if (string.IsNullOrEmpty(message))
             {
                 ErrorException = null;
                 return;
             }
 
-            ErrorException = new ApplicationException(Message);
-
-            if (ErrorHandlingMode == ErrorHandlingModes.ThrowExecptions)
-                throw ErrorException;
-
+            // messages are stored on Exception object so exception always
+            // exists
+            ErrorException = new ApplicationException(message);
         }
 
         /// <summary>
-        /// Sets an internal error exception
+        /// Sets an internal error exception object. If ThrowExceptions is 
+        /// set this method causes an Exception to be fired.
         /// </summary>
         /// <param name="ex"></param>
         public void SetError(Exception ex, bool checkInnerException = false)
         {
-            ErrorException = ex;
-
+            
             if (checkInnerException)
                 ErrorException = ex.GetBaseException();
-
-            ErrorMessage = ErrorException.Message;
+            else
+                ErrorException = ex;
             
-            if (ex != null && ErrorHandlingMode == ErrorHandlingModes.ThrowExecptions)
+            // error message is retrieved from exception object
+            
+            if (ex != null && ErrorHandlingMode == ErrorHandlingModes.ThrowExceptions)
                 throw ex;
         }
 
@@ -1261,6 +1273,6 @@ namespace Westwind.Data.EfCodeFirst
         /// <summary>
         /// Errors are thrown as exceptions
         /// </summary>
-        ThrowExecptions
+        ThrowExceptions
     }
 }
