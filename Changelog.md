@@ -1,9 +1,21 @@
 # West Wind Toolkit Change Log
 
-### Version 2.67
-*Not released yet*
+### 2.69
 
-* **Add better Parameter Support to Sql DataAccess**
+* **Add ErrorHandlingMode to EfCodeFirstBusinessBase**  
+<small>Westwind.Data</small>  
+You can now specify wether errors are handled and returns as result values, or thrown as exceptions using the `ErrorHandlingMode` property. The default as before is `CapturedErrors` which captures errors and then returns error results and error messages, or `ThrowExceptions` which re-throws the captured exceptions.
+
+* **Add HTTP Timeout to HttpUtils HTTP Methods**  
+<small>Westwind.Utilities</small>  
+All the HttpUtils methods now can set the request timeout in the `HttpRequestSettings` parameter object passed to the request to allow terminating requests after a timeout period.
+
+* **Add `LastSql` Property to DataAccess DAL**  
+<small>Westwind.Data</small>  
+The last SQL statement executed against the DataAccess object is now captured in the `LastSql` property to simplify debugging.
+
+* **Add better Parameter Support to Sql DataAccess**  
+<small>Westwind.Data</small>   
 The DAL Data access components now allow you to specify how the higher level functions generate parameters. A new `UsePostionalParameters` writes only the `ParameterPrefix` now, not the name. You can also specify the name of the character for wrapping high level SQL commands fired from within methods using `LeftFieldBracket` and `RightFieldBracket`.
 
 

@@ -62,7 +62,7 @@ namespace Westwind.Web.JsonSerializers
         /// This property should be set only once at application startup typically
         /// in Application_Start of a Web app.
         /// </summary>
-        public static SupportedJsonParserTypes DefaultJsonParserType = SupportedJsonParserTypes.WestWindJsonSerializer;
+        public static SupportedJsonParserTypes DefaultJsonParserType = SupportedJsonParserTypes.JsonNet;
 
         /// <summary>
         /// Determines whether fields are serialized. Supported only for the West Wind JSON Serializer        
