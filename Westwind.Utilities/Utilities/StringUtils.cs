@@ -491,10 +491,13 @@ namespace Westwind.Utilities
         /// </summary>
         /// <param name="output"></param>
         /// <param name="filename"></param>
-        public static void LogString(string output, string filename)
+        public static void LogString(string output, string filename, Encoding encoding = null)
         {
-            StreamWriter Writer = new StreamWriter(filename, true);
-            Writer.WriteLine(DateTime.Now.ToString() + " - " + output);
+            if (encoding == null)
+                encoding = Encoding.UTF8;
+
+            StreamWriter Writer = new StreamWriter(filename, true, encoding);
+            Writer.WriteLine(DateTime.Now + " - " + output);
             Writer.Close();
         }
 
