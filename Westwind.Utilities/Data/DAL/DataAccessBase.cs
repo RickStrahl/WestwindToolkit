@@ -315,14 +315,9 @@ namespace Westwind.Utilities.Data
                     command.Connection = _Connection;
                 }
             }
-            catch (DbException ex)
-            {
-                SetError(ex.Message, ex.ErrorCode);
-                return null;
-            }
             catch (Exception ex)
             {
-                SetError(ex.GetBaseException().Message);
+                SetError(ex);
                 return null;
             }
 
@@ -540,7 +535,7 @@ namespace Westwind.Utilities.Data
             }
             catch (Exception ex)
             {
-                SetError(ex.GetBaseException().Message);
+                SetError(ex.GetBaseException());
                 CloseConnection(command);
                 return null;
             }
@@ -1625,7 +1620,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             {
                 SetError(Resources.NoActiveTransactionToCommit);
                 if (ThrowExceptions)
-                    new ApplicationException(Resources.NoActiveTransactionToCommit);
+                    new InvalidOperationException(Resources.NoActiveTransactionToCommit);
                 return false;
             }
 
@@ -1687,7 +1682,6 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         protected virtual void SetError(DbException ex)
         {
             SetError(ex.Message, ex.ErrorCode);
-
             ErrorException = ex;
 
             if (ThrowExceptions)
