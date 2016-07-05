@@ -9,6 +9,12 @@ namespace AlbumViewerBusiness
 {
     public class ArtistBusiness : EfCodeFirstBusinessBase<Artist,AlbumViewerContext>
     {
+        public ArtistBusiness()
+        { }
+
+        public ArtistBusiness(string connectionString) : base(connectionString)
+        { }
+
         public ICollection<Artist> GetArtists(string nameFilter = null)
         {
             var artists = Context.Artists

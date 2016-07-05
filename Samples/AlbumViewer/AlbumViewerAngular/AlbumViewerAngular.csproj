@@ -163,6 +163,7 @@
     <Content Include="images\headphone-head.png" />
     <Content Include="images\record.png" />
     <Content Include="images\RockLogo.png" />
+    <Content Include="test.html" />
     <Content Include="index.html" />
     <Content Include="Scripts\angular\angular-animate.js" />
     <Content Include="Scripts\angular\angular-animate.min.js" />

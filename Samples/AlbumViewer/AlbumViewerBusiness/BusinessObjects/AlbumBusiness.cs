@@ -17,6 +17,10 @@ namespace AlbumViewerBusiness
         public AlbumBusiness(IBusinessObject<AlbumViewerContext> parentBusiness): base(parentBusiness)
         { }
 
+        public AlbumBusiness(string connectionString) : base(connectionString)
+        {
+
+        }
 
         public ICollection<Album> GetAllAlbums()
         {
