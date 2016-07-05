@@ -430,12 +430,12 @@ namespace Westwind.Data.Test
         {
             var customerBus = new busCustomer()
             {
-                // Validates on Save automatically
-                ErrorHandlingMode = ErrorHandlingModes.ThrowExceptions
+                ThrowExceptions = true
             };
 
             try
             {
+                // this should throw SqlException
                 var custList = customerBus.ExecuteList<Customer>("select * from customerss where company like '%Wind%'");
             }
             catch (SqlException ex)

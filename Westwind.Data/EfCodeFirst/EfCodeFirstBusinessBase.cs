@@ -144,8 +144,9 @@ namespace Westwind.Data.EfCodeFirst
         [XmlIgnore]
         public Exception ErrorException { get; set; }        
 
-
-        public ErrorHandlingModes ErrorHandlingMode {get; set; }
+        [NotMapped]
+        [XmlIgnore]
+        public bool ThrowExceptions {get; set; }
         
 
         #region ObjectInitializers and Disposables
@@ -158,9 +159,6 @@ namespace Westwind.Data.EfCodeFirst
         {
             InitializeInternal();
             Context = CreateContext();
-
-            ErrorHandlingMode = ErrorHandlingModes.CapturedErrors;
-
             Initialize();
         }
 
@@ -236,9 +234,9 @@ namespace Westwind.Data.EfCodeFirst
         /// that accepts a connectionString parameter.
         /// </remarks>
         protected virtual TContext CreateContext(string connectionString)
-        {            
-            TContext context = ReflectionUtils.CreateInstanceFromType(typeof(TContext), connectionString) as TContext;
-
+        {
+            TContext context = Activator.CreateInstance(typeof(TContext),connectionString) as TContext;
+            
             if (context == null)
                 throw new InvalidOperationException(Resources.ThisConstructorOnlyOnCustomContext);
 
@@ -290,7 +288,7 @@ namespace Westwind.Data.EfCodeFirst
         /// <returns></returns>
         public virtual TEntity NewEntity()
         {            
-            Entity = Context.Set<TEntity>().Add(new TEntity()) as TEntity;
+            Entity = Context.Set<TEntity>().Add(new TEntity());
 
             OnNewEntity(Entity);
 
@@ -377,17 +375,17 @@ namespace Westwind.Data.EfCodeFirst
             object match = null;
             try
             {
-                match = DbSet.Find(new object[] {id});
+                match = DbSet.Find(id);
                 if (match == null)
                 {
                     SetError(Resources.UnableToFindMatchingEntityForKey);
                     return null;
                 }            
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException)
             {
                 // Handles errors where an invalid Id was passed, but SQL is valid                
-                SetError(Data.Properties.Resources.CouldnTLoadEntityInvalidKeyProvided);
+                SetError(Resources.CouldnTLoadEntityInvalidKeyProvided);
                 return null;
             }
             catch (Exception ex)
@@ -426,10 +424,10 @@ namespace Westwind.Data.EfCodeFirst
 
                 return Entity;
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidOperationException)
             {
                 // Handles errors where an invalid Id was passed, but SQL is valid                
-                SetError( Data.Properties.Resources.CouldnTLoadEntityInvalidKeyProvided);                            
+                SetError( Resources.CouldnTLoadEntityInvalidKeyProvided);                            
                 return null;
             }
             catch (Exception ex)
@@ -439,26 +437,6 @@ namespace Westwind.Data.EfCodeFirst
             }
 
             return null;
-        }
-
-        /// <summary>
-        /// Attaches an untracked to the internal context and 
-        /// marks it as modified optionally
-        /// Note: child elements need to be manually added.
-        /// </summary>
-        /// <param name="entity"></param>
-        /// <returns></returns>
-        public TEntity Attach(TEntity entity, bool addNew = false)
-        {
-            if (addNew)
-                Entity = DbSet.Add(entity);
-            else
-            {
-                Entity = DbSet.Attach(entity);
-                GetEntityEntry(Entity).State = EntityState.Modified;
-            }
-
-            return Entity;
         }
 
 
@@ -484,6 +462,26 @@ namespace Westwind.Data.EfCodeFirst
             }
 
             return entity;
+        }
+
+        /// <summary>
+        /// Attaches an untracked to the internal context and 
+        /// marks it as modified optionally
+        /// Note: child elements need to be manually added.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public TEntity Attach(TEntity entity, bool addNew = false)
+        {
+            if (addNew)
+                Entity = DbSet.Add(entity);
+            else
+            {
+                Entity = DbSet.Attach(entity);
+                GetEntityEntry(Entity).State = EntityState.Modified;
+            }
+
+            return Entity;
         }
 
         /// <summary>
@@ -706,6 +704,13 @@ namespace Westwind.Data.EfCodeFirst
             return SaveInternal(entity);
         }
 
+
+        /// <summary>
+        /// Handles saving the actual entity by firing OnBeforeSave,SaveChanges and
+        /// OnAfterSave().
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         protected virtual bool SaveInternal(TEntity entity)
         {
             if (!OnBeforeSave(entity))
@@ -1227,8 +1232,7 @@ namespace Westwind.Data.EfCodeFirst
                 ErrorException = ex;
             
             // error message is retrieved from exception object
-            
-            if (ex != null && ErrorHandlingMode == ErrorHandlingModes.ThrowExceptions)
+            if (ex != null && ThrowExceptions)
                 throw ex;
         }
 
@@ -1255,24 +1259,5 @@ namespace Westwind.Data.EfCodeFirst
 
         #endregion
 
-    }
-
-    /// <summary>
-    /// Determines how data errors are handled either as handled
-    /// errors that return a results error message via captured exceptions
-    /// or as raw exceptions.
-    /// </summary>
-    public enum ErrorHandlingModes
-    {
-        /// <summary>
-        /// Errors are captured and returned in the ErrorException and
-        /// ErrorMessage properties
-        /// </summary>
-        CapturedErrors,
-
-        /// <summary>
-        /// Errors are thrown as exceptions
-        /// </summary>
-        ThrowExceptions
     }
 }
