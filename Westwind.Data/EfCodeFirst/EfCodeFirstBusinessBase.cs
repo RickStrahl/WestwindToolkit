@@ -351,7 +351,7 @@ namespace Westwind.Data.EfCodeFirst
     /// The type of the context that is attached to the this business object.
     /// Maps to the Context property. 
     /// </typeparam>
-    public class EfCodeFirstBusinessBase<TEntity, TContext> : IDisposable, IBusinessObject<TContext>, IBusinessObject<TEntity,TContext>, IBusinessObject, IEfCodeFirstBusinessBase<TEntity, TContext> where TEntity : class, new()
+    public class EfCodeFirstBusinessBase<TEntity, TContext> : IDisposable, IBusinessObject<TContext>, IBusinessObject<TEntity,TContext>, IBusinessObject where TEntity : class, new()
         where TContext : DbContext,new()
     {
         [XmlIgnore]
