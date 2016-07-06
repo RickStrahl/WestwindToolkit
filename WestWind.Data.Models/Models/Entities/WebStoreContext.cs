@@ -10,6 +10,12 @@ namespace Westwind.Data.Test.Models
 {
     public class WebStoreContext : EfCodeFirstContext  // use to get support for DbNative interface
     {
+        public WebStoreContext()
+        { }
+        
+        public WebStoreContext(string connectionString) : base(connectionString)
+        { }
+
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Order> Orders { get; set; }
         public DbSet<LineItem> LineItems { get; set; }        

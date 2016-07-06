@@ -447,6 +447,17 @@ namespace Westwind.Data.Test
             Assert.IsTrue(false, "Exception should have fired and code should not get here.");
         }
 
+        [TestMethod]
+        public void PassContextToConstructor()
+        {
+            var customerBus = new busCustomer();
+            customerBus.CreateContext("WebStoreContext");
+
+            var cust = customerBus.Load(1);
+
+            Assert.IsNotNull(cust, customerBus.ErrorMessage);
+
+        }
     }
 
 }

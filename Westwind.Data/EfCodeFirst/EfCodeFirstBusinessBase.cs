@@ -232,7 +232,7 @@ namespace Westwind.Data.EfCodeFirst
         /// This only works if you implement a DbContext contstructor on your custom context
         /// that accepts a connectionString parameter.
         /// </remarks>
-        protected virtual TContext CreateContext(string connectionString)
+        public virtual TContext CreateContext(string connectionString)
         {
             TContext context = Activator.CreateInstance(typeof(TContext),connectionString) as TContext;
             

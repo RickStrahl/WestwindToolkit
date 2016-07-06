@@ -11,8 +11,11 @@ namespace Westwind.Data.Test
 {
     public class busCustomer : EfCodeFirstBusinessBase<Customer, WebStoreContext>
     {
-        public busCustomer()
-        { }
+        public busCustomer() 
+        {
+            string text = "Test";
+
+        }
 
         public busCustomer(string connectionString) : base(connectionString)
         { }
