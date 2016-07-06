@@ -694,8 +694,10 @@ namespace Westwind.Utilities
             }
             else if (targetType == typeof(bool))
             {
+                sourceString = sourceString.ToLower();
                 if (!isEmpty &&
-                    sourceString.ToLower() == "true" || sourceString.ToLower() == "on" || sourceString == "1")
+                    sourceString == "true" || sourceString == "on" || 
+                    sourceString == "1" || sourceString == "yes")
                     result = true;
                 else
                     result = false;
