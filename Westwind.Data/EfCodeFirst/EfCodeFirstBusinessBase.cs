@@ -326,15 +326,6 @@ namespace Westwind.Data.EfCodeFirst
 
 
         /// <summary>
-        /// Overridable method that allows adding post NewEntity functionaly
-        /// </summary>
-        /// <param name="entity"></param>
-        protected virtual void OnNewEntity(TEntity entity)
-        {
-        }
-
-
-        /// <summary>
         /// Loads in instance based on its integer id
         /// </summary>
         /// <param name="id"></param>
@@ -945,6 +936,15 @@ namespace Westwind.Data.EfCodeFirst
 
 
         #region Overridable Event Hooks
+
+        /// <summary>
+        /// Overridable method that allows adding post NewEntity functionaly
+        /// </summary>
+        /// <param name="entity"></param>
+        protected virtual void OnNewEntity(TEntity entity)
+        {
+        }
+
         /// <summary>
         /// Fired after an entity has been loaded with the .Load() method
         /// </summary>

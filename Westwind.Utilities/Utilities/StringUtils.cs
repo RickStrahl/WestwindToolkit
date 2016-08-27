@@ -624,15 +624,13 @@ namespace Westwind.Utilities
             return ms;
         }
 
-
-
         /// <summary>
         /// Turns a BinHex string that contains raw byte values
         /// into a byte array
         /// </summary>
         /// <param name="hex">BinHex string (just two byte hex digits strung together)</param>
         /// <returns></returns>
-        public static byte[] BinHexToString(string hex)
+        public static byte[] BinHexToBinary(string hex)
         {
             int offset = hex.StartsWith("0x") ? 2 : 0;
             if ((hex.Length % 2) != 0)
@@ -650,10 +648,12 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Converts a byte array into a BinHex string
+        /// Converts a byte array into a BinHex string.
+        /// BinHex is two digit hex byte values squished together
+        /// into a string.
         /// </summary>
         /// <param name="data">Raw data to send</param>
-        /// <returns>string or null if input is null</returns>
+        /// <returns>BinHex string or null if input is null</returns>
         public static string BinaryToBinHex(byte[] data)
         {
             if (data == null)

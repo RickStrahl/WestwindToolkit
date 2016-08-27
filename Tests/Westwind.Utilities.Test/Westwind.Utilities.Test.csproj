@@ -88,7 +88,9 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -109,6 +111,7 @@
     <Compile Include="HttpUtilsTests.cs" />
     <Compile Include="ExpandoTests.cs" />
     <Compile Include="SqlDataAccessFoxProTests.cs" />
+    <Compile Include="UnitTest1.cs" />
     <Compile Include="UrlEncodingParserTests.cs" />
     <Compile Include="SupportClasses\DebugModes.cs" />
     <Compile Include="SupportClasses\JsonNetSerializationUtilsTests.cs" />

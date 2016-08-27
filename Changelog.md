@@ -10,6 +10,9 @@ You can now specify wether errors are handled and returns as result values, or t
 <small>Westwind.Utilities</small>  
 All the HttpUtils methods now can set the request timeout in the `HttpRequestSettings` parameter object passed to the request to allow terminating requests after a timeout period.
 
+* **Add FileUtils.SafeFilename**  
+Creates a clean file name and path that strips all invalid characters.
+
 * **Add `LastSql` Property to DataAccess DAL**  
 <small>Westwind.Data</small>  
 The last SQL statement executed against the DataAccess object is now captured in the `LastSql` property to simplify debugging.

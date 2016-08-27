@@ -33,6 +33,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Westwind.Utilities
@@ -121,13 +122,26 @@ namespace Westwind.Utilities
             return new StreamReader(srcFile, enc);
         }
 
+        /// <summary>
+        /// Creates a safe file and directory name that is stripped of all invalid characters.
+        /// </summary>
+        /// <param name="fileName">Filename to clean up</param>
+        /// <param name="replace">Replacement character for invalid characters</param>
+        /// <returns></returns>
+        public  static string SafeFilename(string fileName, string replace = "")
+        {
+            return Path.GetInvalidFileNameChars()
+                .Aggregate(fileName, 
+                           (file, c) => file.Replace(c.ToString(), replace));
+        }
 
-		/// <summary>
-		/// Returns the full path of a full physical filename
-		/// </summary>
-		/// <param name="path"></param>
-		/// <returns></returns>
-		public static string JustPath(string path) 
+
+        /// <summary>
+        /// Returns the full path of a full physical filename
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static string JustPath(string path) 
 		{
 			FileInfo fi = new FileInfo(path);
 			return fi.DirectoryName + "\\";
