@@ -55,8 +55,8 @@
       <HintPath>..\..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -107,11 +107,11 @@
     <Compile Include="AppConfiguration\DatabaseConfigurationTests.cs" />
     <Compile Include="AppConfiguration\JsonFileConfigurationTests.cs" />
     <Compile Include="AppConfiguration\StringConfigurationTests.cs" />
+    <Compile Include="FileUtilsTests.cs" />
     <Compile Include="HttpClientTests.cs" />
     <Compile Include="HttpUtilsTests.cs" />
     <Compile Include="ExpandoTests.cs" />
     <Compile Include="SqlDataAccessFoxProTests.cs" />
-    <Compile Include="UnitTest1.cs" />
     <Compile Include="UrlEncodingParserTests.cs" />
     <Compile Include="SupportClasses\DebugModes.cs" />
     <Compile Include="SupportClasses\JsonNetSerializationUtilsTests.cs" />

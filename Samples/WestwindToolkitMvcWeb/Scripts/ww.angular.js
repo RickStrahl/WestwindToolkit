@@ -1,9 +1,9 @@
 ﻿/// <reference path="jquery.js" />
 /// <reference path="ww.jquery.js" />
 /*
-ww.jQuery.js  
+ww.angular.js
 Version 1.14 - 3/31/2015
-West Wind jQuery plug-ins and utilities
+West Wind Angular utilities
 
 (c) 2008-2015 Rick Strahl, West Wind Technologies 
 www.west-wind.com

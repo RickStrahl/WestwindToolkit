@@ -822,37 +822,55 @@
             <param name="command">A preconfigured DbCommand object that should have all connection information set</param>
             <param name="parameters">Either values mapping to @0,@1,@2 etc. or DbParameter objects created with CreateParameter()</param>
         </member>
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object)">
+            <summary>
+            Used to create named parameters to pass to commands or the various
+            methods of this class.
+            </summary>
+            <param name="parameterName"></param>
+            <param name="value"></param>
+            <param name="dbType"></param>
+            <returns></returns>
+        </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object,System.Data.ParameterDirection)">
             <summary>
             Used to create named parameters to pass to commands or the various
             methods of this class.
             </summary>
-            <param name="parameterName">Name of hte parameter to create</param>
-            <param name="value">Value to set</param>
-            <param name="parameterDirection">Parameter direction. Defaults to input</param>
+            <param name="parameterName"></param>
+            <param name="value"></param>
+            <param name="dbType"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object,System.Data.DbType,System.Int32,System.Data.ParameterDirection)">
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object,System.Int32)">
             <summary>
             Used to create named parameters to pass to commands or the various
             methods of this class.
             </summary>
-            <param name="parameterName">Name of the parameter to create</param>
-            <param name="value">The value of the parameter</param>
-            <param name="type">The type of the parameter</param>
-            <param name="size">The size of the parameter</param>
-            <param name="direction">Dirction of the parameter - defaults to input</param>
-            <returns>A parameter instance</returns>
+            <param name="parameterName"></param>
+            <param name="value"></param>
+            <param name="size"></param>
+            <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object,System.Int32,System.Data.ParameterDirection)">
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object,System.Data.DbType)">
             <summary>
             Used to create named parameters to pass to commands or the various
             methods of this class.
             </summary>
-            <param name="parameterName">Name of the parameter</param>
-            <param name="value">value to set it to</param>
-            <param name="size">size of a numeric field</param>
-            <param name="direction">Dirction of the parameter - defaults to input</param>
+            <param name="parameterName"></param>
+            <param name="value"></param>
+            <param name="dbType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Data.DataAccessBase.CreateParameter(System.String,System.Object,System.Data.DbType,System.Int32)">
+            <summary>
+            Used to create named parameters to pass to commands or the various
+            methods of this class.
+            </summary>
+            <param name="parameterName"></param>
+            <param name="value"></param>
+            <param name="type"></param>
+            <param name="size"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Data.DataAccessBase.ExecuteNonQuery(System.Data.Common.DbCommand)">
@@ -1685,6 +1703,11 @@
             in the Data property.
             </summary>
         </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.Timeout">
+            <summary>
+            The request timeout in milliseconds. 0 for default (20 seconds typically)
+            </summary>
+        </member>
         <member name="P:Westwind.Utilities.HttpRequestSettings.Headers">
             <summary>
             Any Http request headers you want to set for this request
@@ -2456,6 +2479,11 @@
               Looks up a localized string similar to JSON.NET library not avaiable. Please add the Newtonsoft.Json package to your project..
             </summary>
         </member>
+        <member name="P:Westwind.Utilities.Properties.Resources.NoActiveTransactionToCommit">
+            <summary>
+              Looks up a localized string similar to No active Transaction to commit..
+            </summary>
+        </member>
         <member name="P:Westwind.Utilities.Properties.Resources.ObjectCouldNotBeDeserializedFromXml">
             <summary>
               Looks up a localized string similar to Object could not be deserialized from Xml..
@@ -2692,6 +2720,13 @@
             check native properties and only check the Dictionary!
             </remarks>
             <param name="instance"></param>
+        </member>
+        <member name="M:Westwind.Utilities.Expando.#ctor(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Create an Expando from a dictionary
+            </summary>
+            <param name="dict"></param>
+            <param name="expando">Expando instance</param>
         </member>
         <member name="M:Westwind.Utilities.Expando.GetDynamicMemberNames">
             <summary>
@@ -3479,6 +3514,14 @@
             Opens a stream reader with the appropriate text encoding applied.
             </summary>
             <param name="srcFile"></param>
+        </member>
+        <member name="M:Westwind.Utilities.FileUtils.SafeFilename(System.String,System.String)">
+            <summary>
+            Creates a safe file and directory name that is stripped of all invalid characters.
+            </summary>
+            <param name="fileName">Filename to clean up</param>
+            <param name="replace">Replacement character for invalid characters</param>
+            <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.FileUtils.JustPath(System.String)">
             <summary>
@@ -4325,7 +4368,8 @@
         </member>
         <member name="M:Westwind.Utilities.StringUtils.ReplaceStringInstance(System.String,System.String,System.String,System.Int32,System.Boolean)">
             <summary>
-            String replace function that support
+            String replace function that supports replacing a specific instance with 
+            case insensitivity
             </summary>
             <param name="origString">Original input string</param>
             <param name="findString">The string that is to be replaced</param>
@@ -4468,7 +4512,7 @@
             <param name="length">Number of characters to abstract to</param>
             <returns>string</returns>
         </member>
-        <member name="M:Westwind.Utilities.StringUtils.LogString(System.String,System.String)">
+        <member name="M:Westwind.Utilities.StringUtils.LogString(System.String,System.String,System.Text.Encoding)">
             <summary>
             Simple Logging method that allows quickly writing a string to a file
             </summary>
@@ -4527,7 +4571,7 @@
             <param name="encoding"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.StringUtils.BinHexToString(System.String)">
+        <member name="M:Westwind.Utilities.StringUtils.BinHexToBinary(System.String)">
             <summary>
             Turns a BinHex string that contains raw byte values
             into a byte array
@@ -4537,10 +4581,12 @@
         </member>
         <member name="M:Westwind.Utilities.StringUtils.BinaryToBinHex(System.Byte[])">
             <summary>
-            Converts a byte array into a BinHex string
+            Converts a byte array into a BinHex string.
+            BinHex is two digit hex byte values squished together
+            into a string.
             </summary>
             <param name="data">Raw data to send</param>
-            <returns>string or null if input is null</returns>
+            <returns>BinHex string or null if input is null</returns>
         </member>
         <member name="M:Westwind.Utilities.StringUtils.GetProperty(System.String,System.String)">
             <summary>
