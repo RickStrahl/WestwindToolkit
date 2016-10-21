@@ -187,7 +187,7 @@ namespace Westwind.Utilities.Tests
             bag.Add("Key3", 300.10M);
             string xml = bag.ToXml();
 
-            TestContext.WriteLine(bag.ToXml());
+            TestContext.WriteLine(xml);
 
             bag.Clear();
 
