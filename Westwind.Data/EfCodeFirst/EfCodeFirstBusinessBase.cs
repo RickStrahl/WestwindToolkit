@@ -289,11 +289,11 @@ namespace Westwind.Data.EfCodeFirst
         {            
             Entity = Context.Set<TEntity>().Add(new TEntity());
 
-            OnNewEntity(Entity);
-
             if (Entity == null)
                 return null;
 
+            OnNewEntity(Entity);
+            
             return Entity;
         }
 
