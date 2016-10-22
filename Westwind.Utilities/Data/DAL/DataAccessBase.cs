@@ -1478,7 +1478,10 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
         /// <param name="table"></param>
         /// <param name="KeyField"></param>
         /// <param name="propertiesToSkip"></param>
-        /// <returns>Scope Identity or Null</returns>
+        /// <returns>
+        /// Scope Identity or Null (when returnIdentityKey is true
+        /// Otherwise affected records
+        /// </returns>
         public object InsertEntity(object entity, string table, string propertiesToSkip = null, bool returnIdentityKey = true)
         {
             SetError();
@@ -1488,6 +1491,7 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             else
                 propertiesToSkip = "," + propertiesToSkip.ToLower() + ",";
 
+            
             DbCommand Command = CreateCommand(string.Empty);
             if (Command == null)
                 return null;
@@ -1530,26 +1534,18 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
             Command.CommandText = FieldList.ToString().TrimEnd(',') + ") " +
                                  DataList.ToString().TrimEnd(',') + ")";
 
+
+            if (returnIdentityKey)
+            {
+                Command.CommandText += ";\r\n" + "select SCOPE_IDENTITY()";
+                return ExecuteScalar(Command);
+            }
+
             int res = ExecuteNonQuery(Command);
             if (res < 0)
                 return null;
 
-            object result = res;
-
-            string lastSql = Command.CommandText;
-
-            if (returnIdentityKey)
-            {
-                result = ExecuteScalar("select SCOPE_IDENTITY()");
-                CloseConnection();
-
-                LastSql = lastSql + ";\r\n" + LastSql;
-                return result;
-            }         
-
-            CloseConnection();
-
-            return result;
+            return res;
         }
 
 
