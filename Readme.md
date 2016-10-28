@@ -1,5 +1,5 @@
-# West Wind Toolkit
-### A rich library of utilities for Web and everyday development###
+﻿# West Wind Toolkit
+### A rich library of utilities for Web and everyday development
   
 <img src="http://west-wind.com/WestwindToolkit/images/WestwindWebToolkit_128x128.png" align="left"/> The West Wind Toolkit is a set of general purpose and Web Utility classes provided as easy to consume packages. The toolset is also available as source code so you can pick and choose functionality from the toolset if you only need individual features.
 

@@ -1,5 +1,13 @@
 ﻿# West Wind Toolkit Change Log
 
+### 2.70
+
+* **Fix binary encoding in Encryption class**  
+Binary encoding now uses UTF encoding to encrypt/decrypt strings in order to support extended characters.
+
+* **Encryption adds support for returning binary string data as BinHex**  
+You can now return binary values in BinHex format in addition to the default base64 encoded string values.
+
 ### 2.69
 
 * **Add ErrorHandlingMode to EfCodeFirstBusinessBase**  

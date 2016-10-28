@@ -112,6 +112,7 @@
     <Compile Include="HttpUtilsTests.cs" />
     <Compile Include="ExpandoTests.cs" />
     <Compile Include="SqlDataAccessFoxProTests.cs" />
+    <Compile Include="EncryptionTests.cs" />
     <Compile Include="UrlEncodingParserTests.cs" />
     <Compile Include="SupportClasses\DebugModes.cs" />
     <Compile Include="SupportClasses\JsonNetSerializationUtilsTests.cs" />
