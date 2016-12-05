@@ -140,7 +140,7 @@ namespace Westwind.Utilities.Test
             var postSnippet = new CodeSnippet()
             {
                 UserId = "Bogus",
-                Code = "string.Format('Hello World, I will own you!');",
+                Code = "string.Format('die Bären sind süss und sauer.');",
                 Comment = "World domination imminent"
             };
 

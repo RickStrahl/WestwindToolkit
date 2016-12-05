@@ -10,9 +10,33 @@ namespace Westwind.Utilities
     /// </summary>
     public class HttpUtilsWebClient : WebClient
     {
+        /// <summary>
+        /// Intializes this instance of WebClient with settings values
+        /// </summary>
+        /// <param name="settings"></param>
         public HttpUtilsWebClient(HttpRequestSettings settings = null)
         {
             Settings = settings;
+
+            if (settings != null)
+            {
+                if (settings.Credentials != null)
+                    Credentials = settings.Credentials;
+
+                if (settings.Proxy != null)
+                    Proxy = settings.Proxy;
+
+                if (settings.Encoding != null)
+                    Encoding = settings.Encoding;
+
+                if (settings.Headers != null)
+                {
+                    foreach (var header in settings.Headers)
+                    {
+                        Headers[header.Key] = header.Value;
+                    }
+                }
+            }            
         }
 
         internal HttpRequestSettings Settings { get; set; }

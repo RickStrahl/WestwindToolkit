@@ -31,22 +31,7 @@ namespace Westwind.Utilities
         /// <returns>string of HTTP response</returns>
         public static string HttpRequestString(HttpRequestSettings settings)
         {
-            var client = new HttpUtilsWebClient(settings);
-
-            if (settings.Credentials != null)
-                client.Credentials = settings.Credentials;
-
-            if (settings.Proxy != null)
-                client.Proxy = settings.Proxy;
-
-            if (settings.Headers != null)
-            {
-                foreach (var header in settings.Headers)
-                {
-                    client.Headers[header.Key] = header.Value;
-                }
-            }
-            
+            var client = new HttpUtilsWebClient(settings);            
 
             if (settings.HttpVerb == "GET")
                 settings.CapturedResponseContent = client.DownloadString(settings.Url);
@@ -88,23 +73,8 @@ namespace Westwind.Utilities
         /// <returns>deserialized value/object from returned JSON data</returns>
         public static TResultType JsonRequest<TResultType>(HttpRequestSettings settings)
         {
-            var client = new HttpUtilsWebClient();
-
-            if (settings.Credentials != null)
-                client.Credentials = settings.Credentials;
-
-            if (settings.Proxy != null)
-                client.Proxy = settings.Proxy;
-
+            var client = new HttpUtilsWebClient(settings);            
             client.Headers.Add("Accept", "application/json");
-
-            if (settings.Headers != null)
-            {
-                foreach (var header in settings.Headers)
-                {
-                    client.Headers[header.Key] = header.Value;
-                }
-            }
 
             string jsonResult;
 
@@ -115,13 +85,16 @@ namespace Westwind.Utilities
                 if (!string.IsNullOrEmpty(settings.ContentType))
                     client.Headers["Content-type"] = settings.ContentType;
                 else
-                    client.Headers["Content-type"] = "application/json";
+                    client.Headers["Content-type"] = "application/json;charset=utf-8;";
 
                 if (!settings.IsRawData)
-                    settings.CapturedRequestContent = JsonSerializationUtils.Serialize(settings.Content, throwExceptions: true);
+                {
+                    settings.CapturedRequestContent = JsonSerializationUtils.Serialize(settings.Content,
+                        throwExceptions: true);                    
+                }
                 else
                     settings.CapturedRequestContent = settings.Content as string;
-
+                
                 jsonResult = client.UploadString(settings.Url, settings.HttpVerb, settings.CapturedRequestContent);
 
                 if (jsonResult == null)
@@ -133,6 +106,7 @@ namespace Westwind.Utilities
 
             return (TResultType)JsonSerializationUtils.Deserialize(jsonResult, typeof(TResultType), true);
         }
+
 
 #if !NET40
         /// <summary>
@@ -153,22 +127,9 @@ namespace Westwind.Utilities
         /// <returns>string of HTTP response</returns>
         public static async Task<string> HttpRequestStringAsync(HttpRequestSettings settings)
         {
-            var client = new HttpUtilsWebClient();
+            var client = new HttpUtilsWebClient(settings);
 
-            if (settings.Credentials != null)
-                client.Credentials = settings.Credentials;
-
-            if (settings.Proxy != null)
-                client.Proxy = settings.Proxy;
-
-            if (settings.Headers != null)
-            {
-                foreach (var header in settings.Headers)
-                {
-                    client.Headers[header.Key] = header.Value;
-                }
-            }
-
+            
             if (settings.HttpVerb == "GET")
                 settings.CapturedResponseContent = await client.DownloadStringTaskAsync(new Uri(settings.Url));
             else
@@ -208,24 +169,9 @@ namespace Westwind.Utilities
         /// <returns>deserialized value/object from returned JSON data</returns>
         public static async Task<TResultType> JsonRequestAsync<TResultType>(HttpRequestSettings settings)
         {
-            var client = new HttpUtilsWebClient();
-
-            if (settings.Credentials != null)
-                client.Credentials = settings.Credentials;
-
-            if (settings.Proxy != null)
-                client.Proxy = settings.Proxy;
-
+            var client = new HttpUtilsWebClient(settings);       
             client.Headers.Add("Accept", "application/json");
-
-            if (settings.Headers != null)
-            {
-                foreach (var header in settings.Headers)
-                {
-                    client.Headers[header.Key] = header.Value;
-                }
-            }
-
+            
             string jsonResult;
             if (settings.HttpVerb == "GET")
                 jsonResult = await client.DownloadStringTaskAsync(settings.Url);
@@ -237,7 +183,8 @@ namespace Westwind.Utilities
                     client.Headers["Content-type"] = "application/json";
 
                 if (!settings.IsRawData)
-                    settings.CapturedRequestContent = JsonSerializationUtils.Serialize(settings.Content, throwExceptions: true);
+                    settings.CapturedRequestContent = JsonSerializationUtils.Serialize(settings.Content,
+                        throwExceptions: true);
                 else
                     settings.CapturedRequestContent = settings.Content as string;
 
@@ -279,6 +226,11 @@ namespace Westwind.Utilities
         /// Data can be either string or byte[] type
         /// </summary>
         public object Content { get; set; }
+
+        /// <summary>
+        /// Content Encoding for the data sent to to server
+        /// </summary>
+        public Encoding Encoding { get; set;  } 
 
         /// <summary>
         /// When true data is not translated. For example
@@ -355,6 +307,7 @@ namespace Westwind.Utilities
         {
             HttpVerb = "GET";
             Headers = new Dictionary<string, string>();
+            Encoding = Encoding.UTF8;
         }
     }
 }
