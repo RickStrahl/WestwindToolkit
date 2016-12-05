@@ -34,6 +34,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace Westwind.Utilities
@@ -109,8 +110,7 @@ namespace Westwind.Utilities
 
             return enc;
         }
-
-
+        
 
         /// <summary>
         /// Opens a stream reader with the appropriate text encoding applied.
@@ -135,6 +135,34 @@ namespace Westwind.Utilities
                            (file, c) => file.Replace(c.ToString(), replace));
         }
 
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        static extern uint GetLongPathName(string ShortPath, StringBuilder sb, int buffer);
+
+        /// <summary>
+        /// This function returns the actual filename of a file
+        /// that exists on disk. If you provide a path/file name
+        /// that is not proper cased as input, this function fixes
+        /// it up and returns the file using the path and file names
+        /// as they exist on disk.
+        /// 
+        /// If the file doesn't exist the original filename is 
+        /// returned.
+        /// </summary>
+        /// <param name="filename">A filename to check</param>
+        /// <returns>On disk file name and path with the disk casing</returns>
+	    public static string GetPhysicalPath(string filename)
+	    {
+	        try
+	        {
+	            StringBuilder sb = new StringBuilder(1500);
+	            uint result = GetLongPathName(filename, sb, sb.Capacity);
+	            if (result > 0)
+	                filename = sb.ToString();
+	        }
+            catch { }
+
+            return filename;
+        }
 
         /// <summary>
         /// Returns the full path of a full physical filename
