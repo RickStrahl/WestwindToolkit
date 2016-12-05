@@ -1,14 +1,25 @@
 ﻿# West Wind Toolkit Change Log
 
 ### 2.70
+*not released yet*
 
 * **Fix binary encoding in Encryption class**  
+<small>westwind.utilties</small>
 Binary encoding now uses UTF encoding to encrypt/decrypt strings in order to support extended characters.
 
 * **Encryption adds support for returning binary string data as BinHex**  
+<small>westwind.utilties</small>
 You can now return binary values in BinHex format in addition to the default base64 encoded string values.
 
+* **FileUtils.GetPhsysicalPath()**  
+<small>westwind.utilties</small>
+This function returns a given pathname with the proper casing for the file that exists on disk. If the file doesn't exist it
+
+* **Fix Encoding in HttpUtils**  
+Fix encoding bug that didn't properly manage UTF-8 encoding in uploaded JSON content.
+
 ### 2.69
+*October 4th, 2016*
 
 * **Add ErrorHandlingMode to EfCodeFirstBusinessBase**  
 <small>Westwind.Data</small>  
