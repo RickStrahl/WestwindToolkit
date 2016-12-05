@@ -143,8 +143,8 @@ namespace Westwind.Utilities
         /// <returns>true or false</returns>        
         public static bool SerializeToFile(object value, string fileName, bool throwExceptions = false, bool formatJsonOutput = false)
         {
-            dynamic writer = null;
-            FileStream fs = null;
+            
+            
             try
             {
                 Type type = value.GetType();
@@ -153,15 +153,22 @@ namespace Westwind.Utilities
                 if (json == null)
                     return false;
 
-                fs = new FileStream(fileName, FileMode.Create);
-                var sw = new StreamWriter(fs, Encoding.UTF8);
+                
+                using (FileStream fs = new FileStream(fileName, FileMode.Create))
+                {
+                    using (StreamWriter sw = new StreamWriter(fs, Encoding.UTF8))
+                    {
+                        using (dynamic writer = Activator.CreateInstance(JsonTextWriterType, sw))
+                        {
+                            if (formatJsonOutput)
+                                writer.Formatting = (dynamic) Enum.Parse(FormattingType, "Indented");
 
-                writer = Activator.CreateInstance(JsonTextWriterType, sw);
-                if (formatJsonOutput)
-                    writer.Formatting = (dynamic)Enum.Parse(FormattingType, "Indented");
+                            writer.QuoteChar = '"';
+                            json.Serialize(writer, value);
+                        }
+                    }
+                }
 
-                writer.QuoteChar = '"';
-                json.Serialize(writer, value);
             }
             catch (Exception ex)
             {
@@ -169,13 +176,6 @@ namespace Westwind.Utilities
                 if (throwExceptions)
                     throw;
                 return false;
-            }
-            finally
-            {
-                if (writer != null)
-                    writer.Close();
-                if (fs != null)
-                    fs.Close();
             }
 
             return true;
@@ -229,17 +229,22 @@ namespace Westwind.Utilities
             if (json == null)
                 return null;
 
-            object result = null;
-            dynamic reader = null;
-            FileStream fs = null;
+            object result;
+            dynamic reader;
+            FileStream fs;
 
             try
             {
-                fs = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-                var sr = new StreamReader(fs, Encoding.UTF8);
-                reader = Activator.CreateInstance(JsonTextReaderType, sr);
-                result = json.Deserialize(reader, objectType);
-                reader.Close();
+                using (fs = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    using (var sr = new StreamReader(fs, Encoding.UTF8))
+                    {
+                        using (reader = Activator.CreateInstance(JsonTextReaderType, sr))
+                        {
+                            result = json.Deserialize(reader, objectType);                         
+                        }
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -248,14 +253,6 @@ namespace Westwind.Utilities
                     throw;
 
                 return null;
-            }
-            finally
-            {
-                if (reader != null)
-                    reader.Close();
-
-                if (fs != null)
-                    fs.Close();
             }
 
             return result;
