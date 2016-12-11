@@ -53,6 +53,7 @@ namespace Westwind.Utilities
                 {
                     Request.Timeout = Settings.Timeout;
                     Request.ReadWriteTimeout = Settings.Timeout;
+                    Request.PreAuthenticate = Settings.PreAuthenticate;
                 }
             }
 

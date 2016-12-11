@@ -261,6 +261,12 @@ namespace Westwind.Utilities
         public NetworkCredential Credentials { get; set; }
 
         /// <summary>
+        /// Determines whether credentials pre-authenticate
+        /// </summary>
+        public bool PreAuthenticate { get; set; }
+
+
+        /// <summary>
         /// An optional proxy to set for this request
         /// </summary>
         public WebProxy Proxy { get; set; }
@@ -302,6 +308,8 @@ namespace Westwind.Utilities
         /// </summary>
         public HttpWebResponse Response { get; set; }
 
+
+        
 
         public HttpRequestSettings()
         {
