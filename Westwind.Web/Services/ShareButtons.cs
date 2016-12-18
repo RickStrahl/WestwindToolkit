@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Web;
+using Westwind.Utilities;
 
 namespace Westwind.Web.Services
 {
@@ -60,6 +61,23 @@ namespace Westwind.Web.Services
 
             return string.Format(format,text,twitterShareAccount,url,hashTag);
 
+        }
+
+        public static string ShareOnFacebook(string url)
+        {
+            var baseUrl = WebUtils.ResolveUrl("~/");
+            string link =
+$@"<a href=""https://www.facebook.com/sharer/sharer.php?u={url}&display=popup"" target=""_blank"">
+      <img src=""{baseUrl}images/shareonfacebook.png"" style='height: 20px;' />
+</a>";
+
+            return link;
+        }
+
+        public static string ShareOnFacebookFull(string url)
+        {
+            return null;
+            
         }
     }
 
