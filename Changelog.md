@@ -11,6 +11,10 @@ Binary encoding now uses UTF encoding to encrypt/decrypt strings in order to sup
 <small>westwind.utilties</small>
 You can now return binary values in BinHex format in addition to the default base64 encoded string values.
 
+* **Add Encryption.EncryptBytes() and Encryption.DecryptBytes()**  
+<small>westwind.utilties</small>
+Added additional overloads that allow passing byte buffer for the encryption key to make it easier to work with OS data API.
+
 * **FileUtils.GetPhsysicalPath()**  
 <small>westwind.utilties</small>
 This function returns a given pathname with the proper casing for the file that exists on disk. If the file doesn't exist it
