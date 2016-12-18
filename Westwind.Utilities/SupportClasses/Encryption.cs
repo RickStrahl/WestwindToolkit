@@ -33,10 +33,22 @@ namespace Westwind.Utilities
             if (encryptionKey == null)
                 encryptionKey = Encryption.EncryptionKey;
 
+            return EncryptBytes(inputBytes, Encoding.UTF8.GetBytes(encryptionKey));
+        }
+
+
+        /// <summary>
+        /// Encrypts a byte buffer with a byte encryption key
+        /// </summary>
+        /// <param name="inputBytes"></param>
+        /// <param name="encryptionKey"></param>
+        /// <returns></returns>
+        public static byte[] EncryptBytes(byte[] inputBytes, byte[] encryptionKey)
+        {            
             TripleDESCryptoServiceProvider des = new TripleDESCryptoServiceProvider();
             MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
 
-            des.Key = hashmd5.ComputeHash(Encoding.UTF8.GetBytes(encryptionKey));
+            des.Key = hashmd5.ComputeHash(encryptionKey);
             des.Mode = CipherMode.ECB;
 
             ICryptoTransform Transform = des.CreateEncryptor();
@@ -45,6 +57,7 @@ namespace Westwind.Utilities
             return Transform.TransformFinalBlock(Buffer, 0, Buffer.Length);
         }
 
+        
         /// <summary>
         /// Encrypts a string into bytes using DES encryption with a Passkey. 
         /// </summary>
@@ -57,11 +70,30 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
+        /// Encrypts a string using Triple DES encryption with a two way encryption key.String is returned as Base64 or BinHex
+        /// encoded value rather than binary.
+        /// </summary>
+        /// <param name="inputString"></param>
+        /// <param name="encryptionKey"></param>
+        /// <param name="useBinHex">if true returns bin hex rather than base64</param>
+        /// <returns></returns>
+        public static string EncryptString(string inputString, byte[] encryptionKey, bool useBinHex = false)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(inputString);
+
+            if (useBinHex)
+                return BinaryToBinHex(EncryptBytes(bytes, encryptionKey));
+
+            return Convert.ToBase64String(EncryptBytes(bytes, encryptionKey));
+        }
+
+        /// <summary>
         /// Encrypts a string using Triple DES encryption with a two way encryption key.String is returned as Base64 encoded value
         /// rather than binary.
         /// </summary>
         /// <param name="inputString"></param>
         /// <param name="encryptionKey"></param>
+        /// <param name="useBinHex"></param>
         /// <returns></returns>
         public static string EncryptString(string inputString, string encryptionKey, bool useBinHex = false)
         {
@@ -88,10 +120,25 @@ namespace Westwind.Utilities
             if (encryptionKey == null)
                 encryptionKey = Encryption.EncryptionKey;
 
+            return DecryptBytes(decryptBuffer, Encoding.UTF8.GetBytes(encryptionKey));            
+        }
+
+
+        /// <summary>
+        /// Decrypts a byte buffer with a byte based encryption key
+        /// </summary>
+        /// <param name="decryptBuffer"></param>
+        /// <param name="encryptionKey"></param>
+        /// <returns></returns>
+        public static byte[] DecryptBytes(byte[] decryptBuffer, byte[] encryptionKey)
+        {
+            if (decryptBuffer == null || decryptBuffer.Length == 0)
+                return null;
+            
             TripleDESCryptoServiceProvider des = new TripleDESCryptoServiceProvider();
             MD5CryptoServiceProvider hashmd5 = new MD5CryptoServiceProvider();
 
-            des.Key = hashmd5.ComputeHash(Encoding.UTF8.GetBytes(encryptionKey));
+            des.Key = hashmd5.ComputeHash(encryptionKey);
 
             des.Mode = CipherMode.ECB;
 
@@ -100,6 +147,14 @@ namespace Westwind.Utilities
             return Transform.TransformFinalBlock(decryptBuffer, 0, decryptBuffer.Length);
         }
 
+        /// <summary>
+        /// Decrypts a string using DES encryption and a pass key that was used for 
+        /// encryption and returns a byte buffer.    
+        /// </summary>
+        /// <param name="decryptString"></param>
+        /// <param name="encryptionKey"></param>
+        /// <param name="useBinHex">Returns data in useBinHex format (12afb1c3f1). Otherwise base64 is returned.</param>
+        /// <returns>String</returns>
         public static byte[] DecryptBytes(string decryptString, string encryptionKey, bool useBinHex = false)
         {
             if (useBinHex)
@@ -132,6 +187,29 @@ namespace Westwind.Utilities
             }
         }
 
+        /// <summary>
+        /// Decrypts a string using DES encryption and a pass key that was used for 
+        /// encryption.
+        /// <seealso>Class wwEncrypt</seealso>
+        /// </summary>
+        /// <param name="decryptString"></param>
+        /// <param name="encryptionKey"></param>
+        /// <param name="useBinHex">Returns data in useBinHex format (12afb1c3f1). Otherwise base64 is returned</param>
+        /// <returns>String</returns>
+        public static string DecryptString(string decryptString, byte[] encryptionKey, bool useBinHex = false)
+        {
+            var data = useBinHex ? BinHexToBinary(decryptString) : Convert.FromBase64String(decryptString);
+
+            try
+            {
+                byte[] decrypted = DecryptBytes(data, encryptionKey);
+                return Encoding.UTF8.GetString(decrypted);
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
         #endregion
 
 
