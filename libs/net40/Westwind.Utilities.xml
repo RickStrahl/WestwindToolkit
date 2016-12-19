@@ -1663,6 +1663,11 @@
             Data can be either string or byte[] type
             </summary>
         </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.Encoding">
+            <summary>
+            Content Encoding for the data sent to to server
+            </summary>
+        </member>
         <member name="P:Westwind.Utilities.HttpRequestSettings.IsRawData">
             <summary>
             When true data is not translated. For example
@@ -1689,6 +1694,11 @@
         <member name="P:Westwind.Utilities.HttpRequestSettings.Credentials">
             <summary>
             Authentication information for this request
+            </summary>
+        </member>
+        <member name="P:Westwind.Utilities.HttpRequestSettings.PreAuthenticate">
+            <summary>
+            Determines whether credentials pre-authenticate
             </summary>
         </member>
         <member name="P:Westwind.Utilities.HttpRequestSettings.Proxy">
@@ -2523,11 +2533,10 @@
         </member>
         <member name="T:Westwind.Utilities.Encryption">
             <summary>
-            A simple encryption class that can be used to two-way encode/decode strings and byte buffers
-            with single method calls.
+            Class that provides a number of encryption utilities
             </summary>
         </member>
-        <member name="F:Westwind.Utilities.Encryption.Key">
+        <member name="F:Westwind.Utilities.Encryption.EncryptionKey">
             <summary>
             Replace this value with some unique key of your own
             Best set this in your App start up in a Static constructor
@@ -2538,46 +2547,95 @@
             Encodes a stream of bytes using DES encryption with a pass key. Lowest level method that 
             handles all work.
             </summary>
-            <param name="InputString"></param>
-            <param name="EncryptionKey"></param>
+            <param name="inputBytes"></param>
+            <param name="encryptionKey"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Encryption.EncryptBytes(System.Byte[],System.Byte[])">
+            <summary>
+            Encrypts a byte buffer with a byte encryption key
+            </summary>
+            <param name="inputBytes"></param>
+            <param name="encryptionKey"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Encryption.EncryptBytes(System.String,System.String)">
             <summary>
             Encrypts a string into bytes using DES encryption with a Passkey. 
             </summary>
-            <param name="InputString"></param>
-            <param name="EncryptionKey"></param>
+            <param name="inputString"></param>
+            <param name="encryptionKey"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.Encryption.EncryptString(System.String,System.String)">
+        <member name="M:Westwind.Utilities.Encryption.EncryptString(System.String,System.Byte[],System.Boolean)">
+            <summary>
+            Encrypts a string using Triple DES encryption with a two way encryption key.String is returned as Base64 or BinHex
+            encoded value rather than binary.
+            </summary>
+            <param name="inputString"></param>
+            <param name="encryptionKey"></param>
+            <param name="useBinHex">if true returns bin hex rather than base64</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Encryption.EncryptString(System.String,System.String,System.Boolean)">
             <summary>
             Encrypts a string using Triple DES encryption with a two way encryption key.String is returned as Base64 encoded value
             rather than binary.
             </summary>
-            <param name="InputString"></param>
-            <param name="EncryptionKey"></param>
+            <param name="inputString"></param>
+            <param name="encryptionKey"></param>
+            <param name="useBinHex"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Encryption.DecryptBytes(System.Byte[],System.String)">
             <summary>
             Decrypts a Byte array from DES with an Encryption Key.
             </summary>
-            <param name="DecryptBuffer"></param>
-            <param name="EncryptionKey"></param>
+            <param name="decryptBuffer"></param>
+            <param name="encryptionKey"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.Encryption.DecryptString(System.String,System.String)">
+        <member name="M:Westwind.Utilities.Encryption.DecryptBytes(System.Byte[],System.Byte[])">
+            <summary>
+            Decrypts a byte buffer with a byte based encryption key
+            </summary>
+            <param name="decryptBuffer"></param>
+            <param name="encryptionKey"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Encryption.DecryptBytes(System.String,System.String,System.Boolean)">
+            <summary>
+            Decrypts a string using DES encryption and a pass key that was used for 
+            encryption and returns a byte buffer.    
+            </summary>
+            <param name="decryptString"></param>
+            <param name="encryptionKey"></param>
+            <param name="useBinHex">Returns data in useBinHex format (12afb1c3f1). Otherwise base64 is returned.</param>
+            <returns>String</returns>
+        </member>
+        <member name="M:Westwind.Utilities.Encryption.DecryptString(System.String,System.String,System.Boolean)">
             <summary>
             Decrypts a string using DES encryption and a pass key that was used for 
             encryption.
             <seealso>Class wwEncrypt</seealso>
             </summary>
-            <param name="DecryptString"></param>
-            <param name="EncryptionKey"></param>
+            <param name="decryptString"></param>
+            <param name="encryptionKey"></param>
+            <param name="useBinHex">Returns data in useBinHex format (12afb1c3f1). Otherwise base64 is returned.</param>
             <returns>String</returns>
         </member>
-        <member name="M:Westwind.Utilities.Encryption.ComputeHash(System.String,System.String,System.Byte[])">
+        <member name="M:Westwind.Utilities.Encryption.DecryptString(System.String,System.Byte[],System.Boolean)">
+            <summary>
+            Decrypts a string using DES encryption and a pass key that was used for 
+            encryption.
+            <seealso>Class wwEncrypt</seealso>
+            </summary>
+            <param name="decryptString"></param>
+            <param name="encryptionKey"></param>
+            <param name="useBinHex">Returns data in useBinHex format (12afb1c3f1). Otherwise base64 is returned</param>
+            <returns>String</returns>
+        </member>
+        <member name="M:Westwind.Utilities.Encryption.ComputeHash(System.String,System.String,System.Byte[],System.Boolean)">
             <summary>
             Generates a hash for the given plain text value and returns a
             base64-encoded result. Before the hash is computed, a random salt
@@ -2594,25 +2652,18 @@
             MD5 hashing algorithm will be used). This value is case-insensitive.
             </param>
             <param name="saltBytes">
-            Salt bytes. This parameter can be null, in which case a random salt
-            value will be generated.
+            Optinoal salt bytes to apply to the hash. If not passed the
+            raw encoding is used.
             </param>
             <returns>
             Hash value formatted as a base64-encoded string.
             </returns>
-            <remarks>
-            ComputeHash code provided as an example by Obviex at
-            http://www.obviex.com/samples/hash.aspx
-            As noted by Obviex themselves, code is definitely not optimally efficient.
-            Should performance requirements necessitate improvement, this should
-            be improved.
-            </remarks>
         </member>
         <member name="M:Westwind.Utilities.Encryption.GZipMemory(System.Byte[])">
             <summary>
             GZip encodes a memory buffer to a compressed memory buffer
             </summary>
-            <param name="Buffer"></param>
+            <param name="buffer"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.Encryption.GZipMemory(System.String)">
@@ -2637,6 +2688,40 @@
             </summary>
             <param name="Filename"></param>
             <param name="OutputFile"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Encryption.GetChecksumFromFile(System.String,System.String,System.Boolean)">
+            <summary>
+            Creates an SHA256 or MD5 checksum of a file
+            </summary>
+            <param name="file"></param>
+            <param name="mode">SHA256,MD5</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Encryption.GetChecksumFromBytes(System.Byte[],System.String)">
+            <summary>
+            Create a SHA256 or MD5 checksum from a bunch of bytes
+            </summary>
+            <param name="fileData"></param>
+            <param name="mode">SHA256,MD5</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.Encryption.BinaryToBinHex(System.Byte[])">
+            <summary>
+            Converts a byte array into a BinHex string.
+            Example: 01552233 
+            where the numbers are packed
+            byte values.
+            </summary>
+            <param name="data">Raw data to send</param>
+            <returns>string or null if input is null</returns>
+        </member>
+        <member name="M:Westwind.Utilities.Encryption.BinHexToBinary(System.String)">
+            <summary>
+            Turns a BinHex string that contains raw byte values
+            into a byte array
+            </summary>
+            <param name="hex">BinHex string (just two byte hex digits strung together)</param>
             <returns></returns>
         </member>
         <member name="T:Westwind.Utilities.Expando">
@@ -3496,6 +3581,20 @@
             <param name="replace">Replacement character for invalid characters</param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Utilities.FileUtils.GetPhysicalPath(System.String)">
+            <summary>
+            This function returns the actual filename of a file
+            that exists on disk. If you provide a path/file name
+            that is not proper cased as input, this function fixes
+            it up and returns the file using the path and file names
+            as they exist on disk.
+            
+            If the file doesn't exist the original filename is 
+            returned.
+            </summary>
+            <param name="filename">A filename to check</param>
+            <returns>On disk file name and path with the disk casing</returns>
+        </member>
         <member name="M:Westwind.Utilities.FileUtils.JustPath(System.String)">
             <summary>
             Returns the full path of a full physical filename
@@ -3634,6 +3733,12 @@
             to the Response object so we can read result data 
             from the Response.
             </summary>
+        </member>
+        <member name="M:Westwind.Utilities.HttpUtilsWebClient.#ctor(Westwind.Utilities.HttpRequestSettings)">
+            <summary>
+            Intializes this instance of WebClient with settings values
+            </summary>
+            <param name="settings"></param>
         </member>
         <member name="T:Westwind.Utilities.ImageUtils">
             <summary>
@@ -4328,39 +4433,6 @@
             String utility class that provides a host of string related operations
             </summary>
         </member>
-        <member name="M:Westwind.Utilities.StringUtils.ExtractString(System.String,System.String,System.String,System.Boolean,System.Boolean,System.Boolean)">
-            <summary>
-            Extracts a string from between a pair of delimiters. Only the first 
-            instance is found.
-            </summary>
-            <param name="source">Input String to work on</param>
-            <param name="StartDelim">Beginning delimiter</param>
-            <param name="endDelim">ending delimiter</param>
-            <param name="CaseInsensitive">Determines whether the search for delimiters is case sensitive</param>
-            <returns>Extracted string or ""</returns>
-        </member>
-        <member name="M:Westwind.Utilities.StringUtils.ReplaceStringInstance(System.String,System.String,System.String,System.Int32,System.Boolean)">
-            <summary>
-            String replace function that supports replacing a specific instance with 
-            case insensitivity
-            </summary>
-            <param name="origString">Original input string</param>
-            <param name="findString">The string that is to be replaced</param>
-            <param name="replaceWith">The replacement string</param>
-            <param name="instance">Instance of the FindString that is to be found. if Instance = -1 all are replaced</param>
-            <param name="caseInsensitive">Case insensitivity flag</param>
-            <returns>updated string or original string if no matches</returns>
-        </member>
-        <member name="M:Westwind.Utilities.StringUtils.ReplaceString(System.String,System.String,System.String,System.Boolean)">
-            <summary>
-            Replaces a substring within a string with another substring with optional case sensitivity turned off.
-            </summary>
-            <param name="origString">String to do replacements on</param>
-            <param name="findString">The string to find</param>
-            <param name="replaceString">The string to replace found string wiht</param>
-            <param name="caseInsensitive">If true case insensitive search is performed</param>
-            <returns>updated string or original string if no matches</returns>
-        </member>
         <member name="M:Westwind.Utilities.StringUtils.TrimStart(System.String,System.String,System.Boolean)">
             <summary>
             Trims a sub string from a string
@@ -4383,29 +4455,6 @@
             </summary>
             <param name="charCount"></param>
             <param name="character"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.StringUtils.Inlist(System.String,System.String[])">
-            <summary>
-            Determines if a string is contained in a list of other strings
-            </summary>
-            <param name="s"></param>
-            <param name="list"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.StringUtils.GetLines(System.String)">
-            <summary>
-            Parses a string into an array of lines broken
-            by \r\n or \n
-            </summary>
-            <param name="s">String to check for lines</param>
-            <returns>array of strings, or null if the string passed was a null</returns>
-        </member>
-        <member name="M:Westwind.Utilities.StringUtils.CountLines(System.String)">
-            <summary>
-            Returns a line count for a string
-            </summary>
-            <param name="s">string to count lines for</param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.StringUtils.ProperCase(System.String)">
@@ -4439,7 +4488,8 @@
             Terminates a string with the given end string/character, but only if the
             value specified doesn't already exist and the string is not empty.
             </summary>
-            <param name="??"></param>
+            <param name="value">String to terminate</param>
+            <param name="terminator">String to terminate the value string with</param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.StringUtils.TrimTo(System.String,System.Int32)">
@@ -4450,31 +4500,38 @@
             <param name="charCount"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.StringUtils.NormalizeIndentation(System.String)">
+        <member name="M:Westwind.Utilities.StringUtils.ExtractString(System.String,System.String,System.String,System.Boolean,System.Boolean,System.Boolean)">
             <summary>
-            Strips any common white space from all lines of text that have the same
-            common white space text. Effectively removes common code indentation from
-            code blocks for example so you can get a left aligned code snippet.
+            Extracts a string from between a pair of delimiters. Only the first 
+            instance is found.
             </summary>
-            <param name="code"></param>
-            <returns></returns>
+            <param name="source">Input String to work on</param>
+            <param name="StartDelim">Beginning delimiter</param>
+            <param name="endDelim">ending delimiter</param>
+            <param name="CaseInsensitive">Determines whether the search for delimiters is case sensitive</param>
+            <returns>Extracted string or ""</returns>
         </member>
-        <member name="M:Westwind.Utilities.StringUtils.StringToBytes(System.String,System.Text.Encoding)">
+        <member name="M:Westwind.Utilities.StringUtils.ReplaceStringInstance(System.String,System.String,System.String,System.Int32,System.Boolean)">
             <summary>
-            Converts a string into bytes for storage in any byte[] types
-            buffer or stream format (like MemoryStream).
+            String replace function that supports replacing a specific instance with 
+            case insensitivity
             </summary>
-            <param name="text"></param>
-            <param name="encoding">The character encoding to use. Defaults to Unicode</param>
-            <returns></returns>
+            <param name="origString">Original input string</param>
+            <param name="findString">The string that is to be replaced</param>
+            <param name="replaceWith">The replacement string</param>
+            <param name="instance">Instance of the FindString that is to be found. if Instance = -1 all are replaced</param>
+            <param name="caseInsensitive">Case insensitivity flag</param>
+            <returns>updated string or original string if no matches</returns>
         </member>
-        <member name="M:Westwind.Utilities.StringUtils.BytesToString(System.Byte[],System.Text.Encoding)">
+        <member name="M:Westwind.Utilities.StringUtils.ReplaceString(System.String,System.String,System.String,System.Boolean)">
             <summary>
-            Converts a byte array to a stringUtils
+            Replaces a substring within a string with another substring with optional case sensitivity turned off.
             </summary>
-            <param name="buffer">raw string byte data</param>
-            <param name="encoding">Character encoding to use. Defaults to Unicode</param>
-            <returns></returns>
+            <param name="origString">String to do replacements on</param>
+            <param name="findString">The string to find</param>
+            <param name="replaceString">The string to replace found string wiht</param>
+            <param name="caseInsensitive">If true case insensitive search is performed</param>
+            <returns>updated string or original string if no matches</returns>
         </member>
         <member name="M:Westwind.Utilities.StringUtils.TextAbstract(System.String,System.Int32)">
             <summary>
@@ -4485,28 +4542,28 @@
             <param name="length">Number of characters to abstract to</param>
             <returns>string</returns>
         </member>
-        <member name="M:Westwind.Utilities.StringUtils.LogString(System.String,System.String,System.Text.Encoding)">
+        <member name="M:Westwind.Utilities.StringUtils.Inlist(System.String,System.String[])">
             <summary>
-            Simple Logging method that allows quickly writing a string to a file
+            Determines if a string is contained in a list of other strings
             </summary>
-            <param name="output"></param>
-            <param name="filename"></param>
-        </member>
-        <member name="M:Westwind.Utilities.StringUtils.NewStringId">
-            <summary>
-            Creates short string id based on a GUID hashcode.
-            Not guaranteed to be unique across machines, but unlikely
-            to duplicate in medium volume situations.
-            </summary>
+            <param name="s"></param>
+            <param name="list"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.StringUtils.RandomString(System.Int32,System.Boolean)">
+        <member name="M:Westwind.Utilities.StringUtils.GetLines(System.String)">
             <summary>
-            Creates a new random string of upper, lower case letters and digits.
-            Very useful for generating random data for storage in test data.
+            Parses a string into an array of lines broken
+            by \r\n or \n
             </summary>
-            <param name="size">The number of characters of the string to generate</param>
-            <returns>randomized string</returns>
+            <param name="s">String to check for lines</param>
+            <returns>array of strings, or null if the string passed was a null</returns>
+        </member>
+        <member name="M:Westwind.Utilities.StringUtils.CountLines(System.String)">
+            <summary>
+            Returns a line count for a string
+            </summary>
+            <param name="s">string to count lines for</param>
+            <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.StringUtils.ParseInt(System.String,System.Int32,System.IFormatProvider)">
             <summary>
@@ -4535,48 +4592,21 @@
             <param name="input"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.StringUtils.StringToStream(System.String,System.Text.Encoding)">
+        <member name="M:Westwind.Utilities.StringUtils.NewStringId">
             <summary>
-            Creates a Stream from a string. Internally creates
-            a memory stream and returns that.
+            Creates short string id based on a GUID hashcode.
+            Not guaranteed to be unique across machines, but unlikely
+            to duplicate in medium volume situations.
             </summary>
-            <param name="text"></param>
-            <param name="encoding"></param>
             <returns></returns>
         </member>
-        <member name="M:Westwind.Utilities.StringUtils.BinHexToBinary(System.String)">
+        <member name="M:Westwind.Utilities.StringUtils.RandomString(System.Int32,System.Boolean)">
             <summary>
-            Turns a BinHex string that contains raw byte values
-            into a byte array
+            Creates a new random string of upper, lower case letters and digits.
+            Very useful for generating random data for storage in test data.
             </summary>
-            <param name="hex">BinHex string (just two byte hex digits strung together)</param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.StringUtils.BinaryToBinHex(System.Byte[])">
-            <summary>
-            Converts a byte array into a BinHex string.
-            BinHex is two digit hex byte values squished together
-            into a string.
-            </summary>
-            <param name="data">Raw data to send</param>
-            <returns>BinHex string or null if input is null</returns>
-        </member>
-        <member name="M:Westwind.Utilities.StringUtils.GetProperty(System.String,System.String)">
-            <summary>
-            Retrieves a value from an XML-like string
-            </summary>
-            <param name="propertyString"></param>
-            <param name="key"></param>
-            <returns></returns>
-        </member>
-        <member name="M:Westwind.Utilities.StringUtils.SetProperty(System.String,System.String,System.String)">
-            <summary>
-            
-            </summary>
-            <param name="propertyString"></param>
-            <param name="key"></param>
-            <param name="value"></param>
-            <returns></returns>
+            <param name="size">The number of characters of the string to generate</param>
+            <returns>randomized string</returns>
         </member>
         <member name="M:Westwind.Utilities.StringUtils.UrlEncode(System.String)">
             <summary>
@@ -4618,6 +4648,40 @@
             <param name="value"></param>
             <returns></returns>
         </member>
+        <member name="M:Westwind.Utilities.StringUtils.BinHexToBinary(System.String)">
+            <summary>
+            Turns a BinHex string that contains raw byte values
+            into a byte array
+            </summary>
+            <param name="hex">BinHex string (just two byte hex digits strung together)</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.StringUtils.BinaryToBinHex(System.Byte[])">
+            <summary>
+            Converts a byte array into a BinHex string.
+            BinHex is two digit hex byte values squished together
+            into a string.
+            </summary>
+            <param name="data">Raw data to send</param>
+            <returns>BinHex string or null if input is null</returns>
+        </member>
+        <member name="M:Westwind.Utilities.StringUtils.StringToBytes(System.String,System.Text.Encoding)">
+            <summary>
+            Converts a string into bytes for storage in any byte[] types
+            buffer or stream format (like MemoryStream).
+            </summary>
+            <param name="text"></param>
+            <param name="encoding">The character encoding to use. Defaults to Unicode</param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.StringUtils.BytesToString(System.Byte[],System.Text.Encoding)">
+            <summary>
+            Converts a byte array to a stringUtils
+            </summary>
+            <param name="buffer">raw string byte data</param>
+            <param name="encoding">Character encoding to use. Defaults to Unicode</param>
+            <returns></returns>
+        </member>
         <member name="M:Westwind.Utilities.StringUtils.Base36Encode(System.Int64)">
             <summary>
             Encodes an integer into a string by mapping to alpha and digits (36 chars)
@@ -4633,6 +4697,49 @@
             Decodes a base36 encoded string to an integer
             </summary>
             <param name="input"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.StringUtils.NormalizeIndentation(System.String)">
+            <summary>
+            Strips any common white space from all lines of text that have the same
+            common white space text. Effectively removes common code indentation from
+            code blocks for example so you can get a left aligned code snippet.
+            </summary>
+            <param name="code"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.StringUtils.LogString(System.String,System.String,System.Text.Encoding)">
+            <summary>
+            Simple Logging method that allows quickly writing a string to a file
+            </summary>
+            <param name="output"></param>
+            <param name="filename"></param>
+            <param name="encoding">if not specified used UTF-8</param>
+        </member>
+        <member name="M:Westwind.Utilities.StringUtils.StringToStream(System.String,System.Text.Encoding)">
+            <summary>
+            Creates a Stream from a string. Internally creates
+            a memory stream and returns that.
+            </summary>
+            <param name="text"></param>
+            <param name="encoding"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.StringUtils.GetProperty(System.String,System.String)">
+            <summary>
+            Retrieves a value from an XML-like string
+            </summary>
+            <param name="propertyString"></param>
+            <param name="key"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Westwind.Utilities.StringUtils.SetProperty(System.String,System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="propertyString"></param>
+            <param name="key"></param>
+            <param name="value"></param>
             <returns></returns>
         </member>
         <member name="M:Westwind.Utilities.StringUtils.Empty(System.String)">
