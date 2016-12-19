@@ -83,6 +83,39 @@ namespace Westwind.Utilities.Test
             data = "test";
             encrypted = Encryption.ComputeHash(data, algo, salt, useBinHex: true);
             Console.WriteLine(encrypted);
+            
+
+            data = "t";
+            encrypted = Encryption.ComputeHash(data, algo, salt, useBinHex: true);
+            Console.WriteLine(encrypted);
+
+
+            data = "testa";
+            encrypted = Encryption.ComputeHash(data, algo, salt, useBinHex: true);
+            Console.WriteLine(encrypted);
+
+            data = "testa";
+            var encrypted2 = Encryption.ComputeHash(data, algo, salt, useBinHex: true);
+            Console.WriteLine(encrypted);
+
+
+        }
+
+
+        [TestMethod]
+        public void HashValuesHMAC()
+        {
+            string data = "Seekrit!Password";
+            byte[] salt = new byte[] { 10, 22, 144, 51, 55, 61 };
+            string saltString = "bogus";
+            string algo = "SHA256";
+
+            string encrypted = Encryption.ComputeHash(data, algo, salt, useBinHex: true);
+            Console.WriteLine(encrypted);
+
+            data = "test";
+            encrypted = Encryption.ComputeHash(data, algo, salt, useBinHex: true);
+            Console.WriteLine(encrypted);
 
             data = "testa";
             encrypted = Encryption.ComputeHash(data, algo, salt, useBinHex: true);
@@ -91,8 +124,45 @@ namespace Westwind.Utilities.Test
             data = "t";
             encrypted = Encryption.ComputeHash(data, algo, salt, useBinHex: true);
             Console.WriteLine(encrypted);
+
+            var binData = new byte[] { 10, 20, 21, 44, 55, 233, 122, 193 };
+            encrypted = Encryption.ComputeHash(binData, algo, salt, useBinHex: true);
+            Console.WriteLine(encrypted);
+
+            data = "test";
+            encrypted = Encryption.ComputeHash(data, algo, saltString, useBinHex: true);
+            Console.WriteLine(encrypted);
+
+
+            data = "test";
+            var encrypted2 = Encryption.ComputeHash(data, algo, saltString, useBinHex: false);
+            Console.WriteLine(encrypted);
+
+            byte[] decryptBytes1 = Encryption.BinHexToBinary(encrypted);
+            byte[] decryptBytes2 = Convert.FromBase64String(encrypted2);
+
+            Assert.IsTrue( decryptBytes1.SequenceEqual(decryptBytes2));
         }
 
+        [TestMethod]
+        public void BinHexBase64CompareTest()
+        {
+
+            string algo = "HMACSHA256";
+            string saltString = "bogus";
+
+            string data = "test";
+            string encrypted = Encryption.ComputeHash(data, algo, saltString, useBinHex: true);
+            Console.WriteLine(encrypted);
+            
+            string encrypted2 = Encryption.ComputeHash(data, algo, saltString, useBinHex: false);
+            Console.WriteLine(encrypted2);
+            
+            byte[] decryptBytes1 = Encryption.BinHexToBinary(encrypted);
+            byte[] decryptBytes2 = Convert.FromBase64String(encrypted2);
+
+            Assert.IsTrue(decryptBytes1.SequenceEqual(decryptBytes2));
+        }
 
 
 

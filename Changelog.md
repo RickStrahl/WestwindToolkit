@@ -3,13 +3,17 @@
 ### 2.70
 *not released yet*
 
-* **Fix binary encoding in Encryption class**  
+* **Fix binary encoding for extended characters in Encryption class**  
 <small>westwind.utilties</small>
 Binary encoding now uses UTF encoding to encrypt/decrypt strings in order to support extended characters.
 
 * **Encryption adds support for returning binary string data as BinHex**  
 <small>westwind.utilties</small>
 You can now return binary values in BinHex format in addition to the default base64 encoded string values.
+
+* **Add support for HMAC hashing in Encryption.ComputeHash()**
+<small>westwind.utilties</small>
+HMAC provides a standardized way to introduces salted values into hashes that results in fixed length hashes are not vulnerable to length attacks. ComputeHash now exposes HMAC versions of the standard hash algorithms.
 
 * **Add Encryption.EncryptBytes() and Encryption.DecryptBytes()**  
 <small>westwind.utilties</small>

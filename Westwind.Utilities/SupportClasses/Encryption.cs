@@ -210,6 +210,206 @@ namespace Westwind.Utilities
                 return string.Empty;
             }
         }
+
+
+        /// <summary>
+        /// Encrypt bytes using the Data Protection API on Windows. This API
+        /// uses internal keys to encrypt data which is valid for decryption only
+        /// on the same machine.        
+        /// 
+        /// This is an idea storage mechanism for application registraions, 
+        /// service passwords and other semi-transient data that is specific
+        /// to the software used on the current machine
+        /// </summary>
+        /// <remarks>
+        /// DO NOT USE FOR DATA THAT WILL CROSS MACHINE BOUNDARIES
+        /// </remarks>
+        /// <param name="encryptBytes"></param>
+        /// <param name="key"></param>
+        /// <param name="scope"></param>
+        /// <returns></returns>
+        public static byte[] ProtectBytes(byte[] encryptBytes, byte[] key, DataProtectionScope scope = DataProtectionScope.LocalMachine)
+        {
+            return ProtectedData.Protect(encryptBytes,key,scope);            
+        }
+
+        /// <summary>
+        /// Encrypt bytes using the Data Protection API on Windows. This API
+        /// uses internal keys to encrypt data which is valid for decryption only
+        /// on the same machine.        
+        /// 
+        /// This is an idea storage mechanism for application registraions, 
+        /// service passwords and other semi-transient data that is specific
+        /// to the software used on the current machine
+        /// </summary>
+        /// <remarks>
+        /// DO NOT USE FOR DATA THAT WILL CROSS MACHINE BOUNDARIES
+        /// </remarks>
+        /// <param name="encryptBytes"></param>
+        /// <param name="key"></param>     
+        /// <param name="scope"></param>   
+        /// <returns></returns>
+        public static byte[] ProtectBytes(byte[] encryptBytes, string key, DataProtectionScope scope = DataProtectionScope.LocalMachine)
+        {
+            return ProtectedData.Protect(encryptBytes, Encoding.UTF8.GetBytes(key),scope);
+        }
+
+        /// <summary>
+        /// Encrypt bytes using the Data Protection API on Windows. This API
+        /// uses internal keys to encrypt data which is valid for decryption only
+        /// on the same machine.        
+        /// 
+        /// This is an idea storage mechanism for application registraions, 
+        /// service passwords and other semi-transient data that is specific
+        /// to the software used on the current machine
+        /// </summary>
+        /// <remarks>
+        /// DO NOT USE FOR DATA THAT WILL CROSS MACHINE BOUNDARIES
+        /// </remarks>
+        /// <param name="encryptString"></param>
+        /// <param name="key"></param>     
+        /// <param name="scope"></param>
+        /// <param name="useBinHex">returns bin hex data when set (010A0D10AF)</param>
+        /// <returns></returns>
+        public static string ProtectString(string encryptString, string key, DataProtectionScope scope = DataProtectionScope.LocalMachine, bool useBinHex = false)
+        {
+            var encryptedBytes = ProtectedData.Protect(Encoding.UTF8.GetBytes(encryptString), Encoding.UTF8.GetBytes(key), scope);
+
+            if (useBinHex)
+                return BinaryToBinHex(encryptedBytes);
+
+            return Convert.ToBase64String(encryptedBytes);
+        }
+
+        /// <summary>
+        /// Encrypt bytes using the Data Protection API on Windows. This API
+        /// uses internal keys to encrypt data which is valid for decryption only
+        /// on the same machine.        
+        /// 
+        /// This is an idea storage mechanism for application registraions, 
+        /// service passwords and other semi-transient data that is specific
+        /// to the software used on the current machine
+        /// </summary>
+        /// <remarks>
+        /// DO NOT USE FOR DATA THAT WILL CROSS MACHINE BOUNDARIES
+        /// </remarks>
+        /// <param name="encryptString"></param>
+        /// <param name="key"></param>     
+        /// <param name="scope"></param>
+        /// <param name="useBinHex">returns bin hex data when set (010A0D10AF)</param>
+        /// <returns></returns>
+        public static string ProtectString(string encryptString, byte[] key, DataProtectionScope scope = DataProtectionScope.LocalMachine, bool useBinHex = false)
+        {
+            var encryptedBytes = ProtectedData.Protect(Encoding.UTF8.GetBytes(encryptString), key, scope);
+
+            if (useBinHex)
+                return BinaryToBinHex(encryptedBytes);
+
+            return Convert.ToBase64String(encryptedBytes);
+        }
+
+        /// <summary>
+        /// Decrypts bytes using the Data Protection API on Windows. This API
+        /// uses internal keys to encrypt data which is valid for decryption only
+        /// on the same machine.        
+        /// 
+        /// This is an idea storage mechanism for application registraions, 
+        /// service passwords and other semi-transient data that is specific
+        /// to the software used on the current machine
+        /// </summary>
+        /// <remarks>
+        /// DO NOT USE FOR DATA THAT WILL CROSS MACHINE BOUNDARIES
+        /// </remarks>
+        /// <param name="encryptBytes"></param>
+        /// <param name="key"></param>
+        /// <param name="scope"></param>
+        /// <returns></returns>
+        public static byte[] UnprotectBytes(byte[] encryptBytes, byte[] key, DataProtectionScope scope = DataProtectionScope.LocalMachine)
+        {
+            return ProtectedData.Unprotect(encryptBytes, key, scope);
+        }
+
+        /// <summary>
+        /// Encrypt bytes using the Data Protection API on Windows. This API
+        /// uses internal keys to encrypt data which is valid for decryption only
+        /// on the same machine.        
+        /// 
+        /// This is an idea storage mechanism for application registraions, 
+        /// service passwords and other semi-transient data that is specific
+        /// to the software used on the current machine
+        /// </summary>
+        /// <remarks>
+        /// DO NOT USE FOR DATA THAT WILL CROSS MACHINE BOUNDARIES
+        /// </remarks>
+        /// <param name="encryptBytes"></param>
+        /// <param name="key"></param>     
+        /// <param name="scope"></param>   
+        /// <returns></returns>
+        public static byte[] UnprotectBytes(byte[] encryptBytes, string key, DataProtectionScope scope = DataProtectionScope.LocalMachine)
+        {
+            return ProtectedData.Unprotect(encryptBytes, Encoding.UTF8.GetBytes(key), scope);
+        }
+
+        /// <summary>
+        /// Encrypt bytes using the Data Protection API on Windows. This API
+        /// uses internal keys to encrypt data which is valid for decryption only
+        /// on the same machine.        
+        /// 
+        /// This is an idea storage mechanism for application registraions, 
+        /// service passwords and other semi-transient data that is specific
+        /// to the software used on the current machine
+        /// </summary>
+        /// <remarks>
+        /// DO NOT USE FOR DATA THAT WILL CROSS MACHINE BOUNDARIES
+        /// </remarks>
+        /// <param name="encryptString"></param>
+        /// <param name="key"></param>     
+        /// <param name="scope"></param>
+        /// <param name="useBinHex">returns bin hex data when set (010A0D10AF)</param>
+        /// <returns></returns>
+        public static string UnprotectString(string encryptString, string key, DataProtectionScope scope = DataProtectionScope.LocalMachine, bool useBinHex = false)
+        {
+            byte[] buffer;
+            if (useBinHex)
+                buffer = BinHexToBinary(encryptString);
+            else
+                buffer = Convert.FromBase64String(encryptString);
+
+            buffer = ProtectedData.Unprotect(buffer, Encoding.UTF8.GetBytes(key), scope);
+
+            return Encoding.UTF8.GetString(buffer);
+        }
+
+        /// <summary>
+        /// Encrypt bytes using the Data Protection API on Windows. This API
+        /// uses internal keys to encrypt data which is valid for decryption only
+        /// on the same machine.        
+        /// 
+        /// This is an idea storage mechanism for application registraions, 
+        /// service passwords and other semi-transient data that is specific
+        /// to the software used on the current machine
+        /// </summary>
+        /// <remarks>
+        /// DO NOT USE FOR DATA THAT WILL CROSS MACHINE BOUNDARIES
+        /// </remarks>
+        /// <param name="encryptString"></param>
+        /// <param name="key"></param>     
+        /// <param name="scope"></param>
+        /// <param name="useBinHex">returns bin hex data when set (010A0D10AF)</param>
+        /// <returns></returns>
+        public static string UnprotectString(string encryptString, byte[] key, DataProtectionScope scope = DataProtectionScope.LocalMachine, bool useBinHex = false)
+        {
+            byte[] buffer;
+            if (useBinHex)
+                buffer = BinHexToBinary(encryptString);
+            else
+                buffer = Convert.FromBase64String(encryptString);
+
+            buffer = ProtectedData.Unprotect(buffer, key, scope);
+
+            return Encoding.UTF8.GetString(buffer);        
+        }
+
         #endregion
 
 
@@ -227,15 +427,28 @@ namespace Westwind.Utilities
         /// </param>
         /// <param name="hashAlgorithm">
         /// Name of the hash algorithm. Allowed values are: "MD5", "SHA1",
-        /// "SHA256", "SHA384", and "SHA512" (if any other value is specified
-        /// MD5 hashing algorithm will be used). This value is case-insensitive.
+        /// "SHA256", "SHA384", "SHA512", "HMACMD5", "HMACSHA1", "HMACSHA256",
+        ///  "HMACSHA512" (if any other value is specified  MD5 will be used). 
+        /// 
+        /// HMAC algorithms uses Hash-based Message Authentication Code.
+        /// The HMAC process mixes a secret key with the message data, hashes 
+        /// the result with the hash function, mixes that hash value with 
+        /// the secret key again, and then applies the hash function
+        /// a second time. HMAC hashes are fixed lenght and generally
+        /// much longer than non-HMAC hashes of the same type.
+        /// 
+        /// https://msdn.microsoft.com/en-us/library/system.security.cryptography.hmacsha256(v=vs.110).aspx      
+        /// 
+        /// This value is case-insensitive.
         /// </param>
-        /// <param name="saltBytes">
-        /// Optinoal salt bytes to apply to the hash. If not passed the
-        /// raw encoding is used.
+        /// <param name="salt">
+        /// Optional but recommended salt string to apply to the hash. If not passed the
+        /// raw encoding is used. If salt is nullthe raw algorithm is used (useful for 
+        /// file hashes etc.) HMAC versions REQUIRE that salt is passed.
         /// </param>
+        /// <param name="useBinHex">if true returns the data as BinHex byte pair string. Otherwise Base64 is returned.</param>
         /// <returns>
-        /// Hash value formatted as a base64-encoded string.
+        /// Hash value formatted as a base64-encoded or BinHex stringstring.
         /// </returns>
         public static string ComputeHash(string plainText,
                                          string hashAlgorithm,
@@ -245,26 +458,117 @@ namespace Westwind.Utilities
             if (string.IsNullOrEmpty(plainText))
                 return plainText;
 
-            // Convert plain text into a byte array.
-            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            return ComputeHash(Encoding.UTF8.GetBytes(plainText), hashAlgorithm, saltBytes, useBinHex);
+        }
+
+        /// <summary>
+        /// Generates a hash for the given plain text value and returns a
+        /// base64-encoded result. Before the hash is computed, a random salt
+        /// is generated and appended to the plain text. This salt is stored at
+        /// the end of the hash value, so it can be used later for hash
+        /// verification.
+        /// </summary>
+        /// <param name="plainText">
+        /// Plaintext value to be hashed. 
+        /// </param>
+        /// <param name="hashAlgorithm">
+        /// Name of the hash algorithm. Allowed values are: "MD5", "SHA1",
+        /// "SHA256", "SHA384", "SHA512", "HMACMD5", "HMACSHA1", "HMACSHA256",
+        ///  "HMACSHA512" (if any other value is specified  MD5 will be used). 
+        /// 
+        /// HMAC algorithms uses Hash-based Message Authentication Code.
+        /// The HMAC process mixes a secret key with the message data, hashes 
+        /// the result with the hash function, mixes that hash value with 
+        /// the secret key again, and then applies the hash function
+        /// a second time. HMAC hashes are fixed lenght and generally
+        /// much longer than non-HMAC hashes of the same type.
+        /// 
+        /// https://msdn.microsoft.com/en-us/library/system.security.cryptography.hmacsha256(v=vs.110).aspx      
+        /// 
+        /// This value is case-insensitive.
+        /// </param>
+        /// <param name="salt">
+        /// Optional but recommended salt string to apply to the hash. If not passed the
+        /// raw encoding is used. If salt is nullthe raw algorithm is used (useful for 
+        /// file hashes etc.) HMAC versions REQUIRE that salt is passed.
+        /// </param>
+        /// <param name="useBinHex">if true returns the data as BinHex byte pair string. Otherwise Base64 is returned.</param>
+        /// <returns>
+        /// Hash value formatted as a base64-encoded or BinHex stringstring.
+        /// </returns>
+        public static string ComputeHash(string plainText,
+                                         string hashAlgorithm,
+                                         string salt,
+                                         bool useBinHex = false)
+        {
+            if (string.IsNullOrEmpty(plainText))
+                return plainText;
+
+            return ComputeHash(Encoding.UTF8.GetBytes(plainText), hashAlgorithm, Encoding.UTF8.GetBytes(salt), useBinHex);
+        }
+
+        /// <summary>
+        /// Generates a hash for the given plain text value and returns a
+        /// base64-encoded result. Before the hash is computed, a random salt
+        /// is generated and appended to the plain text. This salt is stored at
+        /// the end of the hash value, so it can be used later for hash
+        /// verification.
+        /// </summary>
+        /// <param name="byteData">
+        /// Plaintext value to be hashed. 
+        /// </param>
+        /// <param name="hashAlgorithm">
+        /// Name of the hash algorithm. Allowed values are: "MD5", "SHA1",
+        /// "SHA256", "SHA384", "SHA512", "HMACMD5", "HMACSHA1", "HMACSHA256",
+        ///  "HMACSHA512" (if any other value is specified  MD5 will be used). 
+        /// 
+        /// HMAC algorithms uses Hash-based Message Authentication Code.
+        /// The HMAC process mixes a secret key with the message data, hashes 
+        /// the result with the hash function, mixes that hash value with 
+        /// the secret key again, and then applies the hash function
+        /// a second time. HMAC hashes are fixed lenght and generally
+        /// much longer than non-HMAC hashes of the same type.
+        /// 
+        /// https://msdn.microsoft.com/en-us/library/system.security.cryptography.hmacsha256(v=vs.110).aspx      
+        /// 
+        /// This value is case-insensitive.
+        /// </param>
+        /// <param name="saltBytes">
+        /// Optional but recommended salt bytes to apply to the hash. If not passed the
+        /// raw encoding is used. If salt is nullthe raw algorithm is used (useful for 
+        /// file hashes etc.) HMAC versions REQUIRE that salt is passed.
+        /// </param>
+        /// <param name="useBinHex">if true returns the data as BinHex byte pair string. Otherwise Base64 is returned.</param>
+        /// <returns>
+        /// Hash value formatted as a base64-encoded or BinHex stringstring.
+        /// </returns>
+        public static string ComputeHash(byte[] byteData,
+                                         string hashAlgorithm,
+                                         byte[] saltBytes,
+                                         bool useBinHex = false)
+        {
+            if (byteData == null)
+                return null;
+
+            // Convert plain text into a byte array.            
             byte[] plainTextWithSaltBytes;
 
             if (saltBytes != null)
             {
                 // Allocate array, which will hold plain text and salt.
                 plainTextWithSaltBytes =
-                    new byte[plainTextBytes.Length + saltBytes.Length];
+                    new byte[byteData.Length + saltBytes.Length];
 
                 // Copy plain text bytes into resulting array.
-                for (int i = 0; i < plainTextBytes.Length; i++)
-                    plainTextWithSaltBytes[i] = plainTextBytes[i];
+                for (int i = 0; i < byteData.Length; i++)
+                    plainTextWithSaltBytes[i] = byteData[i];
 
                 // Append salt bytes to the resulting array.
                 for (int i = 0; i < saltBytes.Length; i++)
-                    plainTextWithSaltBytes[plainTextBytes.Length + i] = saltBytes[i];
+                    plainTextWithSaltBytes[byteData.Length + i] = saltBytes[i];
             }
             else
-                plainTextWithSaltBytes = plainTextBytes;
+                plainTextWithSaltBytes = byteData;
 
             HashAlgorithm hash;
 
@@ -278,17 +582,26 @@ namespace Westwind.Utilities
                 case "SHA1":
                     hash = new SHA1Managed();
                     break;
-
                 case "SHA256":
                     hash = new SHA256Managed();
                     break;
-
                 case "SHA384":
                     hash = new SHA384Managed();
                     break;
-
                 case "SHA512":
                     hash = new SHA512Managed();
+                    break;
+                case "HMACMD5":
+                    hash = new HMACMD5(saltBytes);
+                    break;
+                case "HMACSHA1":
+                    hash = new HMACSHA1(saltBytes);
+                    break;
+                case "HMACSHA256":
+                    hash = new HMACSHA256(saltBytes);                    
+                    break;
+                case "HMACSHA512":
+                    hash = new HMACSHA512(saltBytes);
                     break;
                 default:
                     // default to MD5
@@ -296,16 +609,16 @@ namespace Westwind.Utilities
                     break;
             }
 
-
             byte[] hashBytes = hash.ComputeHash(plainTextWithSaltBytes);
+            
+
+            hash.Dispose();
 
             if (useBinHex)
                 return BinaryToBinHex(hashBytes);
 
             return Convert.ToBase64String(hashBytes);
         }
-
-
         #endregion
 
         #region Gzip
@@ -381,7 +694,7 @@ namespace Westwind.Utilities
         /// Creates an SHA256 or MD5 checksum of a file
         /// </summary>
         /// <param name="file"></param>
-        /// <param name="mode">SHA256,MD5</param>
+        /// <param name="mode">SHA256,SHA512,MD5</param>
         /// <returns></returns>
         public static string GetChecksumFromFile(string file, string mode, bool useBinHex = false)
         {
@@ -390,6 +703,12 @@ namespace Westwind.Utilities
                 if (mode == "SHA256")
                 {
                     var sha = new SHA256Managed();
+                    byte[] checksum = sha.ComputeHash(stream);
+                    return BinaryToBinHex(checksum);
+                }
+                if (mode == "SHA512")
+                {
+                    var sha = new SHA512Managed();
                     byte[] checksum = sha.ComputeHash(stream);
                     return BinaryToBinHex(checksum);
                 }
@@ -409,7 +728,7 @@ namespace Westwind.Utilities
         /// Create a SHA256 or MD5 checksum from a bunch of bytes
         /// </summary>
         /// <param name="fileData"></param>
-        /// <param name="mode">SHA256,MD5</param>
+        /// <param name="mode">SHA256,SHA512,MD5</param>
         /// <returns></returns>
         public static string GetChecksumFromBytes(byte[] fileData, string mode)
         {
@@ -419,6 +738,12 @@ namespace Westwind.Utilities
                 {
                     var sha = new SHA256Managed();
                     byte[] checksum = sha.ComputeHash(stream);                   
+                    return BinaryToBinHex(checksum);
+                }
+                if (mode == "SHA512")
+                {
+                    var sha = new SHA512Managed();
+                    byte[] checksum = sha.ComputeHash(stream);
                     return BinaryToBinHex(checksum);
                 }
                 if (mode == "MD5")
@@ -463,7 +788,7 @@ namespace Westwind.Utilities
         /// Turns a BinHex string that contains raw byte values
         /// into a byte array
         /// </summary>
-        /// <param name="hex">BinHex string (just two byte hex digits strung together)</param>
+        /// <param name="hex">BinHex string (011a031f) just two byte hex digits strung together)</param>
         /// <returns></returns>
         public static byte[] BinHexToBinary(string hex)
         {
