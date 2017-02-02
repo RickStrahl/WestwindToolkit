@@ -313,5 +313,37 @@ multiple lines";
             Assert.IsTrue(count == 0);
         }
 
+
+
+        [TestMethod]
+        public void StringTokenization()
+        {
+            string code = "This is a test {{DateTime.Now}}  and another {{System.Environment.CurrentDirectory}}";
+
+            string tokenString = code;
+
+            var tokens = StringUtils.TokenizeString(ref tokenString, "{{", "}}");
+            Assert.IsTrue(tokens.Count > 0,"No tokens found");
+
+
+            Console.WriteLine("Tokenized Code String:");
+            Console.WriteLine(tokenString);
+
+            Console.WriteLine("Tokens:");
+            foreach (var token in tokens)
+            {
+                Console.WriteLine(token);
+            }
+
+            string returnedCode = StringUtils.DetokenizeString(tokenString, tokens);
+
+            Console.WriteLine("--- returned ---");
+
+
+            Console.WriteLine(returnedCode);
+            Console.WriteLine(code);
+
+            Assert.IsTrue(returnedCode == code, "Code doesn't match");
+        }
     }
 }
