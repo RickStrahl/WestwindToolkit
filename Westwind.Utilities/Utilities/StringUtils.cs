@@ -32,6 +32,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -390,14 +391,19 @@ namespace Westwind.Utilities
         /// by \r\n or \n
         /// </summary>
         /// <param name="s">String to check for lines</param>
+        /// <param name="maxLines">Optional - max number of lines to return</param>
         /// <returns>array of strings, or null if the string passed was a null</returns>
-        public static string[] GetLines(string s)
+        public static string[] GetLines(string s, int maxLines = 0)
         {
             if (s == null)
                 return null;
-
+           
             s = s.Replace("\r\n", "\n");
-            return s.Split(new char[] {'\n'});
+
+            if (maxLines > 0)
+                return s.Split(new char[] { '\n' });
+
+            return s.Split(new char[] {'\n'}).Take(maxLines).ToArray();
         }
 
         /// <summary>
@@ -467,6 +473,57 @@ namespace Westwind.Utilities
             }
 
             return sb.ToString();
+        }
+
+        
+        static Regex tokenizeRegex = new Regex("{{.*?}}");
+
+        /// <summary>
+        /// Tokenizes a string based on a start and end string. Replaces the values with a token
+        /// value (#@#1#@# for example).
+        /// 
+        /// You can use Detokenize to get the original values back
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <param name="replaceDelimiter"></param>
+        /// <returns></returns>
+        public static List<string> TokenizeString(ref string text, string start, string end, string replaceDelimiter = "#@#")
+        {
+            var strings = new List<string>();            
+            var matches = tokenizeRegex.Matches(text);
+
+            int i = 0;
+            foreach (Match match in matches)
+            {
+                tokenizeRegex = new Regex(Regex.Escape(match.Value));
+                text = tokenizeRegex.Replace(text, $"{replaceDelimiter}{i}{replaceDelimiter}", 1);
+                strings.Add(match.Value);
+                i++;
+            }
+
+            return strings;
+        }
+
+
+        /// <summary>
+        /// Detokenizes a string tokenized with TokenizeString. Requires the collection created
+        /// by detokenization
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="tokens"></param>
+        /// <param name="replaceDelimiter"></param>
+        /// <returns></returns>
+        public static string DetokenizeString(string text, List<string> tokens, string replaceDelimiter = "#@#")
+        {
+            int i = 0;
+            foreach (string token in tokens)
+            {
+                text = text.Replace($"{replaceDelimiter}{i}{replaceDelimiter}", token);
+                i++;
+            }
+            return text;
         }
 
         #endregion

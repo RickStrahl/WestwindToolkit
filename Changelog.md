@@ -1,15 +1,16 @@
 ﻿# West Wind Toolkit Change Log
 
-### 2.70
+### 2.71
 *not released yet*
 
-* **Fix binary encoding for extended characters in Encryption class**  
-<small>westwind.utilties</small>
-Binary encoding now uses UTF encoding to encrypt/decrypt strings in order to support extended characters.
+* **StringUtils.TokenizeString() and DetokenizeString()**  
+<small>westwind.utilties</small>  
+Added a function that looks for a string pattern based on start and end characters, and replaces the text with numbered tokens. DetokenizeString() then can reinsert the tokens back into the string. Useful for parsing out parts of string for manipulation and then re-adding the values edited out.
 
-* **Encryption adds support for returning binary string data as BinHex**  
-<small>westwind.utilties</small>
-You can now return binary values in BinHex format in addition to the default base64 encoded string values.
+* **StringUtils.GetLines() optional maxLines Parameter**  
+<small>westwind.utilties</small>  
+Added an optional parameter to `GetLines()` to allow specifying the number of lines returned. Internally still all strings are parsed first, but the result retrieves only the max number of lines.
+
 
 * **Add support for HMAC hashing in Encryption.ComputeHash()**
 <small>westwind.utilties</small>
@@ -18,6 +19,18 @@ HMAC provides a standardized way to introduces salted values into hashes that re
 * **Add Encryption.EncryptBytes() and Encryption.DecryptBytes()**  
 <small>westwind.utilties</small>
 Added additional overloads that allow passing byte buffer for the encryption key to make it easier to work with OS data API.
+
+
+### 2.70
+*December 15th, 2016*
+
+* **Fix binary encoding for extended characters in Encryption class**  
+<small>westwind.utilties</small>
+Binary encoding now uses UTF encoding to encrypt/decrypt strings in order to support extended characters.
+
+* **Encryption adds support for returning binary string data as BinHex**  
+<small>westwind.utilties</small>
+You can now return binary values in BinHex format in addition to the default base64 encoded string values.
 
 * **FileUtils.GetPhsysicalPath()**  
 <small>westwind.utilties</small>
