@@ -56,7 +56,7 @@ namespace Westwind.Utilities
         public const BindingFlags MemberPublicInstanceAccess =
             BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase;
 
-        
+
         /// <summary>
         /// Generates a unique Id as a string of up to 16 characters.
         /// Based on a GUID and the size takes that subset of a the
@@ -66,29 +66,35 @@ namespace Westwind.Utilities
         /// 
         /// Sizes: 6 gives roughly 99.97% uniqueness. 
         ///        8 gives less than 1 in a million doubles.
-        ///        16 will give full GUID strength uniqueness
+        ///        16 will give near full GUID strength uniqueness
         /// </summary>
+        /// <param name="stringSize">Number of characters to generate between 8 and 16</param>
+        /// <param name="additionalCharacters">Any additional characters you allow in the string. 
+        /// You can add upper case letters and symbols which are not included in the default
+        /// which includes only digits and lower case letters.
+        /// </param>
+
         /// <returns></returns>
         /// <summary>
-        public static string GenerateUniqueId(int stringSize = 8)
+        public static string GenerateUniqueId(int stringSize = 8, string additionalCharacters = null)
         {
-            string chars = "abcdefghijkmnopqrstuvwxyz1234567890";
+            string chars = "abcdefghijkmnopqrstuvwxyz1234567890" + (additionalCharacters ?? string.Empty);
             StringBuilder result = new StringBuilder(stringSize);
             int count = 0;
 
             
-
             foreach (byte b in Guid.NewGuid().ToByteArray())
             {
                 result.Append(chars[b % (chars.Length)]);
                 count++;
                 if (count >= stringSize)
-                    return result.ToString();
+                    break;
             }
             return result.ToString();
         }
 
 
+        ///<summary>
         /// Generates a unique numeric ID. Generated off a GUID and
         /// returned as a 64 bit long value
         /// </summary>
@@ -99,7 +105,7 @@ namespace Westwind.Utilities
             return (long) BitConverter.ToUInt64(bytes, 0);
         }
 
-        static Random rnd = new Random();
+        private static Random rnd = new Random();
 
         /// <summary>
         /// Returns a random integer in a range of numbers
