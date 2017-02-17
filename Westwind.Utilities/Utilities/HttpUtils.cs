@@ -309,13 +309,18 @@ namespace Westwind.Utilities
         public HttpWebResponse Response { get; set; }
 
 
-        
+        /// <summary>
+        /// The User Agent string sent to the server
+        /// </summary>
+        public string UserAgent { get; set; }
+
 
         public HttpRequestSettings()
         {
             HttpVerb = "GET";
             Headers = new Dictionary<string, string>();
             Encoding = Encoding.UTF8;
+            UserAgent = "West Wind .NET Http Client";
         }
     }
 }

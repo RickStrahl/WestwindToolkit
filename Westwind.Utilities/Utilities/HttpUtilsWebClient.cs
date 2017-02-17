@@ -46,15 +46,18 @@ namespace Westwind.Utilities
         protected override WebRequest GetWebRequest(Uri address)
         {
             Request = base.GetWebRequest(address) as HttpWebRequest;
-
+            
             if (Settings != null)
             {
                 if (Settings.Timeout > 0)
                 {
                     Request.Timeout = Settings.Timeout;
                     Request.ReadWriteTimeout = Settings.Timeout;
-                    Request.PreAuthenticate = Settings.PreAuthenticate;
+                    Request.PreAuthenticate = Settings.PreAuthenticate;                    
                 }
+
+                if (!string.IsNullOrEmpty(Settings.UserAgent))
+                    Request.UserAgent = Settings.UserAgent;                
             }
 
             return Request;
