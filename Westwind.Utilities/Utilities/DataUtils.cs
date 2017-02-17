@@ -80,7 +80,7 @@ namespace Westwind.Utilities
 
             foreach (byte b in Guid.NewGuid().ToByteArray())
             {
-                result.Append(chars[b % (chars.Length - 1)]);
+                result.Append(chars[b % (chars.Length)]);
                 count++;
                 if (count >= stringSize)
                     return result.ToString();
