@@ -148,11 +148,7 @@ namespace Westwind.Utilities.Configuration
             // Loop through all fields and properties                 
             foreach (PropertyInfo property in properties)
             {
-                FieldInfo field = null;
-                Type fieldType = null;
-                fieldType = property.PropertyType;
-
-
+                Type fieldType = property.PropertyType;                
                 string fieldName = property.Name.ToLowerInvariant();
 
                 // Error Message is an internal public property

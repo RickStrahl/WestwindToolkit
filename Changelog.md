@@ -11,6 +11,8 @@ Added a function that looks for a string pattern based on start and end characte
 <small>westwind.utilties</small>  
 Added an optional parameter to `GetLines()` to allow specifying the number of lines returned. Internally still all strings are parsed first, but the result retrieves only the max number of lines.
 
+* **StringUtils.GenerateUniqueId() additional characters**
+You can now add additional character to be included in the unique ID in addition to numbers and digits. This makes the string more resilient to avoid dupe values.
 
 * **Add support for HMAC hashing in Encryption.ComputeHash()**
 <small>westwind.utilties</small>
