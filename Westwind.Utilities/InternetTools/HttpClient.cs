@@ -482,7 +482,7 @@ namespace Westwind.Utilities.InternetTools
 		/// <param name="key"></param>
 		/// <param name="fileName"></param>
 		/// <returns></returns>
-		public bool AddPostFile(string key,string fileName) 
+		public bool AddPostFile(string key,string fileName, string contentType = "application/octet-stream") 
 		{
 			byte[] lcFile;	
 
@@ -517,7 +517,11 @@ namespace Westwind.Utilities.InternetTools
 			_PostData.Write( Encoding.Default.GetBytes(
 				"--" + _MultiPartBoundary + "\r\n"  + 
 				"Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + 
-				new FileInfo(fileName).Name + "\"\r\n\r\n") );
+				new FileInfo(fileName).Name + "\"\r\n" +
+                "Content-Type: " + contentType +
+                "\r\n\r\n" ) );
+            
+            
 
 			_PostData.Write( lcFile );
 
