@@ -76,7 +76,8 @@ namespace Westwind.Utilities
             get
             {
                 if (_InstancePropertyInfo == null && Instance != null)                
-                    _InstancePropertyInfo = Instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+                    _InstancePropertyInfo = Instance.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly)
+                                                            .Where(a => a.GetIndexParameters().Length == 0).ToArray();
                 return _InstancePropertyInfo;                
             }
         }
@@ -113,7 +114,17 @@ namespace Westwind.Utilities
         /// <param name="instance"></param>
         public Expando(object instance)
         {
-            Initialize(instance);
+            var dictionary = instance as IDictionary<string, object>;
+            if (dictionary == null)
+            {
+                Initialize(instance);
+                return;
+            }
+
+            var expando = this;
+
+            Initialize(expando);
+            InitializeAsDictionary(expando, dictionary);
         }
 
         /// <summary>
@@ -126,13 +137,17 @@ namespace Westwind.Utilities
             var expando = this;
 
             Initialize(expando);
+            InitializeAsDictionary(expando, dict);
+        }
 
+        private void InitializeAsDictionary(Expando expando, IDictionary<string, object> dict)
+        {
             Properties = new PropertyBag();
 
             foreach (var kvp in dict)
             {
                 var kvpValue = kvp.Value;
-                if (kvpValue is IDictionary<string,object>)                
+                if (kvpValue is IDictionary<string, object>)
                 {
                     var expandoVal = new Expando(kvpValue);
                     expando[kvp.Key] = expandoVal;
@@ -142,7 +157,7 @@ namespace Westwind.Utilities
                     // iterate through the collection and convert any string-object dictionaries
                     // along the way into expando objects
                     var objList = new List<object>();
-                    foreach (var item in (ICollection)kvp.Value)
+                    foreach (var item in (ICollection) kvp.Value)
                     {
                         var itemVals = item as IDictionary<string, object>;
                         if (itemVals != null)
@@ -163,7 +178,6 @@ namespace Westwind.Utilities
                 }
             }
         }
-
 
         protected void Initialize(object instance)
         {
