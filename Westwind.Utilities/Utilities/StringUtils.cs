@@ -400,7 +400,7 @@ namespace Westwind.Utilities
            
             s = s.Replace("\r\n", "\n");
 
-            if (maxLines > 0)
+            if (maxLines <  1)
                 return s.Split(new char[] { '\n' });
 
             return s.Split(new char[] {'\n'}).Take(maxLines).ToArray();
