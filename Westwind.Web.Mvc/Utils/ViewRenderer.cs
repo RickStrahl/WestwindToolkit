@@ -108,9 +108,8 @@ namespace Westwind.Web.Mvc
         }
 
         /// <summary>
-        /// Renders a partial MVC view to string. Use this method to render
-        /// a partial view that doesn't merge with _Layout and doesn't fire
-        /// _ViewStart.
+        /// Renders a full MVC view to a writer. Will render with the full MVC
+        /// View engine including running _ViewStart and merging into _Layout
         /// </summary>
         /// <param name="viewPath">
         /// The path to the view to render. Either in same controller, shared by 
@@ -127,9 +126,8 @@ namespace Westwind.Web.Mvc
         }
 
         /// <summary>
-        /// Renders a partial MVC view to the given writer. Use this method to render
-        /// a partial view that doesn't merge with _Layout and doesn't fire
-        /// _ViewStart.
+        /// Renders a full MVC view to a writer. Will render with the full MVC
+        /// View engine including running _ViewStart and merging into _Layout
         /// </summary>
         /// <param name="viewPath">
         /// The path to the view to render. Either in same controller, shared by 
@@ -147,9 +145,8 @@ namespace Westwind.Web.Mvc
         }
 
         /// <summary>
-        /// Renders a partial MVC view to string. Use this method to render
-        /// a partial view that doesn't merge with _Layout and doesn't fire
-        /// _ViewStart.
+        /// Renders a full MVC view to a writer. Will render with the full MVC
+        /// View engine including running _ViewStart and merging into _Layout
         /// </summary>
         /// <param name="viewPath">
         /// The path to the view to render. Either in same controller, shared by 
@@ -177,9 +174,8 @@ namespace Westwind.Web.Mvc
         }
 
         /// <summary>
-        /// Renders a partial MVC view to the given writer. Use this method to render
-        /// a partial view that doesn't merge with _Layout and doesn't fire
-        /// _ViewStart.
+        /// Renders a full MVC view to a writer. Will render with the full MVC
+        /// View engine including running _ViewStart and merging into _Layout
         /// </summary>
         /// <param name="viewPath">
         /// The path to the view to render. Either in same controller, shared by 
