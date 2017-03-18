@@ -60,17 +60,22 @@ namespace Westwind.Utilities.Data.Tests
         [TestMethod]
         public void ExecuteReaderTest()
         {
-            using (var data = new SqlDataAccess(STR_ConnectionString))
+            for (int i = 0; i < 100; i++)
             {
-                var reader = data.ExecuteReader("select * from customers");
-
-                Assert.IsTrue(reader.HasRows);
-
-                while (reader.Read())
+                using (var data = new SqlDataAccess(STR_ConnectionString))
                 {
-                    Console.WriteLine(reader["LastName"] + " " + (DateTime) reader["Entered"]);
+                    var reader = data.ExecuteReader("select * from customers");
+
+                    Assert.IsTrue(reader.HasRows);
+
+                    while (reader.Read())
+                    {
+                        string txt = reader["LastName"] + " " + (DateTime) reader["Entered"];
+                        //Console.WriteLine(txt);
+                    }
+                    
                 }
-            }
+            }            
         }
 
         [TestMethod]

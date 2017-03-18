@@ -531,7 +531,7 @@ namespace Westwind.Utilities.Data
             try
             {
                 LastSql = command.CommandText;
-                Reader = command.ExecuteReader(CommandBehavior.CloseConnection);
+                Reader = command.ExecuteReader();
             }
             catch (Exception ex)
             {
