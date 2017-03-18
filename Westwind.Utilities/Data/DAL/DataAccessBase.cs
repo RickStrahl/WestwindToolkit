@@ -212,6 +212,7 @@ namespace Westwind.Utilities.Data
         /// </summary>
         public string LastSql { get; set; }
 
+        #region Connection Operations
         /// <summary>
         /// Opens a Sql Connection based on the connection string.
         /// Called internally but externally accessible. Sets the internal
@@ -282,6 +283,41 @@ namespace Westwind.Utilities.Data
 
             return true;
         }
+
+        /// <summary>
+        /// Closes a connection
+        /// </summary>
+        /// <param name="Command"></param>
+        public virtual void CloseConnection(DbCommand Command)
+        {
+            if (Transaction != null)
+                return;
+
+            if (Command.Connection != null &&
+                Command.Connection.State != ConnectionState.Closed)
+                Command.Connection.Close();
+            
+            _Connection = null;
+        }
+        /// <summary>
+        /// Closes an active connection. If a transaction is pending the 
+        /// connection is held open.
+        /// </summary>
+        public virtual void CloseConnection()
+        {
+            if (Transaction != null)
+                return;
+
+            if (_Connection != null &&
+                _Connection.State != ConnectionState.Closed)
+                _Connection.Close();
+
+            _Connection = null;
+        }
+
+        #endregion
+
+        #region Core Operations
 
         /// <summary>
         /// Creates a Command object and opens a connection
@@ -445,6 +481,66 @@ namespace Westwind.Utilities.Data
             parm.Size = size;
             return parm;
         }
+
+        /// <summary>
+        /// Starts a new transaction on this connection/instance
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool BeginTransaction()
+        {
+            if (_Connection == null)
+            {
+                if (!OpenConnection())
+                    return false;
+            }            
+
+            Transaction = _Connection.BeginTransaction();
+            if (Transaction == null)
+                return false;
+
+            return true;
+        }
+
+        /// <summary>
+        /// Commits all changes to the database and ends the transaction
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool CommitTransaction()
+        {
+            if (Transaction == null)
+            {
+                SetError(Resources.NoActiveTransactionToCommit);
+                if (ThrowExceptions)
+                    new InvalidOperationException(Resources.NoActiveTransactionToCommit);
+                return false;
+            }
+
+            Transaction.Commit();
+            Transaction = null;
+
+            CloseConnection();
+
+            return true;
+        }
+
+        /// <summary>
+        /// Rolls back a transaction
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool RollbackTransaction()
+        {
+            if (Transaction == null)
+                return true;
+
+            Transaction.Rollback();
+            Transaction = null;
+
+            CloseConnection();
+
+            return true;
+        }
+
+        #endregion
 
         /// <summary>
         /// Executes a non-query command and returns the affected records
@@ -1069,37 +1165,6 @@ namespace Westwind.Utilities.Data
         }
 
         /// <summary>
-        /// Closes a connection
-        /// </summary>
-        /// <param name="Command"></param>
-        public virtual void CloseConnection(DbCommand Command)
-        {
-            if (Transaction != null)
-                return;
-
-            if (Command.Connection != null &&
-                Command.Connection.State != ConnectionState.Closed)
-                Command.Connection.Close();
-            
-            _Connection = null;
-        }
-        /// <summary>
-        /// Closes an active connection. If a transaction is pending the 
-        /// connection is held open.
-        /// </summary>
-        public virtual void CloseConnection()
-        {
-            if (Transaction != null)
-                return;
-
-            if (_Connection != null &&
-                _Connection.State != ConnectionState.Closed)
-                _Connection.Close();
-
-            _Connection = null;
-        }
-
-        /// <summary>
         /// Sql 2005 specific semi-generic paging routine
         /// </summary>
         /// <param name="sql"></param>
@@ -1584,67 +1649,6 @@ where __No > (@Page-1) * @PageSize and __No < (@Page * @PageSize + 1)
 
 
         #endregion
-
-
-
-        /// <summary>
-        /// Starts a new transaction on this connection/instance
-        /// </summary>
-        /// <returns></returns>
-        public virtual bool BeginTransaction()
-        {
-            if (_Connection == null)
-            {
-                if (!OpenConnection())
-                    return false;
-            }            
-
-            Transaction = _Connection.BeginTransaction();
-            if (Transaction == null)
-                return false;
-
-            return true;
-        }
-
-        /// <summary>
-        /// Commits all changes to the database and ends the transaction
-        /// </summary>
-        /// <returns></returns>
-        public virtual bool CommitTransaction()
-        {
-            if (Transaction == null)
-            {
-                SetError(Resources.NoActiveTransactionToCommit);
-                if (ThrowExceptions)
-                    new InvalidOperationException(Resources.NoActiveTransactionToCommit);
-                return false;
-            }
-
-            Transaction.Commit();
-            Transaction = null;
-
-            CloseConnection();
-
-            return true;
-        }
-
-        /// <summary>
-        /// Rolls back a transaction
-        /// </summary>
-        /// <returns></returns>
-        public virtual bool RollbackTransaction()
-        {
-            if (Transaction == null)
-                return true;
-
-            Transaction.Rollback();
-            Transaction = null;
-
-            CloseConnection();
-
-            return true;
-        }
-
 
         #region Error Handling
 
