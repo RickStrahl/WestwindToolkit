@@ -292,12 +292,11 @@ namespace Westwind.Utilities
         /// <param name="origString">Original input string</param>
         /// <param name="findString">The string that is to be replaced</param>
         /// <param name="replaceWith">The replacement string</param>
-        /// <param name="instance">Instance of the FindString that is to be found. if Instance = -1 all are replaced</param>
+        /// <param name="instance">Instance of the FindString that is to be found. 1 based. If Instance = -1 all are replaced</param>
         /// <param name="caseInsensitive">Case insensitivity flag</param>
         /// <returns>updated string or original string if no matches</returns>
         public static string ReplaceStringInstance(string origString, string findString,
-            string replaceWith, int instance,
-            bool caseInsensitive)
+            string replaceWith, int instance, bool caseInsensitive)
         {
             if (instance == -1)
                 return ReplaceString(origString, findString, replaceWith, caseInsensitive);
@@ -305,7 +304,6 @@ namespace Westwind.Utilities
             int at1 = 0;
             for (int x = 0; x < instance; x++)
             {
-
                 if (caseInsensitive)
                     at1 = origString.IndexOf(findString, at1, origString.Length - at1, StringComparison.OrdinalIgnoreCase);
                 else
