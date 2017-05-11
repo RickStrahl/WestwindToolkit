@@ -46,22 +46,10 @@ namespace Westwind.Utilities.Data
                 throw new InvalidOperationException(Resources.AConnectionStringMustBePassedToTheConstructor);
 
             if (!connectionString.Contains("="))
-            {
-                // it's a connection string entry
-                var connInfo = ConfigurationManager.ConnectionStrings[connectionString];
-                if (connInfo != null)
-                {
-                    if (!string.IsNullOrEmpty(connInfo.ProviderName))
-                        info.Provider = DbProviderFactories.GetFactory(connInfo.ProviderName);
-                    else
-                        info.Provider = DbProviderFactories.GetFactory(DefaultProviderName);
-
-                    connectionString = connInfo.ConnectionString;
-                }
-                else
-                    throw new InvalidOperationException(Resources.InvalidConnectionStringName + ": " + connectionString);
-            }
-            else
+			{
+				connectionString = RetrieveConnectionStringFromConfig(connectionString, info);
+			}
+			else
             {
                 if (providerName == null)
                     providerName = DefaultProviderName;
@@ -72,5 +60,31 @@ namespace Westwind.Utilities.Data
 
             return info;
         }
-    }
+
+		/// <summary>
+		/// Retrieves a connection string from the Connection Strings configuration settings
+		/// </summary>
+		/// <param name="connectionStringName"></param>
+		/// <param name="info"></param>
+		/// <exception cref="InvalidOperationException">Throws when connection string doesn't exist</exception>
+		/// <returns></returns>
+		public static string RetrieveConnectionStringFromConfig(string connectionStringName, ConnectionStringInfo info)
+		{
+			// it's a connection string entry
+			var connInfo = ConfigurationManager.ConnectionStrings[connectionStringName];
+			if (connInfo != null)
+			{
+				if (!string.IsNullOrEmpty(connInfo.ProviderName))
+					info.Provider = DbProviderFactories.GetFactory(connInfo.ProviderName);
+				else
+					info.Provider = DbProviderFactories.GetFactory(DefaultProviderName);
+
+				connectionStringName = connInfo.ConnectionString;
+			}
+			else
+				throw new InvalidOperationException(Resources.InvalidConnectionStringName + ": " + connectionStringName);
+			return connectionStringName;
+		}
+
+	}
 }
