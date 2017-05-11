@@ -56,18 +56,22 @@ namespace Westwind.Utilities.Data
 
         public SqlDataAccess(string connectionString, string providerName)
             :base(connectionString,providerName)
-        { }       
+        { }
 
-        /// <summary>
-        /// Sql 2005 and later specific semi-generic paging routine
-        /// </summary>
-        /// <param name="sql"></param>
-        /// <param name="pageSize"></param>
-        /// <param name="page"></param>
-        /// <param name="sortOrderFields"></param>
-        /// <param name="Parameters"></param>
-        /// <returns></returns>
-        public override DbCommand CreatePagingCommand(string sql, int pageSize, int page, string sortOrderFields, params object[] Parameters)
+		public SqlDataAccess(string connectionString, DbProviderFactory provider)
+			: base(connectionString,provider)
+		{ }
+
+		/// <summary>
+		/// Sql 2005 and later specific semi-generic paging routine
+		/// </summary>
+		/// <param name="sql"></param>
+		/// <param name="pageSize"></param>
+		/// <param name="page"></param>
+		/// <param name="sortOrderFields"></param>
+		/// <param name="Parameters"></param>
+		/// <returns></returns>
+		public override DbCommand CreatePagingCommand(string sql, int pageSize, int page, string sortOrderFields, params object[] Parameters)
         {
             int pos = sql.IndexOf("select ", 0, StringComparison.OrdinalIgnoreCase);
             if (pos == -1)

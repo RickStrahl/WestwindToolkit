@@ -1,4 +1,6 @@
-﻿#region License
+﻿#define NETCORE
+
+#region License
 #region License
 //#define SupportWebRequestProvider
 /*
@@ -41,7 +43,6 @@ using System.Configuration;
 using System.Data.Common;
 using System.IO;
 using System.Collections.Generic;
-using System.Data.OleDb;
 using System.Diagnostics;
 using Westwind.Utilities.Properties;
 using System.Data.SqlClient;
@@ -111,14 +112,29 @@ namespace Westwind.Utilities.Data
             ConnectionString = connectionString;
         }
 
-        /// <summary>
-        /// Figures out the dbProvider and Connection string from a 
-        /// connectionString name in a config file or explicit 
-        /// ConnectionString and provider.         
-        /// </summary>
-        /// <param name="connectionString">Config file connection name or full connection string</param>
-        /// <param name="providerName">optional provider name. If not passed with a connection string is considered Sql Server</param>
-        public void GetConnectionInfo(string connectionString, string providerName = null)
+		/// <summary>
+		/// Constructor that expects a full connection string and provider
+		/// for creating a SQL instance. To be called by the same implementation
+		/// on a subclass.
+		/// </summary>
+		/// <param name="connectionString"></param>
+		/// <param name="providerName"></param>
+		protected DataAccessBase(string connectionString, DbProviderFactory provider)
+		{
+			ConnectionString = connectionString;
+			dbProvider = provider;			
+		}
+
+
+
+		/// <summary>
+		/// Figures out the dbProvider and Connection string from a 
+		/// connectionString name in a config file or explicit 
+		/// ConnectionString and provider.         
+		/// </summary>
+		/// <param name="connectionString">Config file connection name or full connection string</param>
+		/// <param name="providerName">optional provider name. If not passed with a connection string is considered Sql Server</param>
+		public void GetConnectionInfo(string connectionString, string providerName = null)
         {
             // throws if connection string is invalid or missing
             var connInfo = ConnectionStringInfo.GetConnectionStringInfo(connectionString, providerName);
@@ -260,17 +276,19 @@ namespace Westwind.Utilities.Data
                 if (_Connection.State != ConnectionState.Open)
                     _Connection.Open();
             }
-            catch (SqlException ex)
-            {
-                SetError(ex);
-                return false;
-            }
-            catch (OleDbException ex)
-            {
-                SetError(ex);
-                return false;
-            }
-            catch (DbException ex)
+//            catch (SqlException ex)
+//            {
+//                SetError(ex);
+//                return false;
+//            }
+//#if !NETCORE
+//			catch (OleDbException ex)
+//            {
+//                SetError(ex);
+//                return false;
+//            }
+//#endif
+			catch (DbException ex)
             {
                 SetError(ex);
                 return false;
@@ -971,14 +989,14 @@ namespace Westwind.Utilities.Data
         /// <returns></returns>
         public virtual DataTable ExecuteTable(string tablename, DbCommand command, params object[] parameters)
         {
-            SetError();
+	        SetError();
 
             AddParameters(command, parameters);
 
-            DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
-            Adapter.SelectCommand = command;
-
-            LastSql = command.CommandText;
+	        DbDataAdapter Adapter = dbProvider.CreateDataAdapter();
+	        Adapter.SelectCommand = command;
+			
+			LastSql = command.CommandText;
 
             DataTable dt = new DataTable(tablename);
 
