@@ -1,4 +1,4 @@
-#Westwind.Utiltities
+# Westwind.Utilities
 ###A rich library of everyday utilities for .NET development###
 
 Every .NET application requires small, common and ofen repeated tasks.
@@ -34,6 +34,6 @@ and much, much more.
 
 It's worthwhile to browse through the source code or the documentation
 to find out the myriad of useful functionality that is available, all
-in a small single assembly.
+in a small single assembly. 
 
 This assembly is the base for most other West Wind libraries.
