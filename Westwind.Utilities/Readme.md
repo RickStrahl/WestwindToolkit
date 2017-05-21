@@ -1,7 +1,7 @@
 # Westwind.Utilities
-###A rich library of everyday utilities for .NET development###
+### A rich library of everyday utilities for .NET development###
 
-Every .NET application requires small, common and ofen repeated tasks.
+Every .NET application requires small, common and often repeated tasks.
 This library is a collection of those things that I commonly need on
 a regular basis and have compiled over the years.
 
