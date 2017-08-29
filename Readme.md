@@ -5,6 +5,10 @@
 
 These utility classes and components provide key productivity in day to day Web development. Many of these tools and components have been published individually in articles and blog entries on this site and there have been many requests to publish them as a supported and consolidated library, which turned into this unified toolkit that is integrated, documented and fully supported. And it's all available with full source code so you can use all of it or just portions as needed.	
 
+> #### Westwind.Utilities has moved
+> The latest version of the Westwind.Utilities is now managed in a separate repository. The new repository is at:
+> * [Westwind.Utilities](https://github.com/RickStrahl/Westwind.Utilities)
+
 More Information:
 
 * [West Wind Toolkit Product Page](http://west-wind.com/westwindtoolkit/)
