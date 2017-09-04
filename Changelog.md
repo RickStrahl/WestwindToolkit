@@ -1,7 +1,13 @@
 ﻿# West Wind Toolkit Change Log
 
-### 2.71
+### 3.0.0
 *not released yet*
+
+* **Move Westwind.Utilities to separate Repository and add .NET Standard Support**  
+Remove `westwind.utilities` project to a new Git Repository that is more focused. The new separated westwind.utilities package has also switched to a new SDK style project and supports .NET 4.0, .NET 4.5 and .NET Standard 2.0 targets. For this project westwind.utilities is now imported as a package reference instead of a project reference.
+
+### 2.72
+*May 18th, 2017*
 
 * **StringUtils.TokenizeString() and DetokenizeString()**  
 <small>westwind.utilties</small>  

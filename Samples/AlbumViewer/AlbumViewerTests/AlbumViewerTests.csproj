@@ -74,10 +74,6 @@
       <Project>{1618c87c-1c5b-4e50-bb14-f6663fe4c0b6}</Project>
       <Name>Westwind.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Westwind.Utilities\Westwind.Utilities.csproj">
-      <Project>{1c9829a8-8979-4493-863c-635726f8a61c}</Project>
-      <Name>Westwind.Utilities</Name>
-    </ProjectReference>
     <ProjectReference Include="..\AlbumViewerBusiness\AlbumViewerBusiness.csproj">
       <Project>{8947a85e-2ea3-48da-af3d-5d67eeaa7fbf}</Project>
       <Name>AlbumViewerBusiness</Name>
