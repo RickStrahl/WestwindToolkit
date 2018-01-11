@@ -12,14 +12,3 @@ This library is somewhat compatible with the EntityFramework version, so it's po
 The Westwind Toolkit library is an open source product licensed under **[MIT license](http://opensource.org/licenses/MIT)**, and there's no charge to use, integrate or modify the code for this project. You are free to use it in personal, commercial, government and any other type of application. Commercial licenses are also available.
 
 All source code is copyright West Wind Technologies, regardless of changes made to them. Any source code modifications must leave the original copyright code headers intact.
-
-### Commercial Licenses
-The libray is free, but if you prefer, you can also purchase a fully supported commercial license that allows for paid support options. There are two versions available:
-
-* [Single Developer License](http://store.west-wind.com/product/westwind_toolkit/)
-* [Organization License](http://store.west-wind.com/product/westwind_toolkit_org/)
-
-### Why buy a license?
-Some organizations require a commercial license and support in order to integrate third party software tools into their products. The commercial license provides this level of licensing.
-
-Buying a license also helps support this project and encourages further development and support. While we try to keep the project up to date on an as needed basis, even small financial incentives provide additional motivation to continue to improve and actively support this project. Think of it as a vote of confidence for continued support of the library.
