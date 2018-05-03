@@ -60,17 +60,20 @@ namespace Westwind.Web.Services
 <script>!function(d,s,id){{var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){{js=d.createElement(s);js.id=id;js.src=""//platform.twitter.com/widgets.js"";fjs.parentNode.insertBefore(js,fjs);}}}}(document,""script"",""twitter-wjs"");</script>";
 
             return string.Format(format,text,twitterShareAccount,url,hashTag);
-
         }
 
-        public static string ShareOnFacebook(string url)
+        public static string ShareOnFacebook(string url, string text = null)
         {
+            
             var baseUrl = WebUtils.ResolveUrl("~/");
+
+            //url = $"https://www.facebook.com/dialog/feed?app_id={appid}&display=popup&caption={text}&link={url}&redirect_uri={url}";
+            url = $"https://www.facebook.com/sharer/sharer.php?u={url}&display=page";
             string link =
-$@"<a href=""https://www.facebook.com/sharer/sharer.php?u={url}&display=popup"" target=""_blank"">
+$@"<a href=""{url}"" target=""_blank"">
       <img src=""{baseUrl}images/shareonfacebook.png"" style='height: 20px;' />
 </a>";
-
+            
             return link;
         }
 
@@ -89,3 +92,4 @@ $@"<a href=""https://www.facebook.com/sharer/sharer.php?u={url}&display=popup"" 
         Tall60
     }
 }
+    
