@@ -5,7 +5,7 @@ ww.angular.js
 Version 1.14 - 3/31/2015
 West Wind Angular utilities
 
-(c) 2008-2015 Rick Strahl, West Wind Technologies 
+(c) 2008-2017 Rick Strahl, West Wind Technologies 
 www.west-wind.com
 
 Licensed under MIT License
@@ -79,6 +79,21 @@ http://en.wikipedia.org/wiki/MIT_License
             var d = $q.defer();
             d.then($http.success, $http.error);
             return d.promise;
+        },
+        // Assigns a value to DOM element explicitly and forces
+        // an Angular binding to be updated. Use this function
+        // when you need to update values 'manually' via DOM
+        // manipulation
+        // element parameter can be DOM or jq element
+        applyBindingValue: function(element, value) {                                    
+            // must use timeout to avoid recursive $apply errors
+            setTimeout(function () {                
+                var el = angular.element(element);
+                el.scope().$apply(function () {
+                    el.val(value); // force value to be set                    
+                    el.controller('ngModel').$setViewValue(value);                    
+                });
+            });
         }
     };
 
