@@ -66,6 +66,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="HtmlSanitize.cs" />
     <Compile Include="JsonVariablesTests.cs" />
     <Compile Include="ScriptVariablesTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -116,13 +116,13 @@
     <EmbeddedResource Include="Resources\warning.gif" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Westwind.Web\Westwind.Web.csproj">
-      <Project>{0c38b4e1-0c87-4289-a57b-87c1b5be3bbe}</Project>
-      <Name>Westwind.Web</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\Westwind.Web\Westwind.Web.csproj">
+      <Project>{0C38B4E1-0C87-4289-A57B-87C1B5BE3BBE}</Project>
+      <Name>Westwind.Web</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

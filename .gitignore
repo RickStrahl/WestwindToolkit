@@ -28,3 +28,4 @@ _ReSharper*/
 [Pp]ackages
 *.vssscc
 $tf*/
+.vs

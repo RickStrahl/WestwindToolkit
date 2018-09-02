@@ -37,11 +37,8 @@ using System.Text;
 using System.Web.UI;
 using System.Web;
 using Westwind.Utilities;
-using Westwind.Web.Properties;
 using Westwind.Web.JsonSerializers;
-using System.Reflection;
-using System.Resources;
-
+using Westwind.Web.WebForms.Properties;
 
 namespace Westwind.Web
 {
@@ -475,7 +472,7 @@ namespace Westwind.Web
             HttpRequest Request = HttpContext.Current.Request;
 
             if (UpdateMode == AllowUpdateTypes.None || UpdateMode == AllowUpdateTypes.PropertiesOnly)
-                throw new InvalidOperationException(Resources.CanTRetrieveItemsInUpdateMode + UpdateMode.ToString());
+                throw new InvalidOperationException(Resources.CanTRetrieveItemsInUpdateMode + UpdateMode);
 
             if (Request.HttpMethod != "POST")
                 return default(TType); // throw new InvalidOperationException("GetValue can only be called during postback");

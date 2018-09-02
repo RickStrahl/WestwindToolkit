@@ -6,6 +6,12 @@
 * **Move Westwind.Utilities to separate Repository and add .NET Standard Support**  
 Remove `westwind.utilities` project to a new Git Repository that is more focused. The new separated westwind.utilities package has also switched to a new SDK style project and supports .NET 4.0, .NET 4.5 and .NET Standard 2.0 targets. For this project westwind.utilities is now imported as a package reference instead of a project reference.
 
+### 2.80
+
+* **WebUtils.SanitizeHtml()**  
+Added a rudimentary RegEx based HTML sanitation routine to remove script execution from HTML. Removes various tags (script, iframe, form, etc.), `javascript:` tags and JavaScript event handlers. This is meant as a rudimentary sanitizer. For complete sanitation it's recommended you use a dedicated tool which can configure more protection options.
+
+
 ### 2.72
 *May 18th, 2017*
 
