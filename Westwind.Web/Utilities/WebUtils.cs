@@ -59,6 +59,8 @@ namespace Westwind.Utilities
 
         static DateTime DAT_JAVASCRIPT_BASEDATE = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
+
+        #region Url Management
         /// <summary>
         /// Returns a site relative HTTP path from a partial path starting out with a ~.
         /// Same syntax that ASP.Net internally supports but this method can be used
@@ -173,6 +175,69 @@ namespace Westwind.Utilities
             return Ctl.TemplateControl.AppRelativeVirtualPath.Replace("~/", "");
         }
 
+        /// <summary>
+        /// Returns just the Path of a full Url. Strips off the filename and querystring
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        public static string GetUrlPath(string url)
+        {
+            int lnAt = url.LastIndexOf("/");
+            if (lnAt > 0)
+            {
+                return url.Substring(0, lnAt + 1);
+            }
+            return "/";
+        }
+
+        /// <summary>
+        /// Translates an ASP.NET path like /myapp/subdir/page.aspx 
+        /// into an application relative path: subdir/page.aspx. The
+        /// path returned is based of the application base and 
+        /// starts either with a subdirectory or page name (ie. no ~)
+        /// 
+        /// The path is turned into all lower case.
+        /// </summary>
+        /// <param name="logicalPath">A logical, server root relative path (ie. /myapp/subdir/page.aspx)</param>
+        /// <returns>Application relative path (ie. subdir/page.aspx)</returns>
+        public static string GetAppRelativePath(string logicalPath)
+        {
+            logicalPath = logicalPath.ToLower();
+
+            string appPath = string.Empty;
+
+            if (HttpContext.Current != null)
+            {
+                appPath = HttpContext.Current.Request.ApplicationPath.ToLower();
+                if (appPath != "/")
+                    appPath += "/";
+                else
+                    // Root web relative path is empty - strip off leading slash
+                    return logicalPath.TrimStart('/');
+            }
+            else
+            {
+                // design time compiler for stock web projects will treat as root web
+                return logicalPath.TrimStart('/');
+            }
+
+            return logicalPath.Replace(appPath, "");
+        }
+
+        /// <summary>
+        /// Translates the current ASP.NET path  
+        /// into an application relative path: subdir/page.aspx. The
+        /// path returned is based of the application base and 
+        /// starts either with a subdirectory or page name (ie. no ~)
+        /// 
+        /// This version uses the current ASP.NET path of the request
+        /// that is active and internally uses AppRelativeCurrentExecutionFilePath
+        /// </summary>
+        /// <returns></returns>
+        public static string GetAppRelativePath()
+        {
+            return HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath.Replace("~/", "");
+        }
 
         /// <summary>
         /// Inserts a &lt;script&gt; source link into the page.
@@ -209,251 +274,29 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Converts an ImageFormat value to a Web Content Type
-        /// </summary>
-        /// <param name="formatGuid"></param>
-        /// <returns></returns>
-        public static string ImageFormatToContentType(ImageFormat format)
-        {
-            string ct = null;
-
-            if (format.Equals(ImageFormat.Png))
-                ct = "image/png";
-            else if (format.Equals(ImageFormat.Jpeg))
-                ct = "image/jpeg";
-            else if (format.Equals(ImageFormat.Gif))
-                ct = "image/gif";
-            else if (format.Equals(ImageFormat.Tiff))
-                ct = "image/tiff";
-            else if (format.Equals(ImageFormat.Bmp))
-                ct = "image/bmp";
-            else if (format.Equals(ImageFormat.Icon))
-                ct = "image/x-icon";
-            else if (format.Equals(ImageFormat.Wmf))
-                ct = "application/x-msmetafile";
-            else
-                throw new InvalidOperationException(string.Format(Resources.ERROR_UnableToConvertImageFormatToContentType, format.ToString()));
-
-            return ct;
-        }
-
-        /// <summary>
-        /// Returns an image format from an HTTP content type string
-        /// </summary>
-        /// <param name="contentType">Content Type like image/jpeg</param>
-        /// <returns>Corresponding image format</returns>
-        public static ImageFormat ImageFormatFromContentType(string contentType)
-        {
-            ImageFormat format = ImageFormat.Png;
-
-            contentType = contentType.ToLower();
-
-            if (contentType == "image/png")
-                return format;
-            else if (contentType == "image/gif")
-                format = ImageFormat.Gif;
-            else if (contentType == "image/jpeg")
-                format = ImageFormat.Jpeg;
-            else if (contentType == "image/tiff")
-                format = ImageFormat.Jpeg;
-            else if (contentType == "image/bmp")
-                format = ImageFormat.Bmp;
-            else if (contentType == "image/x-icon")
-                format = ImageFormat.Icon;
-            else if (contentType == "application/x-msmetafile")
-                format = ImageFormat.Wmf;
-            else
-                throw new InvalidOperationException(string.Format(Resources.ERROR_UnableToConvertContentTypeToImageFormat, contentType));
-
-            return format;
-        }
-
-        /// <summary>
-        /// Sets the culture and UI culture to a specific culture. Allows overriding of currency
-        /// and optionally disallows setting the UI culture.
+        /// Creates the headers required to force the current request to not go into 
+        /// the client side cache, forcing a reload of the page.
         /// 
-        /// You can also limit the locales that are allowed in order to minimize
-        /// resource access for locales that aren't implemented at all.
+        /// This method can be called anywhere as part of the Response processing to 
+        /// modify the headers. Use this for any non POST pages that should never be 
+        /// cached.
+        /// <seealso>Class WebUtils</seealso>
         /// </summary>
-        /// <param name="culture">
-        /// 2 or 5 letter ietf string code for the Culture to set. 
-        /// Examples: en-US or en</param>
-        /// <param name="uiCulture">ietf string code for UiCulture to set</param>
-        /// <param name="currencySymbol">Override the currency symbol on the culture</param>
-        /// <param name="setUiCulture">
-        /// if uiCulture is not set but setUiCulture is true 
-        /// it's set to the same as main culture
-        /// </param>
-        /// <param name="allowedLocales">
-        /// Names of 2 or 5 letter ietf locale codes you want to allow
-        /// separated by commas. If two letter codes are used any
-        /// specific version (ie. en-US, en-GB for en) are accepted.
-        /// Any other locales revert to the machine's default locale.
-        /// Useful reducing overhead in looking up resource sets that
-        /// don't exist and using unsupported culture settings .
-        /// Example: de,fr,it,en-US
-        /// </param>
-        public static void SetUserLocale(string culture = null, 
-            string uiCulture = null, 
-            string currencySymbol = null, 
-            bool setUiCulture = true,
-            string allowedLocales = null)
+        /// <param name="Response"></param>
+        /// <returns>Void</returns>
+        public static void ForceReload()
         {
-        // Use browser detection in ASP.NET
-        if (string.IsNullOrEmpty(culture) && HttpContext.Current != null)
-        {
-            HttpRequest Request = HttpContext.Current.Request;
-
-            // if no user lang leave existing but make writable
-            if (Request.UserLanguages == null)
-            {
-                Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo;
-                if (setUiCulture)
-                    Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentUICulture.Clone() as CultureInfo ;
-                    
-                return;
-            }
-
-            culture = Request.UserLanguages[0];
-        }
-            else
-                culture = culture.ToLower();
-
-            if (!string.IsNullOrEmpty(uiCulture))
-                setUiCulture = true;
-
-            if (!string.IsNullOrEmpty(culture) && !string.IsNullOrEmpty(allowedLocales))
-            {
-                allowedLocales = "," + allowedLocales.ToLower() + ",";
-                if (!allowedLocales.Contains("," + culture + ","))
-                {
-                    int i = culture.IndexOf('-');
-                    if (i > 0)
-                    {                        
-                        if (!allowedLocales.Contains("," + culture.Substring(0, i) + ","))
-                        {                            
-                            // Always create writable CultureInfo
-                            Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo;
-                            if (setUiCulture)
-                                Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentUICulture.Clone() as CultureInfo;
-                                        
-                            return;
-                        }
-                    }
-                }
-            }
-
-            if (string.IsNullOrEmpty(culture))
-                culture = CultureInfo.InstalledUICulture.IetfLanguageTag;
-
-            if (string.IsNullOrEmpty(uiCulture))
-                uiCulture = culture;
-
-            try
-            {
-                CultureInfo Culture = new CultureInfo(culture);
-                
-                if (currencySymbol != null && currencySymbol != "")
-                    Culture.NumberFormat.CurrencySymbol = currencySymbol;
-
-                Thread.CurrentThread.CurrentCulture = Culture;
-
-                if (setUiCulture)
-                {                    
-                    var UICulture = new CultureInfo(uiCulture);
-                    Thread.CurrentThread.CurrentUICulture = UICulture;
-                }   
-            }
-            catch { }            
+            HttpResponse Response = HttpContext.Current.Response;
+            Response.Expires = 0;
+            //Response.Cache.SetCacheability(HttpCacheability.NoCache);
+            Response.AppendHeader("Pragma", "no-cache");
+            Response.AppendHeader("Cache-Control", "no-cache, mustrevalidate");
         }
 
-        /// <summary>
-        /// Sets a user's Locale based on the browser's Locale setting. If no setting
-        /// is provided the default Locale is used.
-        /// </summary>
-        /// <param name="currencySymbol">If not null overrides the currency symbol for the culture. 
-        /// Use to force a specify currency when multiple currencies are not supported by the application
-        /// </param>
-        /// <param name="setUiCulture">if true sets the UI culture in addition to core culture</param>
-        [Obsolete("Use the many parametered version of SetUserLocale instead.")]
-        public static void SetUserLocale(string currencySymbol, bool setUiCulture)
-        {
-            SetUserLocale(null, null, currencySymbol, setUiCulture);
-        }
+        #endregion
 
-        /// <summary>
-        /// Finds a Control recursively. Note finds the first match and exits
-        /// </summary>
-        /// <param name="ContainerCtl">The top level container to start searching from</param>
-        /// <param name="IdToFind">The ID of the control to find</param>
-        /// <param name="alwaysUseFindControl">If true uses FindControl to check for hte primary Id which is slower, but finds dynamically generated control ids inside of INamingContainers</param>
-        /// <returns></returns>
-        public static Control FindControlRecursive(Control Root, string id, bool alwaysUseFindControl = false)
-        {
-            if (alwaysUseFindControl)
-            {
-                Control ctl = Root.FindControl(id);
-                if (ctl != null)
-                    return ctl;
-            }
-            else
-            {
-                if (Root.ID == id)
-                    return Root;
-            }
 
-            foreach (Control Ctl in Root.Controls)
-            {
-                Control foundCtl = FindControlRecursive(Ctl, id, alwaysUseFindControl);
-                if (foundCtl != null)
-                    return foundCtl;
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Attempts to restart the active Web Application               
-        /// </summary>
-        /// <remarks>
-        /// Requires either Full Trust (HttpRuntime.UnloadAppDomain) or
-        /// or Write access to web.config otherwise the operation
-        /// will fail and return false.
-        /// </remarks>
-        public static bool RestartWebApplication()
-        {
-            bool error = false;
-            try
-            {
-                // This requires full trust so this will fail
-                // in many scenarios
-                HttpRuntime.UnloadAppDomain();
-            }
-            catch
-            {
-                error = true;
-            }
-
-            if (!error)
-                return true;
-
-            // Couldn't unload with Runtime - let's try modifying web.config
-            // This requires write access in the application's folder for
-            // application's Application Pool account.
-            string ConfigPath = HttpContext.Current.Request.PhysicalApplicationPath + "\\web.config";
-
-            try
-            {
-                File.SetLastWriteTimeUtc(ConfigPath, DateTime.UtcNow);
-            }
-            catch
-            {
-                return false;
-            }
-
-            return true;
-        }
-
+        #region Form Variables
         /// <summary>
         /// Checks to see if a form variable exists in the 
         /// HttpContext. Only works in System.Web based applications
@@ -691,25 +534,74 @@ namespace Westwind.Utilities
         }
 
         /// <summary>
-        /// Creates the headers required to force the current request to not go into 
-        /// the client side cache, forcing a reload of the page.
-        /// 
-        /// This method can be called anywhere as part of the Response processing to 
-        /// modify the headers. Use this for any non POST pages that should never be 
-        /// cached.
-        /// <seealso>Class WebUtils</seealso>
+        /// Retrieves a value by key from a UrlEncoded string.
         /// </summary>
-        /// <param name="Response"></param>
-        /// <returns>Void</returns>
-        public static void ForceReload()
+        /// <param name="urlEncodedString">UrlEncoded String</param>
+        /// <param name="key">Key to retrieve value for</param>
+        /// <returns>returns the value or "" if the key is not found or the value is blank</returns>
+        public static string GetUrlEncodedKey(string urlEncodedString, string key)
         {
-            HttpResponse Response = HttpContext.Current.Response;
-            Response.Expires = 0;
-            //Response.Cache.SetCacheability(HttpCacheability.NoCache);
-            Response.AppendHeader("Pragma", "no-cache");
-            Response.AppendHeader("Cache-Control", "no-cache, mustrevalidate");
+            string res = StringUtils.ExtractString("&" + urlEncodedString, "&" + key + "=", "&", false, true);
+            return HttpUtility.UrlDecode(res);
         }
 
+        /// <summary>
+        /// Returns a request value parsed into an integer. If the value is not found
+        /// or not a number null is returned.
+        /// </summary>
+        /// <param name="paramsKey">The request key to retrieve</param>        
+        /// <returns>parsed integer or null on failure</returns>
+        public static int? GetParamsInt(string paramsKey)
+        {
+            string val = HttpContext.Current.Request.Params[paramsKey];
+            if (val == null)
+                return null;
+
+            int ival = 0;
+            if (!int.TryParse(val, out ival))
+                return null;
+
+            return ival;
+        }
+
+        /// <summary>
+        /// Returns a request value parsed into an integer with an optional 
+        /// default value set if the conversion fails.
+        /// </summary>
+        /// <param name="paramsKey"></param>
+        /// <param name="defaultValue">defaults to -1</param>
+        /// <returns></returns>
+        public static int GetParamsInt(string paramsKey, int defaultValue = -1)
+        {
+            string val = HttpContext.Current.Request.Params[paramsKey];
+            if (val == null)
+                return defaultValue;
+
+            int ival = defaultValue;
+            if (!int.TryParse(val, out ival))
+                return defaultValue;
+
+            return ival;
+        }
+
+        /// <summary>
+        /// Returns the content of the POST buffer as string
+        /// </summary>
+        /// <returns></returns>
+        public static string FormBufferToString()
+        {
+            HttpRequest Request = HttpContext.Current.Request;
+
+            if (Request.TotalBytes > 0)
+                return Encoding.Default.GetString(Request.BinaryRead(Request.TotalBytes));
+
+            return string.Empty;
+        }
+
+        #endregion
+
+
+        #region String Helpers
 
         /// <summary>
         /// Returns the result from an ASPX 'template' page in the /templates directory of this application.
@@ -743,10 +635,105 @@ namespace Westwind.Utilities
             }
 
             return MergedText;
-
         }
 
 
+        static string HtmlSanitizeTagBlackList { get; } = "script|iframe|object|embed|form";
+
+        static Regex _RegExScript = new Regex(
+            $@"(<({HtmlSanitizeTagBlackList})\b[^<]*(?:(?!<\/({HtmlSanitizeTagBlackList}))<[^<]*)*<\/({HtmlSanitizeTagBlackList})>)",
+            RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
+        static Regex _RegExJavaScriptHref = new Regex(
+            @"<.*?(href|src|dynsrc|lowsrc)=.{0,10}(javascript:).*?>",
+            RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
+        static Regex _RegExOnEventAttributes = new Regex(
+            @"<.*?\s(on.{4,12}=([""].*?[""]|['].*?['])).*?(>|\/>)",
+            RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
+        /// <summary>
+        /// Sanitizes HTML to some of the most of 
+        /// </summary>
+        /// <remarks>
+        /// This provides rudimentary HTML sanitation catching the most obvious
+        /// XSS script attack vectors. For mroe complete HTML Sanitation please look into
+        /// a dedicated HTML Sanitizer.
+        /// </remarks>
+        /// <param name="html">input html</param>
+        /// <param name="htmlTagBlacklist">A list of HTML tags that are stripped.</param>
+        /// <returns>Sanitized HTML</returns>
+        public static string SanitizeHtml(string html, string htmlTagBlacklist = "script|iframe|object|embed|form")
+        {
+            if (string.IsNullOrEmpty(html))
+                return html;
+
+            if (!string.IsNullOrEmpty(htmlTagBlacklist) || htmlTagBlacklist == HtmlSanitizeTagBlackList)
+            {
+                // Replace Script tags - reused expr is more efficient
+                html = _RegExScript.Replace(html, string.Empty);
+            }
+            else
+            {
+                html = Regex.Replace(html,
+                                      $@"(<({htmlTagBlacklist})\b[^<]*(?:(?!<\/({HtmlSanitizeTagBlackList}))<[^<]*)*<\/({htmlTagBlacklist})>)",
+                                      "", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            }
+
+            // Remove javascript: directives
+            var matches = _RegExJavaScriptHref.Matches(html);
+            foreach (Match match in matches)
+            {
+                var txt = StringUtils.ReplaceString(match.Value, "javascript:", "unsupported:", true);
+                html = html.Replace(match.Value, txt);
+            }
+
+            // Remove onEvent handlers from elements
+            matches = _RegExOnEventAttributes.Matches(html);
+            foreach (Match match in matches)
+            {
+                var txt = match.Value;
+                if (match.Groups.Count > 1)
+                {
+                    var onEvent = match.Groups[1].Value;
+                    txt = txt.Replace(onEvent, string.Empty);
+                    if (!string.IsNullOrEmpty(txt))
+                        html = html.Replace(match.Value, txt);
+                }
+            }
+
+            return html;
+        }
+
+        /// <summary>
+        /// Parses a Carriage Return based into a &lt;ul&gt; style HTML list by 
+        /// splitting each carriage return separated line.
+        /// <seealso>Class WebUtils</seealso>
+        /// </summary>
+        /// <param name="text">
+        /// The carriage return separated text list
+        /// </param>
+        /// <returns>string</returns>
+        public static string TextListToHtmlList(string text)
+        {
+            string[] TextStrings = text.Split(new char[1] { '\r' }, StringSplitOptions.RemoveEmptyEntries);
+
+            StringBuilder sb = new StringBuilder();
+            foreach (string str in TextStrings)
+            {
+                if (str == "\n")
+                    continue;
+
+                sb.Append("<li>" + str + "</li>\r\n");
+            }
+
+            sb.Append("</ul>");
+            return "<ul>" + sb.ToString();
+        }
+
+        #endregion
+
+        #region WebForms Rendering
         /// <summary>
         /// Renders a control to a string - useful for AJAX return values
         /// </summary>
@@ -901,71 +888,100 @@ namespace Westwind.Utilities
             return RenderUserControl(userControlVirtualPath, includePostbackControls, null);
         }
 
-
         /// <summary>
-        /// Returns just the Path of a full Url. Strips off the filename and querystring
+        /// Finds a Control recursively. Note finds the first match and exits
         /// </summary>
-        /// <param name="url"></param>
+        /// <param name="ContainerCtl">The top level container to start searching from</param>
+        /// <param name="IdToFind">The ID of the control to find</param>
+        /// <param name="alwaysUseFindControl">If true uses FindControl to check for hte primary Id which is slower, but finds dynamically generated control ids inside of INamingContainers</param>
         /// <returns></returns>
-        public static string GetUrlPath(string url)
+        public static Control FindControlRecursive(Control Root, string id, bool alwaysUseFindControl = false)
         {
-            int lnAt = url.LastIndexOf("/");
-            if (lnAt > 0)
+            if (alwaysUseFindControl)
             {
-                return url.Substring(0, lnAt + 1);
-            }
-            return "/";
-        }
-
-        /// <summary>
-        /// Translates an ASP.NET path like /myapp/subdir/page.aspx 
-        /// into an application relative path: subdir/page.aspx. The
-        /// path returned is based of the application base and 
-        /// starts either with a subdirectory or page name (ie. no ~)
-        /// 
-        /// The path is turned into all lower case.
-        /// </summary>
-        /// <param name="logicalPath">A logical, server root relative path (ie. /myapp/subdir/page.aspx)</param>
-        /// <returns>Application relative path (ie. subdir/page.aspx)</returns>
-        public static string GetAppRelativePath(string logicalPath)
-        {
-            logicalPath = logicalPath.ToLower();
-
-            string appPath = string.Empty;
-
-            if (HttpContext.Current != null)
-            {
-                appPath = HttpContext.Current.Request.ApplicationPath.ToLower();
-                if (appPath != "/")
-                    appPath += "/";
-                else
-                    // Root web relative path is empty - strip off leading slash
-                    return logicalPath.TrimStart('/');
+                Control ctl = Root.FindControl(id);
+                if (ctl != null)
+                    return ctl;
             }
             else
             {
-                // design time compiler for stock web projects will treat as root web
-                return logicalPath.TrimStart('/');
+                if (Root.ID == id)
+                    return Root;
             }
 
-            return logicalPath.Replace(appPath, "");
+            foreach (Control Ctl in Root.Controls)
+            {
+                Control foundCtl = FindControlRecursive(Ctl, id, alwaysUseFindControl);
+                if (foundCtl != null)
+                    return foundCtl;
+            }
+
+            return null;
+        }
+
+        #endregion
+
+        #region System Functions
+
+        /// <summary>
+        /// Converts an ImageFormat value to a Web Content Type
+        /// </summary>
+        /// <param name="formatGuid"></param>
+        /// <returns></returns>
+        public static string ImageFormatToContentType(ImageFormat format)
+        {
+            string ct = null;
+
+            if (format.Equals(ImageFormat.Png))
+                ct = "image/png";
+            else if (format.Equals(ImageFormat.Jpeg))
+                ct = "image/jpeg";
+            else if (format.Equals(ImageFormat.Gif))
+                ct = "image/gif";
+            else if (format.Equals(ImageFormat.Tiff))
+                ct = "image/tiff";
+            else if (format.Equals(ImageFormat.Bmp))
+                ct = "image/bmp";
+            else if (format.Equals(ImageFormat.Icon))
+                ct = "image/x-icon";
+            else if (format.Equals(ImageFormat.Wmf))
+                ct = "application/x-msmetafile";
+            else
+                throw new InvalidOperationException(string.Format(Resources.ERROR_UnableToConvertImageFormatToContentType, format.ToString()));
+
+            return ct;
         }
 
         /// <summary>
-        /// Translates the current ASP.NET path  
-        /// into an application relative path: subdir/page.aspx. The
-        /// path returned is based of the application base and 
-        /// starts either with a subdirectory or page name (ie. no ~)
-        /// 
-        /// This version uses the current ASP.NET path of the request
-        /// that is active and internally uses AppRelativeCurrentExecutionFilePath
+        /// Returns an image format from an HTTP content type string
         /// </summary>
-        /// <returns></returns>
-        public static string GetAppRelativePath()
+        /// <param name="contentType">Content Type like image/jpeg</param>
+        /// <returns>Corresponding image format</returns>
+        public static ImageFormat ImageFormatFromContentType(string contentType)
         {
-            return HttpContext.Current.Request.AppRelativeCurrentExecutionFilePath.Replace("~/", "");
-        }
+            ImageFormat format = ImageFormat.Png;
 
+            contentType = contentType.ToLower();
+
+            if (contentType == "image/png")
+                return format;
+            else if (contentType == "image/gif")
+                format = ImageFormat.Gif;
+            else if (contentType == "image/jpeg")
+                format = ImageFormat.Jpeg;
+            else if (contentType == "image/tiff")
+                format = ImageFormat.Jpeg;
+            else if (contentType == "image/bmp")
+                format = ImageFormat.Bmp;
+            else if (contentType == "image/x-icon")
+                format = ImageFormat.Icon;
+            else if (contentType == "application/x-msmetafile")
+                format = ImageFormat.Wmf;
+            else
+                throw new InvalidOperationException(string.Format(Resources.ERROR_UnableToConvertContentTypeToImageFormat, contentType));
+
+            return format;
+        }
 
         /// <summary>
         /// Determines if GZip is supported
@@ -1013,99 +1029,101 @@ namespace Westwind.Utilities
             Response.AppendHeader("Vary", "Content-Encoding");
         }
 
-        /// <summary>
-        /// Retrieves a value by key from a UrlEncoded string.
-        /// </summary>
-        /// <param name="urlEncodedString">UrlEncoded String</param>
-        /// <param name="key">Key to retrieve value for</param>
-        /// <returns>returns the value or "" if the key is not found or the value is blank</returns>
-        public static string GetUrlEncodedKey(string urlEncodedString, string key)
-        {
-            string res = StringUtils.ExtractString("&" + urlEncodedString, "&" + key + "=", "&", false, true);
-            return HttpUtility.UrlDecode(res);
-        }
 
         /// <summary>
-        /// Returns a request value parsed into an integer. If the value is not found
-        /// or not a number null is returned.
+        /// Returns the IIS version for the given Operating System.
+        /// Note this routine doesn't check to see if IIS is installed
+        /// it just returns the version of IIS that should run on the OS.
+        /// 
+        /// Returns the value from Request.ServerVariables["Server_Software"]
+        /// if available. Otherwise uses OS sniffing to determine OS version
+        /// and returns IIS version instead.
         /// </summary>
-        /// <param name="paramsKey">The request key to retrieve</param>        
-        /// <returns>parsed integer or null on failure</returns>
-        public static int? GetParamsInt(string paramsKey)
+        /// <returns>version number or -1 </returns>
+        public static decimal GetIisVersion()
         {
-            string val = HttpContext.Current.Request.Params[paramsKey];
-            if (val == null)
-                return null;
-
-            int ival = 0;
-            if (!int.TryParse(val, out ival))
-                return null;
-
-            return ival;
-        }
-
-        /// <summary>
-        /// Returns a request value parsed into an integer with an optional 
-        /// default value set if the conversion fails.
-        /// </summary>
-        /// <param name="paramsKey"></param>
-        /// <param name="defaultValue">defaults to -1</param>
-        /// <returns></returns>
-        public static int GetParamsInt(string paramsKey, int defaultValue = -1)
-        {
-            string val = HttpContext.Current.Request.Params[paramsKey];
-            if (val == null)
-                return defaultValue;
-
-            int ival = defaultValue;
-            if (!int.TryParse(val, out ival))
-                return defaultValue;
-
-            return ival;
-        }
-
-        /// <summary>
-        /// Returns the content of the POST buffer as string
-        /// </summary>
-        /// <returns></returns>
-        public static string FormBufferToString()
-        {
-            HttpRequest Request = HttpContext.Current.Request;
-
-            if (Request.TotalBytes > 0)
-                return Encoding.Default.GetString(Request.BinaryRead(Request.TotalBytes));
-
-            return string.Empty;
-        }
-
-
-
-        /// <summary>
-        /// Parses a Carriage Return based into a &lt;ul&gt; style HTML list by 
-        /// splitting each carriage return separated line.
-        /// <seealso>Class WebUtils</seealso>
-        /// </summary>
-        /// <param name="text">
-        /// The carriage return separated text list
-        /// </param>
-        /// <returns>string</returns>
-        public static string TextListToHtmlList(string text)
-        {
-            string[] TextStrings = text.Split(new char[1] { '\r' }, StringSplitOptions.RemoveEmptyEntries);
-
-            StringBuilder sb = new StringBuilder();
-            foreach (string str in TextStrings)
+            // if running inside of IIS parse the SERVER_SOFTWARE key
+            // This would be most reliable
+            if (HttpContext.Current != null && HttpContext.Current.Request != null)
             {
-                if (str == "\n")
-                    continue;
-
-                sb.Append("<li>" + str + "</li>\r\n");
+                string os = HttpContext.Current.Request.ServerVariables["SERVER_SOFTWARE"];
+                if (!string.IsNullOrEmpty(os))
+                {
+                    //Microsoft-IIS/7.5
+                    int dash = os.LastIndexOf("/");
+                    if (dash > 0)
+                    {
+                        decimal iisVer = 0M;
+                        if (Decimal.TryParse(os.Substring(dash + 1), out iisVer))
+                            return iisVer;
+                    }
+                }
             }
 
-            sb.Append("</ul>");
-            return "<ul>" + sb.ToString();
+            decimal osVer = (decimal)Environment.OSVersion.Version.Major +
+                            ((decimal)Environment.OSVersion.Version.MajorRevision / 10);
+
+            // Windows 7 and Win2008 R2
+            if (osVer == 6.1M)
+                return 7.5M;
+            // Windows Vista and Windows 2008
+            else if (osVer == 6.0M)
+                return 7.0M;
+            // Windows 2003 and XP 64 bit
+            else if (osVer == 5.2M)
+                return 6.0M;
+            // Windows XP
+            else if (osVer == 5.1M)
+                return 5.1M;
+            // Windows 2000
+            else if (osVer == 5.0M)
+                return 5.0M;
+
+            // error result
+            return -1M;
         }
 
+        /// <summary>
+        /// Attempts to restart the active Web Application               
+        /// </summary>
+        /// <remarks>
+        /// Requires either Full Trust (HttpRuntime.UnloadAppDomain) or
+        /// or Write access to web.config otherwise the operation
+        /// will fail and return false.
+        /// </remarks>
+        public static bool RestartWebApplication()
+        {
+            bool error = false;
+            try
+            {
+                // This requires full trust so this will fail
+                // in many scenarios
+                HttpRuntime.UnloadAppDomain();
+            }
+            catch
+            {
+                error = true;
+            }
+
+            if (!error)
+                return true;
+
+            // Couldn't unload with Runtime - let's try modifying web.config
+            // This requires write access in the application's folder for
+            // application's Application Pool account.
+            string ConfigPath = HttpContext.Current.Request.PhysicalApplicationPath + "\\web.config";
+
+            try
+            {
+                File.SetLastWriteTimeUtc(ConfigPath, DateTime.UtcNow);
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
+        }
 
         /// <summary>
         /// Returns an encrypted string based on the local machine key of the local machine.
@@ -1121,6 +1139,9 @@ namespace Westwind.Utilities
             return MachineKey.Encode(keyData, MachineKeyProtection.Encryption);
         }
 
+        #endregion
+
+        #region JSON Value Encoding
 
         /// <summary>
         /// Encodes a string to be represented as a string literal. The format
@@ -1279,9 +1300,134 @@ namespace Westwind.Utilities
             return val.ToString();
         }
 
+        #endregion
 
 
+        #region Localization
 
+        /// <summary>
+        /// Sets the culture and UI culture to a specific culture. Allows overriding of currency
+        /// and optionally disallows setting the UI culture.
+        /// 
+        /// You can also limit the locales that are allowed in order to minimize
+        /// resource access for locales that aren't implemented at all.
+        /// </summary>
+        /// <param name="culture">
+        /// 2 or 5 letter ietf string code for the Culture to set. 
+        /// Examples: en-US or en</param>
+        /// <param name="uiCulture">ietf string code for UiCulture to set</param>
+        /// <param name="currencySymbol">Override the currency symbol on the culture</param>
+        /// <param name="setUiCulture">
+        /// if uiCulture is not set but setUiCulture is true 
+        /// it's set to the same as main culture
+        /// </param>
+        /// <param name="allowedLocales">
+        /// Names of 2 or 5 letter ietf locale codes you want to allow
+        /// separated by commas. If two letter codes are used any
+        /// specific version (ie. en-US, en-GB for en) are accepted.
+        /// Any other locales revert to the machine's default locale.
+        /// Useful reducing overhead in looking up resource sets that
+        /// don't exist and using unsupported culture settings .
+        /// Example: de,fr,it,en-US
+        /// </param>
+        public static void SetUserLocale(string culture = null, 
+            string uiCulture = null, 
+            string currencySymbol = null, 
+            bool setUiCulture = true,
+            string allowedLocales = null)
+        {
+            // Use browser detection in ASP.NET
+            if (string.IsNullOrEmpty(culture) && HttpContext.Current != null)
+            {
+                HttpRequest Request = HttpContext.Current.Request;
+
+                // if no user lang leave existing but make writable
+                if (Request.UserLanguages == null)
+                {
+                    Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo;
+                    if (setUiCulture)
+                        Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentUICulture.Clone() as CultureInfo ;
+                    
+                    return;
+                }
+
+                culture = Request.UserLanguages[0];
+            }
+            else
+                culture = culture.ToLower();
+
+            if (!string.IsNullOrEmpty(uiCulture))
+                setUiCulture = true;
+
+            if (!string.IsNullOrEmpty(culture) && !string.IsNullOrEmpty(allowedLocales))
+            {
+                allowedLocales = "," + allowedLocales.ToLower() + ",";
+                if (!allowedLocales.Contains("," + culture + ","))
+                {
+                    int i = culture.IndexOf('-');
+                    if (i > 0)
+                    {                        
+                        if (!allowedLocales.Contains("," + culture.Substring(0, i) + ","))
+                        {                            
+                            // Always create writable CultureInfo
+                            Thread.CurrentThread.CurrentCulture = Thread.CurrentThread.CurrentCulture.Clone() as CultureInfo;
+                            if (setUiCulture)
+                                Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentUICulture.Clone() as CultureInfo;
+                                        
+                            return;
+                        }
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(culture))
+                culture = CultureInfo.InstalledUICulture.IetfLanguageTag;
+
+            if (string.IsNullOrEmpty(uiCulture))
+                uiCulture = culture;
+
+            try
+            {
+                CultureInfo Culture = new CultureInfo(culture);
+                
+                if (currencySymbol != null && currencySymbol != "")
+                    Culture.NumberFormat.CurrencySymbol = currencySymbol;
+
+                Thread.CurrentThread.CurrentCulture = Culture;
+
+                if (setUiCulture)
+                {                    
+                    var UICulture = new CultureInfo(uiCulture);
+                    Thread.CurrentThread.CurrentUICulture = UICulture;
+                }   
+            }
+            catch { }            
+        }
+
+        /// <summary>
+        /// Sets a user's Locale based on the browser's Locale setting. If no setting
+        /// is provided the default Locale is used.
+        /// </summary>
+        /// <param name="currencySymbol">If not null overrides the currency symbol for the culture. 
+        /// Use to force a specify currency when multiple currencies are not supported by the application
+        /// </param>
+        /// <param name="setUiCulture">if true sets the UI culture in addition to core culture</param>
+        [Obsolete("Use the many parametered version of SetUserLocale instead.")]
+        public static void SetUserLocale(string currencySymbol, bool setUiCulture)
+        {
+            SetUserLocale(null, null, currencySymbol, setUiCulture);
+        }
+
+        /// <summary>
+        /// Returns a JavaScript Encoded string from a Global Resource
+        /// Defaults to the "Resources" resource set.
+        /// </summary>
+        /// <param name="resourceKey"></param>
+        /// <returns></returns>
+        public static string GResJs(string resourceKey)
+        {
+            return GResJs("Resources", resourceKey);
+        }
 
         /// <summary>
         /// Returns a resource string. Shortcut for HttpContext.GetGlobalResourceObject.
@@ -1373,69 +1519,7 @@ namespace Westwind.Utilities
             return LRes(EncodeJsString(resourceId));
         }
 
-        /// <summary>
-        /// Returns a JavaScript Encoded string from a Global Resource
-        /// Defaults to the "Resources" resource set.
-        /// </summary>
-        /// <param name="resourceKey"></param>
-        /// <returns></returns>
-        public static string GResJs(string resourceKey)
-        {
-            return GResJs("Resources", resourceKey);
-        }
-
-        /// <summary>
-        /// Returns the IIS version for the given Operating System.
-        /// Note this routine doesn't check to see if IIS is installed
-        /// it just returns the version of IIS that should run on the OS.
-        /// 
-        /// Returns the value from Request.ServerVariables["Server_Software"]
-        /// if available. Otherwise uses OS sniffing to determine OS version
-        /// and returns IIS version instead.
-        /// </summary>
-        /// <returns>version number or -1 </returns>
-        public static decimal GetIisVersion()
-        {
-            // if running inside of IIS parse the SERVER_SOFTWARE key
-            // This would be most reliable
-            if (HttpContext.Current != null && HttpContext.Current.Request != null)
-            {
-                string os = HttpContext.Current.Request.ServerVariables["SERVER_SOFTWARE"];
-                if (!string.IsNullOrEmpty(os))
-                {
-                    //Microsoft-IIS/7.5
-                    int dash = os.LastIndexOf("/");
-                    if (dash > 0)
-                    {
-                        decimal iisVer = 0M;
-                        if (Decimal.TryParse(os.Substring(dash + 1), out iisVer))
-                            return iisVer;
-                    }
-                }
-            }
-
-            decimal osVer = (decimal)Environment.OSVersion.Version.Major +
-                    ((decimal)Environment.OSVersion.Version.MajorRevision / 10);
-
-            // Windows 7 and Win2008 R2
-            if (osVer == 6.1M)
-                return 7.5M;
-            // Windows Vista and Windows 2008
-            else if (osVer == 6.0M)
-                return 7.0M;
-            // Windows 2003 and XP 64 bit
-            else if (osVer == 5.2M)
-                return 6.0M;
-            // Windows XP
-            else if (osVer == 5.1M)
-                return 5.1M;
-            // Windows 2000
-            else if (osVer == 5.0M)
-                return 5.0M;
-
-            // error result
-            return -1M;
-        }
+        #endregion
     }
 
     public class UserLocaleResult
