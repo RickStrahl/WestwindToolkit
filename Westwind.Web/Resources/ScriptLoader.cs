@@ -24,7 +24,7 @@ namespace Westwind.Web
         /// <summary>
         /// jQuery CDN Url on Google
         /// </summary>
-        public static string jQueryCdnUrl = "//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js";
+        public static string jQueryCdnUrl = "https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js";
 
         /// <summary>
         /// Fallback Url if CDN can't be reached.
@@ -34,7 +34,7 @@ namespace Westwind.Web
         /// <summary>
         /// jQuery CDN Url on Google
         /// </summary>
-        public static string jQueryUiCdnUrl = "//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js";
+        public static string jQueryUiCdnUrl = "https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js";
 
         /// <summary>
         /// jQuery UI fallback Url if CDN is unavailable or WebResource is used
@@ -47,7 +47,7 @@ namespace Westwind.Web
         /// at the jQuery UI base theme - the theme is replaced either explicitly or from
         /// the jQueryUiTheme property value.soap
         /// </summary>
-        public static string jQueryUiCssBaseUrl = "//ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/base/jquery-ui.css";
+        public static string jQueryUiCssBaseUrl = "https:///ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/base/jquery-ui.css";
 
         /// <summary>
         /// The theme that is applied to the jQueryUiCssBaseUrl
@@ -81,6 +81,10 @@ namespace Westwind.Web
         {
             ClientScriptProxy p = ClientScriptProxy.Current;
 
+            // we no longer deliver jQuery in package
+            if (jQueryLoadMode == jQueryLoadModes.WebResource)
+                jQueryLoadMode = jQueryLoadModes.ContentDeliveryNetwork;
+            
             if (!string.IsNullOrEmpty(jQueryUrl))
                 p.RegisterClientScriptInclude(control, typeof(WebResources), jQueryUrl, ScriptRenderModes.HeaderTop);
             else if (jQueryLoadMode == jQueryLoadModes.WebResource)
@@ -131,6 +135,11 @@ namespace Westwind.Web
 
             if (!string.IsNullOrEmpty(url))
                 jQueryUrl = WebUtils.ResolveUrl(url);
+
+            // not available anymore
+            if (jQueryLoadMode == jQueryLoadModes.WebResource)
+                jQueryLoadMode = jQueryLoadModes.ContentDeliveryNetwork;
+
             else if (jQueryLoadMode == jQueryLoadModes.WebResource)
                 jQueryUrl = script.GetClientScriptResourceUrl(typeof(WebResources),
                                                               WebResources.JQUERY_SCRIPT_RESOURCE);

@@ -209,8 +209,9 @@ http://en.wikipedia.org/wiki/MIT_License
             return http.send(this.serverUrl, data, self.onHttpCallback, self.onHttpCallback);
         };
 
-        this.onHttpCallback = function(result) {
-            if (result && (result.isCallbackError || result.iscallbackerror)) {
+        this.onHttpCallback = function(result) {            
+            if (result && (result.isCallbackError || result.iscallbackerror || result.isError || result.iserror) &&
+                (result.message || result.Message)) {
                 if (self.errorHandler)
                     self.errorHandler(result, self);
                 return;

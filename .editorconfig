@@ -23,6 +23,7 @@ trim_trailing_whitespace = true
 [**.cshtml]
 indent_size = 4
 
+
 # size matters when we render html emails
 [StackOverflow/Views/Email/**.Html.cshtml]
 indent_style = tab
