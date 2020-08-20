@@ -15,7 +15,7 @@ namespace WestwindToolkitMvcWeb.Controllers
 
         public ActionResult Index()
         {
-            return View();
+            return View("~/Views/Home/Index.cshtml");
         }
 
         public ActionResult ScriptVariables()

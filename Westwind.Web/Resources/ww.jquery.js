@@ -1,7 +1,7 @@
 ﻿/// <reference path="../bower_components/jquery/dist/jquery.js" />
 /*
 ww.jQuery.js  
-Version 1.29 - 2/12/2020
+Version 1.30 - 8/20/2020
 West Wind jQuery plug-ins and utilities
 
 (c) 2008-2018 Rick Strahl, West Wind Technologies 
@@ -10,14 +10,14 @@ www.west-wind.com
 Licensed under MIT License
 http://en.wikipedia.org/wiki/MIT_License
 */
-"use strict";
+"use strict"; 
 
 (function($, undefined) {
     
 
     window.HttpClient = function(opt) {
         var self = this;
-
+        
         this.completed = null;
         this.errorHandler = null;
         this.errorMessage = "";
