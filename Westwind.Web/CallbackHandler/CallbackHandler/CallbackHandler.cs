@@ -1,8 +1,8 @@
-#region License
+﻿#region License
 /*
  **************************************************************
  *  Author: Rick Strahl 
- *          � West Wind Technologies, 2008 2011
+ *          © West Wind Technologies, 2008 2011
  *          http://www.west-wind.com/
  * 
  * Created: 09/04/2008
@@ -162,8 +162,12 @@ namespace Westwind.Web
                 if (context.Request.AcceptTypes == null ||
                     context.Request.AcceptTypes.Where(str => str.Contains(WebResources.STR_JsonContentType) || str.Contains(WebResources.STR_JavaScriptContentType)).Count() > 0)
                     format = "json";
-                else if (context.Request.AcceptTypes.Where(str => str.Contains(WebResources.STR_XmlContentType) || str.Contains(WebResources.STR_XmlApplicationContentType)).Count() > 0)
+                else if (context.Request.AcceptTypes.Where(str =>
+                    str.Contains(WebResources.STR_XmlContentType) ||
+                    str.Contains(WebResources.STR_XmlApplicationContentType)).Count() > 0)
                     format = "xml";
+                else
+                    format = "json"; // default to JSON
             }
             
             if (format == "xml")

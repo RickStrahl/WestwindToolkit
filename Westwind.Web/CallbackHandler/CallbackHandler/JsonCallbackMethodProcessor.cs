@@ -123,6 +123,11 @@ namespace Westwind.Web
             
             string contentType = Request.ContentType.ToLower();
 
+            if (string.IsNullOrEmpty(contentType) && Request.ContentLength > 0)
+            {
+                contentType = "application/json";
+            }
+
             // Allow for a single JSON object to be POSTed rather than POST variables
             if (contentType.StartsWith(WebResources.STR_JavaScriptContentType) ||
                 contentType.StartsWith(WebResources.STR_JsonContentType))
