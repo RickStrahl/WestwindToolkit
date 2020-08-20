@@ -23,6 +23,25 @@ namespace WestwindToolkitMvcWeb
             return quote;
         }
 
+
+        [CallbackMethod(RouteUrl = "test/postobject")]
+        public PostObject PostObject(PostObject postObj)
+        {
+            if (postObj == null)
+            {
+                return new PostObject {Name = "Invalid - no post object received."};
+            }
+
+            return postObj;
+        }
+
+    }
+
+    public class PostObject
+    {
+        public string Name { get; set;}
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+
     }
 
     
