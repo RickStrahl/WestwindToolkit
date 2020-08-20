@@ -1,4 +1,4 @@
-#define USE_WWBUSINESS
+﻿#define USE_WWBUSINESS
 
 using System;
 using System.Web.UI;
@@ -371,40 +371,6 @@ namespace Westwind.Web.Controls
         /// 
         /// // bind only on first load or if the product is changed
         /// if (!IsPostBack || IsProductChange)
-        ///    DataBinder.DataBind();
-        /// 
-        /// // Manually bind this control always - it's ReadOnly and so doesn't post 
-        /// back
-        /// DataBinder.GetDataBindingItem(txtPk).DataBind();
-        /// &lt;&lt;/code&gt;&gt;
-        /// 
-        /// Some controls - non-Postback, or read only controls for example - you will 
-        /// want to rebind explicit each time so make sure those are bound explicitly 
-        /// outside of the !IsPostBack block.
-        /// <seealso>Class DataBinder</seealso>
-        /// </summary>
-        /// <returns>true if there no errors. False otherwise.</returns>
-        public new bool DataBind()
-        {
-            return DataBind(Page);
-        }
-
-
-        /// <summary>
-        /// Performs data binding against each of the defined DataBindingItems defined 
-        /// on the DataBinder control. This binds all BindingSources to the specified 
-        /// control properties.
-        /// 
-        /// Typically DataBind is called in the Page_Load() of the page cycle and only 
-        /// when the page originally loads - ie. (if !Page.IsPostPack). Subsequent page
-        ///  hits post back values so you typically do not want to rebind values to 
-        /// POST form variables on each hit.
-        /// 
-        /// &lt;&lt;code lang="C#"&gt;&gt;
-        /// Invoice.Load(id);   // load data to bind
-        /// 
-        /// // bind only on first load or if the product is changed
-        /// if (!IsPostBack || IsProductChange)
         ///    DataBinder.DataBind(this);
         /// 
         /// // Manually bind this control always - it's ReadOnly and so doesn't post 
@@ -417,13 +383,14 @@ namespace Westwind.Web.Controls
         /// outside of the !IsPostBack block.
         /// <seealso>Class DataBinder</seealso>
         /// </summary>
-        /// <param name="Container">
-        /// The top level container that is bound
-        /// </param>
-        public bool DataBind(Control Container)
+        /// <param name="container"> The top level container that is bound. If not set the Parent container of the DataBinder is used.</param>
+        public bool DataBind(Control container = null)
         {
+            if(container == null)
+                container = Parent ?? Page;
+
             if (AutoLoadDataBoundControls)
-                LoadFromControls(Container);
+                LoadFromControls(container);
 
             bool ResultFlag = true;
 
@@ -439,7 +406,7 @@ namespace Westwind.Web.Controls
                     }
 
                     // Here's where all the work happens
-                    Item.DataBind(Container);
+                    Item.DataBind(container);
                 }
                 // Binding errors fire into here
                 catch (Exception ex)

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -55,7 +55,7 @@ namespace Westwind.Web.Controls
       /// <param name="Parent"></param>
       public DataBindingItem(DataBinder Parent)
       {
-         this._Binder = Parent;
+         _Binder = Parent;
       }
 
       /// <summary>
@@ -86,8 +86,8 @@ namespace Westwind.Web.Controls
          set
          {
             _ControlId = value;
-            if (this.DesignMode && this.Binder != null)
-               this.Binder.NotifyDesigner();
+            if (DesignMode && Binder != null)
+               Binder.NotifyDesigner();
          }
       }
       private string _ControlId = "";
@@ -167,8 +167,8 @@ namespace Westwind.Web.Controls
          set
          {
             _BindingSource = value;
-            if (this.DesignMode && this.Binder != null)
-               this.Binder.NotifyDesigner();
+            if (DesignMode && Binder != null)
+               Binder.NotifyDesigner();
          }
       }
       private string _BindingSource = "";
@@ -205,8 +205,8 @@ namespace Westwind.Web.Controls
          set
          {
             _BindingSourceMember = value;
-            if (this.DesignMode && this.Binder != null)
-               this.Binder.NotifyDesigner();
+            if (DesignMode && Binder != null)
+               Binder.NotifyDesigner();
          }
       }
       private string _BindingSourceMember = "";
@@ -222,8 +222,8 @@ namespace Westwind.Web.Controls
          set
          {
             _BindingProperty = value;
-            if (this.DesignMode && this.Binder != null)
-               this.Binder.NotifyDesigner();
+            if (DesignMode && Binder != null)
+               Binder.NotifyDesigner();
          }
       }
       private string _BindingProperty = "Text";
@@ -241,8 +241,8 @@ namespace Westwind.Web.Controls
          set
          {
             _DisplayFormat = value;
-            if (this.DesignMode && this.Binder != null)
-               this.Binder.NotifyDesigner();
+            if (DesignMode && Binder != null)
+               Binder.NotifyDesigner();
          }
       }      
       private string _DisplayFormat = "";
@@ -259,8 +259,8 @@ namespace Westwind.Web.Controls
          set
          {
             _IsRequired = value;
-            if (this.DesignMode && this.Binder != null)
-               this.Binder.NotifyDesigner();
+            if (DesignMode && Binder != null)
+               Binder.NotifyDesigner();
          }
       }
       private bool _IsRequired = false;
@@ -291,8 +291,8 @@ namespace Westwind.Web.Controls
          set
          {
             _UserFieldName = value;
-            if (this.DesignMode && this.Binder != null)
-               this.Binder.NotifyDesigner();
+            if (DesignMode && Binder != null)
+               Binder.NotifyDesigner();
          }
       }
       private string _UserFieldName = "";
@@ -309,8 +309,8 @@ namespace Westwind.Web.Controls
          set
          {
             _ErrorMessageLocation = value;
-            if (this.DesignMode && this.Binder != null)
-               this.Binder.NotifyDesigner();
+            if (DesignMode && Binder != null)
+               Binder.NotifyDesigner();
          }
       }
       private BindingErrorMessageLocations _ErrorMessageLocation = BindingErrorMessageLocations.WarningIconRight;
@@ -370,12 +370,12 @@ namespace Westwind.Web.Controls
       /// <returns></returns>
       public bool OnValidate()
       {
-         if (this.Validate != null)
+         if (Validate != null)
          {
             DataBindingValidationEventArgs Args = new DataBindingValidationEventArgs();
             Args.DataBindingItem = this;
 
-            this.Validate(this, Args);
+            Validate(this, Args);
 
             if (!Args.IsValid)
                return false;
@@ -392,19 +392,15 @@ namespace Westwind.Web.Controls
       /// a DataRow field to a text box field. You specify a binding source object 
       /// (Customer.Entity or Customer.DataRow) and property or field(Company, FirstName)
       /// and bind it to the control and the property specified (Text).
+      ///
+      /// This method defaults `this` to the Parent Container of the DataBinder
       /// </summary>
       public new void DataBind()
       {
          if (BindingMode == BindingModes.None)
             return;
 
-         if (this.Binder != null)
-         {
-             this.DataBind(this.Binder.Page);
-             return;
-         }
-
-         this.DataBind(this.Page);
+         DataBind(Binder?.Parent ?? Page);
       }
 
       /// <summary>
@@ -414,94 +410,94 @@ namespace Westwind.Web.Controls
       /// (Customer.Entity or Customer.DataRow) and property or field(Company, FirstName)
       /// and bind it to the control and the property specified (Text).
       /// </summary>
-      /// <param name="container">the Base control that binding source objects are attached to</param>
+      /// <param name="container">The Base control that binding source objects are attached to. It's recommended you define the databinder as a child of a Page or UserControl object so you have clear reference point of the `this` pointer for bindings.</param>
       public void DataBind(Control container)
       {
          if (BindingMode == BindingModes.None || BindingMode == BindingModes.UnbindOnly)
             return;
          
          // if binding source is empty try to load it from default binding source
-         if (string.IsNullOrEmpty(this.BindingSource) &&
-             this.Binder != null &&
-             !string.IsNullOrEmpty(this.Binder.DefaultBindingSource))
+         if (string.IsNullOrEmpty(BindingSource) &&
+             Binder != null &&
+             !string.IsNullOrEmpty(Binder.DefaultBindingSource))
          {
-             this.BindingSource = this.Binder.DefaultBindingSource;
+             BindingSource = Binder.DefaultBindingSource;
          }
 
          // Empty BindingSource - simply skip
-         if (this.BindingSourceObject == null &&
-             string.IsNullOrEmpty(this.BindingSource) ||
-             string.IsNullOrEmpty(this.BindingSourceMember))
+         if (BindingSourceObject == null &&
+             string.IsNullOrEmpty(BindingSource) ||
+             string.IsNullOrEmpty(BindingSourceMember))
             return;
 
          // Retrieve the binding source either by object reference or by name
-         string BindingSource = this.BindingSource;
-         object BindingSourceObject = this.BindingSourceObject;
+         string bindingSource = BindingSource;
+         object bindingSourceObject = BindingSourceObject;
 
-         string BindingSourceMember = this.BindingSourceMember;
-         string BindingProperty = this.BindingProperty;
+         string bindingSourceMember = BindingSourceMember;
+         string bindingProperty = BindingProperty;
 
-         Control ActiveControl = null;
-         if (this.ControlInstance != null)
-            ActiveControl = this.ControlInstance;
+         Control activeControl = null;
+         if (ControlInstance != null)
+            activeControl = ControlInstance;
          else
-            ActiveControl = WebUtils.FindControlRecursive(container, this.ControlId);
+            activeControl = WebUtils.FindControlRecursive(container, ControlId);
 
          try
          {
-            if (ActiveControl == null)
-               throw new ApplicationException("Control not found for binding to: " + this.ControlId);
+            if (activeControl == null)
+               throw new ApplicationException("Control not found for binding to: " + ControlId);
 
             // Assign so error handler can get a clean control reference
-            this.ControlInstance = ActiveControl;
+            ControlInstance = activeControl;
 
             // Retrieve the bindingsource by name - otherwise we use the 
-            if (BindingSourceObject == null)
+            if (bindingSourceObject == null)
             {
                // Get a reference to the actual control source object
                // Allow this or me to be bound to the page
-               if (BindingSource == "this" || BindingSource.ToLower() == "me")
-                  BindingSourceObject = container;
+               if (bindingSource == "this" || bindingSource.ToLower() == "me")
+                  bindingSourceObject = container;
                else
-                   BindingSourceObject = ReflectionUtils.GetPropertyEx(container, BindingSource);
+                   bindingSourceObject = ReflectionUtils.GetPropertyEx(container, bindingSource);
             }
 
-            if (BindingSourceObject == null)
+            if (bindingSourceObject == null)
                throw new BindingErrorException("Invalid BindingSource: " +
-                                               this.BindingSource + "." + this.BindingSourceMember);
+                                               BindingSource + "." + BindingSourceMember);
 
             // Retrieve the control source value
             object Value;
 
-            if (BindingSourceObject is System.Data.DataSet)
+            if (bindingSourceObject is DataSet)
             {
-               string Tablename = BindingSourceMember.Substring(0, BindingSourceMember.IndexOf("."));
-               string Columnname = BindingSourceMember.Substring(BindingSourceMember.IndexOf(".") + 1);
-               DataSet Ds = (DataSet)BindingSourceObject;
+               string Tablename = bindingSourceMember.Substring(0, bindingSourceMember.IndexOf("."));
+               string Columnname = bindingSourceMember.Substring(bindingSourceMember.IndexOf(".") + 1);
+               DataSet Ds = (DataSet)bindingSourceObject;
                Value = Ds.Tables[Tablename].Rows[0][Columnname];
             }
-            else if (BindingSourceObject is System.Data.DataRow)
+            else if (bindingSourceObject is DataRow)
             {
-               DataRow Dr = (DataRow)BindingSourceObject;
-               Value = Dr[BindingSourceMember];
+               DataRow Dr = (DataRow)bindingSourceObject;
+               Value = Dr[bindingSourceMember];
             }
-            else if (BindingSourceObject is System.Data.DataTable)
+            else if (bindingSourceObject is DataTable)
             {
-               DataTable Dt = (DataTable)BindingSourceObject;
-               Value = Dt.Rows[0][BindingSourceMember];
+               DataTable Dt = (DataTable)bindingSourceObject;
+               Value = Dt.Rows[0][bindingSourceMember];
             }
-            else if (BindingSourceObject is System.Data.DataView)
+            else if (bindingSourceObject is DataView)
             {
-               DataView Dv = (DataView)BindingSourceObject;
-               Value = Dv.Table.Rows[0][BindingSourceMember];
+               DataView Dv = (DataView)bindingSourceObject;
+               Value = Dv.Table.Rows[0][bindingSourceMember];
             }
             else
             {
-               Value = ReflectionUtils.GetPropertyEx(BindingSourceObject, BindingSourceMember);
+               Value = ReflectionUtils.GetPropertyEx(bindingSourceObject, bindingSourceMember);
             }
 
             /// Figure out the type of the control we're binding to
-            object BindingValue = ReflectionUtils.GetProperty(ActiveControl, BindingProperty);
+            object BindingValue = ReflectionUtils.GetProperty(activeControl, bindingProperty);
             Type BindingType = null;
             if (BindingValue != null)
                 BindingType = BindingValue.GetType();
@@ -511,33 +507,33 @@ namespace Westwind.Web.Controls
             if (BindingType != null && BindingType == typeof(string))
             {                
                 if (Value == null)
-                    ReflectionUtils.SetProperty(ActiveControl, BindingProperty, "");
+                    ReflectionUtils.SetProperty(activeControl, bindingProperty, "");
                 else
                 {
                     
                     // Handle format string
-                    if (!string.IsNullOrEmpty(this.DisplayFormat))
-                        ReflectionUtils.SetProperty(ActiveControl, BindingProperty, String.Format(this.DisplayFormat, Value));
+                    if (!string.IsNullOrEmpty(DisplayFormat))
+                        ReflectionUtils.SetProperty(activeControl, bindingProperty, String.Format(DisplayFormat, Value));
                     else
                     {
-                        if (this.HtmlEncode)
+                        if (HtmlEncode)
                             Value = HttpUtility.HtmlEncode((string)Value);
                      
-                        ReflectionUtils.SetProperty(ActiveControl, BindingProperty, Value.ToString());
+                        ReflectionUtils.SetProperty(activeControl, bindingProperty, Value.ToString());
                     }
                 }
             }
             else
                 // Otherwise we're just retrieving a property value and are reassigning it to the control
                 // Just assign the value without any translation
-                ReflectionUtils.SetProperty(ActiveControl, BindingProperty, Value);            
+                ReflectionUtils.SetProperty(activeControl, bindingProperty, Value);            
          }
          catch (Exception ex)
          {
             string lcException = ex.Message;
             throw (new BindingErrorException("Unable to bind " +
-                BindingSource + "." +
-                BindingSourceMember));
+                bindingSource + "." +
+                bindingSourceMember));
          }
       }
 
@@ -552,13 +548,13 @@ namespace Westwind.Web.Controls
       /// </summary>
       public void Unbind()
       {
-         if (this.BindingMode != BindingModes.TwoWay)
+         if (BindingMode != BindingModes.TwoWay)
             return;
 
-         if (this.Binder != null)
-            this.Unbind(this.Binder.Page);
+         if (Binder != null)
+            Unbind(Binder.Page);
 
-         this.Unbind(this.Page);
+         Unbind(Page);
       }
 
       /// <summary>
@@ -580,27 +576,27 @@ namespace Westwind.Web.Controls
          // Get the Control Instance first so we ALWAYS have a ControlId
          // instance reference available
          Control ActiveControl = null;
-         if (this.ControlInstance != null)
-            ActiveControl = this.ControlInstance;
+         if (ControlInstance != null)
+            ActiveControl = ControlInstance;
          else
-            ActiveControl = WebUtils.FindControlRecursive(BindingContainerControl, this.ControlId);
+            ActiveControl = WebUtils.FindControlRecursive(BindingContainerControl, ControlId);
 
          if (ActiveControl == null)
-            throw new ApplicationException(Westwind.Web.WebForms.Properties.Resources.InvalidControlId);
+            throw new ApplicationException(Resources.InvalidControlId);
 
-         this.ControlInstance = ActiveControl;
+         ControlInstance = ActiveControl;
 
          // Don't unbind this item unless we're in TwoWay mode
-         if (this.BindingMode != BindingModes.TwoWay &&
-             this.BindingMode != BindingModes.UnbindOnly)
+         if (BindingMode != BindingModes.TwoWay &&
+             BindingMode != BindingModes.UnbindOnly)
             return;
 
          // if binding source is empty try to load it from default binding source
          if (string.IsNullOrEmpty(this.BindingSource) &&
-             this.Binder != null &&
-             !string.IsNullOrEmpty(this.Binder.DefaultBindingSource))
+             Binder != null &&
+             !string.IsNullOrEmpty(Binder.DefaultBindingSource))
          {
-             this.BindingSource = this.Binder.DefaultBindingSource;
+             this.BindingSource = Binder.DefaultBindingSource;
          }
 
 
@@ -637,7 +633,7 @@ namespace Westwind.Web.Controls
          object ControlValue = ReflectionUtils.GetPropertyEx(ActiveControl, BindingProperty);
 
          // Check for Required values not being blank
-         if (this.IsRequired && (string)ControlValue == "")
+         if (IsRequired && (string)ControlValue == "")
             throw new RequiredFieldException();
 
          // Try to retrieve the type of the BindingSourceMember
@@ -650,7 +646,7 @@ namespace Westwind.Web.Controls
           object bindingSourceObject = BindingSourceObject;
           string bindingSourceMember = BindingSourceMember;
 
-         if (bindingSourceObject is System.Data.DataSet)
+         if (bindingSourceObject is DataSet)
          {
             // Split out the datatable and column names
             int At = bindingSourceMember.IndexOf(".");
@@ -659,12 +655,12 @@ namespace Westwind.Web.Controls
             DataSet Ds = (DataSet)bindingSourceObject;
             typBindingSource = Ds.Tables[DataTable].Columns[DataColumn].DataType;
          }
-         else if (bindingSourceObject is System.Data.DataRow)
+         else if (bindingSourceObject is DataRow)
          {
             DataRow Dr = (DataRow)bindingSourceObject;
             typBindingSource = Dr.Table.Columns[bindingSourceMember].DataType;
          }
-         else if (bindingSourceObject is System.Data.DataTable)
+         else if (bindingSourceObject is DataTable)
          {
             DataTable dt = (DataTable)bindingSourceObject;
             typBindingSource = dt.Columns[bindingSourceMember].DataType;
@@ -728,22 +724,22 @@ namespace Westwind.Web.Controls
              UnboundValue = ControlValue;
        
          /// Write the value back to the underlying object/data item
-         if (bindingSourceObject is System.Data.DataSet)
+         if (bindingSourceObject is DataSet)
          {
             DataSet Ds = (DataSet)bindingSourceObject;
             Ds.Tables[DataTable].Rows[0][DataColumn] = UnboundValue;
          }
-         else if (bindingSourceObject is System.Data.DataRow)
+         else if (bindingSourceObject is DataRow)
          {
             DataRow Dr = (DataRow)bindingSourceObject;
             Dr[bindingSourceMember] = UnboundValue;
          }
-         else if (bindingSourceObject is System.Data.DataTable)
+         else if (bindingSourceObject is DataTable)
          {
             DataTable dt = (DataTable)bindingSourceObject;
             dt.Rows[0][bindingSourceMember] = UnboundValue;
          }
-         else if (bindingSourceObject is System.Data.DataView)
+         else if (bindingSourceObject is DataView)
          {
             DataView dv = (DataView)bindingSourceObject;
             dv[0][bindingSourceMember] = UnboundValue;
@@ -753,7 +749,7 @@ namespace Westwind.Web.Controls
             ReflectionUtils.SetPropertyEx(bindingSourceObject, bindingSourceMember, UnboundValue);
 
          // Clear the error message - no error
-         this.BindingErrorMessage = "";
+         BindingErrorMessage = "";
       }
 
       /// <summary>
@@ -762,10 +758,10 @@ namespace Westwind.Web.Controls
       /// <returns></returns>
       public override string ToString()
       {
-         if (string.IsNullOrEmpty(this.BindingSource))
+         if (string.IsNullOrEmpty(BindingSource))
             return base.ToString();
 
-         return this.BindingSource + "." + this.BindingSourceMember;
+         return BindingSource + "." + BindingSourceMember;
       }
 
 
