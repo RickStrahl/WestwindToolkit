@@ -13,7 +13,7 @@ namespace Westwind.BusinessFramework.Test.MongoDb
     [TestClass]
     public class MongoDbLogTests
     {
-        //[TestMethod]
+        [TestMethod]
         public void CreateTableTest()
         {
             var log = CreateLogManager();

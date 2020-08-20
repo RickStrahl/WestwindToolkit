@@ -28,8 +28,7 @@ namespace WestwindToolkitMvcWeb.Controllers
         {
             var r = new ViewRenderer();
             return r.RenderViewToString("~/Views/Utilities/ScriptVariables.cshtml");
-
-            return ViewRenderer.RenderView("~/Views/Utilities/ScriptVariables.cshtml");
+            
         }
 
         public string ErrorHandler()
