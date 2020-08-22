@@ -121,6 +121,7 @@
     <Compile Include="_App_Code\Business\StockServer.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AjaxJson.html" />
     <Content Include="Css\images\calendar.png" />
     <Content Include="Css\images\close.png" />
     <Content Include="Css\images\closeX.png" />

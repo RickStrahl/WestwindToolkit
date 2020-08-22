@@ -4,7 +4,7 @@ ww.jQuery.js
 Version 1.30 - 8/20/2020
 West Wind jQuery plug-ins and utilities
 
-(c) 2008-2018 Rick Strahl, West Wind Technologies 
+(c) 2008-2020 Rick Strahl, West Wind Technologies 
 www.west-wind.com
 
 Licensed under MIT License
@@ -154,6 +154,7 @@ http://en.wikipedia.org/wiki/MIT_License
 
     window.AjaxMethodCallback = function(controlId, url, opt) {
         var self = this;
+
         this.controlId = controlId;
         this.postbackMode = "PostMethodParametersOnly"; // Post,PostNoViewstate,Get
         this.serverUrl = url;
@@ -214,7 +215,7 @@ http://en.wikipedia.org/wiki/MIT_License
             return http.send(this.serverUrl, data, self.onHttpCallback, self.onHttpCallback);
         };
 
-        this.onHttpCallback = function(result) {
+        self.onHttpCallback = function(result) {
             if (result &&
                 (result.isCallbackError || result.iscallbackerror || result.isError || result.iserror) &&
                 (result.message || result.Message)) {
